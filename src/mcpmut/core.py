@@ -45,6 +45,13 @@ class ToolDeclaration:
     description: str
     input_schema: dict[str, Any]
 
+    # Fields a read tool is declared to return. MCP does NOT mandate output
+    # schemas, so in the real ecosystem this is usually absent -- which caps
+    # how many metamorphic relations a client can derive. That cap is itself
+    # one of the paper's findings, so we model the field as optional rather
+    # than pretending it is always available.
+    output_fields: tuple[str, ...] = ()
+
     def canonical(self) -> str:
         """Stable serialization for hashing. Key order must not matter."""
         return json.dumps(

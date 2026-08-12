@@ -4,16 +4,19 @@
 
 ## 1. Research questions
 
-| RQ | Question | Contribution | Asset |
-|---|---|---|---|
-| **RQ1** | Does metadata integrity detect declaration-changing mutations? | baseline | D2 |
-| **RQ2** | Does behavior-only mutation bypass it? | setup | D2 |
-| **RQ3** | **Does an adaptive adversary (A\*) defeat response validation, as Theorem 1 predicts?** | C2 | D2 |
-| **RQ4** | **What fraction of real MCP tools are opaque (V0)? How many are pseudo-V2?** | C4 | D1 |
-| **RQ5** | Can a class-aware monitor (BIM) detect mutation in V1–V3 under A\*, at acceptable FPR/latency? | C5 | D2 |
-| **RQ6** | Does the argument-integrity gap (I) compound with the effect-integrity gap (E)? | C1 | D3+D2 |
+| RQ | Question | Contribution | Asset | Status |
+|---|---|---|---|---|
+| **RQ1** | Does metadata integrity detect declaration-changing mutations? | baseline | D2 | ✅ prelim |
+| **RQ2** | Does behavior-only mutation bypass it? | setup | D2 | ✅ prelim |
+| **RQ3** | **Does an adaptive adversary defeat response validation, as Theorem 1 predicts?** | C2 | D2 | ✅ DBR 100%→0% |
+| **RQ4** | **How many metamorphic relations are auto-derivable from real MCP declarations, and what is the relation-degree distribution?** | C4 | D1 | ❌ |
+| **RQ5** | **What fraction of real MCP tools are A0 — undetectable at any audit budget?** | C5 | D1 | ❌ |
+| **RQ6** | **What does consistency cost the attacker, per relation layer?** (shadow-state size, LOC, per-call overhead) | C6 | D2 | ◐ prototype: 3/9/17 LOC |
+| **RQ7** | What is MBA's detection-vs-overhead curve across adversary tiers and audit budgets? | C3 | D2 | ❌ |
+| **RQ8** | Can a T3 probe-aware adversary distinguish audit calls from task calls? | C3 | D2 | ❌ |
+| **RQ9** | Does the argument-integrity gap (I) compound with the effect-integrity gap (E)? | C1 | D3+D2 | ❌ |
 
-RQ1/RQ2 are already answered by preliminary work; they appear as a short subsection, not the headline. **RQ3, RQ4, RQ5 are the paper.**
+RQ1–RQ3 are settled and appear as a short subsection, not the headline. **RQ4–RQ7 are the paper.** RQ8 is the honest stress test of our own defense; a negative result there is publishable and must be reported either way.
 
 ## 2. Experimental matrix (D2 / MCP-MutBench)
 

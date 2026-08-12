@@ -2,13 +2,15 @@
 
 **Group 13** — Md. Tanzamul Azad (0112230863), Jahidul Islam (0112230654)
 **Status:** Active · Started 2026-08-13
-**Working title:** *Trust, but Cannot Verify: Execution Integrity and Its Limits in Model Context Protocol Agents*
+**Working title:** *The Price of a Lie: Auditing Untrusted Tool Servers Without Their Cooperation*
 
 ---
 
 ## 1. The one-sentence thesis
 
-> Agent protocols such as MCP establish trust over a tool's **identity**, but the security-relevant object is the tool's **execution**. We decompose execution integrity into argument integrity and effect integrity, prove that client-side effect verification is *impossible* for an identifiable class of tools, measure how much of the real MCP ecosystem falls into that class, and build a defense that achieves what is achievable and escalates where it is not.
+> Agent protocols such as MCP establish trust over a tool's **declaration**, but the security-relevant object is its **implementation**. A passive client cannot close that gap — we prove it. An *active* client can, not by detecting compromise outright, but by forcing the attacker to maintain a consistent simulated world, and we show that burden is measurable, that it rises sharply with a tool's relation degree, and that every documented real-world MCP compromise falls far below it.
+
+**Design constraint that shapes everything:** the client gets **no cooperation** — not from the server, not from downstream providers, not from any independent channel. Anything requiring signed receipts or third-party attestation is out of scope by construction, because it will not be deployed. See [`11-runtime-validation-design.md`](11-runtime-validation-design.md).
 
 ## 2. Why this framing, and not the previous two
 
@@ -50,15 +52,17 @@ This turns a weak claim ("we built a validator") into a strong one ("we establis
 
 **C1 — Execution Integrity framework.** Formal decomposition of tool-call trust into *argument integrity* (I) and *effect integrity* (E). We position 24 prior defenses in this space and show the systematically empty region. [`02-gap-analysis.md`]
 
-**C2 — Impossibility result.** A client-side monitor cannot detect behavior-only mutation for opaque-effect tools under a response-falsifying adversary. Stated and proved. [`05-verifiability-taxonomy.md`]
+**C2 — Theorem 1 (transcript indistinguishability).** No *passive* client-side monitor can detect an adversary that forges honest responses. Proved, and confirmed empirically against our own earlier design. [`05-verifiability-taxonomy.md`]
 
-**C3 — Verifiability taxonomy + automated classifier.** Classes V0–V3; a classifier that assigns any MCP tool to a class from its declaration alone, validated against human labels. [`05-verifiability-taxonomy.md`]
+**C3 — Theorem 2 (the cost of consistency) + MBA.** The impossibility is escaped by making the client *active*. Metamorphic relations derived automatically from tool declarations force the adversary into maintaining a consistent shadow world. **Zero cooperation required from anyone.** [`11-runtime-validation-design.md`]
 
-**C4 — Ecosystem measurement.** Apply C3 to real MCP servers harvested from public registries. Headline number: *what fraction of real, deployed MCP tools are provably undefendable client-side?* This is the contribution that makes the problem real rather than toy. [`06-dataset-plan.md`]
+**C4 — Auditability taxonomy A0–A3 + classifier.** Tools classified by *relation degree*, a client-computable property. A0 (degree 0) is undetectable at any budget.
 
-**C5 — BIM (Behavioral Integrity Monitor).** Class-aware defense: deterministic replay for V1, cross-source corroboration for V2, receipt verification for V3, policy escalation for V0. Evaluated against naive **and adaptive** adversaries, on our benchmark and on AgentDojo. [`07-experiment-plan.md`]
+**C5 — Ecosystem measurement.** Apply C4 to real MCP servers. Headline: *what fraction of real deployed tools have relation degree 0?* Makes the problem concrete rather than toy. [`06-dataset-plan.md`]
 
-**C6 — MCP-MutBench.** Released benchmark: MCP client/server harness, mutation engine, adaptive adversary, ground-truth oracle. Reusable.
+**C6 — Consistency cost curve.** We *build* the consistency-maintaining adversary and report what it cost — shadow-state size, LOC, per-call overhead. The cost curve **is** the security argument. Already demonstrated: 3 → 9 → 17 LOC across three defense layers (`experiments/demo_mba.py`).
+
+**C7 — MCP-MutBench.** Released benchmark: harness, mutation engine, adversary ladder T0–T3, out-of-band ground-truth oracle, relation engine.
 
 ## 5. What makes this non-generic
 
@@ -82,6 +86,8 @@ The user requirement was explicitly *"contribution to solve real problem, not ge
 | [`08-figures-plan.md`](08-figures-plan.md) | Every figure and table, with the claim each one supports |
 | [`09-venue-timeline.md`](09-venue-timeline.md) | Target venues, deadlines, milestone schedule |
 | [`10-implementation-notes.md`](10-implementation-notes.md) | Code architecture, how to run everything |
+| [`11-runtime-validation-design.md`](11-runtime-validation-design.md) | **MBA — the zero-cooperation defense.** Read after 05 |
+| [`12-intellectual-lineage.md`](12-intellectual-lineage.md) | The 11 fields we inherit from and the assumption each one loses |
 
 ## 7. Current state
 

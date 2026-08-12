@@ -27,11 +27,20 @@
 
 ## 2. Recommended strategy
 
-**Primary: USENIX Security.** The paper's shape — an impossibility result plus an ecosystem measurement plus a released artifact — is a USENIX paper more than an S&P paper. S&P rewards deep theory; USENIX rewards *"here is a true thing about the world nobody knew."* That is what C4 is.
+> **Decision (2026-08-13): no rush, top venue only.** No workshop hedge, no early partial submission. The work goes out when it is a Tier-1 paper, not before.
 
-**Parallel hedge (strongly recommended): submit the T2-adversary result to a workshop now.** It is the cheapest genuinely-new result we have (see [`07-experiment-plan.md`](07-experiment-plan.md) §9 step 3), it is ~4 weeks of work, and it establishes priority on the adaptive-adversary framing before anyone else publishes it. Workshop papers do not preclude a full submission.
+**Primary: USENIX Security.** The paper's shape — an impossibility result, a cost-of-consistency theorem, an ecosystem measurement, and a released artifact — is a USENIX paper more than an S&P paper. S&P rewards deep theory; USENIX rewards *"here is a true thing about the world nobody knew."* That is C5, and it is the strongest thing we have.
 
-**Fallback ladder:** USENIX → CCS → NDSS → ACSAC → NeurIPS D&B.
+**Consequences of not rushing — these are real advantages, not consolations:**
+
+1. **The consistency cost curve can be measured properly.** C6 requires *building* adversaries at each rung of the ladder. Rushed, that is three toy classes; done properly, it is a real cost model across four domains with actual overhead numbers.
+2. **The measurement can be large.** A corpus of 4,000 tools with validated labels is a far better paper than 500 with hand-waved ones, and the difference is mostly patience.
+3. **Theorem 2 can be tightened.** Currently informal. A clean bound relating detection probability to relation degree and audit budget would substantially raise the paper's standing — see [`05-verifiability-taxonomy.md`](05-verifiability-taxonomy.md) §7 Q1–Q2.
+4. **Question 5 can be developed.** Whether `deg` is gameable by a malicious server author turns the taxonomy from a measurement instrument into a deployable trust heuristic. That is potentially a second paper, and finding out costs time we now have.
+
+**Priority risk of not rushing:** MCP security is a fast-moving area and the adaptive-adversary framing is not hard to think of. Mitigation is **not** a rushed workshop paper — it is a timestamped public artifact. Keep the repo public and commits dated; that establishes provenance without spending the result.
+
+**Fallback ladder, only if Tier 1 rejects:** USENIX → CCS → NDSS → ACSAC → NeurIPS D&B.
 
 ---
 
@@ -43,9 +52,9 @@ Work-week estimates, not calendar promises. Two people, part-time alongside cour
 |---|---|---|---|
 | **P0** | Repo, plan, docs | ✅ done | — |
 | **P1** | D2 harness + out-of-band oracle; M1–M4 replicate prior result | 2 wk | Prior numbers reproduce |
-| **P2** | **M5 adaptive adversary → RQ3** | 1 wk | **ASR(D-resp, T2) ≈ 100%** ← first new result |
-| **P3** | Workshop paper on P2 | 2 wk | 6 pages submitted |
-| **P4** | D1 harvester; ≥200 servers, ≥1500 tools | 2 wk | corpus built |
+| **P2** | **M5 adaptive adversary → RQ3** | 1 wk | ✅ **done** — DBR 100%→0% |
+| **P3** | **Relation engine + adversary ladder → cost curve** | 3 wk | ✅ prototype done (3/9/17 LOC); needs 4 domains + overhead numbers |
+| **P4** | D1 harvester; ≥400 servers, ≥3000 tools | 3 wk | corpus built |
 | **P5** | Codebook, 300 labels, κ | 1.5 wk | **κ ≥ 0.7** (else §4 fallback) |
 | **P6** | Classifier + held-out validation | 1.5 wk | usable P/R |
 | **P7** | **Full-corpus classification → RQ4** | 0.5 wk | **headline % exists** |
@@ -55,18 +64,17 @@ Work-week estimates, not calendar promises. Two people, part-time alongside cour
 | **P11** | Paper draft v1 | 3 wk | full draft |
 | **P12** | Internal review, artifact packaging, polish | 2.5 wk | submission-ready |
 
-**Total ≈ 23–24 work-weeks.** At ~60% part-time capacity that is **~9 months**, not 3.
+**Total ≈ 25–27 work-weeks.** At ~60% part-time capacity alongside coursework, **~10–11 months**.
 
-**Honest read:** a Tier-1 submission is a mid-2027 target, not a 2026 one. The workshop paper at P3 is the realistic near-term publication, and it is worth doing precisely because it de-risks the big one.
+**Honest read:** a Tier-1 submission is a **late-2027** target. That is the correct timeline for this paper and rushing it would produce a worse one. Two theorems, an ecosystem measurement, a cost model, and a released artifact is not a three-month project.
 
 ---
 
 ## 4. Critical path
 
 ```
-P1 ─▶ P2 ─▶ P3 (workshop, parallel)
-        └─▶ P8 ─▶ P9 ─▶ P10 ─▶ P11 ─▶ P12
-P4 ─▶ P5 ─▶ P6 ─▶ P7 ──────────┘
+P1 ─▶ P2 ✅ ─▶ P3 ─▶ P8 ─▶ P9 ─▶ P10 ─▶ P11 ─▶ P12
+P4 ─▶ P5 ─▶ P6 ─▶ P7 ─────────────┘
 ```
 D1 (P4–P7) and BIM (P8) are independent — **parallelize across the two authors.** Suggested split: one owns the measurement arm (D1/classifier), the other owns the systems arm (harness/BIM). Both own the paper.
 

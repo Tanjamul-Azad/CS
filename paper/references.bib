@@ -1,0 +1,462 @@
+% ============================================================================
+% References — Behavioral Integrity for Agent Tool Protocols
+%
+% VERIFICATION STATUS
+%   [V] verified against the official venue/DOI page
+%   [U] UNVERIFIED — details written from memory; MUST be checked before
+%       submission. Run scripts/verify_refs.py.
+%
+% Foundational entries (§1–8) are long-standing, widely cited works and are
+% low-risk. Recent arXiv entries (§10) carry the highest risk of wrong
+% numbers, wrong years, or venue changes — check every one.
+% ============================================================================
+
+
+% ---------------------------------------------------------------------------
+% 1. TOCTOU — the structural ancestor
+% ---------------------------------------------------------------------------
+
+@techreport{bishop1996toctou,           % [U] check report number
+  author      = {Bishop, Matt and Dilger, Michael},
+  title       = {Checking for Race Conditions in File Accesses},
+  institution = {University of California, Davis},
+  year        = {1996},
+  note        = {Also in Computing Systems 9(2)}
+}
+
+% ---------------------------------------------------------------------------
+% 2. Metamorphic and property-based testing — the borrowed mechanism
+% ---------------------------------------------------------------------------
+
+@techreport{chen1998metamorphic,        % [U] HKUST-CS98-01
+  author      = {Chen, T. Y. and Cheung, S. C. and Yiu, S. M.},
+  title       = {Metamorphic Testing: A New Approach for Generating Next Test Cases},
+  institution = {Hong Kong University of Science and Technology},
+  number      = {HKUST-CS98-01},
+  year        = {1998}
+}
+
+@article{chen2018metamorphic,           % [U]
+  author  = {Chen, Tsong Yueh and Kuo, Fei-Ching and Liu, Huai and Poon, Pak-Lok
+             and Towey, Dave and Tse, T. H. and Zhou, Zhi Quan},
+  title   = {Metamorphic Testing: A Review of Challenges and Opportunities},
+  journal = {ACM Computing Surveys},
+  volume  = {51}, number = {1}, year = {2018}
+}
+
+@article{segura2016survey,              % [U]
+  author  = {Segura, Sergio and Fraser, Gordon and Sanchez, Ana B.
+             and Ruiz-Cort{\'e}s, Antonio},
+  title   = {A Survey on Metamorphic Testing},
+  journal = {IEEE Transactions on Software Engineering},
+  volume  = {42}, number = {9}, year = {2016}
+}
+
+@inproceedings{claessen2000quickcheck,  % [U]
+  author    = {Claessen, Koen and Hughes, John},
+  title     = {QuickCheck: A Lightweight Tool for Random Testing of Haskell Programs},
+  booktitle = {Proc. ACM SIGPLAN Int. Conf. on Functional Programming (ICFP)},
+  year      = {2000}
+}
+
+% ---------------------------------------------------------------------------
+% 3. Runtime verification and invariant inference
+% ---------------------------------------------------------------------------
+
+@inproceedings{havelund2001monitoring,  % [U]
+  author    = {Havelund, Klaus and Ro{\c{s}}u, Grigore},
+  title     = {Monitoring Programs Using Rewriting},
+  booktitle = {Proc. IEEE/ACM Int. Conf. on Automated Software Engineering (ASE)},
+  year      = {2001}
+}
+
+@incollection{bartocci2018rv,           % [U]
+  author    = {Bartocci, Ezio and Falcone, Yli{\`e}s and Francalanza, Adrian
+               and Reger, Giles},
+  title     = {Introduction to Runtime Verification},
+  booktitle = {Lectures on Runtime Verification},
+  publisher = {Springer}, year = {2018}
+}
+
+@article{ernst2001daikon,               % [U]
+  author  = {Ernst, Michael D. and Cockrell, Jake and Griswold, William G.
+             and Notkin, David},
+  title   = {Dynamically Discovering Likely Program Invariants to Support
+             Program Evolution},
+  journal = {IEEE Transactions on Software Engineering},
+  volume  = {27}, number = {2}, year = {2001}
+}
+
+% ---------------------------------------------------------------------------
+% 4. Intrusion detection by behavioral deviation
+% ---------------------------------------------------------------------------
+
+@inproceedings{forrest1996senseofself,  % [U]
+  author    = {Forrest, Stephanie and Hofmeyr, Steven A. and Somayaji, Anil
+               and Longstaff, Thomas A.},
+  title     = {A Sense of Self for Unix Processes},
+  booktitle = {Proc. IEEE Symposium on Security and Privacy},
+  year      = {1996}
+}
+
+@article{denning1987ids,                % [U]
+  author  = {Denning, Dorothy E.},
+  title   = {An Intrusion-Detection Model},
+  journal = {IEEE Transactions on Software Engineering},
+  volume  = {SE-13}, number = {2}, year = {1987}
+}
+
+% ---------------------------------------------------------------------------
+% 5. Byzantine fault tolerance and N-version programming
+% ---------------------------------------------------------------------------
+
+@article{lamport1982byzantine,          % [U]
+  author  = {Lamport, Leslie and Shostak, Robert and Pease, Marshall},
+  title   = {The {Byzantine} Generals Problem},
+  journal = {ACM Transactions on Programming Languages and Systems},
+  volume  = {4}, number = {3}, year = {1982}
+}
+
+@inproceedings{castro1999pbft,          % [U]
+  author    = {Castro, Miguel and Liskov, Barbara},
+  title     = {Practical {Byzantine} Fault Tolerance},
+  booktitle = {Proc. USENIX Symposium on Operating Systems Design and
+               Implementation (OSDI)},
+  year      = {1999}
+}
+
+@article{avizienis1985nversion,         % [U]
+  author  = {Avi{\v{z}}ienis, Algirdas},
+  title   = {The N-Version Approach to Fault-Tolerant Software},
+  journal = {IEEE Transactions on Software Engineering},
+  volume  = {SE-11}, number = {12}, year = {1985}
+}
+
+% The independence critique — directly supports our pseudo-V2 finding.
+@article{knight1986independence,        % [U]
+  author  = {Knight, John C. and Leveson, Nancy G.},
+  title   = {An Experimental Evaluation of the Assumption of Independence in
+             Multiversion Programming},
+  journal = {IEEE Transactions on Software Engineering},
+  volume  = {SE-12}, number = {1}, year = {1986}
+}
+
+% ---------------------------------------------------------------------------
+% 6. Verifiable computation and interactive proofs
+% ---------------------------------------------------------------------------
+
+@article{goldwasser1989interactive,     % [U]
+  author  = {Goldwasser, Shafi and Micali, Silvio and Rackoff, Charles},
+  title   = {The Knowledge Complexity of Interactive Proof Systems},
+  journal = {SIAM Journal on Computing},
+  volume  = {18}, number = {1}, year = {1989}
+}
+
+@inproceedings{babai1985trading,        % [U]
+  author    = {Babai, L{\'a}szl{\'o}},
+  title     = {Trading Group Theory for Randomness},
+  booktitle = {Proc. ACM Symposium on Theory of Computing (STOC)},
+  year      = {1985}
+}
+
+@inproceedings{goldwasser2008muggles,   % [U]
+  author    = {Goldwasser, Shafi and Kalai, Yael Tauman and Rothblum, Guy N.},
+  title     = {Delegating Computation: Interactive Proofs for Muggles},
+  booktitle = {Proc. ACM Symposium on Theory of Computing (STOC)},
+  year      = {2008}
+}
+
+@inproceedings{parno2013pinocchio,      % [U]
+  author    = {Parno, Bryan and Howell, Jon and Gentry, Craig and
+               Raykova, Mariana},
+  title     = {Pinocchio: Nearly Practical Verifiable Computation},
+  booktitle = {Proc. IEEE Symposium on Security and Privacy},
+  year      = {2013}
+}
+
+% ---------------------------------------------------------------------------
+% 7. Software supply chain and transparency
+% ---------------------------------------------------------------------------
+
+@inproceedings{samuel2010tuf,           % [U]
+  author    = {Samuel, Justin and Mathewson, Nick and Cappos, Justin and
+               Dingledine, Roger},
+  title     = {Survivable Key Compromise in Software Update Systems},
+  booktitle = {Proc. ACM Conference on Computer and Communications Security (CCS)},
+  year      = {2010}
+}
+
+@inproceedings{torresarias2019intoto,   % [U]
+  author    = {Torres-Arias, Santiago and Afzali, Hammad and Kuppusamy,
+               Trishank Karthik and Curtmola, Reza and Cappos, Justin},
+  title     = {in-toto: Providing Farm-to-Table Guarantees for Bits and Bytes},
+  booktitle = {Proc. USENIX Security Symposium},
+  year      = {2019}
+}
+
+@article{laurie2014ct,                  % [U]
+  author  = {Laurie, Ben},
+  title   = {Certificate Transparency},
+  journal = {ACM Queue},
+  volume  = {12}, number = {8}, year = {2014}
+}
+
+@inproceedings{newman2022sigstore,      % [U]
+  author    = {Newman, Zachary and Meyers, John Speed and Torres-Arias, Santiago},
+  title     = {Sigstore: Software Signing for Everybody},
+  booktitle = {Proc. ACM Conference on Computer and Communications Security (CCS)},
+  year      = {2022}
+}
+
+% ---------------------------------------------------------------------------
+% 8. Remote attestation and trusted execution
+% ---------------------------------------------------------------------------
+
+@inproceedings{sailer2004ima,           % [U]
+  author    = {Sailer, Reiner and Zhang, Xiaolan and Jaeger, Trent and
+               van Doorn, Leendert},
+  title     = {Design and Implementation of a {TCG}-based Integrity Measurement
+               Architecture},
+  booktitle = {Proc. USENIX Security Symposium},
+  year      = {2004}
+}
+
+@misc{costan2016sgx,                    % [U] IACR ePrint 2016/086
+  author = {Costan, Victor and Devadas, Srinivas},
+  title  = {Intel {SGX} Explained},
+  note   = {IACR Cryptology ePrint Archive 2016/086},
+  year   = {2016}
+}
+
+% ---------------------------------------------------------------------------
+% 9. Trust management
+% ---------------------------------------------------------------------------
+
+@inproceedings{blaze1996trust,          % [U]
+  author    = {Blaze, Matt and Feigenbaum, Joan and Lacy, Jack},
+  title     = {Decentralized Trust Management},
+  booktitle = {Proc. IEEE Symposium on Security and Privacy},
+  year      = {1996}
+}
+
+% ---------------------------------------------------------------------------
+% 10. LLM agent security — the immediate neighborhood
+%     HIGHEST VERIFICATION RISK. Check every entry.
+% ---------------------------------------------------------------------------
+
+@inproceedings{greshake2023injection,   % [U]
+  author    = {Greshake, Kai and Abdelnabi, Sahar and Mishra, Shailesh and
+               Endres, Christoph and Holz, Thorsten and Fritz, Mario},
+  title     = {Not What You've Signed Up For: Compromising Real-World
+               {LLM}-Integrated Applications with Indirect Prompt Injection},
+  booktitle = {Proc. ACM Workshop on Artificial Intelligence and Security (AISec)},
+  year      = {2023}
+}
+
+@inproceedings{debenedetti2024agentdojo, % [U]
+  author    = {Debenedetti, Edoardo and Zhang, Jie and Balunovi{\'c}, Mislav and
+               Beurer-Kellner, Luca and Fischer, Marc and Tram{\`e}r, Florian},
+  title     = {{AgentDojo}: A Dynamic Environment to Evaluate Prompt Injection
+               Attacks and Defenses for {LLM} Agents},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS),
+               Datasets and Benchmarks Track},
+  year      = {2024}
+}
+
+@inproceedings{zhan2024injecagent,      % [U]
+  author    = {Zhan, Qiusi and Liang, Zhixiang and Ying, Zifan and Kang, Daniel},
+  title     = {{InjecAgent}: Benchmarking Indirect Prompt Injections in
+               Tool-Integrated Large Language Model Agents},
+  booktitle = {Findings of the Association for Computational Linguistics: ACL},
+  year      = {2024}
+}
+
+@inproceedings{ruan2024toolemu,         % [U]
+  author    = {Ruan, Yangjun and Dong, Honghua and Wang, Andrew and
+               Pitis, Silviu and Zhou, Yongchao and Ba, Jimmy and
+               Dubois, Yann and Maddison, Chris J. and Hashimoto, Tatsunori},
+  title     = {Identifying the Risks of {LM} Agents with an {LM}-Emulated Sandbox},
+  booktitle = {Proc. International Conference on Learning Representations (ICLR)},
+  year      = {2024}
+}
+
+@inproceedings{yao2023react,            % [U]
+  author    = {Yao, Shunyu and Zhao, Jeffrey and Yu, Dian and Du, Nan and
+               Shafran, Izhak and Narasimhan, Karthik and Cao, Yuan},
+  title     = {{ReAct}: Synergizing Reasoning and Acting in Language Models},
+  booktitle = {Proc. International Conference on Learning Representations (ICLR)},
+  year      = {2023}
+}
+
+@inproceedings{schick2023toolformer,    % [U]
+  author    = {Schick, Timo and Dwivedi-Yu, Jane and Dess{\`i}, Roberto and
+               Raileanu, Roberta and Lomeli, Maria and Zettlemoyer, Luke and
+               Cancedda, Nicola and Scialom, Thomas},
+  title     = {Toolformer: Language Models Can Teach Themselves to Use Tools},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2023}
+}
+
+% ---------------------------------------------------------------------------
+% 11. MCP security — the direct prior work (the project's original 8)
+%     ALL [U] — arXiv IDs and venues must be re-checked. Several IDs in the
+%     earlier drafts fall in ranges that warrant careful verification.
+% ---------------------------------------------------------------------------
+
+@misc{invariantlabs2025toolpoisoning,   % [U]
+  author = {{Invariant Labs}},
+  title  = {{MCP} Security Notification: Tool Poisoning Attacks},
+  year   = {2025}, note = {Industry disclosure}
+}
+
+@article{hou2026mcp,                    % [U]
+  author  = {Hou, Xinyi and Zhao, Yanjie and Wang, Shenao and Wang, Haoyu},
+  title   = {Model Context Protocol ({MCP}): Landscape, Security Threats, and
+             Future Research Directions},
+  journal = {ACM Transactions on Software Engineering and Methodology},
+  year    = {2026}
+}
+
+@misc{song2025beyondprotocol,           % [U] arXiv:2506.02040
+  author = {Song, H. and Shen, Y. and Luo, W. and Guo, L. and Chen, T. and
+            Wang, J. and Li, B. and Zhang, X. and Chen, J.},
+  title  = {Beyond the Protocol: Unveiling Attack Vectors in the Model Context
+            Protocol Ecosystem},
+  note   = {arXiv:2506.02040}, year = {2025}
+}
+
+@misc{guo2025mcpxkit,                   % [U] arXiv:2508.12538
+  author = {Guo, Y. and Liu, P. and Ma, W. and Deng, Z. and Zhu, X. and Di, P.
+            and Xiao, X. and Wen, S.},
+  title  = {{MCPXKit}: The Unified Toolkit for Analyzing Model Context Protocol
+            Security},
+  note   = {arXiv:2508.12538}, year = {2025}
+}
+
+@misc{shen2026mcp38,                    % [U] arXiv ID needs checking
+  author = {Shen, Y. T. and Toyoda, K. and Leung, A.},
+  title  = {{MCP-38}: A Comprehensive Threat Taxonomy for Model Context
+            Protocol Systems},
+  year   = {2026}
+}
+
+@misc{bhatt2025etdi,                    % [U] arXiv:2506.01333
+  author = {Bhatt, M. and Narajala, V. S. and Habler, I.},
+  title  = {{ETDI}: Mitigating Tool Squatting and Rug Pull Attacks in Model
+            Context Protocol by using {OAuth}-Enhanced Tool Definitions and
+            Policy-Based Access Control},
+  note   = {arXiv:2506.01333}, year = {2025}
+}
+
+@misc{narajala2025zerotrust,            % [U] arXiv:2504.19951
+  author = {Narajala, V. S. and Huang, K. and Habler, I.},
+  title  = {Securing {GenAI} Multi-Agent Systems Against Tool Squatting:
+            A Zero Trust Registry-Based Approach},
+  note   = {arXiv:2504.19951}, year = {2025}
+}
+
+@inproceedings{xing2026mcpguard,        % [U]
+  author    = {Xing, W. and Qi, Z. and Qin, Y. and Li, Y. and Chang, C. and
+               Yu, J. and Lin, C. and Xie, Z. and Han, M.},
+  title     = {{MCP-Guard}: A Multi-Stage Defense-in-Depth Framework for
+               Securing Model Context Protocol in Agentic {AI}},
+  booktitle = {Findings of the Association for Computational Linguistics: ACL},
+  year      = {2026}
+}
+
+% ---------------------------------------------------------------------------
+% 12. Agent access control and guardrails (the project's other 16)
+%     Entered from the earlier literature review; ALL [U].
+% ---------------------------------------------------------------------------
+
+@misc{shi2025progent,                   % [U] arXiv:2504.11703
+  author = {Shi, T. and He, J. and Wang, Z. and Li, H. and Wu, L. and
+            Guo, W. and Song, D.},
+  title  = {Progent: Programmable Privilege Control for {LLM} Agents},
+  note   = {arXiv:2504.11703}, year = {2025}
+}
+
+@misc{luo2025agrail,                    % [U] arXiv:2502.11448
+  author = {Luo, W. and others},
+  title  = {{AGrail}: A Lifelong Agent Guardrail with Effective and Adaptive
+            Safety Detection},
+  note   = {Proc. ACL; arXiv:2502.11448}, year = {2025}
+}
+
+@misc{melon2025,                        % [U] arXiv:2502.05174
+  title = {{MELON}: Provable Defense Against Indirect Prompt Injection in
+           {LLM} Agents},
+  note  = {Proc. ICML; arXiv:2502.05174}, year = {2025}
+}
+
+@misc{taskshield2025,                   % [U] arXiv:2412.16682
+  title = {The Task Shield: Enforcing Task Alignment to Defend Against Indirect
+           Prompt Injection in {LLM} Agents},
+  note  = {Proc. ACL; arXiv:2412.16682}, year = {2025}
+}
+
+@misc{ipiguard2025,                     % [U] arXiv:2508.15310
+  title = {{IPIGuard}: A Novel Tool Dependency Graph-Based Defense Against
+           Indirect Prompt Injection in {LLM} Agents},
+  note  = {Proc. EMNLP; arXiv:2508.15310}, year = {2025}
+}
+
+@misc{kim2025pfi,                       % [U] arXiv:2503.15547
+  author = {Kim, J. and Choi, W. and Lee, B.},
+  title  = {Prompt Flow Integrity to Prevent Privilege Escalation in
+            {LLM} Agents},
+  note   = {arXiv:2503.15547}, year = {2025}
+}
+
+@misc{zhu2025miniscope,                 % [U] arXiv:2512.11147
+  author = {Zhu, J. and Tseng, K. and Vernik, G. and Huang, X. and Patil, S.
+            and Fang, V. and Popa, R. A.},
+  title  = {{MiniScope}: A Least Privilege Framework for Authorizing
+            Tool-Calling Agents},
+  note   = {arXiv:2512.11147}, year = {2025}
+}
+
+@misc{mellafe2026capabilitygates,       % [U] arXiv:2606.28679
+  author = {Mellafe Zuvic, D.},
+  title  = {Capability Gates Are Not Authorization: Confused-Deputy Failures
+            in {LLM} Agent Frameworks},
+  note   = {arXiv:2606.28679}, year = {2026}
+}
+
+@misc{ji2026taming,                     % [U] arXiv:2601.11893
+  author = {Ji, Z. and Wu, D. and Jiang, W. and Ma, P. and Li, Z. and Gao, Y.
+            and Wang, S. and Li, Y.},
+  title  = {Taming Various Privilege Escalation in {LLM}-Based Agent Systems:
+            A Mandatory Access Control Framework},
+  note   = {arXiv:2601.11893}, year = {2026}
+}
+
+@inproceedings{odersky2026capabilities, % [U]
+  author    = {Odersky, M. and Zhao, Y. and Xu, Y. and Bra{\v{c}}evac, O. and
+               Pham, C. N.},
+  title     = {Securing Agents With Tracked Capabilities},
+  booktitle = {Proc. ACM Conference on AI and Agentic Systems},
+  year      = {2026}
+}
+
+@misc{yang2026overprivileged,           % [U] arXiv:2606.20023
+  author = {Yang, K. and Bu, Y. and Yi, J. and Wang, Y. and Zhou, B. and
+            Dai, J. and Hu, S. and Yang, Y.},
+  title  = {When Lower Privileges Suffice: Investigating Over-Privileged Tool
+            Selection in {LLM} Agents},
+  note   = {arXiv:2606.20023}, year = {2026}
+}
+
+@misc{li2025visionac,                   % [U] arXiv:2510.11108
+  author = {Li, X. and Huang, D. and Li, J. and Cai, H. and Zhou, Z. and
+            Dong, W. and Wang, X. and Liu, Y.},
+  title  = {A Vision for Access Control in {LLM}-based Agent Systems},
+  note   = {arXiv:2510.11108}, year = {2025}
+}
+
+@misc{iyer2026causalgating,             % [U] arXiv:2606.13884
+  author = {Iyer, L. G. and Babu, R. S.},
+  title  = {Capability Minimization as a Safety Primitive: Risk-Aware Causal
+            Gating for Least-Privilege {LLM} Agents},
+  note   = {arXiv:2606.13884}, year = {2026}
+}
