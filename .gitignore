@@ -1,0 +1,47 @@
+# Secrets — NEVER commit
+.env
+*.key
+secrets/
+**/kaggle.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.ipynb_checkpoints/
+.pytest_cache/
+
+# Experiment outputs (regenerable; large)
+experiments/results/**/*.json
+experiments/results/**/*.jsonl
+experiments/logs/
+data/raw/
+data/processed/*.jsonl
+
+# Keep directory structure + small curated artifacts
+!experiments/results/.gitkeep
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/benchmark/**
+
+# Generated figures (conceptual TikZ sources ARE tracked)
+paper/figures/*.pdf
+paper/figures/*.png
+!paper/figures/conceptual/**
+
+# LaTeX
+*.aux
+*.log
+*.out
+*.bbl
+*.blg
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
