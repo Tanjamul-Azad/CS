@@ -206,12 +206,28 @@ _TS_ANNOTATION = re.compile(
 )
 
 
-def _zod_schema_fields(source: str, ref: str) -> list[str]:
-    """Resolve `const XSchema = z.object({ a: z.string(), ... })`."""
-    m = re.search(
-        rf"(?:export\s+)?const\s+{re.escape(ref)}\s*=\s*z\.object\s*\(\s*\{{",
-        source,
-    )
+def _zod_schema_fields(source: str, ref: str, context: str = "") -> list[str]:
+    """Resolve `const XSchema = z.object({ a: z.string(), ... })`.
+
+    `context` is the rest of the server's source, pooled. Real servers
+    routinely define schemas in a sibling module and import them, so a
+    strictly single-file resolver silently returns no fields -- which
+    suppresses R2 and R5 derivation and understates auditability. We
+    therefore search the declaring file first, then the pooled server
+    source.
+    """
+    for hay in (source, context):
+        if not hay:
+            continue
+        m = re.search(
+            rf"(?:export\s+)?const\s+{re.escape(ref)}\s*=\s*z\.object\s*\(\s*\{{",
+            hay,
+        )
+        if m:
+            source = hay
+            break
+    else:
+        return []
     if not m:
         return []
     # Walk braces from the opening one to find the object's extent.
@@ -251,13 +267,49 @@ def _brace_extent(source: str, open_idx: int, limit: int = 20000) -> str:
 
 
 def _config_value_region(config: str, key: str) -> str:
-    """Text of `key: <value>` up to the next sibling key."""
+    """Text of `key: <value>`, up to the next SIBLING key.
+
+    Must be depth-aware. An inline object value --
+
+        inputSchema: {
+          path: z.string(),
+          tail: z.number(),
+        },
+        outputSchema: ...
+
+    -- contains keys of its own, and a naive "stop at the next `word:`"
+    scan truncates the region at `path:`, returning nothing usable. That
+    silently emptied input_fields for every tool declaring its schema
+    inline, which in turn suppressed R2/R5 derivation. Only a key found
+    at nesting depth 0 ends the region.
+    """
     m = re.search(rf"\b{key}\s*:", config)
     if not m:
         return ""
     rest = config[m.end():]
-    nxt = _TS_KEY.search(rest)
-    return rest[: nxt.start()] if nxt else rest
+
+    depth = 0
+    i = 0
+    n = len(rest)
+    while i < n:
+        c = rest[i]
+        if c in "{[(":
+            depth += 1
+        elif c in "}])":
+            depth -= 1
+            if depth < 0:            # ran past the end of this object
+                return rest[:i]
+        elif c in "\"'`":            # skip string literals wholesale
+            quote = c
+            i += 1
+            while i < n and rest[i] != quote:
+                i += 2 if rest[i] == "\\" else 1
+        elif depth == 0 and c == "\n":
+            nxt = _TS_KEY.match(rest, i + 1)
+            if nxt:
+                return rest[: i + 1]
+        i += 1
+    return rest
 
 
 def _joined_strings(region: str) -> str:
@@ -266,7 +318,8 @@ def _joined_strings(region: str) -> str:
     return " ".join(p.strip() for p in parts if p).strip()
 
 
-def _extract_ts_modern(source: str, path: str, server_id: str) -> list[ExtractedTool]:
+def _extract_ts_modern(source: str, path: str, server_id: str,
+                       context: str = "") -> list[ExtractedTool]:
     """`registerTool("name", {config}, handler)` -- possibly many per file.
 
     Earlier this returned after the first match, which silently collapsed
@@ -295,7 +348,7 @@ def _extract_ts_modern(source: str, path: str, server_id: str) -> list[Extracted
 
         in_region = _config_value_region(config, "inputSchema")
         ref = re.search(r"([A-Za-z0-9_]+)(?:\.shape)?", in_region.strip())
-        fields = _zod_schema_fields(source, ref.group(1)) if ref else []
+        fields = _zod_schema_fields(source, ref.group(1), context) if ref else []
         if not fields:
             fields = list(dict.fromkeys(_TS_ZOD_FIELD.findall(in_region)))
 
@@ -321,7 +374,7 @@ def _extract_ts_modern(source: str, path: str, server_id: str) -> list[Extracted
     if not name_m or "registerTool" not in source:
         return []
     schema_m = _TS_CONFIG_SCHEMA_REF.search(source)
-    fields = _zod_schema_fields(source, schema_m.group("ref")) if schema_m else []
+    fields = _zod_schema_fields(source, schema_m.group("ref"), context) if schema_m else []
     if not fields:
         fields = list(dict.fromkeys(_TS_ZOD_FIELD.findall(source)))
     desc_m = _TS_CONFIG_DESC.search(source)
@@ -336,11 +389,12 @@ def _extract_ts_modern(source: str, path: str, server_id: str) -> list[Extracted
     )]
 
 
-def extract_typescript(source: str, path: str = "", server_id: str = "") -> list[ExtractedTool]:
+def extract_typescript(source: str, path: str = "", server_id: str = "",
+                       context: str = "") -> list[ExtractedTool]:
     tools: list[ExtractedTool] = []
     seen: set[str] = set()
 
-    modern = _extract_ts_modern(source, path, server_id)
+    modern = _extract_ts_modern(source, path, server_id, context)
     if modern:
         return modern
 
@@ -419,12 +473,15 @@ def extract_json_manifest(source: str, path: str = "", server_id: str = "") -> l
 # Dispatch
 # ==========================================================================
 
-def extract(source: str, path: str, server_id: str = "") -> list[ExtractedTool]:
+def extract(source: str, path: str, server_id: str = "",
+            context: str = "") -> list[ExtractedTool]:
+    """`context` is the server's other sources, pooled, for cross-file
+    schema resolution. Optional: single-file extraction still works."""
     lower = path.lower()
     if lower.endswith(".py"):
         return extract_python(source, path, server_id)
     if lower.endswith((".ts", ".js", ".mjs", ".tsx")):
-        return extract_typescript(source, path, server_id)
+        return extract_typescript(source, path, server_id, context)
     if lower.endswith(".json"):
         return extract_json_manifest(source, path, server_id)
     return []

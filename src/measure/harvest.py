@@ -132,19 +132,44 @@ def harvest_repo(
     repo: Repo,
     token: str | None = None,
     max_files: int = 120,
-    delay: float = 0.1,
-) -> Iterator[ExtractedTool]:
+    delay: float = 0.05,
+    quiet: bool = False,
+) -> list[ExtractedTool]:
+    """Fetch a repo's candidate files, then extract per server.
+
+    Extraction is deferred until every file for a server is in hand,
+    because schemas are routinely defined in one module and referenced
+    from another. Extracting file-by-file loses those fields, which
+    suppresses R2/R5 and makes the ecosystem look less auditable than it
+    is.
+    """
     paths = [p for p in list_tree(repo, token) if is_candidate(p)][:max_files]
-    print(f"  {repo.server_id}: {len(paths)} candidate files")
+    if not paths:
+        return []
+
+    # server_id -> {path: source}
+    by_server: dict[str, dict[str, str]] = {}
     for path in paths:
         src = fetch_raw(repo, path)
         if not src:
             continue
-        sid = sub_server_id(repo, path)
-        for tool in extract(src, path, server_id=sid):
-            if tool.name:
-                yield tool
+        by_server.setdefault(sub_server_id(repo, path), {})[path] = src
         time.sleep(delay)
+
+    out: list[ExtractedTool] = []
+    for sid, files in by_server.items():
+        for path, src in files.items():
+            # Everything else this server ships, as resolution context.
+            context = "\n".join(v for k, v in files.items() if k != path)
+            out.extend(
+                t for t in extract(src, path, server_id=sid, context=context)
+                if t.name
+            )
+
+    if not quiet:
+        print(f"  {repo.server_id}: {len(paths)} files -> "
+              f"{len(out)} tools / {len(by_server)} servers")
+    return out
 
 
 def dedup(tools: list[ExtractedTool]) -> list[ExtractedTool]:

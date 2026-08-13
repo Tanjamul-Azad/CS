@@ -150,30 +150,48 @@ def derive_for_server(tools: list[ExtractedTool]) -> list[DerivedRelation]:
 
     for w in writes:
         w_nouns = nouns_of(w)
+        w_fields = {f.lower() for f in w.input_fields}
         for r in reads:
             shared = w_nouns & nouns_of(r)
-            if not shared:
-                continue
 
-            # R1 -- write-read consistency
-            rels.append(DerivedRelation(
-                "R1", (w.name, r.name), server,
-                basis="shared resource: " + ", ".join(sorted(shared)[:3]),
-            ))
+            # Field overlap is a far stronger signal than shared nouns: if
+            # a write ACCEPTS {recipient, amount, memo} and a read RETURNS
+            # {recipient, amount, memo}, that read can corroborate that
+            # write regardless of whether their names share vocabulary.
+            # Noun matching alone misses transfer_money <-> list_transactions,
+            # which is the canonical case the whole method is built on.
+            field_overlap = w_fields & {f.lower() for f in r.output_fields}
 
-            # R2 -- conservation, when the write moves a numeric quantity
-            # and the read reports a quantity of that kind.
-            w_numeric = {f.lower() for f in w.input_fields} & NUMERIC_FIELDS
-            r_quantity = nouns_of(r) & QUANTITY_NOUNS
+            # R2 -- conservation. Evaluated INDEPENDENTLY of the R1 test:
+            # a write that moves a numeric quantity is constrained by any
+            # read that reports a quantity of that kind, whether or not the
+            # two share vocabulary. transfer_money and check_balance share
+            # no noun and no field, yet balance-after == balance-before -
+            # amount is exactly the invariant that catches a skimming
+            # server. Gating this behind R1 silently deleted the strongest
+            # relation class from the whole analysis.
+            w_numeric = w_fields & NUMERIC_FIELDS
+            r_quantity = ((nouns_of(r) & QUANTITY_NOUNS)
+                          | ({f.lower() for f in r.output_fields} & QUANTITY_NOUNS))
             if w_numeric and r_quantity:
                 rels.append(DerivedRelation(
                     "R2", (w.name, r.name), server,
                     basis=f"{sorted(w_numeric)[0]} vs {sorted(r_quantity)[0]}",
                 ))
 
+            if not shared and not field_overlap:
+                continue
+
+            basis = (f"read returns {', '.join(sorted(field_overlap)[:3])}"
+                     if field_overlap
+                     else "shared resource: " + ", ".join(sorted(shared)[:3]))
+
+            # R1 -- write-read consistency
+            rels.append(DerivedRelation("R1", (w.name, r.name), server, basis))
+
             # R5 -- canary, when the client controls a free-form field
             # that a read-back could echo.
-            free_form = {f.lower() for f in w.input_fields} & {
+            free_form = w_fields & {
                 "content", "body", "text", "message", "memo", "note",
                 "description", "comment", "data", "payload", "name", "title",
             }

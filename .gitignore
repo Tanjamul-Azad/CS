@@ -45,3 +45,5 @@ paper/figures/*.png
 .DS_Store
 Thumbs.db
 desktop.ini
+data/processed/*.json
+data/processed/*.log
