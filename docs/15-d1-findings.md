@@ -80,7 +80,29 @@ It falls through 8–15, then **rises again** for large servers.
 
 The mechanism is visible in the per-server table: large servers are often *bundles of unrelated tools* — `MCP-Open-Discovery` (65 tools, 61 A0), `prometeo-mcp` (27 tools, 26 A0) — rather than cohesive services. Adding tools only helps if they touch the same resource.
 
-This suggests the right predictor is not tool count but something like **resource cohesion**: how many tools share a resource with at least one sibling. Worth constructing and testing properly, and worth reporting as a corrected hypothesis rather than quietly dropping — the naive version was ours and it was wrong.
+### 4.1 What actually predicts it: read coverage
+
+Count was never the mechanism. **Every relation needs a read to corroborate a write.** A server exposing twenty writes and no reads is unauditable at any size.
+
+| reads / tools | servers | tools | A0 rate |
+|---|---|---|---|
+| **none** | 17 | 257 | **96.1%** |
+| <20% | 6 | 310 | 56.5% |
+| 20–40% | 16 | 391 | 48.8% |
+| **40–60%** | 18 | 252 | **43.3%** ← minimum |
+| >60% | 17 | 201 | 58.2% |
+
+Spearman ρ(read fraction, A0 rate) = **−0.300** over 74 servers.
+
+Two things worth stating carefully:
+
+1. **Servers with no read tools at all are 96.1% A0.** This is the single cleanest sub-result so far. It is almost tautological given the mechanism — which is the point: the mechanism is *visible in the ecosystem data*, not just asserted.
+
+2. The relationship is **U-shaped, not monotonic**, bottoming at 40–60%. Read-heavy servers rise again because a read also needs a *write* to corroborate it. What predicts auditability is **balance**, not reads per se.
+
+This yields the paper's second concrete protocol recommendation, alongside `outputSchema`: **ship a read for every write.** Unlike most security advice it costs the author almost nothing and is checkable at review time.
+
+> A first attempt measured "resource cohesion" — whether a server's tools share vocabulary. It was dropped: nearly every server scored above 0.8, because almost any two tools share a token like `id` or `name`, so it did not discriminate. Recorded here because the dead end is informative — sharing *vocabulary* is not the same as sharing a *resource*, and only the latter supports a relation.
 
 ---
 

@@ -8,6 +8,7 @@ from .classify import (
     annotation_coverage,
     classify,
     derive_all,
+    is_read,
     wilson_ci,
 )
 from .extract import ExtractedTool
@@ -82,6 +83,7 @@ def report(tools: list[ExtractedTool]) -> None:
 
     # ---- tool-count hypothesis --------------------------------------
     _toolcount_effect(tools, classes)
+    _readcoverage_effect(tools, classes)
 
     # ---- official vs community --------------------------------------
     _by_kind(tools, classes)
@@ -146,6 +148,92 @@ def _toolcount_effect(tools: list[ExtractedTool], classes: dict) -> None:
         label = f"{lo}" if lo == hi else (f"{lo}+" if hi > 10**5 else f"{lo}-{hi}")
         bar = "#" * int(30 * a0 / len(keys))
         print(f"  {label:>14} {nsv:8} {len(keys):7} {100*a0/len(keys):8.1f}%  {bar}")
+
+
+def read_fraction(tools: list[ExtractedTool]) -> float:
+    """Share of a server's tools that are reads."""
+    if not tools:
+        return 0.0
+    return sum(1 for t in tools if is_read(t)) / len(tools)
+
+
+def _readcoverage_effect(tools: list[ExtractedTool], classes: dict) -> None:
+    """A0 rate against how many READS a server exposes.
+
+    Replaces the tool-count hypothesis, which the data falsified (A0 falls
+    through mid-size servers then rises again at 16+). Count was never the
+    mechanism. Every relation needs a read to corroborate a write, so a
+    server that exposes twenty writes and no reads cannot be audited at
+    any size.
+
+    A first attempt measured "resource cohesion" -- whether tools share
+    vocabulary -- but nearly every server scored above 0.8, because almost
+    any two tools share some token like `id` or `name`. It did not
+    discriminate and was dropped. Read fraction is coarser but actually
+    mechanistic, and it yields advice a server author can act on.
+    """
+    by_server: dict[str, list[ExtractedTool]] = defaultdict(list)
+    for t in tools:
+        by_server[t.server_id].append(t)
+    servers = {s: ts for s, ts in by_server.items() if len(ts) >= 2}
+    if not servers:
+        return
+
+    print(f"\n{'='*70}")
+    print("A0 RATE vs READ COVERAGE   (replaces the falsified tool-count")
+    print("                            hypothesis -- see docs/15 section 4)")
+    print("=" * 70)
+    bands = [(0.0, 0.01), (0.01, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 1.01)]
+    labels = ["no reads", "<20%", "20-40%", "40-60%", ">60%"]
+    print(f"  {'reads':>10} {'servers':>8} {'tools':>7} {'A0 rate':>9}")
+    for (lo, hi), lab in zip(bands, labels):
+        sids = [s for s, ts in servers.items() if lo <= read_fraction(ts) < hi]
+        keys = [(s, t) for (s, t) in classes if s in sids]
+        if not keys:
+            continue
+        a0 = sum(1 for k in keys if classes[k][0] == "A0")
+        bar = "#" * int(30 * a0 / len(keys))
+        print(f"  {lab:>10} {len(sids):8} {len(keys):7} "
+              f"{100*a0/len(keys):8.1f}%  {bar}")
+
+    rates, fracs = [], []
+    for s, ts in servers.items():
+        keys = [(a, b) for (a, b) in classes if a == s]
+        if keys:
+            rates.append(sum(1 for k in keys if classes[k][0] == "A0") / len(keys))
+            fracs.append(read_fraction(ts))
+    rho = _spearman(fracs, rates)
+    print(f"\n  Spearman rho(read fraction, A0 rate) = {rho:+.3f} "
+          f"over {len(rates)} servers")
+    print("  Negative means servers exposing more reads are more auditable.")
+    print("  If it holds, the recommendation to server authors is concrete:")
+    print("  ship a read for every write, and your tools leave A0.")
+
+
+def _spearman(x: list[float], y: list[float]) -> float:
+    n = len(x)
+    if n < 3:
+        return 0.0
+
+    def rank(v: list[float]) -> list[float]:
+        order = sorted(range(n), key=lambda i: v[i])
+        r = [0.0] * n
+        i = 0
+        while i < n:                       # average ranks within ties
+            j = i
+            while j + 1 < n and v[order[j + 1]] == v[order[i]]:
+                j += 1
+            avg = (i + j) / 2 + 1
+            for k in range(i, j + 1):
+                r[order[k]] = avg
+            i = j + 1
+        return r
+
+    rx, ry = rank(x), rank(y)
+    mx, my = sum(rx) / n, sum(ry) / n
+    num = sum((a - mx) * (b - my) for a, b in zip(rx, ry))
+    den = (sum((a - mx) ** 2 for a in rx) * sum((b - my) ** 2 for b in ry)) ** 0.5
+    return num / den if den else 0.0
 
 
 def _by_kind(tools: list[ExtractedTool], classes: dict) -> None:
