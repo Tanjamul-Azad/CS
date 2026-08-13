@@ -1,143 +1,196 @@
 # D1 Findings — Ecosystem Measurement
 
-**Status: INTERIM.** n = 1,153 tools / 67 servers, from 130 of 500 discovered repositories. Harvest still running. Numbers will shift; the *direction* of every effect below is already large enough that it is unlikely to reverse, but nothing here is final and none of it has passed κ validation yet.
+<!-- AUTO:corpus-line -->
+**n = 5,397 tools across 295 servers.** A0 56.5% · A1 7.2% · A2 35.9% · A3 0.4%. Regenerated 2026-08-13 by `python experiments/update_docs.py`.
+<!-- /AUTO:corpus-line -->
 
-Supersedes `docs/13`, which measured only the official reference repo and is now best understood as the *best-case* control arm.
+> **Status: harvest complete, validation pending.** These figures come from the full 500-repository harvest. They are **not yet a measurement** — the A0–A3 classifier has not been scored against a human gold standard. Until κ validation runs (see [`17-status.md`](17-status.md)), treat every number here as an *instrument reading*.
+>
+> Supersedes [`13-d1-preliminary-findings.md`](13-d1-preliminary-findings.md), which covered only the official reference repository and is now best read as the best-case control arm.
+
+Numbers inside `<!-- AUTO -->` blocks regenerate from the corpus. Prose is hand-written.
 
 ---
 
 ## 1. The headline
 
-**62.0% of MCP tools have relation degree 0** (95% CI 59.2–64.8, n=1,153).
+<!-- AUTO:headline -->
+**56.5% of MCP tools have relation degree 0** (95% CI 55.2–57.8, n=5,397 tools across 295 servers).
 
 No client-side audit detects their compromise at any cost. Not with a bigger budget, not with a smarter checker — Theorem 1 applies and there is no relation to check. For these tools the remedy is policy: restrict the call, or put a human in front of it.
 
 | Class | n | % | 95% CI |
 |---|---|---|---|
-| **A0** unrelatable | 715 | **62.0%** | 59.2–64.8 |
-| A1 self-relatable | 106 | 9.2% | 7.7–11.0 |
-| A2 read-backable | 326 | 28.3% | 25.8–30.9 |
-| A3 invariant-bound | 6 | **0.5%** | 0.2–1.1 |
+| **A0** unrelatable | 3,051 | **56.5%** | 55.2–57.8 |
+| A1 self-relatable | 388 | 7.2% | 6.5–7.9 |
+| A2 read-backable | 1,936 | 35.9% | 34.6–37.2 |
+| A3 invariant-bound | 22 | **0.4%** | 0.3–0.6 |
+<!-- /AUTO:headline -->
 
 ---
 
-## 2. The finding that reframes the paper: official ≠ ecosystem
+## 2. Official reference servers are the best case, not the ecosystem
 
-| | Official reference (n=43) | Community (n=1,153) | Ratio |
-|---|---|---|---|
-| **A0 rate** | 9.3% | **62.0%** | **6.7×** |
-| `readOnlyHint` declared | 74.4% | **2.6%** | 29× |
-| `destructiveHint` declared | 51.2% | 1.9% | 27× |
-| `idempotentHint` declared | 51.2% | 1.6% | 32× |
-| `outputSchema` present | 30.2% | **0.0%** | — |
-| `inputSchema` present | ~100% | 54.9% | — |
+<!-- AUTO:official-vs-community -->
+*(This corpus contains no official reference servers; run `run_harvest.py` for the official control arm.)*
+<!-- /AUTO:official-vs-community -->
 
-Every prior MCP security paper that evaluates on reference servers is evaluating on the most favourable 3% of the ecosystem. This is a concrete, quantified instance of a general methodological problem, and it is worth stating plainly: **the servers researchers test on are not the servers users run.**
+Measured separately ([`13`](13-d1-preliminary-findings.md), n=43): the official reference servers show **A0 9.3%**, `readOnlyHint` on **74.4%**, `outputSchema` on **30.2%**. Against the ecosystem's 56.5% / 3.1% / 1.2%, that is a different population entirely.
 
-### 2.1 MCP's behavioral annotations are effectively unused
+> ### The methodological claim
+> **Every prior MCP security paper that evaluates on reference servers is evaluating the most favourable slice of the ecosystem.** The servers researchers test on are not the servers users run.
 
-`docs/13` framed these hints as "self-declared by the audited party, therefore unverifiable." That critique stands, but it turns out to be **almost moot in practice**: only 2.6% of tools in the wild declare `readOnlyHint` at all.
-
-The story is therefore not *"the protocol trusts the attacker's self-report"* so much as *"the protocol's one behavioral channel is dead on arrival."* Both are findings. The second is the bigger one, and it inverts the framing from `docs/13` — which is exactly why that document is superseded rather than merely extended.
-
-Consequence for our method: the classifier's reliance on self-declared hints is far smaller than feared. **Dual derivation moves only 1.6 points** (A0 62.0% → 63.7% when hints are ignored). Measured auditability is not resting on the attacker's word, because the attacker's word is almost never given. That is a much stronger position than we expected to be in.
-
-### 2.2 No output schemas at all
-
-`outputSchema` on **0.0%** of community tools (0/1,153).
-
-This directly caps what can be derived. Without knowing what a read returns, a client cannot mechanically check that a write is reflected in it, so R1 falls back to matching name and description vocabulary — weaker and noisier. A large share of the 62% A0 rate is likely *caused* by this absence rather than by any deep property of the tools.
-
-**That reframes the finding as actionable rather than merely grim:** it implies a concrete, cheap, unilateral protocol recommendation — *mandate or strongly encourage `outputSchema`* — which would move tools out of A0 at essentially no cost to server authors. It is rare for a measurement paper to hand the ecosystem a fix this specific.
+This is a concrete, quantified instance of a general problem in systems security evaluation, and it is worth stating plainly rather than as a hedge.
 
 ---
 
-## 3. Conservation is essentially absent
+## 3. MCP's behavioral annotations are effectively unused
 
-**4 R2 relations across the entire corpus. A3 = 0.5%.**
+<!-- AUTO:schema-coverage -->
+| Field | present on |
+|---|---|
+| `inputSchema` | 59.2% |
+| `outputSchema` | **1.2%** |
+| `readOnlyHint` | 3.1% |
+| `destructiveHint` | 2.6% |
+| `idempotentHint` | 2.5% |
+| `openWorldHint` | 3.1% |
+<!-- /AUTO:schema-coverage -->
 
-R2 is the strongest relation class: it constrains a *global* quantity and is the hardest thing for an attacker to fake, because doing so requires simulating the honest system's arithmetic (the 17-LOC rung of the ladder). In the wild it is nearly unavailable.
+[`13`](13-d1-preliminary-findings.md) framed these hints as *"self-declared by the audited party, therefore unverifiable"* — a compromised server sets `readOnlyHint: true` and a trusting client stops looking. That critique is sound and still holds where the hints appear.
 
-`docs/13` flagged A3=0 as possibly an instrument artifact. That explanation is now much weaker: the inline-schema bug is fixed, input-field resolution went 23% → 72% on the reference corpus, and R2 is no longer gated behind R1. Conservation still barely appears. The likeliest reading is now **real**: most MCP servers expose file, search, and API-wrapper tools with no conserved numeric quantity. Banking-style invariants are the exception, not the rule.
+**But in the wild they barely appear at all.** ~3%.
 
-Still requires κ validation before being claimed.
+The story is therefore not *"the protocol trusts the attacker's self-report"* so much as **"the protocol's one behavioral channel is dead on arrival."** Both are findings; the second is larger, and it inverts rather than refines the first — which is why `13` is marked superseded rather than quietly edited.
+
+**This strengthens our own method.** We were worried the classifier leaned on attacker-controlled metadata. Dual derivation — classifying once trusting the hints, once ignoring them — moves only **2.3 points** (A0 56.5% → 58.8%). Measured auditability barely depends on the attacker's word, because that word is almost never given.
+
+### 3.1 `outputSchema` on 1.2% — and why that is actionable
+
+Without knowing what a read *returns*, a client cannot mechanically check that a write is reflected in it. R1 degrades to matching name and description vocabulary — weaker and noisier. A meaningful share of the 56.5% is likely **caused by this absence** rather than by anything intrinsic to the tools.
+
+That reframes the finding from grim to actionable, and yields the paper's first protocol recommendation: **mandate or strongly encourage `outputSchema`.** It costs server authors almost nothing and would move tools out of A0 wholesale.
 
 ---
 
-## 4. Tool-count hypothesis: NOT confirmed
+## 4. Conservation is nearly absent
 
-`docs/13` predicted A0 rate would fall monotonically as servers ship more tools, since relations are derived between siblings. It does not:
+<!-- AUTO:relations -->
+| Relation | n | |
+|---|---|---|
+| **R1** | 7,535 | write-read consistency |
+| **R2** | 32 | conservation |
+| **R3** | 495 | determinism |
+| **R4** | 23 | null-op |
+| **R5** | 1,454 | canary |
+<!-- /AUTO:relations -->
 
+**32 conservation relations across 5,397 tools. A3 = 0.4%.**
+
+R2 is the strongest relation class: it constrains a *global* quantity, and faking it requires simulating the honest system's arithmetic — the 17-LOC rung of the adversary ladder. In the wild it is almost unavailable.
+
+[`13`](13-d1-preliminary-findings.md) flagged A3≈0 as possibly an instrument artifact. That explanation is now weak: the inline-schema bug is fixed, field resolution went 23%→72%, and R2 is no longer gated behind R1. Conservation still barely appears. The likeliest reading is **real** — most MCP servers wrap files, search, and APIs, and have no conserved numeric quantity. Banking-style invariants are the exception.
+
+**Consequence for the defense:** the strongest audit class is, in practice, mostly unavailable. MBA in the wild runs largely on R1 and R5.
+
+---
+
+## 5. What predicts auditability
+
+### 5.1 Tool count — hypothesis holds at full n
+
+<!-- AUTO:toolcount -->
 | tools/server | servers | tools | A0 rate |
 |---|---|---|---|
-| 1 | 12 | 12 | 83.3% |
-| 2–3 | 6 | 16 | 87.5% |
-| 4–7 | 19 | 101 | 65.3% |
-| 8–15 | 9 | 106 | 45.3% |
-| **16+** | 21 | 918 | **62.9%** |
+| 1 | 25 | 25 | 88.0% |
+| 2–3 | 31 | 78 | 84.6% |
+| 4–7 | 68 | 370 | 72.4% |
+| 8–15 | 75 | 847 | 55.6% |
+| **16+** | 96 | 4,077 | 54.5% |
+<!-- /AUTO:toolcount -->
 
-It falls through 8–15, then **rises again** for large servers.
+Monotonic decreasing, as originally predicted: relations are derived between siblings, so more siblings means more opportunities to relate.
 
-The mechanism is visible in the per-server table: large servers are often *bundles of unrelated tools* — `MCP-Open-Discovery` (65 tools, 61 A0), `prometeo-mcp` (27 tools, 26 A0) — rather than cohesive services. Adding tools only helps if they touch the same resource.
+> **Correction, recorded deliberately.** At n=1,153 (partial harvest) this curve *reversed* at 16+, rising to 62.9%, and we wrote the hypothesis up as falsified. At full n it does not reverse. **The reversal was small-sample noise, and our "falsification" was premature.**
+>
+> This is retained rather than deleted because it is the cleanest possible argument for the discipline the rest of this document tries to keep: do not draw conclusions from a partial corpus. We did, on our own data, and were wrong within an hour.
 
-### 4.1 What actually predicts it: read coverage
+### 5.2 Read coverage — the stronger mechanism
 
-Count was never the mechanism. **Every relation needs a read to corroborate a write.** A server exposing twenty writes and no reads is unauditable at any size.
-
+<!-- AUTO:read-coverage -->
 | reads / tools | servers | tools | A0 rate |
 |---|---|---|---|
-| **none** | 17 | 257 | **96.1%** |
-| <20% | 6 | 310 | 56.5% |
-| 20–40% | 16 | 391 | 48.8% |
-| **40–60%** | 18 | 252 | **43.3%** ← minimum |
-| >60% | 17 | 201 | 58.2% |
+| **none** | 77 | 1,076 | **92.8%** |
+| <20% | 24 | 773 | 67.7% |
+| 20–40% | 58 | 1,974 | 41.0% |
+| 40–60% | 52 | 885 | 40.5% |
+| >60% | 59 | 664 | 51.2% |
 
-Spearman ρ(read fraction, A0 rate) = **−0.300** over 74 servers.
+Lowest A0 rate is in the **40–60%** band (40.5%) — the relationship is U-shaped, not monotonic, because a read also needs a write to corroborate it.
+<!-- /AUTO:read-coverage -->
 
-Two things worth stating carefully:
+Spearman ρ(read fraction, A0 rate) = **−0.300** over 270 servers.
 
-1. **Servers with no read tools at all are 96.1% A0.** This is the single cleanest sub-result so far. It is almost tautological given the mechanism — which is the point: the mechanism is *visible in the ecosystem data*, not just asserted.
+Read coverage separates the ecosystem far more sharply than tool count does — **92.8%** for servers with no reads at all, against 88.0% for single-tool servers — and it is *mechanistic* rather than correlational: every relation needs a read to corroborate a write. A server exposing twenty writes and no reads is unauditable at any size.
 
-2. The relationship is **U-shaped, not monotonic**, bottoming at 40–60%. Read-heavy servers rise again because a read also needs a *write* to corroborate it. What predicts auditability is **balance**, not reads per se.
+The curve is **U-shaped**, bottoming at 40–60%. Read-heavy servers rise again because a read also needs a *write* to corroborate it. What predicts auditability is **balance**.
 
-This yields the paper's second concrete protocol recommendation, alongside `outputSchema`: **ship a read for every write.** Unlike most security advice it costs the author almost nothing and is checkable at review time.
-
-> A first attempt measured "resource cohesion" — whether a server's tools share vocabulary. It was dropped: nearly every server scored above 0.8, because almost any two tools share a token like `id` or `name`, so it did not discriminate. Recorded here because the dead end is informative — sharing *vocabulary* is not the same as sharing a *resource*, and only the latter supports a relation.
+**Second protocol recommendation: ship a read for every write.** Unlike most security advice this costs the author almost nothing and is checkable at review time.
 
 ---
 
-## 5. Declaration idioms
+## 6. Declaration idioms
 
+<!-- AUTO:idioms -->
 | Idiom | n | % |
 |---|---|---|
-| Python FastMCP decorator | 531 | 46.1% |
-| TS object literal | 214 | 18.6% |
-| JSON manifest | 163 | 14.1% |
-| TS `registerTool` | 101 | 8.8% |
-| TS `server.tool` | 97 | 8.4% |
-| Python `types.Tool` | 47 | 4.1% |
+| `python/fastmcp-decorator` | 2,374 | 44.0% |
+| `ts/object-literal` | 1,489 | 27.6% |
+| `ts/registerTool` | 647 | 12.0% |
+| `ts/server.tool` | 414 | 7.7% |
+| `python/types.Tool` | 310 | 5.7% |
+| `json/manifest` | 163 | 3.0% |
+<!-- /AUTO:idioms -->
 
-Python FastMCP dominates. Since that path is AST-based and reliable, extractor confidence is higher than a regex-heavy pipeline would suggest — but recall on the TS idioms (35.8% combined) is still unmeasured against real code and remains a live limitation.
+Python FastMCP dominates at 44%, and that path is AST-based and reliable — so extractor confidence is higher than a regex-heavy pipeline would suggest. The TypeScript idioms (47.3% combined) are regex-based; recall on those is checked against real code in §7.
 
 ---
 
-## 6. What must close before any of this is claimed
+## 7. Instrument validation
 
-| # | Item | Why it blocks |
+| Check | Result |
+|---|---|
+| Fixture recall, all idioms | 100% (but fixtures are self-written — weak evidence) |
+| **Recall on real code**, 39 files / 171 declarations | **no file extracted fewer than a permissive independent counter** |
+| Regression tests for known bugs | 4 bugs pinned, 41 tests passing |
+| **Classifier vs human labels** | ❌ **not yet run — the blocker** |
+
+The real-code recall check is a **lower bound** on missed declarations, not a true recall figure: both counters look for registration syntax, so a declaration written in a form neither recognises is invisible to both. What it reliably catches is the failure mode that bit us twice — a declaration plainly present in the source that full extraction drops.
+
+---
+
+## 8. Threats to validity
+
+| # | Threat | Direction |
 |---|---|---|
-| 1 | **Finish the harvest** (130/500 repos) | n and CIs are provisional |
-| 2 | **κ validation**, 300 tools, 2 annotators | classifier accuracy unmeasured; A0 bias unknown |
-| 3 | **Extractor recall on real code** per idiom | a systematic miss biases the headline |
-| 4 | Resource-cohesion metric | replaces the falsified tool-count hypothesis |
-| 5 | Sampling-frame bias audit | GitHub-only; npm/PyPI-only servers invisible |
+| 1 | **Classifier unvalidated against humans** | unknown — this is why nothing here is claimed as a measurement |
+| 2 | Sampling frame is GitHub-only | servers shipped solely via npm/PyPI or privately are invisible; direction unknown |
+| 3 | Discovery relies on GitHub search relevance + star stratification | mitigated by stratifying, not eliminated |
+| 4 | Repos self-identifying as MCP servers are taken at their word | may include non-servers |
+| 5 | Relation derivation is heuristic (verbs, nouns, fields) | precision-biased, so A0 is likely **over**-stated |
+| 6 | Extractor recall is a lower bound | missed declarations would **over**-state A0 |
 
-Item 2 is the hard blocker. Until the classifier is scored against a human gold standard, 62.0% is an instrument reading, not a measurement.
+Threats 5 and 6 both push in the same direction: **the true A0 rate is probably somewhat lower than 56.5%.** Stated here rather than buried, because it cuts against our own headline.
 
 ---
 
-## 7. Reproduce
+## 9. Reproduce
 
 ```bash
-python experiments/run_d1.py --target 500 --resume
-python experiments/run_d1.py --report-only
+python experiments/run_d1.py --target 500      # ~90 min, checkpoints; --resume to continue
+python experiments/run_d1.py --report-only     # analysis over the saved corpus
+python experiments/update_docs.py              # regenerate the numbers in this file
+python experiments/make_figures.py             # F1–F4
 ```
+
+`GITHUB_TOKEN` in `.env` is required for a full harvest (5,000 req/hr vs 60). The corpus is gitignored by design — regenerate rather than commit, so data always matches the current extractor.

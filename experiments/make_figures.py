@@ -187,6 +187,16 @@ def main() -> None:
     args = ap.parse_args()
 
     tools = load_corpus(args.corpus)
+    # F4 contrasts community against the official reference servers, which
+    # live in a separate corpus written by run_harvest.py. Merge when present.
+    official = ROOT / "data" / "processed" / "registry_corpus.jsonl"
+    if official.exists():
+        seen = {(t.server_id, t.name) for t in tools}
+        extra = [t for t in load_corpus(official)
+                 if (t.server_id, t.name) not in seen]
+        if extra:
+            print(f"  + {len(extra)} official reference tools for F4")
+            tools = tools + extra
     classes = classify(tools, derive_all(tools))
     n = len(classes)
     print(f"figures from {n:,} tools / "
@@ -196,7 +206,8 @@ def main() -> None:
     fig_ladder()
     fig_read_coverage(tools, classes)
     fig_official_vs_community(classes, tools)
-    print("\nInterim corpus -- regenerate when the harvest completes.")
+    print("
+Regenerate after any corpus or classifier change.")
 
 
 if __name__ == "__main__":
