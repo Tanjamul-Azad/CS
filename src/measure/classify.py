@@ -27,10 +27,36 @@ from .extract import ExtractedTool
 # Verb and noun vocabularies
 # --------------------------------------------------------------------------
 
+# NOTE ON TUNING DIRECTION -- these two vocabularies are tuned OPPOSITELY,
+# because the cost of each error is opposite:
+#
+#   Relation derivation wants PRECISION. A spurious relation fires a false
+#   alarm at audit time and inflates measured auditability.
+#
+#   Write detection wants RECALL. A missed write is a mutating tool the
+#   policy layer waves through as harmless -- exactly the A0-and-mutating
+#   cell that nothing else can catch. Under-calling writes is the
+#   dangerous error, so this list is deliberately broad.
+#
+# Real corpus data drove this: purge_sessions, prune_tools, approve_prompt
+# and export_session all read as harmless under a narrow verb list.
 WRITE_VERBS = {
     "send", "transfer", "write", "create", "delete", "post", "update",
     "set", "add", "remove", "put", "insert", "upload", "publish", "move",
     "rename", "append", "execute", "run", "apply", "commit", "push",
+    # destructive
+    "purge", "prune", "drop", "clear", "reset", "revoke", "destroy",
+    "truncate", "wipe", "erase", "kill", "terminate", "cancel", "close",
+    "archive", "expire", "evict", "unlink", "detach", "disable",
+    # state-changing
+    "approve", "reject", "assign", "grant", "enable", "activate",
+    "deactivate", "register", "unregister", "subscribe", "unsubscribe",
+    "configure", "install", "deploy", "provision", "schedule", "trigger",
+    "invoke", "call", "start", "stop", "restart", "pause", "resume",
+    "save", "store", "persist", "sync", "import", "export", "backup",
+    "restore", "merge", "patch", "modify", "edit", "change", "replace",
+    "toggle", "increment", "decrement", "charge", "refund", "pay",
+    "order", "book", "reserve", "submit", "confirm", "finalize",
 }
 
 READ_VERBS = {

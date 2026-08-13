@@ -1,83 +1,143 @@
 # The Price of a Lie
 
-**Auditing Untrusted Tool Servers Without Their Cooperation**
+**Auditing untrusted tool servers without their cooperation.**
 
-Group 13 — Md. Tanzamul Azad (0112230863), Jahidul Islam (0112230654)
-United International University
+MCP binds approval to a tool's *declaration* and execution to its *implementation*, and nothing binds those two together. A user approves `transfer_money` once; an autonomous agent then calls it at machine speed, forever, with no further review. If the implementation behind that declaration is swapped, every existing defense is looking at the wrong thing.
+
+This is a distributed TOCTOU with no atomicity primitive. Check at *T₁*, use at *T₂*, untrusted party in between.
 
 ---
 
-## What this is
-
-MCP lets a user approve a tool **once**, after which an autonomous agent may invoke it indefinitely without further review. Approval binds trust to the tool's *declaration* — name, description, schema. The security-relevant object is its *implementation*, and nothing binds the two.
-
-**Theorem 1.** A *passive* client — one that inspects responses — cannot detect a server that performs a malicious effect while returning the honest response. Detection rate equals false-positive rate. This invalidates the entire response-validation family, including the defense this project originally proposed.
-
-**The escape.** The client is not passive. It is authorized to *call*. Metamorphic relations derived automatically from tool declarations force a diverting server to maintain a consistent shadow world — a simulated honest server running in parallel. That burden is measurable, and it is the security argument.
-
-**Hard constraint:** zero cooperation. No signed receipts, no attestation, no independent channel, no help from the server or any downstream provider. Only tools the client was already approved to use. Anything else does not get deployed.
-
 ## The result, in one table
 
-Every variant below steals money through an approved tool whose declaration never changed — hash pinning is blind to all of them:
+Same theft every time. The declaration never changes, so hash pinning is blind throughout. Only the attacker's machinery changes:
 
-| Adversary | Attacker LOC | Caught by |
-|---|---|---|
-| M5 forge response | 3 | R1 write-read |
-| M7 + shadow ledger | 9 | R2 conservation |
-| M8 + shadow balance | 17 | **nothing** |
+| Adversary | LOC | Shadow state | Caught by |
+|---|---|---|---|
+| forge the response | **3** | none | R1 write-read |
+| + fake the ledger | **9** | ledger | R2 conservation |
+| + fake the balance | **17** | ledger + balance | **nothing** |
 
-Defenses do not stop the attacker. They **price** them. M8 wins and Theorem 1 says it always will — that is the honest ceiling. The contribution is the slope below it, plus the fact that documented real MCP compromises are M5-class one-line patches maintaining no shadow state at all.
+Defenses do not stop the attacker. They **price** them.
+
+The 17-LOC adversary wins, and Theorem 1 says one always will — that ceiling is stated in the abstract, not buried. The contribution is the *slope below it*, plus one empirical fact: documented real-world MCP compromises are 3-LOC-class patches that maintain no shadow state at all.
 
 ```bash
-python experiments/demo_mba.py       # no API key needed
+python experiments/demo_mcpaudit.py    # the ladder, through the deployable defense
+python experiments/demo_theorem1.py    # response validation: 100% -> 0% against T2
+python experiments/demo_mba.py         # relation-by-relation escalation
 ```
 
-## Repository map
+No API key needed. Nothing contacts a live server.
+
+---
+
+## Two theorems
+
+**Theorem 1 — Transcript Indistinguishability.** A *passive* client cannot detect a server that performs a malicious effect while returning the honest response. Detection rate equals false-positive rate. Response validation is defeated by 3 lines.
+
+**The escape:** the client is not passive. It is *authorized to call*. That moves the problem from observation, where the impossibility bites, to interrogation, where it does not.
+
+**Theorem 2 — The Cost of Consistency.** A client that checks metamorphic relations forces a diverting server to lie *consistently* across all of them — that is, to maintain a simulated honest world. That burden is measurable, in lines and in shadow-state size.
+
+---
+
+## The constraint that shaped everything
+
+**Zero cooperation.** Not from the server, not from its operator, not from any downstream provider.
+
+An earlier design proposed receipt attestation and cross-channel verification. Both require cooperation nobody will give — banks will not sign receipts for your agent. That design was scrapped. Everything here works with declarations the server already advertises and calls the client is already authorized to make.
+
+---
+
+## `mcpaudit` — the deployable defense
+
+```bash
+PYTHONPATH=src python -m mcpaudit scan --tools tools.json
+PYTHONPATH=src python -m mcpaudit scan --stdio "npx -y @modelcontextprotocol/server-filesystem /tmp"
+```
+
+Real output, against a real community server from the corpus:
 
 ```
-docs/          research program — start with 00-RESEARCH-PLAN.md
-src/mcpmut/    MCP-MutBench: harness, mutation engine, defenses, oracle
-src/measure/   registry harvester + V-class classifier
-src/analysis/  statistics and figure generation
-data/          corpus and benchmark definitions
-experiments/   configs, results, logs
-paper/         LaTeX source, figures, bibliography
+  20 tools  A0=11  A1=0  A2=9  A3=0   (55% unverifiable)
+  UNVERIFIABLE MUTATIONS: set_license, save_custom_rules
+
+  class   deg  policy    tool
+  A0        0  confirm   set_license  <-- unverifiable mutation
+  A0        0  allow     estimate_cost
+  A2        7  audit     list_sessions
+  A2        1  audit     purge_sessions
 ```
 
-## Documents
+### The safety rule that shapes the design
 
-| Doc | Contents |
+Auditing works by **calling tools**, and a probe write is a *real* write. An auditor that "tests" `transfer_money` has moved real money; one that probes `delete_file` has destroyed a real file.
+
+So: **the auditor never issues a write the agent did not ask for.** Verification is built only from extra *reads*, and from reads taken before and after the agent's own writes. That costs coverage — synthetic canaries and null-op probes are off by default because both mutate — and it is the correct trade for something people run against production. `allow_probe_writes=True` opts back in, explicitly.
+
+### What it will not pretend to do
+
+A tool with no derivable relation (**A0**) cannot be checked, ever, at any budget. `mcpaudit` reports these loudly instead of implying coverage it lacks. For A0 the remedy is policy — restrict the call, or put a human in front of it — not detection.
+
+---
+
+## Auditability classes
+
+Keyed on **relation degree**, which the client computes for itself. No assumptions about anyone.
+
+| | Meaning |
 |---|---|
-| [00-RESEARCH-PLAN.md](docs/00-RESEARCH-PLAN.md) | Master plan, thesis, contributions |
-| [01-literature-review.md](docs/01-literature-review.md) | 24 works, organized by what each verifies |
-| [02-gap-analysis.md](docs/02-gap-analysis.md) | The I×E grid and the empty quadrant |
-| [03-novelty-contributions.md](docs/03-novelty-contributions.md) | Novelty audit, reviewer rebuttals, draft abstract |
-| [04-threat-model.md](docs/04-threat-model.md) | Adversary tiers T0–T3 |
-| [05-verifiability-taxonomy.md](docs/05-verifiability-taxonomy.md) | **Theory core** — Theorems 1 & 2, classes A0–A3 |
-| [06-dataset-plan.md](docs/06-dataset-plan.md) | Building D1/D2 from nothing; labeling protocol |
-| [07-experiment-plan.md](docs/07-experiment-plan.md) | RQs, matrix, statistics, power |
-| [08-figures-plan.md](docs/08-figures-plan.md) | Every figure and the claim it carries |
-| [09-venue-timeline.md](docs/09-venue-timeline.md) | Venue strategy, milestones |
-| [10-implementation-notes.md](docs/10-implementation-notes.md) | Code architecture |
-| [11-runtime-validation-design.md](docs/11-runtime-validation-design.md) | **MBA — the zero-cooperation defense** |
-| [12-intellectual-lineage.md](docs/12-intellectual-lineage.md) | The 11 fields we inherit from, and what breaks |
+| **A0** | no relation derivable — undetectable at any budget |
+| **A1** | self-relatable (determinism, null-op) |
+| **A2** | read-backable (write-read, canary) |
+| **A3** | invariant-bound (conservation) — strongest |
 
-## Setup
+The dangerous cell is **A0 ∧ mutating**: consequential *and* uncheckable. Default policy sends it to a human; strict mode denies it.
+
+---
+
+## Ecosystem measurement (D1)
 
 ```bash
-pip install -r requirements.txt
-cp .env.example .env    # add your own keys; .env is gitignored
+python experiments/run_d1.py --target 500      # checkpoints; --resume to continue
+python experiments/run_d1.py --report-only
 ```
+
+Static extraction from public source. **No live server is ever contacted.** One GitHub trees call per repo, then unmetered raw fetches. Discovery stratifies by star bucket so the long tail is represented — A0 rate appears to track server tool-count, and sampling only the popular head would bias the headline toward auditability.
+
+⚠️ **Numbers in `docs/13` are pipeline validation, not results** — a single repo of official reference servers, i.e. best case. Do not cite them. The full harvest is what the paper reports.
+
+### Validation before any claim
+
+```bash
+python experiments/make_label_sample.py --n 300
+python experiments/score_labels.py --a a.tsv --b b.tsv
+```
+
+Two annotators label independently against `docs/14-labeling-codebook.md`; the tool reports Cohen's κ, per-class precision/recall, and the **A0 bias** — the signed gap between classifier and humans. That bias applies directly to the headline and is reported beside it, never silently corrected.
+
+---
+
+## Layout
+
+```
+src/mcpaudit/     the deployable defense  (auditor, policy, CLI)
+src/measure/      D1 instrument           (extract, harvest, discover, classify, report, agreement)
+src/mcpmut/       benchmark               (mutations, adversary ladder, domains)
+experiments/      runnable demos and harvest scripts
+docs/00-14        research program, theory, threat model, lineage, codebook
+paper/            references.bib -- 45 entries, all marked [U] unverified
+```
+
+Start with `docs/00-RESEARCH-PLAN.md`, then `docs/11-runtime-validation-design.md` (the defense) and `docs/12-intellectual-lineage.md` (what this subfield inherits from TOCTOU, metamorphic testing, BFT, and eight others).
+
+---
 
 ## Status
 
-Design complete; implementation starting. See [00-RESEARCH-PLAN.md](docs/00-RESEARCH-PLAN.md) §7.
+Measurement instrument built and running. Two theorems stated, one proved and demonstrated. Deployable auditor works end-to-end against the full adversary ladder.
 
-## Security note
+**Not yet done:** κ validation, extractor recall on real code, remaining tool domains, LLM-in-the-loop cost curve, T3 probe-aware adversary. Targeting a Tier-1 security venue; no workshop hedge.
 
-Earlier exploratory notebooks in this project contained hardcoded API keys. Those keys are revoked and no secret is tracked in this repository. All credentials load from `.env`.
-
-## License
-
-Research code, released for reproducibility. See `LICENSE`.
+MIT licensed. Group 13, UIU.
