@@ -3,6 +3,8 @@
 **Run date:** 2026-08-13 · **Corpus:** 43 tools / 5 servers, `modelcontextprotocol/servers` only
 **Command:** `python experiments/run_harvest.py`
 
+
+> **SUPERSEDED by [`15-d1-findings.md`](15-d1-findings.md).** This document measured only the official reference repository. The full harvest shows the official servers are the *best case* by a wide margin — A0 9.3% here vs 62.0% ecosystem-wide — so treat this as the control arm, not the result. Its framing of MCP annotations as "self-declared therefore unverifiable" is also revised there: in the wild those hints are barely declared at all.
 > ⚠️ **This is a pipeline validation, not the paper's result.** n=43 from a single repository is far too small and — critically — the *wrong* sample: these are the official reference servers, the best-engineered examples in the ecosystem. They are the **best case**, not the typical case. Every number here will move, most likely against auditability, once community servers are included. Do not cite these figures.
 
 ---
