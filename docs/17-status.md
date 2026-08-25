@@ -22,8 +22,12 @@ Theory is settled, the measurement instrument is built and validated against rea
 | **D1 harvest** | ✅ complete | see §Numbers |
 | **A0–A3 classifier** | ⚠️ **unvalidated** | no human gold standard yet |
 | **Labeling harness** (codebook, sampler, κ) | ✅ built, ⏳ unrun | needs two human annotators |
+| **Evaluation** — 4 domains, attack × defense matrix | ✅ | [`18`](18-evaluation-findings.md) |
+| **False positives under concurrency** | ✅ 0% after redesign | was 20–86% before |
+| **Probe-aware adversary (T3)** | ✅ run | detection 0%, deterrence total |
+| **LLM in the loop (E4)** | ✅ running | utility delta +0.0 points |
 | **Figures** | ✅ F1–F4 | `figures/` |
-| **Test suite** | ✅ 41 passing | `pytest tests/ -q` |
+| **Test suite** | ✅ 42 passing | `pytest tests/ -q` |
 | **references.bib** | ⚠️ 45 entries, all `[U]` unverified | must check venue pages |
 | **Paper draft** | ❌ not started | — |
 
@@ -56,11 +60,11 @@ Target κ ≥ 0.70. Below 0.60 means the codebook is underspecified — revise a
 | 3 | Extractor recall is a *lower bound*, not a true figure | Both counters look for registration syntax; a declaration in a form neither recognises is invisible to both | ⚠️ stated in tooling output |
 | 4 | Theorem 2 is not a closed-form bound | Weakens a theory claim to an empirical one | ◐ ladder is measured; bound is not |
 | 5 | Relation derivation is heuristic (verbs, nouns, fields) | Precision/recall unquantified per relation class | ⚠️ folded into #1 |
-| 6 | Only one tool domain implemented (banking) | Cost curve may not generalise | ❌ email/files/compute pending |
-| 7 | No LLM-in-the-loop experiments yet | No end-to-end ASR under MBA | ❌ pending |
-| 8 | T3 probe-aware adversary not built | Our own defense not stress-tested | ❌ pending |
+| 6 | Conservation needs an itemised ledger to survive concurrency | Where absent, R2 is unavailable in production | ✅ measured; now a protocol recommendation |
+| 7 | Detection against a probe-aware adversary is **zero** | Deterrence holds, detection does not | ✅ measured; decoys force an unfavourable equilibrium |
+| 8 | Servers are simulated; no real MCP server audited end-to-end | Relation derivation untested against live declarations at runtime | ❌ pending (E3) |
 
-**On #8:** this is the honest stress test — can an adversary distinguish audit calls from task calls and behave differently? A negative result there is publishable and must be reported either way.
+**On #7:** the adversary declines to cheat while watched, so there is nothing to detect on audited calls. Theft *volume* still tracks the audit rate, and decoy auditing suppresses it to zero — but a rational adversary that spots the decoys reverts to being caught at the audit rate. Reported as an equilibrium, not a win.
 
 ---
 
@@ -72,7 +76,8 @@ Recorded because these are easy to lose track of and each cost real effort.
 - **One hypothesis falsified (resource cohesion), and one falsified then RE-confirmed at full n (tool-count)** — the premature falsification is kept in [`16`](16-design-history.md) as a worked example of why partial corpora are not evidence.
 - **Four instrument bugs found by running against real code**, each of which produced a confident wrong number rather than an error. All now pinned by regression tests.
 - **The safety property that makes the auditor deployable**: it never issues a write the agent did not request, because a probe write is a real write. Pinned by `test_auditor_never_issues_unrequested_writes`.
-- **Two concrete protocol recommendations** fell out of the measurement — mandate `outputSchema`, ship a read for every write. Rare for a measurement paper to hand the ecosystem a fix this specific.
+- **Three concrete protocol recommendations** fell out of the work — mandate `outputSchema`, ship a read for every write, and expose an itemised ledger of any conserved quantity (without one, conservation cannot be audited under concurrency at all).
+- **We broke our own defense twice and reported both.** Naive conservation had 20–86% false positives under concurrent honest activity; a probe-aware adversary drops detection to exactly zero. Both are in [`18`](18-evaluation-findings.md) rather than omitted.
 
 ---
 
@@ -80,10 +85,9 @@ Recorded because these are easy to lose track of and each cost real effort.
 
 1. **κ validation** — unblocks every claim about the headline *(needs 2 humans)*
 2. **Threat-to-validity section** on the GitHub-only sampling frame
-3. **Remaining tool domains** — email, files, compute — so the cost curve is not banking-only
-4. **T3 probe-aware adversary** — stress-test our own defense
-5. **LLM-in-the-loop runner** — port the checkpoint/resume pattern from `exp/gap-exp.ipynb`
-6. **Tighten Theorem 2** toward a closed-form bound
+3. **E3 — audit a real MCP server** end to end, not just `tools/list`
+4. **Sweep the probe-aware adversary across all four domains** (banking only so far)
+5. **Tighten Theorem 2** toward a closed-form bound
 7. **Verify all 45 references** against venue pages
 8. **Paper draft**
 
