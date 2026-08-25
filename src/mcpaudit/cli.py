@@ -47,17 +47,31 @@ def _load_stdio(cmd: str) -> list[dict]:
             async with ClientSession(r, w) as session:
                 await session.initialize()
                 res = await session.list_tools()
-                return [
-                    {
+                # The wire format is camelCase but the Python SDK exposes
+                # snake_case, and which one you get depends on the SDK
+                # version. Accept either rather than pinning a version.
+                def field(t, *names, default=None):
+                    for n in names:
+                        v = getattr(t, n, None)
+                        if v is not None:
+                            return v
+                    return default
+
+                out = []
+                for t in res.tools:
+                    ann = field(t, "annotations", default=None)
+                    if ann is not None and hasattr(ann, "model_dump"):
+                        ann = ann.model_dump(exclude_none=True)
+                    out.append({
                         "name": t.name,
-                        "description": t.description or "",
-                        "inputSchema": t.inputSchema or {},
-                        "annotations": (
-                            t.annotations.model_dump() if t.annotations else {}
-                        ),
-                    }
-                    for t in res.tools
-                ]
+                        "description": field(t, "description", default="") or "",
+                        "inputSchema": field(t, "inputSchema", "input_schema",
+                                             default={}),
+                        "outputSchema": field(t, "outputSchema", "output_schema",
+                                              default={}),
+                        "annotations": ann or {},
+                    })
+                return out
 
     return asyncio.run(go())
 

@@ -2,7 +2,7 @@
 
 Results from `experiments/run_eval.py` (detection, false positives, overhead), `experiments/run_probe_aware.py` (adaptive adversary), and `experiments/run_llm.py` (LLM in the loop).
 
-Servers are simulated; a real MCP server has not been audited end to end (E3, pending). See [`17-status.md`](17-status.md) for what these results do and do not license us to claim.
+Sections 1-5 use simulated servers; section 6 audits a real MCP server end to end. See [`17-status.md`](17-status.md) for what these results do and do not license us to claim.
 
 ---
 
@@ -160,12 +160,67 @@ At temperature 0 with one fixed phrasing per task, the agent is **deterministic*
 
 **So n=10 per cell is one outcome repeated ten times, not ten samples.** A confidence interval over it would imply sampling variation that does not exist. What 320 episodes establish is reproducibility and the absence of API flakiness — not robustness.
 
-Genuine variance requires temperature > 0 and paraphrased tasks; that run is reported in section 5.1. This is stated because it would have been easy, and wrong, to present "100% (n=10)" as though it carried statistical weight.
+This is stated because it would have been easy, and wrong, to present "100% (n=10)" as though it carried statistical weight.
+
+### 5.1 Variance probe — the outcomes hold
+
+Re-run at **temperature 0.7** with **five distinct phrasings per task** (320 episodes, recorded per-episode):
+
+| | temp 0, fixed phrasing | temp 0.7, 5 phrasings |
+|---|---|---|
+| cells with outcome variation | 0 / 32 | **0 / 32** |
+| episode length | always 2 steps | **always 2 steps** |
+| every headline number | — | **unchanged** |
+
+Varying both the sampling temperature and the wording of the request moves nothing. At temperature 0 we could not distinguish *"the setup is deterministic"* from *"the result is robust"*; with the input actually varied and the outcomes still fixed, this is evidence for the second.
+
+**What it means.** Detection depends on the *server*, not on how the agent phrases its call — which is what the design predicts, since relations are derived from declarations and checked against effects, neither of which the agent controls.
+
+**What it does not mean.** These tasks are unambiguous and each domain exposes 3–4 tools. A larger tool surface, ambiguous instructions, or multi-step tasks would introduce agent-side variance that this design cannot exhibit. The claim is bounded to: *within this task difficulty, the result is phrasing- and temperature-stable.*
 
 
 ---
 
-## 6. What this changes
+## 6. A real MCP server (E3)
+
+Everything above used servers we wrote. This drives the **official filesystem reference server** over stdio — unmodified, real declarations, real files on a real disk — and interposes a tampering proxy that plays the L1 adversary: it diverts the write to a different path and reports the path that was requested.
+
+| Run | probes | violations | outcome |
+|---|---|---|---|
+| honest real server | 1 | **0** | `confirmed via read_file` |
+| tampering proxy | 1 | **1** | `read_file reports the target of this write does not exist, yet the response claimed success` |
+
+Ground truth on disk confirms it: after the tampered run the sandbox contains `exfil.txt`, not the `report.txt` the response claimed.
+
+From the live declarations the auditor derived **44 relations across 14 tools**, A0 = 0 — every tool on that server admits at least one check. Latency for the audit was ~0.05 s.
+
+**Detection works against declarations we did not author, with no false alarm on the genuine server.**
+
+### Three bugs only a live server could expose
+
+Every simulated reader in the benchmark was parameterless and never returned an error. Real ones are neither, and each of these produced a *confident wrong answer* rather than a crash:
+
+| Bug | Effect |
+|---|---|
+| The auditor called readers with **no arguments**. `read_file(path)` needs the path just written; called bare it errors. | False positive on an honest server |
+| R1 required **every** write argument to appear in the read-back. `read_file(path)` returns *content* — the path is the query, not the answer. | False positive on every honest write |
+| Error responses were treated as one thing. | Either loses all detections or fabricates them |
+
+The third is the subtle one. An error means two opposite things depending on why:
+
+- **"the file you just wrote is not there"** → the strongest evidence the auditor can obtain
+- **"you called me wrong"** → no evidence at all
+
+Collapsing them loses every detection *or* fabricates them. They are now separated: absence is a violation, an unusable probe is a warning that says the call went **unverified** rather than implying it was checked.
+
+### Caveat
+
+The tampering proxy is our own code, not a compromised third-party server. What this establishes is that derivation and checking work against **declarations we did not write**; it is not a discovery of a real compromise in the wild.
+
+
+---
+
+## 7. What this changes
 
 The paper is no longer "we measured the ecosystem." It is:
 
@@ -177,14 +232,18 @@ The paper is no longer "we measured the ecosystem." It is:
 
 ---
 
-## 7. Reproduce
+## 8. Reproduce
 
 ```bash
 python experiments/run_eval.py --trials 30 --fp-trials 300
 python experiments/run_probe_aware.py
 python experiments/run_llm.py --episodes 10                    # temperature 0
 python experiments/run_llm.py --episodes 10 --temperature 0.7        --out experiments/results/llm_eval_t07.json             # variance probe
+python experiments/run_live.py --sandbox /path/to/scratch      # real MCP server
 ```
+
+`run_live.py` needs `pip install mcp` and Node (it launches the reference
+server via `npx`). It only touches the sandbox directory you pass.
 
 `run_llm.py` needs `OPENAI_API_KEY` in the environment or `.env`. It talks to
 the chat-completions API over httpx, so any provider with the same shape

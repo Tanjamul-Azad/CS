@@ -385,16 +385,39 @@ class Auditor:
 
         reader = readers[0]
         self._audits += 1
+        # Fill the reader's parameters from the write we are checking.
+        # read_file(path) must be asked about the path just written; calling
+        # it bare returns an error, the error text naturally does not contain
+        # the value we wrote, and the auditor reports a violation against a
+        # perfectly honest server. Every simulated reader in the benchmark
+        # was parameterless, so only a live server surfaced this.
+        probe_args = _probe_args(self.by_name.get(reader), args)
         try:
-            observed = call_fn(reader, {})
+            observed = call_fn(reader, probe_args)
         except Exception as e:  # noqa: BLE001
             return [Alert("warning", name, "R1",
                           f"read-back via {reader} failed: {type(e).__name__}")]
 
+        verdict = _classify_probe(observed)
+        if verdict == "unusable":
+            return [Alert("warning", name, "R1",
+                          f"read-back via {reader} could not be performed; "
+                          f"this call is unverified")]
+        if verdict == "absent":
+            return [Alert(
+                "violation", name, "R1",
+                f"{reader} reports the target of this write does not exist, "
+                f"yet the response claimed success")]
+
+        # Values we PASSED to the probe scope the query -- they identify what
+        # to look at, and a read is not obliged to echo them back. read_file
+        # takes `path` and returns content; demanding the path appear in the
+        # content flags every honest write. Only the remaining arguments must
+        # actually be reflected.
         blob = _stringify(observed)
         missing = [
             f"{k}={v}" for k, v in args.items()
-            if _is_checkable(v) and str(v) not in blob
+            if k not in probe_args and _is_checkable(v) and str(v) not in blob
         ]
         if missing:
             return [Alert(
@@ -489,6 +512,54 @@ def _number(x: Any) -> float | None:
     if isinstance(x, (int, float)):
         return float(x)
     return None
+
+
+# An error response means two very different things depending on WHY.
+# "the file you just wrote is not there" is the strongest evidence the
+# auditor can get. "you called me wrong" is no evidence at all. Collapsing
+# them either loses every detection or fabricates them.
+_ABSENCE_MARKERS = ("no such file", "enoent", "not found", "does not exist",
+                    "no such", "missing")
+_UNUSABLE_MARKERS = ("required", "invalid", "denied", "not allowed",
+                     "unauthorized", "forbidden", "must be", "expected")
+
+
+def _probe_args(reader: ExtractedTool | None, write_args: dict) -> dict:
+    """Arguments for a read-back probe, taken from the write being checked.
+
+    Only fields the reader declares AND the write supplied are passed, so a
+    parameterless reader still gets {} and a parameterised one gets the
+    value it needs to look in the right place.
+    """
+    if reader is None or not reader.input_fields:
+        return {}
+    lowered = {k.lower(): v for k, v in write_args.items()}
+    out = {}
+    for f in reader.input_fields:
+        if f in write_args:
+            out[f] = write_args[f]
+        elif f.lower() in lowered:
+            out[f] = lowered[f.lower()]
+    return out
+
+
+def _classify_probe(x: Any) -> str:
+    """"ok" | "absent" | "unusable".
+
+    Servers report failures as ordinary content rather than exceptions, so
+    the auditor has to read them. `absent` -- the thing we just wrote is
+    not there -- is a violation. `unusable` -- we called the probe wrongly
+    or were refused -- is not evidence of anything and must not be
+    reported as one.
+    """
+    text = _stringify(x).lower()
+    if len(text) > 400:
+        return "ok"
+    if any(m in text for m in _UNUSABLE_MARKERS):
+        return "unusable"
+    if any(m in text for m in _ABSENCE_MARKERS):
+        return "absent"
+    return "ok"
 
 
 def _stringify(x: Any) -> str:
