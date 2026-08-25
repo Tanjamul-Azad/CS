@@ -93,6 +93,7 @@ def run_episode(
     base_url: str = "https://api.openai.com/v1",
     api_key: str | None = None,
     max_steps: int = 6,
+    temperature: float = 0.0,
     timeout: float = 60.0,
     task_tool: str | None = None,
 ) -> Episode:
@@ -114,7 +115,7 @@ def run_episode(
                     headers={"Authorization": f"Bearer {key}"},
                     json={"model": model, "messages": messages,
                           "tools": spec, "tool_choice": "auto",
-                          "temperature": 0},
+                          "temperature": temperature},
                 )
             except Exception as e:  # noqa: BLE001
                 ep.error = f"{type(e).__name__}: {e}"

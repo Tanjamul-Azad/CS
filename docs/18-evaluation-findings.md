@@ -1,8 +1,8 @@
 # Evaluation Findings
 
-Results from `experiments/run_eval.py` (detection, false positives, overhead) and `experiments/run_probe_aware.py` (adaptive adversary).
+Results from `experiments/run_eval.py` (detection, false positives, overhead), `experiments/run_probe_aware.py` (adaptive adversary), and `experiments/run_llm.py` (LLM in the loop).
 
-Simulated servers; no LLM in the loop yet. See [`17-status.md`](17-status.md) for what that does and does not license us to claim.
+Servers are simulated; a real MCP server has not been audited end to end (E3, pending). See [`17-status.md`](17-status.md) for what these results do and do not license us to claim.
 
 ---
 
@@ -125,7 +125,47 @@ The auditor's probe-volume cap throttled mid-session and confounded the budget s
 
 ---
 
-## 5. What this changes
+## 5. LLM in the loop
+
+Everything above used a scripted caller. This puts a real model in front of the server and lets it choose the tool calls. 320 episodes, `gpt-4o-mini`, 4 domains x (honest + 3 adversaries) x (audit off/on), 0 errors.
+
+| Domain | Adversary | ASR | DR (audited) | utility off -> on |
+|---|---|---|---|---|
+| banking | L1 forge | 100% | **100%** | 100% -> 100% |
+| banking | L2 shadow ledger | 100% | **100%** | 100% -> 100% |
+| banking | L3 shadow balance | 100% | 0% | 100% -> 100% |
+| email | L2 shadow sent-list | 100% | 0% | 100% -> 100% |
+| files | L2 shadow directory | 100% | 0% | 100% -> 100% |
+| compute | L2 shadow job list | 100% | **100%** | 100% -> 100% |
+| *honest* | — | 0% | **0% FP** (n=40) | 100% -> 100% |
+
+**The LLM harness reproduces the scripted harness exactly.** That agreement is the point: it means the earlier numbers were not an artifact of scripted calling.
+
+### The result only an LLM run can produce
+
+> **Utility delta: +0.0 points.** The agent completes its task at the same rate with auditing on as off.
+
+This was previously a *claim* — the auditor's probes go to the server directly and never through the model, so the agent should not notice them. It is now measured.
+
+Cost: **4.8 probe calls and 386 tokens per episode**; the full 320-episode run is roughly $0.02.
+
+### Two deliberate design choices
+
+- **The agent is not told the server might be compromised.** Telling it would measure prompt engineering rather than the auditor.
+- **Ground truth stays with the out-of-band oracle.** The model's account of what happened is exactly as untrustworthy as the server's.
+
+### A methodological caveat we hold ourselves to
+
+At temperature 0 with one fixed phrasing per task, the agent is **deterministic**: all 32 cells showed *zero* within-cell variation and every episode took exactly 2 steps.
+
+**So n=10 per cell is one outcome repeated ten times, not ten samples.** A confidence interval over it would imply sampling variation that does not exist. What 320 episodes establish is reproducibility and the absence of API flakiness — not robustness.
+
+Genuine variance requires temperature > 0 and paraphrased tasks; that run is reported in section 5.1. This is stated because it would have been easy, and wrong, to present "100% (n=10)" as though it carried statistical weight.
+
+
+---
+
+## 6. What this changes
 
 The paper is no longer "we measured the ecosystem." It is:
 
@@ -137,9 +177,15 @@ The paper is no longer "we measured the ecosystem." It is:
 
 ---
 
-## 6. Reproduce
+## 7. Reproduce
 
 ```bash
 python experiments/run_eval.py --trials 30 --fp-trials 300
 python experiments/run_probe_aware.py
+python experiments/run_llm.py --episodes 10                    # temperature 0
+python experiments/run_llm.py --episodes 10 --temperature 0.7        --out experiments/results/llm_eval_t07.json             # variance probe
 ```
+
+`run_llm.py` needs `OPENAI_API_KEY` in the environment or `.env`. It talks to
+the chat-completions API over httpx, so any provider with the same shape
+(Groq, vLLM, together) works by changing `base_url`.
