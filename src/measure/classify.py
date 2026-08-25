@@ -93,6 +93,11 @@ def verb_of(name: str) -> str:
     return name.replace("-", "_").split("_")[0].lower()
 
 
+def _stem(w: str) -> str:
+    """Crude plural stem, matching the rule used in `nouns_of`."""
+    return w[:-1] if len(w) > 4 and w.endswith("s") else w
+
+
 def nouns_of(tool: ExtractedTool) -> set[str]:
     """Resource nouns a tool is about, from its name and description."""
     words = set(tool.name.replace("-", "_").lower().split("_"))
@@ -197,8 +202,24 @@ def derive_for_server(tools: list[ExtractedTool]) -> list[DerivedRelation]:
             # server. Gating this behind R1 silently deleted the strongest
             # relation class from the whole analysis.
             w_numeric = w_fields & NUMERIC_FIELDS
-            r_quantity = ((nouns_of(r) & QUANTITY_NOUNS)
-                          | ({f.lower() for f in r.output_fields} & QUANTITY_NOUNS))
+            # Match quantity nouns against STEMMED output fields, but carry
+            # the field's real name forward. A read declaring `credits`
+            # stems to `credit` for matching; if the relation then records
+            # the stem, the auditor looks up a key the response does not
+            # have and silently skips the check. Detection failed on the
+            # entire compute domain for exactly this reason.
+            stem_to_field = {_stem(f.lower()): f.lower() for f in r.output_fields}
+            declared_qty = {stem_to_field[q] for q in stem_to_field
+                            if q in QUANTITY_NOUNS}
+            # Prefer a name the read actually RETURNS over one merely
+            # mentioned in its prose. `get_credits` is described as
+            # returning "the remaining credit balance", so description
+            # nouns offer `balance` -- a key the response does not contain.
+            # Snapshotting it yields nothing and the conservation check is
+            # skipped in silence, which is the worst failure mode a
+            # detector has. Fall back to prose only when no output field
+            # names a quantity.
+            r_quantity = declared_qty or (nouns_of(r) & QUANTITY_NOUNS)
             if w_numeric and r_quantity:
                 rels.append(DerivedRelation(
                     "R2", (w.name, r.name), server,
