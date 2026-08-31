@@ -36,6 +36,8 @@ Defenses do not stop the attacker. They **price** them. The 17-LOC adversary win
 
 ## Reading paths
 
+**Start here if you want the honest state of the work:** [`19-reviewer-review.md`](19-reviewer-review.md), then [`20-plan-to-submission.md`](20-plan-to-submission.md).
+
 **For a supervisor or reviewer, in order:**
 1. [`16-design-history.md`](16-design-history.md) — what we tried, what broke, why the design changed. Read this first; it explains why the project looks the way it does.
 2. [`02-gap-analysis.md`](02-gap-analysis.md) — the hole in the literature
@@ -81,8 +83,11 @@ Defenses do not stop the attacker. They **price** them. The 17-LOC adversary win
 |---|---|
 | [`15-d1-findings.md`](15-d1-findings.md) | **Current findings.** Kept updated as the harvest grows |
 | [`13-d1-preliminary-findings.md`](13-d1-preliminary-findings.md) | ⚠️ *Superseded.* Official-servers-only run; now the best-case control arm |
+| [`18-evaluation-findings.md`](18-evaluation-findings.md) | **Evaluation.** Detection, false positives, adaptive adversary, LLM, live server |
 | [`08-figures-plan.md`](08-figures-plan.md) | Figure plan F1–F11 |
 | [`17-status.md`](17-status.md) | **Living status.** What is done, running, and blocked |
+| [`19-reviewer-review.md`](19-reviewer-review.md) | **Adversarial self-review.** Read as a hostile PC member. Current verdict: reject |
+| [`20-plan-to-submission.md`](20-plan-to-submission.md) | **The plan.** Phases keyed to `19`, with acceptance and kill criteria |
 
 ### Logistics
 
