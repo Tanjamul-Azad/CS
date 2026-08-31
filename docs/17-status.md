@@ -6,7 +6,7 @@
 
 ## One-line summary
 
-Theory is settled, the measurement instrument is built and validated against real code, the deployable defense works end-to-end — and the headline number is **not yet a measurement** because the classifier has not been scored against human labels.
+Theory, measurement, and the full evaluation (E1–E5, including a real MCP server and an LLM in the loop) are done. **One blocker remains**: the A0–A3 classifier has never been scored against human labels, so the headline 56.5% is an instrument reading rather than a measurement. Everything else is ready for a draft.
 
 ---
 
@@ -25,7 +25,8 @@ Theory is settled, the measurement instrument is built and validated against rea
 | **Evaluation** — 4 domains, attack × defense matrix | ✅ | [`18`](18-evaluation-findings.md) |
 | **False positives under concurrency** | ✅ 0% after redesign | was 20–86% before |
 | **Probe-aware adversary (T3)** | ✅ run | detection 0%, deterrence total |
-| **LLM in the loop (E4)** | ✅ running | utility delta +0.0 points |
+| **LLM in the loop (E4)** | ✅ 320 episodes | utility delta +0.0 pts; stable at temp 0.7 |
+| **Real MCP server (E3)** | ✅ | 0 FP honest, detects a tampering proxy |
 | **Figures** | ✅ F1–F4 | `figures/` |
 | **Test suite** | ✅ 42 passing | `pytest tests/ -q` |
 | **references.bib** | ⚠️ 45 entries, all `[U]` unverified | must check venue pages |
@@ -62,7 +63,7 @@ Target κ ≥ 0.70. Below 0.60 means the codebook is underspecified — revise a
 | 5 | Relation derivation is heuristic (verbs, nouns, fields) | Precision/recall unquantified per relation class | ⚠️ folded into #1 |
 | 6 | Conservation needs an itemised ledger to survive concurrency | Where absent, R2 is unavailable in production | ✅ measured; now a protocol recommendation |
 | 7 | Detection against a probe-aware adversary is **zero** | Deterrence holds, detection does not | ✅ measured; decoys force an unfavourable equilibrium |
-| 8 | Servers are simulated; no real MCP server audited end-to-end | Relation derivation untested against live declarations at runtime | ❌ pending (E3) |
+| 8 | Live-server test used a tampering proxy we wrote, not a real compromise | Shows derivation works on foreign declarations; not a finding in the wild | ✅ done, caveat recorded |
 
 **On #7:** the adversary declines to cheat while watched, so there is nothing to detect on audited calls. Theft *volume* still tracks the audit rate, and decoy auditing suppresses it to zero — but a rational adversary that spots the decoys reverts to being caught at the audit rate. Reported as an equilibrium, not a win.
 
@@ -83,13 +84,11 @@ Recorded because these are easy to lose track of and each cost real effort.
 
 ## Next steps, in dependency order
 
-1. **κ validation** — unblocks every claim about the headline *(needs 2 humans)*
-2. **Threat-to-validity section** on the GitHub-only sampling frame
-3. **E3 — audit a real MCP server** end to end, not just `tools/list`
-4. **Sweep the probe-aware adversary across all four domains** (banking only so far)
-5. **Tighten Theorem 2** toward a closed-form bound
-7. **Verify all 45 references** against venue pages
-8. **Paper draft**
+1. **κ validation** — the only hard blocker *(needs 2 humans)*
+2. **Paper draft** — everything it needs now exists except §8's validated number
+3. **Verify all 45 references** against venue pages
+4. Sweep the probe-aware adversary across all four domains (banking only so far)
+5. Tighten Theorem 2 toward a closed-form bound
 
 ---
 
