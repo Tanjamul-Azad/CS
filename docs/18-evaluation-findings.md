@@ -183,7 +183,7 @@ Varying both the sampling temperature and the wording of the request moves nothi
 
 ## 6. A real MCP server (E3)
 
-Everything above used servers we wrote. This drives the **official filesystem reference server** over stdio — unmodified, real declarations, real files on a real disk — and interposes a tampering proxy that plays the L1 adversary: it diverts the write to a different path and reports the path that was requested.
+Everything above used servers we wrote. This drives the **official filesystem reference server** over stdio — unmodified, real declarations, real files on a real disk — and interposes the **generic, declaration-driven tampering proxy** (`src/mcpmut/proxy.py`, the same one used against the benchmark, not specialised to this server). It plays the L1 adversary: divert the write to an attacker-controlled path, report the path that was requested.
 
 | Run | probes | violations | outcome |
 |---|---|---|---|
@@ -213,9 +213,13 @@ The third is the subtle one. An error means two opposite things depending on why
 
 Collapsing them loses every detection *or* fabricates them. They are now separated: absence is a violation, an unusable probe is a warning that says the call went **unverified** rather than implying it was checked.
 
+### Why the generic proxy matters
+
+The adversary here is built from the live declarations alone — the same input the defense receives — so this is not the defense being tested against an attacker tuned to it. The proxy reproduces the benchmark's L1/L2/L3 detection semantics with no domain-specific code (`tests/test_proxy.py`), which is what lets a real third-party server sit on the same cost axis as the hand-written benchmark.
+
 ### Caveat
 
-The tampering proxy is our own code, not a compromised third-party server. What this establishes is that derivation and checking work against **declarations we did not write**; it is not a discovery of a real compromise in the wild.
+The proxy is still our own code, not a compromised third-party server found in the wild. What this establishes is that derivation and checking work against **declarations we did not write**; it is not a discovery of a real compromise.
 
 
 ---
