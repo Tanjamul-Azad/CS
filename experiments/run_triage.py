@@ -67,20 +67,29 @@ def source_blob(server_id: str, tools, ref: str = "main") -> str:
 
 def report(rows: list[dict]) -> None:
     n = len(rows)
+    timeouts = [r for r in rows if r["launch_class"] == "timeout"]
+    reached = [r for r in rows if r["launch_class"] != "timeout"]
+    m = max(len(reached), 1)
+
     print(f"\n{'='*74}")
     print(f"LAUNCHABILITY TRIAGE  --  {n} audit-relevant servers")
     print("=" * 74)
 
-    print("\nLaunch class")
-    for k, v in Counter(r["launch_class"] for r in rows).most_common():
-        print(f"  {k:16} {v:4}  ({100*v/n:4.1f}%)")
+    if timeouts:
+        print(f"\nUnreachable within budget: {len(timeouts)} "
+              f"({100*len(timeouts)/n:.1f}%) -- excluded from the rates below, "
+              "since this is our network, not a property of the ecosystem")
 
-    cred = sum(1 for r in rows if r["needs_credentials"])
-    ext = sum(1 for r in rows if r["external_services"])
+    print("\nLaunch class (of servers we could reach)")
+    for k, v in Counter(r["launch_class"] for r in reached).most_common():
+        print(f"  {k:16} {v:4}  ({100*v/m:4.1f}%)")
+
+    cred = sum(1 for r in reached if r["needs_credentials"])
+    ext = sum(1 for r in reached if r["external_services"])
     standalone = [r for r in rows if r["runnable_standalone"]]
-    print("\nBlockers")
-    print(f"  needs credentials      {cred:4}  ({100*cred/n:4.1f}%)")
-    print(f"  talks to an external service {ext:4}  ({100*ext/n:4.1f}%)")
+    print("\nBlockers (of servers we could reach)")
+    print(f"  needs credentials            {cred:4}  ({100*cred/m:4.1f}%)")
+    print(f"  talks to an external service {ext:4}  ({100*ext/m:4.1f}%)")
 
     print(f"\n{'='*74}")
     print(f"RUNNABLE STANDALONE: {len(standalone)} / {len(reached)} reached "
