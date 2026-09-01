@@ -15,7 +15,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeout
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -28,6 +30,15 @@ from measure.launchability import Launchability, assess  # noqa: E402
 ROOT = Path(__file__).resolve().parents[1]
 CORPUS = ROOT / "data" / "processed" / "d1_corpus.jsonl"
 OUT = ROOT / "data" / "processed" / "triage.json"
+STATE = ROOT / "data" / "processed" / "d1_state.json"
+
+
+def default_branches() -> dict[str, str]:
+    """owner/repo -> default branch, as recorded during discovery."""
+    if not STATE.exists():
+        return {}
+    st = json.loads(STATE.read_text(encoding="utf-8"))
+    return {f"{r[0]}/{r[1]}": r[2] for r in st.get("repos", [])}
 
 
 def candidates(corpus) -> dict[str, list]:
@@ -41,10 +52,10 @@ def candidates(corpus) -> dict[str, list]:
             and any(is_read(t) for t in ts)}
 
 
-def source_blob(server_id: str, tools) -> str:
+def source_blob(server_id: str, tools, ref: str = "main") -> str:
     """A sample of the server's own source, for credential detection."""
     parts = server_id.split("/")
-    repo = Repo(parts[0], parts[1], "main")
+    repo = Repo(parts[0], parts[1], ref or "main")
     paths = list(dict.fromkeys(t.source_path for t in tools if t.source_path))[:3]
     out = []
     for p in paths:
@@ -72,8 +83,8 @@ def report(rows: list[dict]) -> None:
     print(f"  talks to an external service {ext:4}  ({100*ext/n:4.1f}%)")
 
     print(f"\n{'='*74}")
-    print(f"RUNNABLE STANDALONE: {len(standalone)} / {n} "
-          f"({100*len(standalone)/n:.1f}%)")
+    print(f"RUNNABLE STANDALONE: {len(standalone)} / {len(reached)} reached "
+          f"({100*len(standalone)/m:.1f}%)   [{len(standalone)}/{n} of all]")
     print("=" * 74)
     print("  Launchable by a third party with no credentials and no external")
     print("  service. This is the population a client-side defense can be")
@@ -102,7 +113,11 @@ def main() -> None:
     ap.add_argument("--out", type=Path, default=OUT)
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--resume", action="store_true")
+    ap.add_argument("--redo-unknown", action="store_true",
+                    help="re-assess servers previously classed unknown")
     ap.add_argument("--report-only", action="store_true")
+    ap.add_argument("--timeout", type=float, default=60.0,
+                    help="hard per-server budget, seconds")
     args = ap.parse_args()
 
     rows: list[dict] = []
@@ -114,17 +129,45 @@ def main() -> None:
         return
 
     cands = candidates(load_corpus(args.corpus))
+    if args.redo_unknown:
+        stale = {r["server_id"] for r in rows
+                 if r["launch_class"] in ("unknown", "timeout")}
+        rows = [r for r in rows if r["server_id"] not in stale]
+        print(f"re-assessing {len(stale)} previously-unknown servers")
     done = {r["server_id"] for r in rows}
     todo = [s for s in cands if s not in done]
     if args.limit:
         todo = todo[:args.limit]
     print(f"{len(cands)} audit-relevant servers; assessing {len(todo)}\n")
 
+    # A per-server watchdog. urllib's socket timeout does not bound a slow
+    # trickle of bytes, so a single unresponsive host stalls the whole run --
+    # it killed the first full pass at server 77 of 111 with no traceback.
+    # Timing out one server and recording why is far better than losing the
+    # rest of the sweep.
+    pool = ThreadPoolExecutor(max_workers=1)
+
+    branches = default_branches()
+
+    def assess_one(sid, tools):
+        ref = branches.get("/".join(sid.split("/")[:2]), "main")
+        return assess(sid, len(tools), source_blob(sid, tools, ref), ref)
+
     for i, sid in enumerate(todo, 1):
         tools = cands[sid]
         try:
-            blob = source_blob(sid, tools)
-            la = assess(sid, len(tools), blob)
+            la = pool.submit(assess_one, sid, tools).result(timeout=args.timeout)
+        except FutureTimeout:
+            # A timeout is NOT a launch class. Recording it as "unknown"
+            # conflates "this server ships no manifest" with "we could not
+            # reach the host in time" -- and on the first full sweep every
+            # single "unknown" turned out to be the latter, which would have
+            # been reported as an ecosystem property.
+            la = Launchability(server_id=sid, tools=len(tools),
+                               launch_class="timeout",
+                               notes=f"timed out after {args.timeout}s")
+            pool.shutdown(wait=False, cancel_futures=True)
+            pool = ThreadPoolExecutor(max_workers=1)
         except Exception as e:  # noqa: BLE001
             la = Launchability(server_id=sid, tools=len(tools),
                                notes=f"assessment failed: {type(e).__name__}")
@@ -139,6 +182,13 @@ def main() -> None:
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(rows, indent=1), encoding="utf-8")
     report(rows)
+
+    # A worker abandoned mid-fetch is not joinable -- urllib is blocked in a
+    # socket read that never returns, and Python will not exit while that
+    # thread lives. Results are already on disk, so leave immediately rather
+    # than hanging the run for a host that stopped answering.
+    sys.stdout.flush()
+    os._exit(0)
 
 
 if __name__ == "__main__":

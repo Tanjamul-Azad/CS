@@ -75,11 +75,16 @@ class Launchability:
         return d
 
 
-def _repo_of(server_id: str) -> tuple[Repo, str]:
-    """Split 'owner/repo/subdir' into a Repo and its subpath."""
+def _repo_of(server_id: str, ref: str = "main") -> tuple[Repo, str]:
+    """Split 'owner/repo/subdir' into a Repo and its subpath.
+
+    `ref` matters: 64 of the discovered repositories default to `master`
+    and a handful to something else entirely. Assuming `main` fetches
+    nothing from those and silently classifies them "unknown", which
+    inflates a number we report.
+    """
     parts = server_id.split("/")
-    repo = Repo(parts[0], parts[1], "main")
-    return repo, "/".join(parts[2:])
+    return Repo(parts[0], parts[1], ref or "main"), "/".join(parts[2:])
 
 
 def _try(repo: Repo, paths: list[str]) -> tuple[str, str] | None:
@@ -121,10 +126,11 @@ def _pyproject(src: str) -> tuple[str | None, str | None, str]:
         "no console script; guessed -m"
 
 
-def assess(server_id: str, n_tools: int, sources: str = "") -> Launchability:
+def assess(server_id: str, n_tools: int, sources: str = "",
+           ref: str = "main") -> Launchability:
     """Static launchability assessment for one server."""
     out = Launchability(server_id=server_id, tools=n_tools)
-    repo, sub = _repo_of(server_id)
+    repo, sub = _repo_of(server_id, ref)
     prefix = f"{sub}/" if sub else ""
 
     hit = _try(repo, [f"{prefix}package.json", "package.json"])
