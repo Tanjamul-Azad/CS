@@ -26,7 +26,10 @@ Theory, measurement, and the full evaluation (E1–E5, including a real MCP serv
 | **False positives under concurrency** | ✅ 0% after redesign | was 20–86% before |
 | **Probe-aware adversary (T3)** | ✅ run | detection 0%, deterrence total |
 | **LLM in the loop (E4)** | ✅ 320 episodes | utility delta +0.0 pts; stable at temp 0.7 |
-| **Real MCP server (E3)** | ✅ | 0 FP honest, detects a tampering proxy |
+| **Real MCP server (E3)** | ✅ | 0 FP honest; generic proxy detected |
+| **Generic tampering proxy** | ✅ | declaration-driven; reproduces L1/L2/L3 |
+| **Launchability triage** | ✅ | 32/123 runnable standalone |
+| **Adversarial self-review + plan** | ✅ | [`19`](19-reviewer-review.md), [`20`](20-plan-to-submission.md) |
 | **Figures** | ✅ F1–F4 | `figures/` |
 | **Test suite** | ✅ 42 passing | `pytest tests/ -q` |
 | **references.bib** | ⚠️ 45 entries, all `[U]` unverified | must check venue pages |
