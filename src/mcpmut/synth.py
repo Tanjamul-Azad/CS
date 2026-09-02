@@ -42,7 +42,14 @@ def _string_for(field_name: str, schema: dict) -> str:
     if schema.get("format") == "email" or low in ADDRESS_FIELDS:
         return f"{_rand_token()}@example.test"
     if low in PATH_FIELDS or "path" in low:
-        return f"sandbox/{_rand_token()}.txt"
+        # Flat filename, no directory component. A nested prefix like
+        # "sandbox/x.txt" assumes a subdirectory that does not exist under
+        # the server's actual root, so write_file silently fails (most
+        # filesystem servers do not auto-create parents) and the honest
+        # read-back correctly reports "not found" -- for the wrong reason.
+        # That produced a false-positive VIOLATION on a completely honest
+        # server, corrupting exactly the number Phase 1 exists to measure.
+        return f"probe-{_rand_token()}.txt"
     if "id" in low:
         return f"id-{_rand_token()}"
     return f"probe-{_rand_token()}"

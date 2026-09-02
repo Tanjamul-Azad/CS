@@ -47,3 +47,8 @@ Thumbs.db
 desktop.ini
 data/processed/*.json
 data/processed/*.log
+
+# Scratch space for auditing untrusted third-party MCP servers (Phase 1
+# scale run). Contains whatever those servers happened to write -- never
+# commit this.
+data/scratch/

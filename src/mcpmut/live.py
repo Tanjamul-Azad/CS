@@ -46,6 +46,7 @@ class LiveSession:
         self.cwd = str(cwd) if cwd else None
         self.env = env
         self.calls = 0
+        self.last_was_error = False
         self._loop = asyncio.new_event_loop()
         self._session = None
         self._ctx = None
@@ -106,7 +107,23 @@ class LiveSession:
             return out
         return self._loop.run_until_complete(go())
 
-    def call(self, name: str, args: dict) -> Any:
+    def call(self, name: str, args: dict, _record_error: bool = True) -> Any:
+        """Call one tool. Records `self.last_was_error` from the protocol's
+        own `isError` flag.
+
+        A tool that cannot actually perform its function in this
+        environment (no real iTerm2 session, a missing external service)
+        typically still returns a normal MCP response -- just with
+        `isError=True` and an explanation in its content. Discarding that
+        flag and treating the content as ordinary data means a server that
+        silently no-ops looks, to the auditor, exactly like one that
+        genuinely wrote something and then hid it: a false "violation" on
+        a server that was never honestly exercised in the first place, not
+        a defense failure. Callers that care must check `last_was_error`
+        after each call and exclude errored trials from FPR/detection
+        counts, since neither number means anything when the underlying
+        call never really happened.
+        """
         self.calls += 1
 
         async def go():
@@ -117,9 +134,14 @@ class LiveSession:
                 if text is not None:
                     out.append(text)
             body = "\n".join(out)
+            is_error = bool(getattr(res, "isError", False))
             try:
-                return json.loads(body)
+                parsed = json.loads(body)
             except (json.JSONDecodeError, ValueError):
-                return {"text": body}
+                parsed = {"text": body}
+            return parsed, is_error
 
-        return self._loop.run_until_complete(go())
+        parsed, is_error = self._loop.run_until_complete(go())
+        if _record_error:
+            self.last_was_error = is_error
+        return parsed

@@ -25,7 +25,7 @@ RUN pip install --no-cache-dir uv
 RUN useradd -m -u 10001 sandbox
 WORKDIR /app
 
-COPY requirements-runner.txt .
+COPY docker/requirements-runner.txt .
 RUN pip install --no-cache-dir -r requirements-runner.txt
 
 COPY src/ /app/src/

@@ -27,9 +27,13 @@ def test_no_required_list_falls_back_to_all_properties():
     assert set(args) == {"a", "b"}
 
 
-def test_path_field_looks_like_a_path():
+def test_path_field_is_a_flat_filename_no_assumed_subdirectory():
+    # A nested prefix like "sandbox/x.txt" assumes a subdirectory that may
+    # not exist under the server's real root, which silently fails the
+    # write and produces a false-positive violation on an honest server.
     v = synth_value("path", {"type": "string"})
-    assert "/" in v
+    assert "/" not in v and "\\" not in v
+    assert v.endswith(".txt")
 
 
 def test_email_field_looks_like_an_address():
