@@ -37,7 +37,13 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-TRIAGE = ROOT / "data" / "processed" / "triage.json"
+# Registry-checked triage is preferred: the plain triage.json's
+# runnable_standalone is a false positive for any server whose declared
+# package name was never actually published (15 of the original 32 --
+# see run_registry_check.py), and those all fail identically at launch.
+_REGISTRY_TRIAGE = ROOT / "data" / "processed" / "triage_registry.json"
+_PLAIN_TRIAGE = ROOT / "data" / "processed" / "triage.json"
+TRIAGE = _REGISTRY_TRIAGE if _REGISTRY_TRIAGE.exists() else _PLAIN_TRIAGE
 OUT = ROOT / "data" / "processed" / "scale_run.json"
 SCRATCH_ROOT = ROOT / "data" / "scratch" / "scale_run"
 IMAGE = "mcpaudit-runner:latest"
