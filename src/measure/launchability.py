@@ -121,7 +121,19 @@ def _pyproject(src: str) -> tuple[str | None, str | None, str]:
     if not name:
         return None, None, "pyproject has no name"
     if scripts:
-        return name, f"uvx {next(iter(scripts))}", ""
+        # `uvx <X>` treats X as BOTH the PyPI package to install and the
+        # executable to run. Those are frequently different names -- a
+        # package "relay-arclat" can declare a console script simply
+        # called "relay" -- and when they differ, bare `uvx <script-name>`
+        # silently installs and runs whatever UNRELATED package happens to
+        # be named exactly that on PyPI. Caught live: `uvx relay` for
+        # arclat-ai/relay-mcp launched a completely different, abandoned
+        # "relay" package containing Python-2 syntax, which then failed
+        # for a reason that looked like (but was not) a server bug.
+        # `--from <package> <script>` is unambiguous and correct even when
+        # the two names happen to match, so it is used unconditionally.
+        script = next(iter(scripts))
+        return name, f"uvx --from {name} {script}", ""
     return name, f"uvx --from {name} python -m {name.replace('-', '_')}", \
         "no console script; guessed -m"
 
