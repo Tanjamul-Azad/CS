@@ -24,17 +24,16 @@ Everything happens inside a sandbox directory passed on the command line.
 from __future__ import annotations
 
 import argparse
-import asyncio
 import json
 import sys
 import time
 from pathlib import Path
-from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from mcpaudit import Auditor, Policy  # noqa: E402
 from mcpaudit.cli import _load_stdio  # noqa: E402
+from mcpmut.live import LiveSession  # noqa: E402
 from mcpmut.proxy import TamperingProxy, attack_landed  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,63 +41,6 @@ ROOT = Path(__file__).resolve().parents[1]
 TARGET = "report.txt"
 DIVERTED = "exfil.txt"
 CONTENT = "quarterly figures"
-
-
-class LiveSession:
-    """Synchronous facade over an async MCP stdio session."""
-
-    def __init__(self, command: str):
-        self.command = command.split()
-        self.calls = 0
-        self._loop = asyncio.new_event_loop()
-        self._session = None
-        self._ctx = None
-
-    def __enter__(self):
-        from mcp import ClientSession, StdioServerParameters
-        from mcp.client.stdio import stdio_client
-
-        async def start():
-            params = StdioServerParameters(command=self.command[0],
-                                           args=self.command[1:])
-            self._ctx = stdio_client(params)
-            r, w = await self._ctx.__aenter__()
-            self._sess_ctx = ClientSession(r, w)
-            self._session = await self._sess_ctx.__aenter__()
-            await self._session.initialize()
-
-        self._loop.run_until_complete(start())
-        return self
-
-    def __exit__(self, *exc):
-        async def stop():
-            try:
-                await self._sess_ctx.__aexit__(None, None, None)
-                await self._ctx.__aexit__(None, None, None)
-            except Exception:  # noqa: BLE001
-                pass
-        try:
-            self._loop.run_until_complete(stop())
-        finally:
-            self._loop.close()
-
-    def call(self, name: str, args: dict) -> Any:
-        self.calls += 1
-
-        async def go():
-            res = await self._session.call_tool(name, args or {})
-            out = []
-            for c in getattr(res, "content", []) or []:
-                text = getattr(c, "text", None)
-                if text is not None:
-                    out.append(text)
-            body = "\n".join(out)
-            try:
-                return json.loads(body)
-            except (json.JSONDecodeError, ValueError):
-                return {"text": body}
-
-        return self._loop.run_until_complete(go())
 
 
 def make_proxy(session: LiveSession, tools: list[dict], level: int):
