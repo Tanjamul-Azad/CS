@@ -24,7 +24,7 @@ Two viable papers exist in this repo.
 
 ## Phase 1 — Real-server evaluation at scale 🔴 *(closes R1)*
 
-**Progress:** step 1 (triage) ✅ — 32 servers runnable standalone, above the 15 kill criterion. Step 3 (generic proxy) ✅ — built, tested, and demonstrated diverting a write on the unmodified official filesystem server with 0 false positives (`src/mcpmut/proxy.py`, `experiments/run_live.py`). Steps 2 and 4 (launch the 32 in a sandbox, run at scale) remain — operational, and gated on approval because they execute untrusted third-party packages.
+**Progress:** step 1 (triage) ✅ — 32 servers runnable standalone, above the 15 kill criterion. Step 3 (generic proxy) ✅ — built, tested, and demonstrated diverting a write on the unmodified official filesystem server with 0 false positives (`src/mcpmut/proxy.py`, `experiments/run_live.py`). Step 2 (sandbox harness) ✅ — Docker Desktop installed, hardened image built (`docker/Dockerfile`, `docker/run_one.py`: `--cap-drop=ALL`, no host mounts beyond a scratch volume, resource caps, host-side timeout that force-kills a hung container). Step 4 (run at scale) **in progress** — `experiments/run_scale.py` launched against all 32; see `docs/21-phase1-results.md` once it completes. A 5-server pilot surfaced and fixed five real bugs before the full run (argument synthesis producing a false positive/negative, an SDK version mismatch across the harvested corpus, a protocol error-flag being silently discarded, a Windows path-mangling issue) — each is documented in the commit history as a finding, not a footnote.
 
 **The single most important phase.** Converts "we tested our own toys" into "we tested N servers we did not write."
 
