@@ -80,6 +80,27 @@ def _compat_command(command: str) -> str:
     return command
 
 
+def _mcp_subcommand_hint(stderr: str) -> bool:
+    """Does a failed launch's stderr show an argparse/click subcommand
+    list that includes a literal "mcp" option?
+
+    Caught live: arclat-ai/relay-mcp is a general CLI (`relay {scan,
+    verify,report,mcp} ...`) whose MCP server lives behind one specific
+    subcommand rather than being the bare entrypoint. This is a real,
+    generalisable pattern worth one retry rather than a one-off patch for
+    that single server -- any user integrating these tools by hand would
+    do exactly this: read the usage line, notice "mcp", try it.
+    """
+    return bool(stderr) and "mcp" in stderr and (
+        "usage:" in stderr.lower() or "Commands:" in stderr)
+
+
+def _launch(cmd: list[str], timeout: float) -> tuple[int, str, str]:
+    proc = subprocess.run(cmd, env=DOCKER_ENV, timeout=timeout,
+                          capture_output=True, text=True)
+    return proc.returncode, proc.stdout, proc.stderr
+
+
 def run_one(server: dict, timeout: float) -> dict:
     sid = server["server_id"]
     scratch = SCRATCH_ROOT / sid.replace("/", "__")
@@ -87,23 +108,52 @@ def run_one(server: dict, timeout: float) -> dict:
     name = f"mcpaudit-{uuid.uuid4().hex[:12]}"
     command = _compat_command(server["command"])
 
-    cmd = [
-        "docker", "run", "--rm", "--name", name,
-        "--memory=512m", "--cpus=1", "--pids-limit=256",
-        "--cap-drop=ALL", "--security-opt=no-new-privileges",
-        "-v", f"{scratch}:/sandbox",
-        IMAGE,
-        "--server-id", sid,
-        "--command", command,
-        "--cwd", "/sandbox",
-        "--out", "/sandbox/result.json",
-    ]
+    def build_cmd(cmd_str: str, container_name: str) -> list[str]:
+        return [
+            "docker", "run", "--rm", "--name", container_name,
+            "--memory=512m", "--cpus=1", "--pids-limit=256",
+            "--cap-drop=ALL", "--security-opt=no-new-privileges",
+            "-v", f"{scratch}:/sandbox",
+            IMAGE,
+            "--server-id", sid,
+            "--command", cmd_str,
+            "--cwd", "/sandbox",
+            "--out", "/sandbox/result.json",
+        ]
 
+    cmd = build_cmd(command, name)
     t0 = time.time()
     try:
         proc = subprocess.run(cmd, env=DOCKER_ENV, timeout=timeout,
                               capture_output=True, text=True)
         stderr_tail = proc.stderr[-1500:] if proc.stderr else ""
+
+        # One retry with an "mcp" subcommand appended, only when the
+        # first attempt's own output hints one exists. Not a blind guess:
+        # gated on the pattern actually being present in what the server
+        # itself printed.
+        result_path = scratch / "result.json"
+        first_ok = result_path.exists() and json.loads(
+            result_path.read_text(encoding="utf-8")).get("status") == "ok"
+        if not first_ok and _mcp_subcommand_hint(stderr_tail) \
+                and not command.rstrip().endswith(" mcp"):
+            retry_command = command.rstrip() + " mcp"
+            retry_name = f"{name}-retry"
+            proc2 = subprocess.run(
+                build_cmd(retry_command, retry_name), env=DOCKER_ENV,
+                timeout=timeout, capture_output=True, text=True)
+            if result_path.exists():
+                try:
+                    data = json.loads(result_path.read_text(encoding="utf-8"))
+                    if data.get("status") == "ok":
+                        data["wall_s"] = round(time.time() - t0, 1)
+                        data["original_command"] = server["command"]
+                        data["retried_with_mcp_subcommand"] = True
+                        return data
+                except (json.JSONDecodeError, OSError):
+                    pass
+            stderr_tail = (proc2.stderr[-1500:] if proc2.stderr
+                          else stderr_tail)
     except subprocess.TimeoutExpired:
         # The docker CLI's own process was killed by the timeout, but the
         # container it started keeps running server-side unless force-
