@@ -106,8 +106,18 @@ def main() -> None:
             all_rows.append(row)
             for p in row["packages"]:
                 if p["runnable_standalone"]:
+                    # A registry entry can list more than one installable
+                    # package (an npm build and a PyPI build of the same
+                    # server) -- 48 out of ~6,200 candidates did, in
+                    # practice. Using entry.name alone as server_id would
+                    # give both the same scratch directory and the same
+                    # dedup key downstream, so the second variant is
+                    # silently skipped forever and, if run concurrently,
+                    # the two could race on the same directory.
+                    sid = (entry.name if len(row["packages"]) == 1
+                          else f"{entry.name}#{p['registry_type']}")
                     candidates.append({
-                        "server_id": entry.name,
+                        "server_id": sid,
                         "title": entry.title,
                         "description": entry.description,
                         "repository_url": entry.repository_url,

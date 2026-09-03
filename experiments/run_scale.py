@@ -31,19 +31,27 @@ import json
 import os
 import subprocess
 import sys
+import threading
 import time
 import uuid
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-# Registry-checked triage is preferred: the plain triage.json's
-# runnable_standalone is a false positive for any server whose declared
-# package name was never actually published (15 of the original 32 --
-# see run_registry_check.py), and those all fail identically at launch.
+# Preference order for the candidate pool, best source first:
+#   1. registry_candidates.json -- from the OFFICIAL MCP registry. The
+#      command is author-declared (registryType + identifier), not
+#      guessed from parsing package.json/pyproject.toml, and required
+#      secrets are author-flagged rather than regex-inferred from source.
+#      See src/measure/mcp_registry.py for why this is materially better.
+#   2. triage_registry.json -- GitHub-search-derived, registry-existence
+#      checked (still useful; a different, complementary sampling frame).
+#   3. triage.json -- the same pool without the registry-existence check;
+#      last resort only.
+_MCP_REGISTRY_CANDIDATES = ROOT / "data" / "processed" / "registry_candidates.json"
 _REGISTRY_TRIAGE = ROOT / "data" / "processed" / "triage_registry.json"
 _PLAIN_TRIAGE = ROOT / "data" / "processed" / "triage.json"
-TRIAGE = _REGISTRY_TRIAGE if _REGISTRY_TRIAGE.exists() else _PLAIN_TRIAGE
 OUT = ROOT / "data" / "processed" / "scale_run.json"
 SCRATCH_ROOT = ROOT / "data" / "scratch" / "scale_run"
 IMAGE = "mcpaudit-runner:latest"
@@ -55,9 +63,19 @@ IMAGE = "mcpaudit-runner:latest"
 DOCKER_ENV = {**os.environ, "MSYS_NO_PATHCONV": "1", "MSYS2_ARG_CONV_EXCL": "*"}
 
 
-def load_targets() -> list[dict]:
-    rows = json.loads(TRIAGE.read_text(encoding="utf-8"))
-    return [r for r in rows if r["runnable_standalone"]]
+def load_targets(source: Path | None = None) -> tuple[list[dict], str]:
+    """(targets, source label). Each target has at least server_id+command."""
+    if source:
+        rows = json.loads(source.read_text(encoding="utf-8"))
+        return rows, str(source)
+    if _MCP_REGISTRY_CANDIDATES.exists():
+        rows = json.loads(_MCP_REGISTRY_CANDIDATES.read_text(encoding="utf-8"))
+        # Already pre-filtered to runnable-without-credentials by
+        # run_registry_harvest.py; server_id/command already present.
+        return rows, str(_MCP_REGISTRY_CANDIDATES)
+    triage_path = _REGISTRY_TRIAGE if _REGISTRY_TRIAGE.exists() else _PLAIN_TRIAGE
+    rows = json.loads(triage_path.read_text(encoding="utf-8"))
+    return [r for r in rows if r["runnable_standalone"]], str(triage_path)
 
 
 def _compat_command(command: str) -> str:
@@ -317,9 +335,18 @@ def main() -> None:
     ap.add_argument("--timeout", type=float, default=180.0,
                     help="hard per-server wall-clock budget, seconds")
     ap.add_argument("--out", type=Path, default=OUT)
+    ap.add_argument("--source", type=Path, default=None,
+                    help="candidate pool JSON; default picks the best "
+                         "available (see load_targets)")
     ap.add_argument("--resume", action="store_true")
     ap.add_argument("--report-only", action="store_true")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--workers", type=int, default=5,
+                    help="concurrent docker containers. Each is capped at "
+                        "--memory=512m --cpus=1 in run_one(); this machine "
+                        "has 12 logical CPUs and Docker Desktop's own VM is "
+                        "allocated ~7.5GB, so 5 leaves headroom for the "
+                        "host rather than trying to saturate every core.")
     args = ap.parse_args()
 
     rows: list[dict] = []
@@ -330,27 +357,51 @@ def main() -> None:
         report(rows)
         return
 
-    targets = load_targets()
+    targets, source_label = load_targets(args.source)
     done = {r["server_id"] for r in rows}
     todo = [t for t in targets if t["server_id"] not in done]
     if args.limit:
         todo = todo[:args.limit]
-    print(f"{len(targets)} runnable-standalone servers; running {len(todo)}\n")
+    print(f"source: {source_label}")
+    print(f"{len(targets)} candidates; running {len(todo)} "
+          f"with {args.workers} concurrent workers\n")
 
-    for i, server in enumerate(todo, 1):
-        sid = server["server_id"]
-        print(f"  [{i}/{len(todo)}] {sid} ...", flush=True)
-        result = run_one(server, args.timeout)
-        rows.append(result)
-        status = result.get("status", "?")
-        extra = ""
-        if status == "ok" and "tampered" in result:
-            extra = (f" fp={result.get('honest',{}).get('violations','-')} "
-                     f"det={result.get('tampered',{}).get('violations','-')}")
-        print(f"       -> {status}{extra}")
+    lock = threading.Lock()
+    completed = 0
+
+    def checkpoint() -> None:
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(rows, indent=1, default=str),
                             encoding="utf-8")
+
+    def work(server: dict) -> tuple[dict, dict]:
+        return server, run_one(server, args.timeout)
+
+    with ThreadPoolExecutor(max_workers=max(1, args.workers)) as pool:
+        futures = {pool.submit(work, s): s for s in todo}
+        try:
+            for fut in as_completed(futures):
+                server, result = fut.result()
+                with lock:
+                    rows.append(result)
+                    completed += 1
+                    status = result.get("status", "?")
+                    extra = ""
+                    if status == "ok" and "tampered" in result:
+                        extra = (f" fp={result.get('honest',{}).get('violations','-')} "
+                                 f"det={result.get('tampered',{}).get('violations','-')}")
+                    print(f"  [{completed}/{len(todo)}] {server['server_id']} "
+                          f"-> {status}{extra}", flush=True)
+                    if completed % 5 == 0 or completed == len(todo):
+                        checkpoint()
+        except KeyboardInterrupt:
+            print("\ninterrupted -- cancelling remaining work, "
+                  "checkpointing what finished")
+            for f in futures:
+                f.cancel()
+        finally:
+            with lock:
+                checkpoint()
 
     report(rows)
 
