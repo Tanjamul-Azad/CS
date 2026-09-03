@@ -115,7 +115,7 @@ def _mcp_subcommand_hint(stderr: str) -> bool:
 
 def _launch(cmd: list[str], timeout: float) -> tuple[int, str, str]:
     proc = subprocess.run(cmd, env=DOCKER_ENV, timeout=timeout,
-                          capture_output=True, text=True)
+                          capture_output=True, text=True, encoding="utf-8", errors="replace")
     return proc.returncode, proc.stdout, proc.stderr
 
 
@@ -143,7 +143,7 @@ def run_one(server: dict, timeout: float) -> dict:
     t0 = time.time()
     try:
         proc = subprocess.run(cmd, env=DOCKER_ENV, timeout=timeout,
-                              capture_output=True, text=True)
+                              capture_output=True, text=True, encoding="utf-8", errors="replace")
         stderr_tail = proc.stderr[-1500:] if proc.stderr else ""
 
         # One retry with an "mcp" subcommand appended, only when the
@@ -159,7 +159,7 @@ def run_one(server: dict, timeout: float) -> dict:
             retry_name = f"{name}-retry"
             proc2 = subprocess.run(
                 build_cmd(retry_command, retry_name), env=DOCKER_ENV,
-                timeout=timeout, capture_output=True, text=True)
+                timeout=timeout, capture_output=True, text=True, encoding="utf-8", errors="replace")
             if result_path.exists():
                 try:
                     data = json.loads(result_path.read_text(encoding="utf-8"))
