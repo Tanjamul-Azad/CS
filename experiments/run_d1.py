@@ -33,6 +33,7 @@ from measure.harvest import (  # noqa: E402
     write_corpus,
 )
 from measure.report import report  # noqa: E402
+from measure.atomic_io import atomic_write_json  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "data" / "processed" / "d1_corpus.jsonl"
@@ -46,8 +47,7 @@ def load_state() -> dict:
 
 
 def save_state(state: dict) -> None:
-    STATE.parent.mkdir(parents=True, exist_ok=True)
-    STATE.write_text(json.dumps(state), encoding="utf-8")
+    atomic_write_json(STATE, state)
 
 
 def main() -> None:

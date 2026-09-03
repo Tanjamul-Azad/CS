@@ -39,6 +39,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+from measure.atomic_io import atomic_write_json  # noqa: E402
 # Preference order for the candidate pool, best source first:
 #   1. registry_candidates.json -- from the OFFICIAL MCP registry. The
 #      command is author-declared (registryType + identifier), not
@@ -370,9 +372,15 @@ def main() -> None:
     completed = 0
 
     def checkpoint() -> None:
-        args.out.parent.mkdir(parents=True, exist_ok=True)
-        args.out.write_text(json.dumps(rows, indent=1, default=str),
-                            encoding="utf-8")
+        # Atomic: a non-atomic write_text() truncates the file BEFORE
+        # writing the new content, so a failure mid-write (this is how
+        # the last run's disk-full crash actually happened) leaves an
+        # empty or partial file and destroys whatever checkpoint was
+        # there before -- 350 completed results were lost exactly this
+        # way. atomic_write_json writes to a temp file and renames, so
+        # the destination is always either the old complete content or
+        # the new complete content.
+        atomic_write_json(args.out, rows, indent=1, default=str)
 
     def work(server: dict) -> tuple[dict, dict]:
         return server, run_one(server, args.timeout)

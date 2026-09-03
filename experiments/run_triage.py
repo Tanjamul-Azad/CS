@@ -26,6 +26,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from measure.classify import is_read, is_write  # noqa: E402
 from measure.harvest import Repo, fetch_raw, load_corpus  # noqa: E402
 from measure.launchability import Launchability, assess  # noqa: E402
+from measure.atomic_io import atomic_write_json  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 CORPUS = ROOT / "data" / "processed" / "d1_corpus.jsonl"
@@ -185,11 +186,9 @@ def main() -> None:
         print(f"  [{i}/{len(todo)}] {flag} {la.launch_class:14} "
               f"{sid[:48]}", flush=True)
         if i % 10 == 0:
-            args.out.parent.mkdir(parents=True, exist_ok=True)
-            args.out.write_text(json.dumps(rows, indent=1), encoding="utf-8")
+            atomic_write_json(args.out, rows, indent=1)
 
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps(rows, indent=1), encoding="utf-8")
+    atomic_write_json(args.out, rows, indent=1)
     report(rows)
 
     # A worker abandoned mid-fetch is not joinable -- urllib is blocked in a

@@ -191,10 +191,16 @@ def dedup(tools: list[ExtractedTool]) -> list[ExtractedTool]:
 
 
 def write_corpus(tools: list[ExtractedTool], out: Path) -> None:
-    out.parent.mkdir(parents=True, exist_ok=True)
-    with out.open("w", encoding="utf-8") as f:
-        for t in tools:
-            f.write(json.dumps(t.to_json()) + "\n")
+    # Atomic: the previous version opened `out` for writing directly,
+    # which truncates it immediately, then wrote one line per tool in a
+    # loop. A disk-full mid-loop (this is exactly how it failed once, on
+    # a 14,000+-tool corpus) leaves the file part-written and the
+    # complete prior checkpoint gone -- this is called on every harvest
+    # loop iteration, not just at the end, so "the last good state" is
+    # the whole run's progress, not a small window.
+    from .atomic_io import atomic_write_text
+    text = "\n".join(json.dumps(t.to_json()) for t in tools)
+    atomic_write_text(out, text + ("\n" if text else ""))
 
 
 def load_corpus(path: Path) -> list[ExtractedTool]:

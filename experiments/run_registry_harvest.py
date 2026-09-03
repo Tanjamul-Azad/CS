@@ -30,6 +30,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from measure.mcp_registry import walk_registry  # noqa: E402
+from measure.atomic_io import atomic_write_json  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 ALL_OUT = ROOT / "data" / "processed" / "registry_all.json"
@@ -91,10 +92,12 @@ def main() -> None:
     last_cursor = start_cursor
 
     def checkpoint() -> None:
-        ALL_OUT.parent.mkdir(parents=True, exist_ok=True)
-        ALL_OUT.write_text(json.dumps(all_rows, indent=1), encoding="utf-8")
-        CAND_OUT.write_text(json.dumps(candidates, indent=1), encoding="utf-8")
-        STATE_OUT.write_text(json.dumps({"cursor": last_cursor}), encoding="utf-8")
+        # Atomic writes: a disk-full or killed-process mid-write must not
+        # truncate a checkpoint that took many minutes of registry
+        # pagination to build -- see measure/atomic_io.py.
+        atomic_write_json(ALL_OUT, all_rows, indent=1)
+        atomic_write_json(CAND_OUT, candidates, indent=1)
+        atomic_write_json(STATE_OUT, {"cursor": last_cursor})
 
     try:
         for entry, cursor in walk_registry(limit_per_page=args.limit_per_page,
