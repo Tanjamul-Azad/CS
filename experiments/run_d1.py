@@ -57,6 +57,10 @@ def main() -> None:
     ap.add_argument("--resume", action="store_true")
     ap.add_argument("--report-only", action="store_true")
     ap.add_argument("--out", type=Path, default=OUT)
+    ap.add_argument("--rediscover", action="store_true",
+                    help="run discovery again at --target and MERGE new "
+                         "repos into the existing state, instead of only "
+                         "reusing whatever was discovered the first time")
     args = ap.parse_args()
 
     if args.report_only:
@@ -73,11 +77,24 @@ def main() -> None:
         tools = load_corpus(args.out)
         print(f"resuming: {len(tools)} tools, {len(state['done'])} repos done")
 
-    if not state.get("repos"):
-        print("discovering MCP server repositories...")
-        repos = discover(token, target=args.target)
-        state["repos"] = [[r.owner, r.name, r.ref, r.kind] for r in repos]
+    if not state.get("repos") or args.rediscover:
+        print(f"discovering MCP server repositories (target={args.target})...")
+        new_repos = discover(token, target=args.target)
+        # Merge rather than replace: a --rediscover at a bigger --target
+        # should ADD repos, not throw away work already checkpointed
+        # against the smaller set from a previous run.
+        existing = {tuple(r[:2]) for r in state.get("repos", [])}
+        merged = list(state.get("repos", []))
+        added = 0
+        for r in new_repos:
+            key = (r.owner, r.name)
+            if key not in existing:
+                merged.append([r.owner, r.name, r.ref, r.kind])
+                existing.add(key)
+                added += 1
+        state["repos"] = merged
         save_state(state)
+        print(f"  {added} new repos added ({len(merged)} total)")
     repos = [Repo(*r) for r in state["repos"]]
 
     done = set(state["done"])
