@@ -33,7 +33,19 @@ COPY docker/run_one.py /app/run_one.py
 
 RUN mkdir -p /sandbox /out && chown -R sandbox:sandbox /app /sandbox /out
 USER sandbox
-ENV HOME=/sandbox
+# HOME stays the container's own home directory (/home/sandbox, created by
+# `useradd -m` above), NOT /sandbox. /sandbox is bind-mounted to the host
+# for the audited server's own files and is exactly what we want gone
+# when a container exits.
+#
+# npm/uv/pip resolve their package cache under $HOME (npm: $HOME/.npm,
+# uv: $HOME/.cache/uv) regardless of the process's working directory.
+# Pointing HOME at the bind mount meant every one of ~900 audited
+# servers left its ENTIRE package cache on the HOST disk -- ~40GB across
+# the corpus, discovered only when it filled a 144GB drive and crashed
+# two unrelated background harvests with ENOSPC. With HOME back in the
+# container's own writable layer, that cache is destroyed with the
+# container on --rm, exactly like everything else --rm is meant to undo.
 ENV PYTHONPATH=/app/src
 
 ENTRYPOINT ["python3", "/app/run_one.py"]
