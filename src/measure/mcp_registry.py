@@ -90,16 +90,24 @@ class RegistryEntry:
                if p.stdio_launchable and not p.needs_credentials]
 
 
-def _get(url: str, retries: int = 3) -> dict:
+def _get(url: str, retries: int = 6) -> dict:
+    """A walk over 20,000+ pages WILL hit a transient network hiccup --
+    it already has, once, in practice, taking the entire harvest down and
+    losing everything after the last checkpoint because a plain
+    TimeoutError is not a urllib.error.URLError and was not caught. Catch
+    broadly here; a real, persistent outage still surfaces after `retries`
+    with a real traceback, but a lone dropped connection does not cost a
+    ten-minute walk.
+    """
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     for attempt in range(retries):
         try:
             with urllib.request.urlopen(req, timeout=20) as r:
                 return json.loads(r.read())
-        except (urllib.error.URLError, TimeoutError):
+        except Exception:  # noqa: BLE001
             if attempt == retries - 1:
                 raise
-            time.sleep(2 * (attempt + 1))
+            time.sleep(min(2 * (attempt + 1), 20))
     return {}
 
 
@@ -137,12 +145,20 @@ def walk_registry(
     max_pages: int = 10_000,
     delay: float = 0.15,
     only_latest: bool = True,
-) -> Iterator[RegistryEntry]:
-    """Every entry in the official registry, paginated. `only_latest`
-    skips superseded versions -- the registry keeps full version history,
-    and without this filter every server appears once per release ever
-    published."""
-    cursor: str | None = None
+    start_cursor: str | None = None,
+) -> Iterator[tuple[RegistryEntry, str | None]]:
+    """Every entry in the official registry, paginated, each yielded with
+    the cursor value that would RESUME right after it.
+
+    `only_latest` skips superseded versions -- the registry keeps full
+    version history, and without this filter every server appears once
+    per release ever published. `start_cursor` resumes a walk broken by a
+    prior failure instead of re-scanning from the beginning; the registry
+    turned out to run past 21,000 entries, far more than an early
+    50-page probe suggested, so re-walking the whole thing on every
+    transient failure is not a viable retry strategy.
+    """
+    cursor = start_cursor
     version_q = "&version=latest" if only_latest else ""
     for _ in range(max_pages):
         url = f"{BASE}?limit={limit_per_page}{version_q}"
@@ -152,9 +168,9 @@ def walk_registry(
         items = data.get("servers", [])
         if not items:
             return
-        for item in items:
-            yield _parse_entry(item)
         cursor = data.get("metadata", {}).get("nextCursor")
+        for item in items:
+            yield _parse_entry(item), cursor
         if not cursor:
             return
         time.sleep(delay)

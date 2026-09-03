@@ -34,6 +34,7 @@ from measure.mcp_registry import walk_registry  # noqa: E402
 ROOT = Path(__file__).resolve().parents[1]
 ALL_OUT = ROOT / "data" / "processed" / "registry_all.json"
 CAND_OUT = ROOT / "data" / "processed" / "registry_candidates.json"
+STATE_OUT = ROOT / "data" / "processed" / "registry_harvest_state.json"
 
 
 def to_row(entry) -> dict:
@@ -60,40 +61,70 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--max-pages", type=int, default=10_000)
     ap.add_argument("--limit-per-page", type=int, default=100)
+    ap.add_argument("--resume", action="store_true",
+                    help="continue from the last saved cursor and data "
+                         "instead of starting over -- a walk over 20,000+ "
+                         "entries WILL hit a transient network failure")
+    ap.add_argument("--restart", action="store_true",
+                    help="explicitly discard any saved progress and start "
+                         "from the beginning")
     args = ap.parse_args()
 
-    print("Walking the official MCP registry...\n")
     all_rows: list[dict] = []
     candidates: list[dict] = []
+    start_cursor = None
+    if args.resume and not args.restart and STATE_OUT.exists():
+        state = json.loads(STATE_OUT.read_text(encoding="utf-8"))
+        start_cursor = state.get("cursor")
+        if ALL_OUT.exists():
+            all_rows = json.loads(ALL_OUT.read_text(encoding="utf-8"))
+        if CAND_OUT.exists():
+            candidates = json.loads(CAND_OUT.read_text(encoding="utf-8"))
+        print(f"resuming from cursor={start_cursor!r}: "
+              f"{len(all_rows)} entries, {len(candidates)} candidates "
+              "already saved\n")
+    else:
+        print("Walking the official MCP registry from the start...\n")
+
     t0 = time.time()
+    i = len(all_rows)
+    last_cursor = start_cursor
 
-    for i, entry in enumerate(walk_registry(limit_per_page=args.limit_per_page,
-                                            max_pages=args.max_pages), 1):
-        row = to_row(entry)
-        all_rows.append(row)
-        for p in row["packages"]:
-            if p["runnable_standalone"]:
-                candidates.append({
-                    "server_id": entry.name,
-                    "title": entry.title,
-                    "description": entry.description,
-                    "repository_url": entry.repository_url,
-                    "registry_type": p["registry_type"],
-                    "identifier": p["identifier"],
-                    "command": p["command"],
-                    "optional_env": p["optional_env"],
-                })
-        if i % 500 == 0:
-            elapsed = time.time() - t0
-            print(f"  {i} entries, {len(candidates)} candidates so far "
-                  f"({elapsed:.0f}s elapsed)")
-            ALL_OUT.parent.mkdir(parents=True, exist_ok=True)
-            ALL_OUT.write_text(json.dumps(all_rows, indent=1), encoding="utf-8")
-            CAND_OUT.write_text(json.dumps(candidates, indent=1), encoding="utf-8")
+    def checkpoint() -> None:
+        ALL_OUT.parent.mkdir(parents=True, exist_ok=True)
+        ALL_OUT.write_text(json.dumps(all_rows, indent=1), encoding="utf-8")
+        CAND_OUT.write_text(json.dumps(candidates, indent=1), encoding="utf-8")
+        STATE_OUT.write_text(json.dumps({"cursor": last_cursor}), encoding="utf-8")
 
-    ALL_OUT.parent.mkdir(parents=True, exist_ok=True)
-    ALL_OUT.write_text(json.dumps(all_rows, indent=1), encoding="utf-8")
-    CAND_OUT.write_text(json.dumps(candidates, indent=1), encoding="utf-8")
+    try:
+        for entry, cursor in walk_registry(limit_per_page=args.limit_per_page,
+                                           max_pages=args.max_pages,
+                                           start_cursor=start_cursor):
+            i += 1
+            last_cursor = cursor
+            row = to_row(entry)
+            all_rows.append(row)
+            for p in row["packages"]:
+                if p["runnable_standalone"]:
+                    candidates.append({
+                        "server_id": entry.name,
+                        "title": entry.title,
+                        "description": entry.description,
+                        "repository_url": entry.repository_url,
+                        "registry_type": p["registry_type"],
+                        "identifier": p["identifier"],
+                        "command": p["command"],
+                        "optional_env": p["optional_env"],
+                    })
+            if i % 500 == 0:
+                elapsed = time.time() - t0
+                print(f"  {i} entries, {len(candidates)} candidates so far "
+                      f"({elapsed:.0f}s elapsed)")
+                checkpoint()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        checkpoint()
 
     print(f"\n{'='*70}")
     print(f"REGISTRY HARVEST COMPLETE  --  {time.time()-t0:.0f}s")
