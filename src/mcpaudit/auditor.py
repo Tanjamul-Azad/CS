@@ -121,11 +121,43 @@ class Auditor:
         self.relations = derive_all(self.tools)
         self.classes = classify(self.tools, self.relations)
 
-        # tool -> read tools that can corroborate it
+        # tool -> read tools that can corroborate it, ordered field-overlap
+        # readers first. derive_for_server emits an R1/R5 relation whenever
+        # a write and a read share EITHER an output-field name (strong: the
+        # read actually returns what the write accepted) OR merely a
+        # resource noun in their names/descriptions (weak: `create_order`
+        # and `search_products` both mention "product", but a catalog
+        # browse cannot reflect a freshly created order). A noun-only
+        # reader routinely names something that structurally cannot
+        # corroborate the write -- wrong resource type, a different index,
+        # paginated or eventually consistent -- and then fires identically
+        # on an honest and a tampered server. Measured on the real-server
+        # registry run: of the servers where BOTH the honest and tampered
+        # trial were flagged, 136/144 had the reader picked this way and
+        # the tampering attack never even landed. Preferring the
+        # field-overlap reader when one exists, and marking the reader's
+        # strength so _check_write_read can decline to call a noun-only
+        # finding a confirmed "violation", is the fix.
         self._readers: dict[str, list[str]] = defaultdict(list)
+        self._reader_strength: dict[tuple[str, str], str] = {}
+        _pending: dict[str, list[tuple[str, str]]] = defaultdict(list)
         for rel in self.relations:
             if rel.kind in ("R1", "R5") and len(rel.tools) == 2:
                 w, r = rel.tools
+                strength = "field" if rel.basis.startswith("read returns") else "noun"
+                # A write/reader pair can carry BOTH an R1 relation (field
+                # or noun basis) and an R5 canary relation (always a "field:
+                # <name>" basis, which does not start with "read returns").
+                # Once a pair has earned "field" from any relation, a later
+                # R5 entry for the same pair must not downgrade it back to
+                # "noun" just because canary's basis string reads differently.
+                if self._reader_strength.get((w, r)) != "field":
+                    self._reader_strength[(w, r)] = strength
+                _pending[w].append((r, strength))
+        for w, pairs in _pending.items():
+            # Stable sort: field-overlap pairs first, noun-only as fallback,
+            # original discovery order preserved within each tier.
+            for r, _ in sorted(pairs, key=lambda p: p[1] != "field"):
                 if r not in self._readers[w]:
                     self._readers[w].append(r)
 
@@ -385,6 +417,14 @@ class Auditor:
 
         reader = readers[0]
         self._audits += 1
+        # "field" means this reader actually returns what the write
+        # accepted -- a real corroboration. "noun" means it was the only
+        # reader available and shares nothing but a resource word with the
+        # write (see the comment on self._readers in __init__); a mismatch
+        # there is too weak a signal to call a confirmed violation, so it
+        # is reported but does not count toward fp/detection rates.
+        strength = self._reader_strength.get((name, reader), "noun")
+        weak = strength != "field"
         # Fill the reader's parameters from the write we are checking.
         # read_file(path) must be asked about the path just written; calling
         # it bare returns an error, the error text naturally does not contain
@@ -405,9 +445,12 @@ class Auditor:
                           f"this call is unverified")]
         if verdict == "absent":
             return [Alert(
-                "violation", name, "R1",
+                "warning" if weak else "violation", name, "R1",
                 f"{reader} reports the target of this write does not exist, "
-                f"yet the response claimed success")]
+                f"yet the response claimed success"
+                + (f" (weak pairing: {reader} shares only a resource noun "
+                   f"with {name}, not its fields -- not counted as a "
+                   f"confirmed violation)" if weak else ""))]
 
         # Values we PASSED to the probe scope the query -- they identify what
         # to look at, and a read is not obliged to echo them back. read_file
@@ -421,9 +464,12 @@ class Auditor:
         ]
         if missing:
             return [Alert(
-                "violation", name, "R1",
+                "warning" if weak else "violation", name, "R1",
                 f"wrote {missing} but {reader} does not reflect it -- "
-                f"the server's response claimed success")]
+                f"the server's response claimed success"
+                + (f" (weak pairing: {reader} shares only a resource noun "
+                   f"with {name}, not its fields -- not counted as a "
+                   f"confirmed violation)" if weak else ""))]
         return [Alert("info", name, "R1", f"confirmed via {reader}")]
 
 

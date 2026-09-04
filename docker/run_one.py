@@ -1,12 +1,22 @@
 """
 Runs INSIDE the sandbox container: audit one real, unvetted MCP server.
 
-Launches the server twice (fresh subprocess each time, so state does not
-carry over): once honestly, once behind the declaration-driven tampering
-proxy at L1. Both trials pick the SAME write tool, chosen by highest
-relation degree among tools the auditor can actually check, and synthesize
-its arguments from the declared inputSchema alone -- we do not know this
-server's semantics, only what it advertises.
+Launches the server once honestly, then once more per requested tamper
+level (--levels, default "1") -- a fresh subprocess each time, so state
+does not carry over between trials. All trials pick the SAME write tool
+(highest relation degree among tools the auditor can actually check,
+unless --write-tool forces a specific name to stay consistent with a
+prior run's choice), and synthesize fresh arguments per trial from the
+declared inputSchema alone -- we do not know this server's semantics,
+only what it advertises.
+
+The levels matter because the ladder in mcpmut/proxy.py is cumulative:
+L1 diverts a target field and R1 (write-read consistency) should catch
+it; L2 additionally skims a numeric field and launders it out of reads,
+which blinds R1 but conservation (R2) should still catch the skim; L3
+launders the aggregate too, which Theorem 1 says defeats any client-side
+check. Running only L1 (the original scale run) cannot tell us whether R2
+rescues what R1 misses on real servers -- that is what this run measures.
 
 Writes one JSON result to --out. Never raises past main(): a broken or
 hostile server must produce a result row explaining the failure, not take
@@ -40,12 +50,25 @@ def _decl(t: dict) -> ExtractedTool:
                          annotations=t.get("annotations") or {})
 
 
-def choose_write_tool(tools: list[dict], auditor: Auditor) -> dict | None:
+def choose_write_tool(tools: list[dict], auditor: Auditor,
+                      forced_name: str | None = None) -> dict | None:
     """The write tool with the most derivable relations -- the one an
-    audit has the best chance of actually being able to check."""
+    audit has the best chance of actually being able to check.
+
+    `forced_name` keeps a follow-up run (e.g. testing L2/L3 against
+    servers already audited at L1) pointed at the SAME tool the original
+    run picked, rather than risking a different auto-choice if the
+    server's tool list drifted between runs.
+    """
     writes = [t for t in tools if is_write(_decl(t))]
     if not writes:
         return None
+    if forced_name:
+        forced = next((t for t in writes if t["name"] == forced_name), None)
+        if forced is not None:
+            return forced
+        # Named tool no longer present (server changed) -- fall back to
+        # auto-choice rather than failing the whole trial outright.
 
     def degree(t: dict) -> int:
         _, deg = auditor._cls(t["name"])
@@ -56,13 +79,13 @@ def choose_write_tool(tools: list[dict], auditor: Auditor) -> dict | None:
 
 
 def one_trial(command: str, cwd: str, tools: list[dict], write_tool: dict,
-             args: dict, tampered: bool) -> dict:
+             args: dict, tampered: bool, level: int = 1) -> dict:
     """Launch fresh, run one audited call, return what happened."""
     with LiveSession(command, cwd=cwd) as session:
         server = (TamperingProxy(inner=session.call,
                                  write_tools={t["name"] for t in tools if is_write(_decl(t))},
                                  read_tools={t["name"] for t in tools if is_read(_decl(t))},
-                                 level=1)
+                                 level=level)
                   if tampered else session)
 
         auditor = Auditor.from_mcp_tools(
@@ -112,7 +135,17 @@ def main() -> None:
     ap.add_argument("--command", required=True)
     ap.add_argument("--cwd", default="/sandbox")
     ap.add_argument("--out", default="/out/result.json")
+    ap.add_argument("--levels", default="1",
+                    help="comma-separated tamper levels to test, e.g. "
+                         "1,2,3 -- see mcpmut/proxy.py for what each does")
+    ap.add_argument("--write-tool", default=None,
+                    help="force this tool name (keeps a follow-up run "
+                         "pointed at the same tool an earlier run used)")
+    ap.add_argument("--skip-honest", action="store_true",
+                    help="omit the honest trial (already known from a "
+                         "prior run) -- saves one launch per server")
     args = ap.parse_args()
+    levels = [int(x) for x in args.levels.split(",") if x.strip()]
 
     result: dict = {"server_id": args.server_id, "command": args.command}
 
@@ -127,36 +160,40 @@ def main() -> None:
         cov = auditor.coverage()
         result["coverage"] = cov.by_class
 
-        write_tool = choose_write_tool(tools, auditor)
+        write_tool = choose_write_tool(tools, auditor, args.write_tool)
         if write_tool is None:
             result["status"] = "no_write_tool_found"
         else:
             result["write_tool"] = write_tool["name"]
 
-            # Fresh arguments PER TRIAL. Both trials share the same mounted
-            # sandbox directory across two separate subprocess launches, so
-            # reusing one synthesized path/filename here means the honest
-            # trial's file is still on disk when the tampered trial reads
-            # back -- read_file finds the honest leftover and reports
-            # "confirmed" even though the tampered write actually landed
-            # somewhere else. That false negative is exactly the kind of
-            # instrument bug this project keeps finding by running against
-            # real things instead of assuming the harness is neutral.
+            # Fresh arguments PER TRIAL. Trials share the same mounted
+            # sandbox directory across separate subprocess launches, so
+            # reusing one synthesized path/filename here means an earlier
+            # trial's file is still on disk when a later trial reads back
+            # -- read_file finds the leftover and reports "confirmed" even
+            # though this trial's write actually landed somewhere else.
+            # That false negative is exactly the kind of instrument bug
+            # this project keeps finding by running against real things
+            # instead of assuming the harness is neutral.
             schema = write_tool.get("inputSchema") or {}
 
-            try:
-                result["honest"] = one_trial(
-                    args.command, args.cwd, tools, write_tool,
-                    synth_args(schema), tampered=False)
-            except Exception as e:  # noqa: BLE001
-                result["honest"] = {"error": f"{type(e).__name__}: {e}"}
+            if not args.skip_honest:
+                try:
+                    result["honest"] = one_trial(
+                        args.command, args.cwd, tools, write_tool,
+                        synth_args(schema), tampered=False)
+                except Exception as e:  # noqa: BLE001
+                    result["honest"] = {"error": f"{type(e).__name__}: {e}"}
 
-            try:
-                result["tampered"] = one_trial(
-                    args.command, args.cwd, tools, write_tool,
-                    synth_args(schema), tampered=True)
-            except Exception as e:  # noqa: BLE001
-                result["tampered"] = {"error": f"{type(e).__name__}: {e}"}
+            result["tampered"] = {}
+            for level in levels:
+                try:
+                    result["tampered"][f"L{level}"] = one_trial(
+                        args.command, args.cwd, tools, write_tool,
+                        synth_args(schema), tampered=True, level=level)
+                except Exception as e:  # noqa: BLE001
+                    result["tampered"][f"L{level}"] = {
+                        "error": f"{type(e).__name__}: {e}"}
 
             result["status"] = "ok"
 
