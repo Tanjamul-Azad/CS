@@ -29,6 +29,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 import threading
@@ -116,14 +117,71 @@ def _mcp_subcommand_hint(stderr: str) -> bool:
 
 
 def _launch(cmd: list[str], timeout: float) -> tuple[int, str, str]:
-    proc = subprocess.run(cmd, env=DOCKER_ENV, timeout=timeout,
+    proc = subprocess.run(cmd, env=DOCKER_ENV, timeout=timeout, stdin=subprocess.DEVNULL,
                           capture_output=True, text=True, encoding="utf-8", errors="replace")
     return proc.returncode, proc.stdout, proc.stderr
 
 
+def _run_docker(cmd: list[str], container_name: str, timeout: float) -> subprocess.CompletedProcess:
+    """subprocess.run against ONE docker invocation, killing that SAME
+    container by name if it times out.
+
+    A retry launches a second, differently-named container
+    (`{name}-retry`). Killing a fixed/outer name here -- rather than the
+    name that actually corresponds to THIS call -- is a silent no-op
+    whenever the timeout hits the retry: the first container already
+    exited normally, `docker kill` on its name just fails quietly, and
+    the real, still-running retry container is never touched. Caught
+    live: one retry container ran orphaned for 4+ hours, undetected
+    because the host-side timeout still fired and moved the worker on to
+    its next server -- the leak was invisible in the run's own progress.
+
+    stdin=DEVNULL matters here specifically: subprocess.run with no stdin=
+    argument inherits the PARENT's stdin handle. Run in a normal foreground
+    shell that handle is fine; run as a detached/background process (this
+    script is meant to survive for hours, unattended) it can be an invalid
+    or half-torn-down handle that every `docker` child process then also
+    inherits. Caught live: every worker hung with ~0 CPU time and zero
+    completions for 10+ minutes after being relaunched detached, while the
+    exact same concurrent-subprocess code ran cleanly in under 20s from a
+    normal foreground call -- the only difference was stdin inheritance.
+    """
+    try:
+        return subprocess.run(cmd, env=DOCKER_ENV, timeout=timeout, stdin=subprocess.DEVNULL,
+                              capture_output=True, text=True, encoding="utf-8", errors="replace")
+    except subprocess.TimeoutExpired:
+        subprocess.run(["docker", "kill", container_name], env=DOCKER_ENV,
+                       stdin=subprocess.DEVNULL, capture_output=True, timeout=15)
+        raise
+
+
+_UNSAFE_PATH_CHARS = re.compile(r'[<>:"|?*]')
+
+
+def _safe_dirname(sid: str) -> str:
+    """A server_id turned into a directory name Windows will accept.
+
+    registry_candidates.json disambiguates entries that register more than
+    one installable package with `#{registry_type}` and, for the rare
+    remaining collision, a further `:{identifier}` suffix (see
+    run_registry_harvest.py) -- so a handful of real server_ids contain a
+    literal `:`. Windows reserves `: < > " | ? *` in path components (`:`
+    specifically for drive letters / NTFS alternate data streams), so
+    `sid.replace("/", "__")` alone produces an invalid directory name for
+    those. Caught live: it crashed the WHOLE run with an uncaught
+    NotADirectoryError the moment the queue reached the first such id --
+    scratch.mkdir() runs before run_one()'s own try/except, and the
+    exception then propagated straight through fut.result() in main()'s
+    loop, which had no guard either. Every restart resumed at the same
+    point and hit the same id within a couple of minutes, which is exactly
+    why it looked like a hang rather than a crash on casual inspection.
+    """
+    return _UNSAFE_PATH_CHARS.sub("_", sid.replace("/", "__"))
+
+
 def run_one(server: dict, timeout: float) -> dict:
     sid = server["server_id"]
-    scratch = SCRATCH_ROOT / sid.replace("/", "__")
+    scratch = SCRATCH_ROOT / _safe_dirname(sid)
     scratch.mkdir(parents=True, exist_ok=True)
     name = f"mcpaudit-{uuid.uuid4().hex[:12]}"
     command = _compat_command(server["command"])
@@ -144,8 +202,7 @@ def run_one(server: dict, timeout: float) -> dict:
     cmd = build_cmd(command, name)
     t0 = time.time()
     try:
-        proc = subprocess.run(cmd, env=DOCKER_ENV, timeout=timeout,
-                              capture_output=True, text=True, encoding="utf-8", errors="replace")
+        proc = _run_docker(cmd, name, timeout)
         stderr_tail = proc.stderr[-1500:] if proc.stderr else ""
 
         # One retry with an "mcp" subcommand appended, only when the
@@ -159,9 +216,8 @@ def run_one(server: dict, timeout: float) -> dict:
                 and not command.rstrip().endswith(" mcp"):
             retry_command = command.rstrip() + " mcp"
             retry_name = f"{name}-retry"
-            proc2 = subprocess.run(
-                build_cmd(retry_command, retry_name), env=DOCKER_ENV,
-                timeout=timeout, capture_output=True, text=True, encoding="utf-8", errors="replace")
+            proc2 = _run_docker(build_cmd(retry_command, retry_name),
+                                retry_name, timeout)
             if result_path.exists():
                 try:
                     data = json.loads(result_path.read_text(encoding="utf-8"))
@@ -175,11 +231,8 @@ def run_one(server: dict, timeout: float) -> dict:
             stderr_tail = (proc2.stderr[-1500:] if proc2.stderr
                           else stderr_tail)
     except subprocess.TimeoutExpired:
-        # The docker CLI's own process was killed by the timeout, but the
-        # container it started keeps running server-side unless force-
-        # stopped explicitly. --rm alone does not guarantee that.
-        subprocess.run(["docker", "kill", name], env=DOCKER_ENV,
-                       capture_output=True, timeout=15)
+        # Whichever container actually ran this call has already been
+        # killed by _run_docker, by its own correct name.
         result_path = scratch / "result.json"
         if result_path.exists():
             try:
@@ -383,7 +436,24 @@ def main() -> None:
         atomic_write_json(args.out, rows, indent=1, default=str)
 
     def work(server: dict) -> tuple[dict, dict]:
-        return server, run_one(server, args.timeout)
+        # run_one() already catches everything from the docker call
+        # onward (see its own docstring: "a broken or hostile server must
+        # produce a result row... not take down the whole scale run"),
+        # but scratch.mkdir() runs before that guard starts, and the
+        # broader point holds regardless of exactly where a future bug
+        # lands: fut.result() in the main loop below has no guard of its
+        # OWN, so ANY uncaught exception from ANY worker -- not just this
+        # one -- kills the entire run. Caught live: an unsanitized
+        # server_id crashed the whole 8626-server run on server #1 of the
+        # resume, and it looked identical to a hang because every restart
+        # landed on the exact same id within minutes. One bad server must
+        # cost one row, never the run.
+        try:
+            return server, run_one(server, args.timeout)
+        except Exception as e:  # noqa: BLE001
+            return server, {"server_id": server["server_id"],
+                            "status": "worker_error",
+                            "error": f"{type(e).__name__}: {e}"}
 
     with ThreadPoolExecutor(max_workers=max(1, args.workers)) as pool:
         futures = {pool.submit(work, s): s for s in todo}
