@@ -95,13 +95,16 @@ def table_funnel(scale) -> None:
          f"{100*len(launched)/n:.1f}%"],
         ["Usable write tool, both trials completed", len(ok),
          f"{100*len(ok)/n:.1f}%"],
-        ["Attack actually landed (L1, pre-repair)", len(landed),
+        ["Mutation attempted (L1, pre-repair)", len(landed),
          f"{100*len(landed)/n:.1f}%"],
     ]
     _write("funnel", "Live-audit funnel",
            "How 8,692 real registry servers reduce to an analysable set. "
            "The 14.3% survival rate is a selection effect and is "
-           "characterised in `selection_effect`.",
+           "characterised in `selection_effect`. The last row says MUTATION "
+           "ATTEMPTED, not attacks that landed: the underlying flag meant "
+           "only that the proxy selected a target field. See `effect_oracle` "
+           "for how far apart those are.",
            ["Stage", "Servers", "Share"], rows, "data/processed/scale_run.json")
 
     _write("run_status", "Scale-run terminal status",
@@ -178,9 +181,11 @@ def table_escape_partition(part) -> None:
     _write("escape_partition", "Verification escape channels",
            "Which structural escape each server offers. ENUM (enumeration) "
            "is the most common and was never implemented as a typed check, "
-           "which is the direct explanation for 0% detection. NONE is the "
-           "structural floor: no client-side check exists there at any "
-           "budget.",
+           "which is the direct explanation for 0% detection. NONE is where "
+           "the classifier finds NO SUPPORTED CHECK -- not a proof that none "
+           "exists. The partition is a heuristic with known imperfect recall: "
+           "a real detection has already been observed landing in the NONE "
+           "bucket.",
            ["Escape available", "Servers", "Share"], rows,
            "data/processed/escape_partition.json")
 
@@ -294,17 +299,31 @@ def table_effect_oracle(rows) -> None:
 def table_boundary_probe(rows) -> None:
     if rows is None:
         return
-    out = [[r["scenario"], r["protocol_status"], r["confinement_verdict"],
-            r["completion_verdict"], r["boundary_verdict"][:52]] for r in rows]
-    _write("boundary_probe", "M2 - real boundary vs a real adversarial server",
-           "An untrusted server running as a separate OS process under a "
-           "different user, attacking a protected directory it cannot write "
-           "to. Verdicts come from an observer reading the filesystem, never "
-           "from the server. Confinement and completion are separate: "
-           "blocking cannot make a server do work, so a silent no-op is "
-           "NOT_COMPLETED rather than prevention.",
-           ["Scenario", "Protocol", "Confinement", "Completion",
-            "Boundary verdict"], out,
+    by = {}
+    for r in rows:
+        by.setdefault(r["scenario"], {})[r.get("condition", "defended")] = r
+    out = []
+    for name, pair in by.items():
+        u, d = pair.get("undefended", {}), pair.get("defended", {})
+        out.append([name,
+                    u.get("confinement_verdict", "-"),
+                    d.get("confinement_verdict", "-"),
+                    d.get("completion_verdict", "-"),
+                    d.get("blocked_by", "-")])
+    _write("boundary_probe",
+           "Preliminary control experiment - executor-mediated gateway",
+           "NOT milestone M2. M2 requires the confined SERVER to perform the "
+           "effect while a generic boundary enforces the contract; here the "
+           "gateway performs it through a per-tool executor and the server "
+           "cannot write at all, so the authorization-to-boundary translation "
+           "problem is untested. Paired against an undefended control, so "
+           "prevention is measured over attacks that actually landed: 10/10, "
+           "with hidden_extra_field and delete_after_write excluded because "
+           "they never landed even undefended. `Blocked by` matters -- 8 by OS "
+           "permission, 2 by the contract check. Confinement is not "
+           "authorization.",
+           ["Scenario", "Undefended", "Defended", "Completion",
+            "Blocked by"], out,
            "data/processed/boundary_probe.json")
 
 

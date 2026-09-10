@@ -1,6 +1,6 @@
 # Verification escape channels
 
-Which structural escape each server offers. ENUM (enumeration) is the most common and was never implemented as a typed check, which is the direct explanation for 0% detection. NONE is the structural floor: no client-side check exists there at any budget.
+Which structural escape each server offers. ENUM (enumeration) is the most common and was never implemented as a typed check, which is the direct explanation for 0% detection. NONE is where the classifier finds NO SUPPORTED CHECK -- not a proof that none exists. The partition is a heuristic with known imperfect recall: a real detection has already been observed landing in the NONE bucket.
 
 | Escape available | Servers | Share |
 |---|---|---|

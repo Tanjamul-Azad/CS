@@ -193,10 +193,23 @@ Unknown trials are reported, never silently dropped; dropping them is how a deno
 ### M2 — Mediation boundary, one domain
 Filesystem, using the existing container harness.
 
+**Design, fixed after the control experiment showed what it does not test: a call-scoped transactional boundary.** The point is that the *server* acts and a *generic* mechanism enforces, with no per-tool executor anywhere:
+
+1. Each MCP invocation gets an isolated staging workspace (overlay or copy).
+2. The **untrusted server itself** writes, renames and deletes in it — normally, with no mediation in the path.
+3. When the call returns, a trusted mediator freezes the process tree.
+4. A trusted observer diffs the workspace.
+5. The diff is matched against the contract: approved path, approved final bytes (by hash), allowed operation count, and **no extra paths**.
+6. Exact match commits generically; any mismatch discards the whole transaction; anything unsettled is UNKNOWN.
+
+No `FilesystemExecutor`. What replaces it is generic filesystem transaction machinery, and that generality is the contribution — an executor per effect family is exactly what the goal in §1 rules out.
+
+Requirements:
 - Contract expressed as filesystem constraints
 - Enforcement at the boundary, not via a per-tool executor
 - Attack suite: wrong target, extra target, payload substitution, extra invocation, silent no-op, boundary bypass, TOCTOU, concurrent replay
-- Honest workflows must still complete
+- Honest multi-write workflows (a real save is several writes plus a rename) must still complete
+- Paired against an undefended control, so prevention coverage is over attacks that actually land
 
 **Accept when:** three separate thresholds are met, because a single "blocked or UNKNOWN" criterion is trivially passed by declaring everything UNKNOWN:
 
@@ -208,7 +221,30 @@ Filesystem, using the existing container harness.
 | **UNKNOWN rate** | ≤ **20%** of scenarios | honest, but a layer that mostly declines to adjudicate is not a defense |
 | **honest utility** | task completion under an honest server within a **non-inferiority margin of 5 percentage points** of undefended | "indistinguishable" needs a stated margin, or any shortfall can be argued away |
 
-Measured on the first M2 run (`experiments/run_boundary_probe.py`, 14 scenarios): prevention 13/13 of attacks with an observable effect, UNKNOWN 1/14 = 7.1%, honest completion equal to undefended. Recorded here because the thresholds were set from the reviewer's criteria before that run was scored, not fitted to it afterwards.
+**M2 is NOT met.** `experiments/run_boundary_probe.py` is a **preliminary control experiment**, not the milestone, and the distinction is the whole architecture:
+
+| | M2 requires | the probe does |
+|---|---|---|
+| who performs the effect | the confined **server** | the **gateway**, via `FilesystemExecutor` |
+| per-tool code | none | one executor per effect family |
+| what enforces | a generic boundary | a contract check plus Unix permissions |
+
+Because the server cannot write at all, the authorization-to-boundary translation problem — the actual research question in §1 — is **untested**. The correct name for the result is *executor-mediated gateway with coarse process isolation*, and its value is as an **M5 baseline**, where it belongs beside the static least-privilege sandbox.
+
+What it does establish, paired against an undefended control so the denominator is attacks that actually landed rather than scenarios we wrote:
+
+| | |
+|---|---|
+| prevention coverage | **10/10** of attacks the undefended control demonstrated |
+| excluded, never landed even undefended | `hidden_extra_field`, `delete_after_write` |
+| UNKNOWN | 1/14 = 7.1% (`silent_noop`) |
+| honest completion | equal to undefended |
+| blocked by **OS permission** | 8 |
+| blocked by **contract check** | 2 (`wrong_path`, `content_substitution`) |
+
+That last split is the finding worth carrying forward: **confinement is not authorization.** A boundary sees paths and permissions and cannot tell that a proposed destination is the wrong one. Those two refusals came from the contract, and no amount of sandboxing supplies them.
+
+One caveat that bounds even this: the server's report that a bypass was "blocked (PermissionError)" is **written by the adversary**. The observer proves no forbidden effect landed; it does not prove the syscall was attempted and refused. A server that skipped the attempt looks identical. Establishing that needs a trusted syscall record — strace from the parent, auditd/eBPF, seccomp-notify, or FUSE mediation — and until then those lines are unverified claims.
 
 Plus: at least one *deliberate bypass attempt* documented, succeeded or failed, and confinement reported separately from completion (§4.2).
 

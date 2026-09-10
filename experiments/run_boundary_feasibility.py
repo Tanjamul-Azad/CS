@@ -18,13 +18,19 @@ all. So the real question is not "does a boundary generalise" but:
     filesystem/network/process policy constrain, and what fraction
     needs an application-level adapter that understands the operation?
 
-This measures an UPPER BOUND, and the bound is loose in one direction on
-purpose. It reads declarations only -- argument names and types from
-tools/list -- so it asks what a boundary could constrain IN PRINCIPLE. A
-tool whose argument is called `path` is counted as filesystem-expressible
-even though the enforcement still has to survive symlinks, renames,
-partial writes and TOCTOU. Real coverage cannot be higher than this and
-will very likely be lower.
+This is a HEURISTIC ESTIMATE, not a bound in either direction, and an
+earlier version of this docstring wrongly called it an upper bound. It
+reads argument NAMES from declarations, so it errs both ways: an
+unrecognised name can hide a genuinely enforceable tool, and a recognised
+one can be wrong about what the argument means -- `file_id` reads as a
+path and is a remote handle. Required-vs-optional fields, real semantics,
+and whether a contract needs to constrain a given field at all are not
+considered, and enforcement would still have to survive symlinks,
+renames, partial writes and TOCTOU.
+
+Every category below therefore needs a human-validated sample before any
+of it is quoted. That audit is separate from the A0-A3 labelling, which
+validates a different classifier.
 
     python experiments/run_boundary_feasibility.py
 """
@@ -110,8 +116,12 @@ def verb(name: str) -> str:
 
 def main() -> None:
     if not SOURCE.exists():
-        print(f"missing {SOURCE}; run experiments/run_resource_sweep.py first")
-        return
+        print(f"MISSING INPUT: {SOURCE}\n"
+              f"  Raw traces are gitignored (large, regenerable). Produce it "
+              f"with:\n    python experiments/run_resource_sweep.py\n"
+              f"  (~1 hour, needs Docker). See results/README.md.")
+        # Exit non-zero: a missing input must not look like a clean run.
+        sys.exit(2)
     rows = [r for r in json.loads(SOURCE.read_text(encoding="utf-8"))
             if r.get("status") == "ok"]
 
@@ -178,8 +188,10 @@ def main() -> None:
     print(f"       which needs the field's real semantics and whether the")
     print(f"       contract must constrain it at all.\n")
     print(f"    of those, boundary narrows it  {partial:>5}  {100*partial/n:>5.1f}%\n")
-    print(f"  unknown args only               {unknown_t:>5}  {100*unknown_t/n:>5.1f}%")
-    print(f"    -- outside the vocabulary entirely; unclassifiable either way\n")
+    print(f"  unclassified arg, none opaque    {unknown_t:>5}  {100*unknown_t/n:>5.1f}%")
+    print(f"    -- has at least one argument outside the vocabulary and no")
+    print(f"       recognisably opaque one. NOT 'entirely unclassified': such")
+    print(f"       a tool may also carry recognised boundary fields.\n")
     print(f"  has an ambiguous arg            {ambig_t:>5}  {100*ambig_t/n:>5.1f}%")
     print(f"    -- file_id, email_address: reads as boundary vocabulary but")
     print(f"       may denote a remote handle or a recipient\n")
@@ -199,10 +211,15 @@ def main() -> None:
 
     OUT.write_text(json.dumps(per_tool, indent=1), encoding="utf-8")
     print(f"\nwrote {OUT.relative_to(ROOT)}")
-    print("\nUPPER BOUND. Declarations only: a field named `path` counts as")
-    print("filesystem-expressible without the enforcement having to survive")
-    print("symlinks, renames, partial writes or TOCTOU. Real coverage cannot")
-    print("exceed this and will very likely be lower.")
+    print("\nHEURISTIC ESTIMATE -- not a validated enforceability rate and")
+    print("not a mathematical bound. It reads argument NAMES from")
+    print("declarations, so it errs in BOTH directions: an unrecognised name")
+    print("can hide a genuinely enforceable tool, and a recognised one can be")
+    print("wrong about what the argument means. Required-vs-optional fields,")
+    print("real semantics, and whether a contract needs to constrain a given")
+    print("field at all are not considered. Treat these as estimates until a")
+    print("human-validated sample per category exists -- a separate audit")
+    print("from the A0-A3 labelling, which does not validate this classifier.")
 
 
 if __name__ == "__main__":
