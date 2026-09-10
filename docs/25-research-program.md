@@ -8,9 +8,11 @@ Work proceeds by milestone, not by date. A milestone is done when its acceptance
 
 ## 1. Goal
 
-> Build and evaluate an execution-security layer for untrusted MCP servers that confines effects to what the user explicitly authorized, and that applies across heterogeneous tool implementations without per-tool engineering.
+> **How much of a per-call authorization can be translated into generic filesystem, network and process restrictions, such that unauthorized effects are blocked across heterogeneous untrusted MCP implementations while honest workflows still complete — and where are application-level adapters unavoidable?**
 
-The last clause is the research. Everything before it is engineering.
+The translation problem is the research. Enforcement machinery is engineering.
+
+An earlier draft of this document stated the goal as building a layer that "applies across heterogeneous tool implementations **without per-tool engineering**." That phrasing asserted as a capability what is in fact the open question, and the feasibility measurement in §3.1 shows the strong form of it is false. The goal above replaces it.
 
 ---
 
@@ -43,12 +45,39 @@ The gateway prototype in `src/mcpgate/` performs approved effects itself using a
 Effects are mediated where they are unavoidable and uniform:
 
 - **filesystem** — which paths may be created, written, deleted
-- **network** — which hosts, methods, and payloads may leave
+- **network** — which hosts and ports may be reached
 - **process** — what may be spawned
 
-A contract is then expressed in those terms, and no tool-specific knowledge is required. **`src/mcpgate/contract.py` survives this change** — contracts, binding fields, and verdicts are the same idea. What changes is where the check is applied.
+**`src/mcpgate/contract.py` survives this change** — contracts, binding fields, and verdicts are the same idea. What changes is where the check is applied.
 
-**This is a hypothesis, not a result.** Whether real MCP effects are faithfully expressible as filesystem/network constraints is Milestone 3's question, and a negative answer there is itself a finding.
+### 3.1 A boundary sees effects; it does not understand them
+
+The critical limitation, and it is not a detail. A boundary observes syscalls and packets, not meaning:
+
+| the boundary can see | it cannot thereby know |
+|---|---|
+| a write to an allowed path | whether the final bytes are the approved bytes; how a partial write plus rename should count |
+| a connection to an allowed host | whether the mail is going to Alice or to the attacker |
+| network bytes | anything inside TLS |
+| activity by one process | which concurrent MCP call caused it |
+| a request leaving | whether the downstream service performed the action |
+
+Allowing `smtp.gmail.com` allows every recipient reachable through it. Kernel mechanisms do not close this: Landlock constrains filesystem paths and network ports, not recipients or payload intent.
+
+**Measured, not argued** (`experiments/run_boundary_feasibility.py`, over the 10,320 write tools of the 1,216-server corpus, from declarations alone — an upper bound):
+
+| | share of write tools |
+|---|---|
+| every argument is a path, host or command — **fully boundary-expressible** | **14.8%** |
+| at least one argument decides the effect where a boundary cannot adjudicate — **needs an adapter** | **54.3%** |
+| ... of which a boundary still narrows, without fully authorizing | 12.3% |
+| no declared arguments | 2.0% |
+
+The most common un-adjudicable argument is `id` (1,007 occurrences): a record in a remote service's namespace, invisible to any local boundary. 70.5% of arguments fall outside the classifier's vocabulary entirely, so the true picture is likely worse, not better.
+
+**Consequence for the program.** The strong hypothesis — a shared boundary needs no tool-specific knowledge — is false. What remains is a genuine and, as far as we know, unmeasured research question: *which authorization constraints survive translation to shared boundary mechanisms, and which require semantic adapters.* The architecture is therefore **hybrid by necessity**: boundary enforcement where it suffices, adapters where it does not, and an explicit **UNKNOWN** where neither does. A layer that silently degrades to "allowed" outside its competence would be worse than none.
+
+This measurement is itself a contribution: nobody has published what fraction of real MCP authorization is enforceable at a generic boundary.
 
 ---
 
@@ -63,6 +92,21 @@ A contract is then expressed in those terms, and no tool-specific knowledge is r
 | **Explicitly out of scope** | prompt injection that corrupts the intent *before* a contract exists. The layer binds the SERVER to the contract; it does not establish the contract reflects the user's wish |
 
 That last row is the honest boundary and must appear in the paper's own words, not only in a limitations section.
+
+### 4.1 Deployment scope — client-controlled environments only
+
+The layer mediates MCP servers **running inside an environment the client controls** (a local container, as in `docker/`). It cannot mediate a remote MCP server operated by a third party: that server's filesystem writes and internal API calls happen on someone else's machine and are invisible to us.
+
+The claim is therefore: *contract-bound effect mediation for untrusted MCP servers executing in client-controlled environments.* Equivalent protection for remotely hosted servers is not claimed and cannot be, without downstream-provider cooperation or attestation.
+
+### 4.2 Confinement and completion are different properties
+
+Blocking cannot make a server do work. A server that performs nothing is not stopped by an allow/deny boundary, so two properties must be reported separately and never merged:
+
+- **Confinement** — no effect occurred outside the authorization. This is what enforcement delivers.
+- **Completion** — the authorized effect actually occurred. This needs independent outcome evidence.
+
+A silent no-op is **NOT_COMPLETED** or **UNKNOWN**, never *blocked*. This is where the project's auditing work re-enters: the mediation boundary may supply trusted observations that make completion checking possible for the first time, since they come from a component the server does not control.
 
 ---
 
@@ -79,12 +123,14 @@ Permit(a, C) = Valid(C) ∧ Matches(a, C) ∧ Unused(C) ∧ Mediated(a)
 - **Unused** — invocation allowance remains
 - **Mediated** — the effect took the enforced path; nothing reached the world around it
 
-This is a **policy definition, not a theorem, and it must not be labelled one.** The research content is: under what assumptions does it hold, does the implementation actually preserve it, and where does it break. Two failure modes to attack directly rather than assume away:
+This is a **policy definition, not a theorem, and it must not be labelled one.** The research content is: under what assumptions does it hold, does the implementation actually preserve it, and where does it break.
 
-- **TOCTOU** — the effect changing between check and execution
-- **concurrency / replay** — two mediated calls racing the same allowance
+`Mediated` is the clause that makes the others meaningful, and it is the one an implementation is most likely to get wrong. Four failure modes to attack directly rather than assume away:
 
-`Mediated` is the clause that makes the others meaningful, and it is the one an implementation is most likely to get wrong.
+- **TOCTOU** — the object or payload changing between check and use. `seccomp` user-notification is explicitly documented as vulnerable here for pointer arguments: validating what a pointer refers to and then letting the syscall proceed permits the memory to change in between. Any design that checks and then releases inherits this.
+- **effect-to-call binding** — one server process serves many calls. Attributing an observed effect to *the* call that authorized it is a real problem, not bookkeeping, and background work and child processes make it worse.
+- **one invocation ≠ one syscall** — an honest file save may be several writes plus a rename. `Unused(C)` therefore cannot be implemented by counting syscalls; it needs a notion of a completed logical operation.
+- **bypass surface** — file descriptors held across a policy change, symlinks, renames, hard links, and concurrent access.
 
 ---
 
@@ -100,14 +146,17 @@ The foundation must be sound before anything is built on it.
 - Re-run the corrected pilot; report detection and FPR with refused writes excluded
 - Characterise funnel survivors vs dropouts
 
-**Accept when:** every number in [`24`](24-calibrated-auditing-the-real-experiment.md) either survives with a stated CI or is corrected, and κ ≥ 0.6.
+**Accept when:** every number in [`24`](24-calibrated-auditing-the-real-experiment.md) either survives with a stated CI or is corrected, **and** both of the following, which are different things:
+
+- **κ ≥ 0.6** — measures whether two humans agree with each other. It says nothing about whether the classifier is right.
+- **classifier held-out precision/recall per class**, scored against the adjudicated labels on a split not used for tuning. Confidence intervals must account for clustering: tools are nested within servers and are not independent samples.
 
 ### M1 — Threat model and novelty gate
 - Fix the threat model (§4) precisely
 - **Literature check against primary sources**, per the citation quarantine in [`23`](23-frozen-direction-auditability-analyzer.md) §5: capability-based security, sandboxing/seccomp/AppArmor, CaMeL, SAFEFLOW, MCPSec, Progent, and MCP's own confirmation model
 - For each: what it enforces, at what boundary, and what it does not cover
 
-**Accept when:** a table exists naming, for every adjacent system, the specific thing this layer does that it does not — with a DOI or venue page recorded for each. **If no such thing survives the table, stop and redesign.** This gate exists to be failable.
+**Accept when:** a table exists naming, for every adjacent system, the specific thing this layer does that it does not — compared against a **named threat and a named property**, not against the system in general. Each entry carries a verified identifier: DOI, arXiv id, venue page, or official documentation. **If no such thing survives the table, stop and redesign.** This gate exists to be failable.
 
 ### M2 — Mediation boundary, one domain
 Filesystem, using the existing container harness.
@@ -117,16 +166,31 @@ Filesystem, using the existing container harness.
 - Attack suite: wrong target, extra target, payload substitution, extra invocation, silent no-op, boundary bypass, TOCTOU, concurrent replay
 - Honest workflows must still complete
 
-**Accept when:** every attack is blocked or explicitly reported UNKNOWN, honest task completion is unchanged from undefended, and at least one *deliberate bypass attempt* is documented — succeeded or failed.
+**Accept when:** three separate thresholds are met, because a single "blocked or UNKNOWN" criterion is trivially passed by declaring everything UNKNOWN:
+
+- **prevention coverage** — the fraction of attacks actually blocked, reported as its own number
+- **UNKNOWN rate** — how often the layer declines to adjudicate. Honest, but a layer that is mostly UNKNOWN is not a defense
+- **honest utility** — task completion under an honest server, which must be indistinguishable from undefended
+
+Plus: at least one *deliberate bypass attempt* documented, succeeded or failed, and confinement reported separately from completion (§4.2).
 
 ### M3 — Generality
 The milestone the goal lives or dies on.
 
-- Same mechanism, no new per-tool code, against **≥10 independent real MCP servers** from the corpus
-- Measure: what fraction of their effects are expressible as boundary constraints; where an adapter is unavoidable and why; integration effort per server
+- Same mechanism against **≥10 independent real MCP servers** from the corpus
 - Extend to the network boundary
 
-**Accept when:** ≥10 servers are mediated with zero per-server code, or the reason each failure needed code is characterised into named categories. **A low coverage number is a publishable result, not a failure** — provided it is measured rather than estimated.
+Zero per-server *code* is not the criterion on its own — per-server engineering migrates into configuration and the research problem survives untouched. Report all of:
+
+| | |
+|---|---|
+| shared enforcement code | unchanged across servers, or not |
+| policy/config effort | per server, in concrete terms |
+| adapters | which servers needed an API-specific parser, and why |
+| denominator | which operations are claimed supported, out of how many |
+| held-out behaviour | what happens on an unseen server with no manual repair |
+
+**Accept when:** ≥10 servers are mediated by the shared mechanism, with configuration effort reported. Failure analysis alone is a *completed analysis*, not generality — if the mechanism does not generalise, that is the finding, and it must be stated as such rather than presented as success. Whether a low coverage number is publishable depends on the strength of the analysis around it, and cannot be asserted in advance.
 
 ### M4 — Adaptive adversary
 A defense evaluated only against attacks written before it is not evaluated.
@@ -135,14 +199,16 @@ A defense evaluated only against attacks written before it is not evaluated.
 - Attempts: encode the effect in an unmediated channel, exhaust the allowance, race the check, cause a false block, degrade utility until the layer is disabled
 - Report what succeeds
 
-**Accept when:** at least one adaptive attack succeeds and is reported, or the search is documented well enough that its failure is informative.
+**Accept when:** the attack budget, the adaptive strategies tried, and the search coverage are reported. Requiring a success would be the wrong criterion — it rewards a weak defense and tempts the evaluator to stop searching once one is found. What must not happen is an unbounded search reported as "we tried hard".
 
 ### M5 — Held-out evaluation
 - Servers and workflows not touched during development
-- Baselines: no defense · the project's auditor · **plain container sandbox** · MCP confirmation prompts · this layer
-- Metrics: unauthorized-effect rate, honest task completion, false blocks, user confirmations required, latency and call overhead, unsupported-operation rate
+- Baselines: no defense · the project's auditor · plain container sandbox · **task-specific static least-privilege sandbox** · MCP confirmation prompts · this layer
+- Metrics: unauthorized-effect rate, honest task completion, false blocks, user confirmations required, latency and call overhead, unsupported-operation rate, UNKNOWN rate
 
-**Accept when:** the layer shows a benefit over a **plain sandbox** on held-out data. If it does not, the honest paper is "boundary sandboxing is already sufficient" — which is a real finding and must be reported rather than buried.
+The least-privilege baseline is the demanding one and must not be dropped. A plain container is an easy comparison to beat; a sandbox hand-configured per task with the minimum rights that task needs is what a careful engineer would actually deploy, and the per-call contract has to earn its complexity against that.
+
+**Accept when:** the comparison is run and reported against both sandbox baselines. If the layer shows no benefit over static least-privilege, that outcome is reported plainly — its publishability depends on the quality of the analysis, and is not guaranteed in advance.
 
 ### M6 — Write-up
 Claims fixed to what M0–M5 support; prevented / detected / UNKNOWN reported separately; limitations in the authors' own words.
@@ -172,6 +238,14 @@ Carried from [`22`](22-research-diagnosis-and-10-day-plan.md) and [`23`](23-froz
 
 ---
 
-## 9. Immediate next step
+## 9. This document is not a fixed architecture
 
-**M0, starting with κ.** It is the only task on this program that cannot be automated: two people must label 265 tools independently. Everything else can proceed in parallel, but the headline auditability number stays contestable until this is done.
+The direction is fixed; the architecture is a working hypothesis under test. §3.1 already falsified its strong form before any enforcement code was written, which is the point of putting feasibility probes ahead of implementation. Expect the same to happen again at M2 and M3, and record it when it does rather than defending the design.
+
+## 10. Immediate next steps — in parallel
+
+The largest uncertainty is no longer classifier agreement. It is **how faithfully a high-level authorization can be enforced at a boundary**, and §3.1 answers only the declaration-level upper bound.
+
+1. **κ validation (M0).** Two people, 265 tools, independent. The only task here that cannot be automated, and the headline auditability number stays contestable until it is done.
+2. **M1 novelty gate**, in parallel. It can stop the whole program, so it should run early rather than after months of building.
+3. **Boundary feasibility, one real server.** Take a single filesystem MCP server from the corpus, put a real mediation boundary around it, and find out what breaks: effect-to-call binding, partial writes, renames, background work. §3.1 measured what declarations *say*; this measures what enforcement actually survives — and it is the cheapest way to find the next false assumption.
