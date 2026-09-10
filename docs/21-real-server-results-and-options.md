@@ -1,6 +1,6 @@
 # Real-Server Results and Options — Where We Actually Are
 
-Written 2026-09-04, after the first full real-server evaluation completed (L1, then L2/L3 follow-up). This supersedes the acceptance criteria and phase plan in [`20-plan-to-submission.md`](20-plan-to-submission.md), which was written before any of this ran and predicted numbers (>80% detection) the real data does not support. Read this one doc first — it links out to everything else.
+Written 2026-09-04, after the first full real-server evaluation completed (L1, then L2/L3 follow-up). This supersedes the acceptance criteria and phase plan in [`20-plan-to-submission.md`](archive/20-plan-to-submission.md), which was written before any of this ran and predicted numbers (>80% detection) the real data does not support. Read this one doc first — it links out to everything else.
 
 ---
 

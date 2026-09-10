@@ -22,14 +22,14 @@ Theory, measurement, and the full evaluation (E1–E5, including a real MCP serv
 | **D1 harvest** | ✅ complete | see §Numbers |
 | **A0–A3 classifier** | ⚠️ **unvalidated** | no human gold standard yet |
 | **Labeling harness** (codebook, sampler, κ) | ✅ built, ⏳ unrun | needs two human annotators |
-| **Evaluation** — 4 domains, attack × defense matrix | ✅ | [`18`](18-evaluation-findings.md) |
+| **Evaluation** — 4 domains, attack × defense matrix | ✅ | [`18`](../18-evaluation-findings.md) |
 | **False positives under concurrency** | ✅ 0% after redesign | was 20–86% before |
 | **Probe-aware adversary (T3)** | ✅ run | detection 0%, deterrence total |
 | **LLM in the loop (E4)** | ✅ 320 episodes | utility delta +0.0 pts; stable at temp 0.7 |
 | **Real MCP server (E3)** | ✅ | 0 FP honest; generic proxy detected |
 | **Generic tampering proxy** | ✅ | declaration-driven; reproduces L1/L2/L3 |
 | **Launchability triage** | ✅ | 32/123 runnable standalone |
-| **Adversarial self-review + plan** | ✅ | [`19`](19-reviewer-review.md), [`20`](20-plan-to-submission.md) |
+| **Adversarial self-review + plan** | ✅ | [`19`](../19-reviewer-review.md), [`20`](20-plan-to-submission.md) |
 | **Figures** | ✅ F1–F4 | `figures/` |
 | **Test suite** | ✅ 42 passing | `pytest tests/ -q` |
 | **references.bib** | ⚠️ 45 entries, all `[U]` unverified | must check venue pages |
@@ -39,7 +39,7 @@ Theory, measurement, and the full evaluation (E1–E5, including a real MCP serv
 
 ## The one hard blocker
 
-**κ validation.** Until two people independently label ~300 tools against [`14-labeling-codebook.md`](14-labeling-codebook.md) and the classifier is scored against that gold standard, the headline A0 figure is an *instrument reading*, not a measurement. A reviewer will ask, and "we ran our own heuristic and believed it" is not an answer.
+**κ validation.** Until two people independently label ~300 tools against [`14-labeling-codebook.md`](../14-labeling-codebook.md) and the classifier is scored against that gold standard, the headline A0 figure is an *instrument reading*, not a measurement. A reviewer will ask, and "we ran our own heuristic and believed it" is not an answer.
 
 Everything needed is built:
 
@@ -76,12 +76,12 @@ Target κ ≥ 0.70. Below 0.60 means the codebook is underspecified — revise a
 
 Recorded because these are easy to lose track of and each cost real effort.
 
-- **Two designs killed and replaced** — see [`16-design-history.md`](16-design-history.md). The zero-cooperation constraint came from a supervisor objection that would otherwise have been a reviewer's.
-- **One hypothesis falsified (resource cohesion), and one falsified then RE-confirmed at full n (tool-count)** — the premature falsification is kept in [`16`](16-design-history.md) as a worked example of why partial corpora are not evidence.
+- **Two designs killed and replaced** — see [`16-design-history.md`](../16-design-history.md). The zero-cooperation constraint came from a supervisor objection that would otherwise have been a reviewer's.
+- **One hypothesis falsified (resource cohesion), and one falsified then RE-confirmed at full n (tool-count)** — the premature falsification is kept in [`16`](../16-design-history.md) as a worked example of why partial corpora are not evidence.
 - **Four instrument bugs found by running against real code**, each of which produced a confident wrong number rather than an error. All now pinned by regression tests.
 - **The safety property that makes the auditor deployable**: it never issues a write the agent did not request, because a probe write is a real write. Pinned by `test_auditor_never_issues_unrequested_writes`.
 - **Three concrete protocol recommendations** fell out of the work — mandate `outputSchema`, ship a read for every write, and expose an itemised ledger of any conserved quantity (without one, conservation cannot be audited under concurrency at all).
-- **We broke our own defense twice and reported both.** Naive conservation had 20–86% false positives under concurrent honest activity; a probe-aware adversary drops detection to exactly zero. Both are in [`18`](18-evaluation-findings.md) rather than omitted.
+- **We broke our own defense twice and reported both.** Naive conservation had 20–86% false positives under concurrent honest activity; a probe-aware adversary drops detection to exactly zero. Both are in [`18`](../18-evaluation-findings.md) rather than omitted.
 
 ---
 

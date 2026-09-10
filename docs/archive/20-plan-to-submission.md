@@ -1,6 +1,6 @@
 # Plan to Submission
 
-Response to [`19-reviewer-review.md`](19-reviewer-review.md). Every phase closes a numbered objection and states **how we will know it is closed** — an acceptance criterion decided *before* the experiment runs, so a disappointing result is a finding rather than something to quietly re-tune.
+Response to [`19-reviewer-review.md`](../19-reviewer-review.md). Every phase closes a numbered objection and states **how we will know it is closed** — an acceptance criterion decided *before* the experiment runs, so a disappointing result is a finding rather than something to quietly re-tune.
 
 **Target:** USENIX Security, Tier-1 only, no workshop hedge.
 **Estimated total: 14–17 weeks of build + 4 weeks of writing.**
@@ -197,7 +197,7 @@ The compounding problem: write-verbs were expanded *after* seeing corpus data. T
 | 9–11 | **Phase 8** minors | — |
 | 12–13 | Re-run everything; regenerate all figures and docs | — |
 | 14–17 | **Write** | — |
-| 18 | Internal red-team against [`19`](19-reviewer-review.md); fix; submit | — |
+| 18 | Internal red-team against [`19`](../19-reviewer-review.md); fix; submit | — |
 
 ---
 
@@ -218,8 +218,8 @@ Stated now so we cannot rationalise later.
 
 The things a reviewer would praise, which the rebuild must not damage:
 
-- Reporting our own failures ([`18`](18-evaluation-findings.md): 20–86% FPR; probe-aware detection = 0)
-- Recording falsified hypotheses ([`16`](16-design-history.md))
+- Reporting our own failures ([`18`](../18-evaluation-findings.md): 20–86% FPR; probe-aware detection = 0)
+- Recording falsified hypotheses ([`16`](../16-design-history.md))
 - Stating the ceiling in the abstract — the 17-LOC adversary wins
 - Never claiming coverage the tool does not have
 
@@ -229,6 +229,6 @@ The things a reviewer would praise, which the rebuild must not damage:
 
 | Who | What |
 |---|---|
-| **You + Jahidul** | κ annotation — `data/processed/labels_annotator_{A,B}.tsv`, codebook [`14`](14-labeling-codebook.md). Runs parallel to everything. |
+| **You + Jahidul** | κ annotation — `data/processed/labels_annotator_{A,B}.tsv`, codebook [`14`](../14-labeling-codebook.md). Runs parallel to everything. |
 | **Me, now** | Phase 1 step 1: launchability triage of all 123 candidate servers |
 | **Me, next** | Generic declaration-driven tampering proxy |

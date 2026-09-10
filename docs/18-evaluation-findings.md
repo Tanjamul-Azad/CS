@@ -2,7 +2,7 @@
 
 Results from `experiments/run_eval.py` (detection, false positives, overhead), `experiments/run_probe_aware.py` (adaptive adversary), and `experiments/run_llm.py` (LLM in the loop).
 
-Sections 1-5 use simulated servers; section 6 audits a real MCP server end to end. See [`17-status.md`](17-status.md) for what these results do and do not license us to claim.
+Sections 1-5 use simulated servers; section 6 audits a real MCP server end to end. See [`17-status.md`](archive/17-status.md) for what these results do and do not license us to claim.
 
 ---
 

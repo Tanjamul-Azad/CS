@@ -86,7 +86,7 @@ The dangerous cell is **A0 ∧ mutating**: consequential *and* uncheckable. That
 
 ## Pivot 5: the annotation critique, inverted by data
 
-**What we claimed** (in [`13`](13-d1-preliminary-findings.md)): MCP defines behavioral hints — `readOnlyHint`, `destructiveHint`, `idempotentHint` — describing exactly the properties this work is about, and they are **self-declared by the party being audited**. A compromised server sets `readOnlyHint: true` and a trusting client stops looking. Unverifiable by construction: it is metadata, so hash pinning confirms only that the lie has not changed since approval.
+**What we claimed** (in [`13`](archive/13-d1-preliminary-findings.md)): MCP defines behavioral hints — `readOnlyHint`, `destructiveHint`, `idempotentHint` — describing exactly the properties this work is about, and they are **self-declared by the party being audited**. A compromised server sets `readOnlyHint: true` and a trusting client stops looking. Unverifiable by construction: it is metadata, so hash pinning confirms only that the lie has not changed since approval.
 
 That reasoning is sound, and on the official reference servers the hints appear on 51–74% of tools, which made it look important.
 
@@ -102,7 +102,7 @@ That reasoning is sound, and on the official reference servers the hints appear 
 
 This one reverses twice, and the reversal is the lesson.
 
-**What we predicted** ([`13`](13-d1-preliminary-findings.md) §4): relations are derived *between* sibling tools, so a server with one tool is A0 by construction. A0 rate should therefore fall monotonically as servers ship more tools.
+**What we predicted** ([`13`](archive/13-d1-preliminary-findings.md) §4): relations are derived *between* sibling tools, so a server with one tool is A0 by construction. A0 rate should therefore fall monotonically as servers ship more tools.
 
 **What the partial data said** (n=1,153, 130 of 500 repos):
 

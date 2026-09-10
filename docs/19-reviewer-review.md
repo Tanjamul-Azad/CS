@@ -2,7 +2,7 @@
 
 Written as a USENIX Security reviewer who wants to reject. Every objection below is one a competent reviewer would actually raise, ordered by how likely it is to kill the paper.
 
-The point is not to be pessimistic. It is that each of these is **fixable**, and knowing which ones are fatal tells us what to build. [`20-plan-to-submission.md`](20-plan-to-submission.md) is the response.
+The point is not to be pessimistic. It is that each of these is **fixable**, and knowing which ones are fatal tells us what to build. [`20-plan-to-submission.md`](archive/20-plan-to-submission.md) is the response.
 
 **Verdict as of today: Reject.** Not because the idea is weak — the measurement is genuinely good — but because the defense evaluation cannot survive contact with R1–R3.
 
