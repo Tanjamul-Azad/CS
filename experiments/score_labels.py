@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 import sys
 from pathlib import Path
 
@@ -73,9 +74,42 @@ def main() -> None:
     if not keys:
         print("\nno overlap between labels and corpus -- is --corpus right?")
         return
-    print_validation([gold[k] for k in keys],
-                     [pred_map[k][0] for k in keys],
-                     title="automatic classifier vs human gold")
+
+    # Kappa above measured whether two PEOPLE agree. It says nothing about
+    # whether the CLASSIFIER is right, and that classifier's write-verb
+    # list was extended after looking at corpus data (docs/19 R7). So the
+    # numbers that matter are on servers it was never tuned against.
+    split_path = ROOT / "data" / "processed" / "label_split.json"
+    split = {}
+    if split_path.exists():
+        split = json.loads(split_path.read_text(encoding="utf-8")).get("split", {})
+
+    if not split:
+        print("\n  NO FROZEN SPLIT FOUND (data/processed/label_split.json).")
+        print("  Reporting all rows together, which cannot separate fitted")
+        print("  from held-out accuracy. Create one with:")
+        print("    python experiments/prepare_label_sheets.py")
+        print_validation([gold[k] for k in keys],
+                         [pred_map[k][0] for k in keys],
+                         title="classifier vs human gold (UNSPLIT)")
+        return
+
+    for part in ("tune", "heldout"):
+        sub = [k for k in keys if split.get(k[0]) == part]
+        if not sub:
+            print(f"\n  no {part} rows labelled yet")
+            continue
+        servers = len({k[0] for k in sub})
+        print_validation([gold[k] for k in sub],
+                         [pred_map[k][0] for k in sub],
+                         title=f"classifier vs human gold -- {part.upper()} "
+                               f"({len(sub)} tools, {servers} servers)")
+
+    print("\n  Tools are nested within servers and are not independent")
+    print("  samples: several tools by one author share naming and sibling")
+    print("  structure. A binomial interval over tools will be too narrow.")
+    print("  Report a clustered interval, using the server count above as")
+    print("  the effective sample size.")
 
 
 if __name__ == "__main__":
