@@ -1,0 +1,9 @@
+Escape available,Servers,Share
+ENUM,558,45.9%
+NONE,308,25.3%
+ENUM+SNAP,258,21.2%
+SNAP,47,3.9%
+CONS+ENUM+SNAP,26,2.1%
+CONS+ENUM,17,1.4%
+CONS,2,0.2%
+**any escape**,908,74.7%

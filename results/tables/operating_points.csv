@@ -1,0 +1,7 @@
+Run,Point,Usable,Landed,True detections,Detection rate,FPR
+pre-R7 baseline,strict,217,205,0,0.0%,1.8%
+pre-R7 baseline,permissive,217,205,5,2.4%,78.3%
+R7 uncalibrated,strict,217,205,0,0.0%,6.9%
+R7 uncalibrated,permissive,217,205,4,2.0%,78.3%
+R7 calibrated,strict,217,204,1,0.5%,2.3%
+R7 calibrated,permissive,217,204,6,2.9%,77.0%
