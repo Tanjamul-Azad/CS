@@ -268,6 +268,46 @@ def table_suppressed(baseline) -> None:
            "data/processed/pilot_pre_r7_baseline.json")
 
 
+def table_effect_oracle(rows) -> None:
+    if rows is None:
+        return
+    out = [[r["behaviour"],
+            "yes" if r["mutation_attempted"] else "-",
+            "yes" if r["protocol_error"] else "-",
+            "yes" if r["authorized_effect_observed"] else "-",
+            "yes" if r["unauthorized_effect_observed"] else "-",
+            "yes" if r["outcome_unknown"] else "-",
+            "yes" if r["detector_violation"] else "-"] for r in rows]
+    _write("effect_oracle", "Attempted vs happened vs detected",
+           "Ground truth for every detection rate in the project. The old "
+           "`attack_landed` flag meant only that the proxy selected a target "
+           "field. Here the old label would count 2 of these while 3 carry a "
+           "real unauthorized effect -- and one reports a protocol error AND "
+           "leaves a forbidden write behind, which is why excluding errored "
+           "trials is also wrong. Only observation is ground truth.",
+           ["Behaviour", "Mutation attempted", "Protocol error",
+            "Authorized effect", "Unauthorized effect", "Unknown",
+            "Detector violation"], out,
+           "data/processed/effect_oracle.json")
+
+
+def table_boundary_probe(rows) -> None:
+    if rows is None:
+        return
+    out = [[r["scenario"], r["protocol_status"], r["confinement_verdict"],
+            r["completion_verdict"], r["boundary_verdict"][:52]] for r in rows]
+    _write("boundary_probe", "M2 - real boundary vs a real adversarial server",
+           "An untrusted server running as a separate OS process under a "
+           "different user, attacking a protected directory it cannot write "
+           "to. Verdicts come from an observer reading the filesystem, never "
+           "from the server. Confinement and completion are separate: "
+           "blocking cannot make a server do work, so a silent no-op is "
+           "NOT_COMPLETED rather than prevention.",
+           ["Scenario", "Protocol", "Confinement", "Completion",
+            "Boundary verdict"], out,
+           "data/processed/boundary_probe.json")
+
+
 def write_manifest() -> None:
     try:
         commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"],
@@ -317,11 +357,15 @@ def main() -> None:
     table_resource_channel(sweep)
     table_escape_partition(part)
     errf = _load("Pilot, working error flag", PROC / "pilot_errflag.json")
+    oracle = _load("Effect oracle", PROC / "effect_oracle.json")
+    probe = _load("M2 boundary probe", PROC / "boundary_probe.json")
     table_operating_points({"pre-R7 baseline (flag broken)": base,
                             "R7 uncalibrated (flag broken)": r7,
                             "R7 calibrated (flag broken)": cal,
                             "R7 calibrated + error flag": errf})
     table_suppressed(base)
+    table_effect_oracle(oracle)
+    table_boundary_probe(probe)
     write_manifest()
     print("\ndone. Open results/ -- every table names its source file.")
 

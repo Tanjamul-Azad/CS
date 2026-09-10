@@ -4,6 +4,13 @@ Every number reported in this project, regenerated from raw data by one
 command:
 
 ```bash
+python experiments/run_all.py           # everything that runs offline
+python experiments/run_all.py --docker  # also the container stages
+```
+
+or just the tables:
+
+```bash
 python experiments/make_results.py
 ```
 
@@ -38,6 +45,8 @@ than silently wrong.
 | [`escape_partition`](tables/escape_partition.md) | Which structural verification escape each server offers, and the 25.3% that have none |
 | [`operating_points`](tables/operating_points.md) | **The central measurement.** Detection and false-positive rate, per detector version |
 | [`suppressed_detections`](tables/suppressed_detections.md) | Real attacks the detector found and discarded — how the research direction was located |
+| [`effect_oracle`](tables/effect_oracle.md) | **Ground truth.** What the proxy attempted vs what actually happened vs what the detector said |
+| [`boundary_probe`](tables/boundary_probe.md) | **M2.** A real adversarial server process against an OS-enforced boundary |
 
 ## Reading order, if you have five minutes
 
@@ -51,6 +60,11 @@ than silently wrong.
    offer only the enumeration escape, which was never implemented.
 4. **`selection_effect`** — why the negative result is strong rather than
    weak: it was measured on the easiest quarter of the ecosystem.
+5. **`effect_oracle`** — the correction that matters most. Every rate in
+   this project divided by a count of "attacks that landed", and that
+   count meant only that the proxy had changed an argument.
+6. **`boundary_probe`** — the constructive answer: an untrusted server
+   process attacking a protected area it cannot write to.
 
 ## Raw inputs, and what it costs to regenerate them
 
