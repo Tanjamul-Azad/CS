@@ -126,6 +126,14 @@ CREATE_VERBS = {
 }
 
 
+# Read verbs that return a COLLECTION rather than one addressed record.
+# Only these can support the enumeration escape (R7): the check needs a
+# reader that can be called with no key at all, so that what it returns is
+# decided by the server's state rather than by an argument we chose.
+ENUMERATION_VERBS = {"list", "search", "query", "find", "browse", "index",
+                     "all", "enumerate", "scan"}
+
+
 def _is_id_field(name: str) -> bool:
     n = name.strip().lower().replace("-", "_")
     if n in ID_FIELD_EXCLUDE:
@@ -329,6 +337,48 @@ def derive_for_server(tools: list[ExtractedTool]) -> list[DerivedRelation]:
                     "R5", (w.name, r.name), server,
                     basis=f"canary field: {sorted(free_form)[0]}",
                 ))
+
+    # R7 -- enumeration. The escape 45.9% of real servers offer and the
+    # one this project never implemented as a typed check, which is the
+    # direct explanation for its 0% real-world detection rate (see
+    # docs/24). A reader that lists a collection without needing a key
+    # can be snapshotted BEFORE the write and again after: what appeared
+    # in between is what the write actually did, independent of whatever
+    # the write's response claimed.
+    #
+    # This is strictly more informative than reading back the intended
+    # key, and it is the only channel that can produce POSITIVE evidence
+    # of diversion -- the intended entry missing while an unintended one
+    # appeared. Read-back at the intended key can only ever observe an
+    # absence, which is indistinguishable from a reader that does not
+    # reflect writes at all.
+    #
+    # Requires the reader take no identifier: a list_orders(order_id=...)
+    # is a keyed lookup wearing a plural name, and enumerating with a key
+    # we chose ourselves reintroduces exactly the ambiguity this escape
+    # exists to remove.
+    # Requires a shared resource noun. The before/after diff is partly
+    # self-policing -- an unrelated reader simply does not change, and the
+    # check reports "unverifiable" rather than a violation -- but pairing
+    # every write with every list tool on the server would still inflate
+    # the auditability classification itself, handing `send_webhook` a
+    # relation degree on the strength of an unrelated `list_users`. That
+    # tool genuinely has no verification path, A0 is the correct answer
+    # for it, and the A0 share is a headline number we must not quietly
+    # improve by loosening what counts as a relation.
+    for w in writes:
+        w_nouns = nouns_of(w)
+        for r in reads:
+            if verb_of(r.name) not in ENUMERATION_VERBS:
+                continue
+            if any(_is_id_field(f) for f in r.input_fields):
+                continue
+            if not (w_nouns & nouns_of(r)):
+                continue
+            rels.append(DerivedRelation(
+                "R7", (w.name, r.name), server,
+                basis=f"enumeration via {r.name}",
+            ))
 
     # R3 -- determinism, self-relation on pure tools
     for t in tools:
