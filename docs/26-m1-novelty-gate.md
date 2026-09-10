@@ -66,16 +66,22 @@ Struck from the program and from any draft:
 
 > A server may hold a legitimate permission to write `report.txt` and still violate the contract by writing *different bytes* to it. Path-level permission is intact; the authorization is not.
 
-AgentBound grants resources; it does not constrain the content committed within a granted resource. That is a real gap — and on its own it is an incremental extension, not a paper. It needs a measured comparison against content-aware policy and transactional validation baselines before it counts as anything.
+AgentBound grants resources; it does not constrain the content committed within a granted resource. That is a real gap.
+
+**But demonstrating it proves almost nothing on its own.** A contract that specifies exact bytes holds strictly more information than a path grant, so of course it catches content substitution — that is true by construction. The experiment must separate *does more specification help* (a property of the contract) from *does our mechanism help* (a property of us), by running a **simple staging-and-diff validator given the same contract and the same trusted information** as a control. If the simple validator matches it, there is no system contribution here. [`27-narrow-candidate-experiment.md`](27-narrow-candidate-experiment.md) specifies that comparison.
 
 **As contributions that the literature check did NOT remove — because they are measurements and instruments, not architecture:**
 
-1. The auditability distribution over 18,566 real tools, and the live audit over 1,242 third-party servers.
-2. The negative result on post-hoc effect verification, with its cause located rather than asserted.
+1. The auditability distribution over 18,566 real tools, and the live audit over 1,242 third-party servers. **With a caveat that is not optional:** those trials carry no independent state evidence. They are protocol- and proxy-based observations, and cannot be re-reported as observed-compromise detection rates. The effect oracle exposed the label defect; it did not retroactively repair the data. This contribution needs its own validation pass.
+2. The negative result on post-hoc effect verification, with its cause located rather than asserted — subject to the same caveat.
 3. **The effect oracle** — separating mutation attempted, protocol status, authorized effect, unauthorized effect and unknown, and demonstrating that neither the mutation plan nor the protocol status is ground truth.
 4. The evaluation discipline: paired undefended controls, prevention coverage over demonstrated attacks, prevented/detected/UNKNOWN kept apart, mechanism attribution.
 
-This is the honest shape the paper now has: **a measurement and evaluation paper about MCP effect verifiability, which evaluates existing defenses against permission-compatible attacks — not a paper proposing a new architecture.**
+A candidate shape for the paper, **not a settled one**: a measurement and evaluation paper about MCP effect verifiability, which evaluates existing defenses against permission-compatible attacks.
+
+**This document must not be read as closing the design space.** M1 rejected four *specific* broad claims against named prior work. It did not enumerate every possible system contribution, and "no architecture paper is possible here" does not follow from "these four architectures exist". An earlier version of this section overstated exactly that, and the narrow candidate below is the next thing to test, not the last thing available.
+
+Whether the surviving contributions carry a paper depends on what [`27-narrow-candidate-experiment.md`](27-narrow-candidate-experiment.md) measures, not on this table.
 
 ## 5. Revised research question
 

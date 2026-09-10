@@ -10,7 +10,7 @@ Full statement, threat model and milestones: [`25-research-program.md`](25-resea
 
 ---
 
-## The spine — read these six, in this order
+## The spine — read these seven, in this order
 
 | # | Doc | What you learn | Length |
 |---|---|---|---|
@@ -20,8 +20,9 @@ Full statement, threat model and milestones: [`25-research-program.md`](25-resea
 | 4 | [`24-calibrated-auditing-the-real-experiment.md`](24-calibrated-auditing-the-real-experiment.md) | Why it failed — found by auditing our own detector. The measurement the program is built on | medium |
 | 5 | [`26-m1-novelty-gate.md`](26-m1-novelty-gate.md) | **What the literature already owns.** Read before the plan — it retires three of its claims | medium |
 | 6 | [`25-research-program.md`](25-research-program.md) | **The plan.** Goal, scope, permit rule, milestones M0–M6 with acceptance criteria | long |
+| 7 | [`27-narrow-candidate-experiment.md`](27-narrow-candidate-experiment.md) | **What runs next.** The comparison that decides whether a system contribution exists | short |
 
-After those six you know the problem, the impossibility result, the measured failure, the diagnosis, and the plan. Nothing else is required.
+After those seven you know the problem, the impossibility result, the measured failure, the diagnosis, and the plan. Nothing else is required.
 
 ## To see the evidence rather than read about it
 
