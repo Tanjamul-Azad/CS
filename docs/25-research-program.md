@@ -12,13 +12,15 @@ Work proceeds by milestone, not by date. A milestone is done when its acceptance
 
 The translation problem is the research. Enforcement machinery is engineering.
 
+> **Read [`26-m1-novelty-gate.md`](26-m1-novelty-gate.md) before this section.** The novelty gate retired the broad architectural claim: AgentBound already confines unmodified MCP servers with concrete runtime permissions, Progent already does per-call argument policy, SAFEFLOW already does transactional agent execution, and Alcatraz already did staging-and-commit in 2003. What survives is a measurement and evaluation contribution plus one narrow candidate mechanism, and the program below should be read with that correction applied.
+
 An earlier draft of this document stated the goal as building a layer that "applies across heterogeneous tool implementations **without per-tool engineering**." That phrasing asserted as a capability what is in fact the open question, and the feasibility measurement in §3.1 shows the strong form of it is false. The goal above replaces it.
 
 ---
 
 ## 2. Why this goal, and what it is NOT
 
-**Where it comes from.** The measurement half of this project established, over 1,242 real third-party servers, that a client cannot reliably determine after the fact what a server actually did. Six mechanisms were implemented and measured; none reached a usable operating point; 25.3% of servers offer no observation channel that could support one at any budget. The design lesson is narrow and defensible:
+**Where it comes from.** The measurement half of this project established, over 1,242 real third-party servers, that a client cannot reliably determine after the fact what a server actually did. Six mechanisms were implemented and measured; none reached a usable operating point; and for 25.3% of servers the classifier finds no observation channel that could support one -- which is a statement about our relation vocabulary, not a proof that none exists. The design lesson is narrow and defensible:
 
 > Do not rest safety on checking the response of a component that both performs the effect and produces the only evidence of it.
 
@@ -62,7 +64,7 @@ The critical limitation, and it is not a detail. A boundary observes syscalls an
 | activity by one process | which concurrent MCP call caused it |
 | a request leaving | whether the downstream service performed the action |
 
-Allowing `smtp.gmail.com` allows every recipient reachable through it. Kernel mechanisms do not close this: Landlock constrains filesystem paths and network ports, not recipients or payload intent.
+Allowing `smtp.gmail.com` allows every recipient reachable through it. Kernel mechanisms narrow this but do not close it: Landlock enforces filesystem paths and network ports **given a policy** -- an earlier version of this document said no sandbox can enforce authorization, which is wrong and is corrected in [`26-m1-novelty-gate.md`](26-m1-novelty-gate.md). What a sandbox cannot do is *derive* the policy from user intent, or adjudicate a recipient inside an allowed host.
 
 **A first heuristic estimate** (`experiments/run_boundary_feasibility.py`, over the 10,320 write tools of the 1,216-server corpus). Read the caveat below before quoting any of it:
 
@@ -202,7 +204,9 @@ Filesystem, using the existing container harness.
 5. The diff is matched against the contract: approved path, approved final bytes (by hash), allowed operation count, and **no extra paths**.
 6. Exact match commits generically; any mismatch discards the whole transaction; anything unsettled is UNKNOWN.
 
-No `FilesystemExecutor`. What replaces it is generic filesystem transaction machinery, and that generality is the contribution — an executor per effect family is exactly what the goal in §1 rules out.
+No `FilesystemExecutor`. What replaces it is generic filesystem transaction machinery.
+
+**This mechanism is not new and must not be presented as such.** It is one-way isolation with consistency-checked commit, which Alcatraz published in 2003/2009 (see [`26-m1-novelty-gate.md`](26-m1-novelty-gate.md)). Applying it to MCP is engineering. Anything claimed here has to come from what is measured with it, not from the machinery itself.
 
 Requirements:
 - Contract expressed as filesystem constraints

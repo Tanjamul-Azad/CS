@@ -10,7 +10,7 @@ Full statement, threat model and milestones: [`25-research-program.md`](25-resea
 
 ---
 
-## The spine — read these five, in this order
+## The spine — read these six, in this order
 
 | # | Doc | What you learn | Length |
 |---|---|---|---|
@@ -18,9 +18,10 @@ Full statement, threat model and milestones: [`25-research-program.md`](25-resea
 | 2 | [`05-verifiability-taxonomy.md`](05-verifiability-taxonomy.md) | **Theorem 1** — a passive client can never detect a diverted effect. The A0–A3 auditability classes | short |
 | 3 | [`21-real-server-results-and-options.md`](21-real-server-results-and-options.md) | What happened when the defense met 1,242 real third-party servers | medium |
 | 4 | [`24-calibrated-auditing-the-real-experiment.md`](24-calibrated-auditing-the-real-experiment.md) | Why it failed — found by auditing our own detector. The measurement the program is built on | medium |
-| 5 | [`25-research-program.md`](25-research-program.md) | **The plan.** Goal, scope, permit rule, milestones M0–M6 with acceptance criteria | long |
+| 5 | [`26-m1-novelty-gate.md`](26-m1-novelty-gate.md) | **What the literature already owns.** Read before the plan — it retires three of its claims | medium |
+| 6 | [`25-research-program.md`](25-research-program.md) | **The plan.** Goal, scope, permit rule, milestones M0–M6 with acceptance criteria | long |
 
-After those five you know the problem, the impossibility result, the measured failure, the diagnosis, and the plan. Nothing else is required.
+After those six you know the problem, the impossibility result, the measured failure, the diagnosis, and the plan. Nothing else is required.
 
 ## To see the evidence rather than read about it
 

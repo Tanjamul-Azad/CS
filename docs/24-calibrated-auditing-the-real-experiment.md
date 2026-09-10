@@ -180,7 +180,7 @@ Detection at each rung, at fixed FPR, is the paper's central figure. **The shape
 
 ## 8. Honest positioning
 
-**What is genuinely ours.** Reader calibration as a deployable client-side mechanism; the escape-channel taxonomy with an ecosystem-scale measurement behind it; and the safety/detectability frontier, which nobody has priced because nobody had the corpus to price it on.
+**What is genuinely ours** -- after the novelty gate in [`26-m1-novelty-gate.md`](26-m1-novelty-gate.md), which removed more than this section originally claimed: the escape-channel taxonomy with an ecosystem-scale measurement behind it, the effect oracle, and the safety/detectability frontier. Reader calibration is a mechanism, and mechanism claims in this space did not survive the gate -- present it as an instrument that made the measurement possible, not as a novel defense.
 
 **What is not.** The underlying principle — that verifying an untrusted store requires either client-side state or an independent channel — is old, and lives in memory checking and authenticated data structures. **Do not claim an impossibility result as new.** Our contribution is the instantiation, the measurement, and the price. Cite the lineage in [`12-intellectual-lineage.md`](12-intellectual-lineage.md) and add memory checking to it.
 
