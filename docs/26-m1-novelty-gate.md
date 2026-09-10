@@ -7,10 +7,11 @@ Written 2026-09-10. The gate defined in [`25-research-program.md`](25-research-p
 | | |
 |---|---|
 | **Broad architectural claim** — "confine an untrusted MCP server's effects at an enforcement boundary derived from a per-call authorization" | **NO-GO.** Taken, by primary sources below. |
-| **Narrow candidate** — permission-compatible but contract-violating effects | Survives, but is thin on its own. |
-| **What is still ours** | The measurement and the evaluation instrument, not an architecture. |
+| **Narrow candidate** — permission-compatible but contract-violating effects | Survives, unresolved. Thin on its own, and its test is specified in [`27`](27-narrow-candidate-experiment.md). |
+| **Measurement and instruments** | Not removed by the gate — but the large-scale results carry an unresolved evidence caveat, see §4. |
+| **The design space** | **Not closed.** Four named claims were rejected against named prior work. That is not an enumeration. |
 
-The gate did its job. It cost a day and it stopped a month of building on a claim that three separate systems already hold.
+The gate did its job. It cost a day and it stopped a month of building on claims that four separate systems already hold.
 
 ---
 
