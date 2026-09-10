@@ -42,7 +42,7 @@ Conceded for D2, and that is deliberate — ground truth about a hidden implemen
 Correct, and Theorem 1 says nothing can. Any paper claiming to solve V0 client-side is wrong. We state this in the abstract.
 
 **R5: "Only small/open models."**
-Being fixed: ≥3 models including at least one frontier commercial model. See [`07-experiment-plan.md`](07-experiment-plan.md).
+Being fixed: ≥3 models including at least one frontier commercial model. See [`07-experiment-plan.md`](archive/07-experiment-plan.md).
 
 **R6: "Where is the comparison to existing defenses?"**
 We implement hash pinning (ETDI's core mechanism) and a MELON/Task-Shield-style intent-match validator as baselines, not just "no defense." This was a real hole in the previous plan.
@@ -64,7 +64,7 @@ We implement hash pinning (ETDI's core mechanism) and a MELON/Task-Shield-style 
 
 ## 6. What must be true for this to land
 
-Falsifiable preconditions. If these fail, we adapt (see [`06-dataset-plan.md`](06-dataset-plan.md) §5) rather than force the story.
+Falsifiable preconditions. If these fail, we adapt (see [`06-dataset-plan.md`](archive/06-dataset-plan.md) §5) rather than force the story.
 
 1. A non-trivial fraction of real MCP tools are V0. *If nearly all are verifiable, the paper inverts to a constructive protocol paper — still publishable.*
 2. A\* defeats response validation empirically as Theorem 1 predicts. *Very likely; it is near-definitional.*

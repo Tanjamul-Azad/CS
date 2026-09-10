@@ -4,9 +4,9 @@
 **n = 5,397 tools across 295 servers.** A0 56.5% · A1 7.2% · A2 35.9% · A3 0.4%. Regenerated 2026-08-13 by `python experiments/update_docs.py`.
 <!-- /AUTO:corpus-line -->
 
-> **Status: harvest complete, validation pending.** These figures come from the full 500-repository harvest. They are **not yet a measurement** — the A0–A3 classifier has not been scored against a human gold standard. Until κ validation runs (see [`17-status.md`](17-status.md)), treat every number here as an *instrument reading*.
+> **Status: harvest complete, validation pending.** These figures come from the full 500-repository harvest. They are **not yet a measurement** — the A0–A3 classifier has not been scored against a human gold standard. Until κ validation runs (see [`17-status.md`](archive/17-status.md)), treat every number here as an *instrument reading*.
 >
-> Supersedes [`13-d1-preliminary-findings.md`](13-d1-preliminary-findings.md), which covered only the official reference repository and is now best read as the best-case control arm.
+> Supersedes [`13-d1-preliminary-findings.md`](archive/13-d1-preliminary-findings.md), which covered only the official reference repository and is now best read as the best-case control arm.
 
 Numbers inside `<!-- AUTO -->` blocks regenerate from the corpus. Prose is hand-written.
 
@@ -35,7 +35,7 @@ No client-side audit detects their compromise at any cost. Not with a bigger bud
 *(This corpus contains no official reference servers; run `run_harvest.py` for the official control arm.)*
 <!-- /AUTO:official-vs-community -->
 
-Measured separately ([`13`](13-d1-preliminary-findings.md), n=43): the official reference servers show **A0 9.3%**, `readOnlyHint` on **74.4%**, `outputSchema` on **30.2%**. Against the ecosystem's 56.5% / 3.1% / 1.2%, that is a different population entirely.
+Measured separately ([`13`](archive/13-d1-preliminary-findings.md), n=43): the official reference servers show **A0 9.3%**, `readOnlyHint` on **74.4%**, `outputSchema` on **30.2%**. Against the ecosystem's 56.5% / 3.1% / 1.2%, that is a different population entirely.
 
 > ### The methodological claim
 > **Every prior MCP security paper that evaluates on reference servers is evaluating the most favourable slice of the ecosystem.** The servers researchers test on are not the servers users run.
@@ -57,7 +57,7 @@ This is a concrete, quantified instance of a general problem in systems security
 | `openWorldHint` | 3.1% |
 <!-- /AUTO:schema-coverage -->
 
-[`13`](13-d1-preliminary-findings.md) framed these hints as *"self-declared by the audited party, therefore unverifiable"* — a compromised server sets `readOnlyHint: true` and a trusting client stops looking. That critique is sound and still holds where the hints appear.
+[`13`](archive/13-d1-preliminary-findings.md) framed these hints as *"self-declared by the audited party, therefore unverifiable"* — a compromised server sets `readOnlyHint: true` and a trusting client stops looking. That critique is sound and still holds where the hints appear.
 
 **But in the wild they barely appear at all.** ~3%.
 
@@ -89,7 +89,7 @@ That reframes the finding from grim to actionable, and yields the paper's first 
 
 R2 is the strongest relation class: it constrains a *global* quantity, and faking it requires simulating the honest system's arithmetic — the 17-LOC rung of the adversary ladder. In the wild it is almost unavailable.
 
-[`13`](13-d1-preliminary-findings.md) flagged A3≈0 as possibly an instrument artifact. That explanation is now weak: the inline-schema bug is fixed, field resolution went 23%→72%, and R2 is no longer gated behind R1. Conservation still barely appears. The likeliest reading is **real** — most MCP servers wrap files, search, and APIs, and have no conserved numeric quantity. Banking-style invariants are the exception.
+[`13`](archive/13-d1-preliminary-findings.md) flagged A3≈0 as possibly an instrument artifact. That explanation is now weak: the inline-schema bug is fixed, field resolution went 23%→72%, and R2 is no longer gated behind R1. Conservation still barely appears. The likeliest reading is **real** — most MCP servers wrap files, search, and APIs, and have no conserved numeric quantity. Banking-style invariants are the exception.
 
 **Consequence for the defense:** the strongest audit class is, in practice, mostly unavailable. MBA in the wild runs largely on R1 and R5.
 

@@ -81,10 +81,10 @@ The user requirement was explicitly *"contribution to solve real problem, not ge
 | [`03-novelty-contributions.md`](03-novelty-contributions.md) | Novelty defense, anticipated reviewer attacks + rebuttals |
 | [`04-threat-model.md`](04-threat-model.md) | Adversary capabilities, naive vs adaptive, scope boundaries |
 | [`05-verifiability-taxonomy.md`](05-verifiability-taxonomy.md) | **Theory core.** V0–V3, impossibility theorem, per-class defenses |
-| [`06-dataset-plan.md`](06-dataset-plan.md) | D1/D2/D3, the no-existing-dataset strategy, labeling protocol |
-| [`07-experiment-plan.md`](07-experiment-plan.md) | RQs, conditions, models, N, statistics, ablations |
-| [`08-figures-plan.md`](08-figures-plan.md) | Every figure and table, with the claim each one supports |
-| [`09-venue-timeline.md`](09-venue-timeline.md) | Target venues, deadlines, milestone schedule |
+| [`06-dataset-plan.md`](archive/06-dataset-plan.md) | D1/D2/D3, the no-existing-dataset strategy, labeling protocol |
+| [`07-experiment-plan.md`](archive/07-experiment-plan.md) | RQs, conditions, models, N, statistics, ablations |
+| [`08-figures-plan.md`](archive/08-figures-plan.md) | Every figure and table, with the claim each one supports |
+| [`09-venue-timeline.md`](archive/09-venue-timeline.md) | Target venues, deadlines, milestone schedule |
 | [`10-implementation-notes.md`](10-implementation-notes.md) | Code architecture, how to run everything |
 | [`11-runtime-validation-design.md`](11-runtime-validation-design.md) | **MBA — the zero-cooperation defense.** Read after 05 |
 | [`12-intellectual-lineage.md`](12-intellectual-lineage.md) | The 11 fields we inherit from and the assumption each one loses |

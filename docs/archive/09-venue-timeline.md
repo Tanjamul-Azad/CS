@@ -35,7 +35,7 @@
 
 1. **The consistency cost curve can be measured properly.** C6 requires *building* adversaries at each rung of the ladder. Rushed, that is three toy classes; done properly, it is a real cost model across four domains with actual overhead numbers.
 2. **The measurement can be large.** A corpus of 4,000 tools with validated labels is a far better paper than 500 with hand-waved ones, and the difference is mostly patience.
-3. **Theorem 2 can be tightened.** Currently informal. A clean bound relating detection probability to relation degree and audit budget would substantially raise the paper's standing — see [`05-verifiability-taxonomy.md`](05-verifiability-taxonomy.md) §7 Q1–Q2.
+3. **Theorem 2 can be tightened.** Currently informal. A clean bound relating detection probability to relation degree and audit budget would substantially raise the paper's standing — see [`05-verifiability-taxonomy.md`](../05-verifiability-taxonomy.md) §7 Q1–Q2.
 4. **Question 5 can be developed.** Whether `deg` is gameable by a malicious server author turns the taxonomy from a measurement instrument into a deployable trust heuristic. That is potentially a second paper, and finding out costs time we now have.
 
 **Priority risk of not rushing:** MCP security is a fast-moving area and the adaptive-adversary framing is not hard to think of. Mitigation is **not** a rushed workshop paper — it is a timestamped public artifact. Keep the repo public and commits dated; that establishes provenance without spending the result.
