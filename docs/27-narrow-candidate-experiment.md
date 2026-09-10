@@ -84,7 +84,13 @@ The last two are not overhead — they are the answer to "does this scale beyond
 
 - **Q1 answered** if the content-constrained condition prevents effects the path-permission condition does not, on attacks demonstrated undefended, with honest completion within a 5pp non-inferiority margin.
 - **Q2 answered positively** only if the proposed mediation beats the **simple validator** on at least one of: prevention coverage, honest completion, UNKNOWN rate, or effort — with the same contract and the same trusted information.
-- **If Q2 is negative, that is the finding**, and the paper reports that a simple staging-and-diff validator suffices. Alcatraz already published that machinery ([`26`](26-m1-novelty-gate.md)), so this outcome is entirely plausible and must not be argued away.
+- **If Q2 shows no improvement, that is not automatically "the simple validator suffices."** A null result can mean the mechanism adds nothing, or that the sample was too small and the interval too wide to tell. Those are different findings and must be reported differently. So a threshold is fixed in advance:
+
+  - **improvement** — the proposed mediation beats the simple validator by ≥ 10 percentage points on prevention coverage, or ≥ 10pp on honest completion, or ≥ 10pp on UNKNOWN rate, with the interval excluding zero
+  - **equivalence** — the difference is within ±5pp and the interval is narrow enough to exclude a 10pp effect
+  - **inconclusive** — anything else, and the honest report is that the experiment could not distinguish them
+
+  A previous draft of this document asserted that a negative Q2 was "entirely plausible" because Alcatraz published the machinery in 2003. **That inference was wrong and is withdrawn.** Prior work bounds what we may claim as novel; it says nothing about how our mechanism will perform. Predicting the result from the literature is exactly the reasoning a pre-registered threshold exists to prevent.
 
 ## 8. What this specification does not settle
 
