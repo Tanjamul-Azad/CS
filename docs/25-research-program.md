@@ -64,20 +64,26 @@ The critical limitation, and it is not a detail. A boundary observes syscalls an
 
 Allowing `smtp.gmail.com` allows every recipient reachable through it. Kernel mechanisms do not close this: Landlock constrains filesystem paths and network ports, not recipients or payload intent.
 
-**Measured, not argued** (`experiments/run_boundary_feasibility.py`, over the 10,320 write tools of the 1,216-server corpus, from declarations alone — an upper bound):
+**A first heuristic estimate** (`experiments/run_boundary_feasibility.py`, over the 10,320 write tools of the 1,216-server corpus). Read the caveat below before quoting any of it:
 
 | | share of write tools |
 |---|---|
-| every argument is a path, host or command — **fully boundary-expressible** | **14.8%** |
-| at least one argument decides the effect where a boundary cannot adjudicate — **needs an adapter** | **54.3%** |
-| ... of which a boundary still narrows, without fully authorizing | 12.3% |
+| every argument falls in a recognised boundary category — **candidate** | **2.3%** |
+| has a recognisably opaque argument — *suggests* an adapter | 54.1% |
+| ... of which a boundary still narrows something | 11.9% |
+| **arguments entirely outside the vocabulary** | **41.3%** |
+| has an ambiguous argument (`file_id`, `email_address`) | 1.7% |
 | no declared arguments | 2.0% |
 
-The most common un-adjudicable argument is `id` (1,007 occurrences): a record in a remote service's namespace, invisible to any local boundary. 70.5% of arguments fall outside the classifier's vocabulary entirely, so the true picture is likely worse, not better.
+**These are estimates from argument NAMES, not a validated enforceability rate and not a mathematical bound.** An earlier version of this table reported 14.8% as "fully boundary-expressible" from a predicate that only required *no recognisably opaque* argument — so a tool taking `(path, mystery_option)` counted as fully expressible on the strength of one known field and one the vocabulary did not know. That was a definition error, not a conservative estimate, and it inflated the figure roughly sixfold.
 
-**Consequence for the program.** The strong hypothesis — a shared boundary needs no tool-specific knowledge — is false. What remains is a genuine and, as far as we know, unmeasured research question: *which authorization constraints survive translation to shared boundary mechanisms, and which require semantic adapters.* The architecture is therefore **hybrid by necessity**: boundary enforcement where it suffices, adapters where it does not, and an explicit **UNKNOWN** where neither does. A layer that silently degrades to "allowed" outside its competence would be worse than none.
+The corrected numbers err in **both** directions: an unrecognised name can hide a genuinely enforceable tool, and a recognised one can be wrong about what the argument means. With 41.3% of tools having only unclassified arguments, the vocabulary covers a minority of the real surface.
 
-This measurement is itself a contribution: nobody has published what fraction of real MCP authorization is enforceable at a generic boundary.
+**Consequence for the program.** The honest statement is *not* "the strong hypothesis is falsified" — it is **"we cannot yet say, and the instrument that would say is not good enough."** What is established is only that a boundary observes syscalls and packets rather than meaning (the table in this section), which is an argument from mechanism, not from this measurement.
+
+The architecture is therefore treated as **hybrid by working assumption**: boundary enforcement where it suffices, adapters where it does not, and an explicit **UNKNOWN** where neither does. A layer that silently degrades to "allowed" outside its competence would be worse than none.
+
+Before any of these numbers is quoted, the classifier needs a **human-validated sample per category**. That is a separate audit from the A0–A3 labelling in M0; κ on auditability classes does not validate this classifier.
 
 ---
 
@@ -140,6 +146,32 @@ Each has an acceptance criterion. No milestone is "done" without it.
 
 ### M0 — Repair the evidence base
 The foundation must be sound before anything is built on it.
+
+**M0a — replace `attack_landed` with observed effect. This is the most important remaining correction, because it sits in the denominator of every rate the project has published.**
+
+`mcpmut/proxy.py` computes `attack_landed = any(p.active for p in plans)`, and `active` is true as soon as the proxy *selects a target field*. "71 landed attacks" therefore means "an argument was changed and no protocol error came back" — not that an unauthorized effect occurred. A server that ignored the argument, no-opped, or failed at the application level counts identically to one that really wrote to the attacker's path.
+
+Every trial must record five independent fields, none derived from another:
+
+| field | meaning |
+|---|---|
+| `mutation_attempted` | the proxy changed an argument |
+| `protocol_error` | the server reported an error |
+| `authorized_effect_observed` | the approved effect is really present |
+| `unauthorized_effect_observed` | a forbidden effect is really present |
+| `outcome_unknown` | the evidence does not settle it |
+
+Decided by a **trusted observer** reading real state before and after, living outside the container the server runs in, and not reachable from it.
+
+**The error flag cannot substitute for this, in either direction.** `experiments/run_effect_oracle.py` demonstrates both failures on controlled behaviours: of six, the old label would count 2 while 3 carry a real unauthorized effect, and one reports a protocol error *and* leaves a forbidden write behind. So the 2026-09-10 correction — excluding errored trials from the denominator — is **also wrong**, discarding a genuine compromise. Only observation is ground truth.
+
+Unknown trials are reported, never silently dropped; dropping them is how a denominator lies.
+
+**Accept when:** every reported attack success is backed by independent state evidence, and the unknown rate is published alongside.
+
+**M0b — re-run the comparison on a matched denominator.** Do not compare a repaired detector against the old broken run and call the difference an improvement. Run baseline and repaired detector on the same pinned server versions and matched workflows, separating detector change from eligibility change. Report successful, failed, partial and unknown trials separately, with server-level clustering in the CIs, and keep the project's paired "tampered fires, honest silent" metric under its own name rather than presenting it as a conventional detection rate.
+
+**M0c — classifier validation.**
 
 - κ validation of the A0–A3 classifier (265 rows, two annotators, held-out split)
 - Hand-validate the escape partition on ~30 servers; report classifier recall (one true positive is known to sit in the `NONE` bucket)
