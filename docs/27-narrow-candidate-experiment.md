@@ -1,6 +1,8 @@
 # Experiment specification — permission-compatible contract violations
 
-Written 2026-09-10. Follows [`26-m1-novelty-gate.md`](26-m1-novelty-gate.md), which retired the broad architectural claims and left this candidate unresolved. **Specification only. Nothing here has been run.**
+Written 2026-09-10. Follows [`26-m1-novelty-gate.md`](26-m1-novelty-gate.md), which retired the broad architectural claims and left this candidate unresolved.
+
+**Status: pilot exercised on one workflow (constrained class); Q1 evidence obtained; broader instrument validation and generalization pending.** Not "instrument validated" — one workflow, eight scenarios, one server we wrote. `experiments/run_append_pilot.py`.
 
 ## 1. The mistake this specification exists to avoid
 
@@ -83,11 +85,12 @@ The last two are not overhead — they are the answer to "does this scale beyond
 ## 7. Decision rule, pre-registered
 
 - **Q1 answered** if the content-constrained condition prevents effects the path-permission condition does not, on attacks demonstrated undefended, with honest completion within a 5pp non-inferiority margin.
-- **Q2 answered positively** only if the proposed mediation beats the **simple validator** on at least one of: prevention coverage, honest completion, UNKNOWN rate, or effort — with the same contract and the same trusted information.
+- **Q2 is INACTIVE.** It compares a second mechanism against the simple validator, and no second mechanism has been specified — the proposed mediation *is* stage/diff/commit. Running one implementation twice under two names would manufacture a comparison, so the pilot runs three conditions and answers Q1 only. Q2 activates when a real mechanism difference exists.
+- When active, **Q2 is answered positively** only if the proposed mediation beats the **simple validator** on at least one of: prevention coverage, honest completion, UNKNOWN rate, or effort — with the same contract and the same trusted information.
 - **If Q2 shows no improvement, that is not automatically "the simple validator suffices."** A null result can mean the mechanism adds nothing, or that the sample was too small and the interval too wide to tell. Those are different findings and must be reported differently. So a threshold is fixed in advance:
 
   - **improvement** — the proposed mediation beats the simple validator by ≥ 10 percentage points on prevention coverage, or ≥ 10pp on honest completion, or ≥ 10pp on UNKNOWN rate, with the interval excluding zero
-  - **equivalence** — the difference is within ±5pp and the interval is narrow enough to exclude a 10pp effect
+  - **equivalence** — the **entire confidence interval** lies within −5pp to +5pp. Merely being able to exclude a 10pp improvement is *not* equivalence: an interval spanning −8pp to +4pp excludes 10pp and is still consistent with a meaningful loss
   - **inconclusive** — anything else, and the honest report is that the experiment could not distinguish them
 
   A previous draft of this document asserted that a negative Q2 was "entirely plausible" because Alcatraz published the machinery in 2003. **That inference was wrong and is withdrawn.** Prior work bounds what we may claim as novel; it says nothing about how our mechanism will perform. Predicting the result from the literature is exactly the reasoning a pre-registered threshold exists to prevent.
