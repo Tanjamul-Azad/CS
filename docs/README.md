@@ -36,7 +36,7 @@ Defenses do not stop the attacker. They **price** them. The 17-LOC adversary win
 
 ## Reading paths
 
-**Start here:** [`24-calibrated-auditing-the-real-experiment.md`](24-calibrated-auditing-the-real-experiment.md) — the current experiment and thesis. [`23-frozen-direction-auditability-analyzer.md`](23-frozen-direction-auditability-analyzer.md) holds the system design it runs on. Behind it: [`21-real-server-results-and-options.md`](21-real-server-results-and-options.md) for the real-server data, [`22-research-diagnosis-and-10-day-plan.md`](22-research-diagnosis-and-10-day-plan.md) for the diagnosis and experiment matrix, and [`19-reviewer-review.md`](19-reviewer-review.md) for the adversarial self-review all three respond to.
+**Start here:** [`25-research-program.md`](25-research-program.md) — the fixed research program, milestones M0–M6. [`24-calibrated-auditing-the-real-experiment.md`](24-calibrated-auditing-the-real-experiment.md) holds the measurement it is built on. [`23-frozen-direction-auditability-analyzer.md`](23-frozen-direction-auditability-analyzer.md) holds the system design it runs on. Behind it: [`21-real-server-results-and-options.md`](21-real-server-results-and-options.md) for the real-server data, [`22-research-diagnosis-and-10-day-plan.md`](22-research-diagnosis-and-10-day-plan.md) for the diagnosis and experiment matrix, and [`19-reviewer-review.md`](19-reviewer-review.md) for the adversarial self-review all three respond to.
 
 **For a supervisor or reviewer, in order:**
 1. [`16-design-history.md`](16-design-history.md) — what we tried, what broke, why the design changed. Read this first; it explains why the project looks the way it does.
@@ -92,6 +92,7 @@ Defenses do not stop the attacker. They **price** them. The 17-LOC adversary win
 | [`22-research-diagnosis-and-10-day-plan.md`](22-research-diagnosis-and-10-day-plan.md) | Diagnosis, the pivot to measurement, experiment matrix E1–E10 |
 | [`23-frozen-direction-auditability-analyzer.md`](23-frozen-direction-auditability-analyzer.md) | Analyzer + Verification Contract + Runtime Evaluator; E0; pre-registered E3 rule; claim-wording freeze |
 | [`24-calibrated-auditing-the-real-experiment.md`](24-calibrated-auditing-the-real-experiment.md) | **THE EXPERIMENT.** Reader calibration, escape-channel taxonomy, the safety/detectability frontier |
+| [`25-research-program.md`](25-research-program.md) | **THE PLAN.** Contract-bound effect mediation; threat model, permit rule, milestones M0–M6 with acceptance criteria |
 
 ### Logistics
 
