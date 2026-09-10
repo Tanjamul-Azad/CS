@@ -31,7 +31,11 @@ question this architecture raises rather than answers.
 
 from __future__ import annotations
 
+import hashlib
+import json
+from copy import deepcopy
 from dataclasses import dataclass, field
+from types import MappingProxyType
 from typing import Any
 
 
@@ -105,6 +109,47 @@ class EffectContract:
     bounded: dict[str, tuple[Any, Any]] = field(default_factory=dict)
     free: frozenset[str] = frozenset()
     max_invocations: int = 1
+    # Derived in __post_init__ from the canonical serialization; never
+    # supplied by a caller.
+    contract_id: str = field(default="", compare=False)
+    canonical: str = field(default="", compare=False, repr=False)
+
+    def __post_init__(self) -> None:
+        """Make the contract actually immutable, and give it an identity.
+
+        `frozen=True` protects the dataclass's own attribute bindings and
+        nothing inside them: a caller holding the dict passed as `binding`
+        could still change where an approved effect lands, after approval.
+        The dicts are therefore deep-copied and wrapped read-only.
+
+        `contract_id` is derived from the canonical serialized content, so
+        two contracts authorizing exactly the same thing share an id, and
+        any change to what was approved produces a different one. That
+        makes it usable as the key an execution allowance is charged
+        against -- and it is the hook a real deployment would sign.
+        """
+        if self.max_invocations <= 0:
+            raise ValueError(
+                f"max_invocations must be positive, got {self.max_invocations}; "
+                f"a contract that authorizes nothing should not be created")
+
+        object.__setattr__(self, "binding",
+                           MappingProxyType(deepcopy(dict(self.binding))))
+        object.__setattr__(self, "bounded",
+                           MappingProxyType({k: tuple(v) for k, v
+                                             in self.bounded.items()}))
+        object.__setattr__(self, "free", frozenset(self.free))
+
+        canonical = json.dumps({
+            "operation": self.operation,
+            "binding": dict(self.binding),
+            "bounded": {k: list(v) for k, v in self.bounded.items()},
+            "free": sorted(self.free),
+            "max_invocations": self.max_invocations,
+        }, sort_keys=True, default=str, separators=(",", ":"))
+        object.__setattr__(self, "contract_id",
+                           hashlib.sha256(canonical.encode()).hexdigest())
+        object.__setattr__(self, "canonical", canonical)
 
     def check(self, proposal: EffectProposal) -> Verdict:
         if proposal.operation != self.operation:
@@ -122,7 +167,15 @@ class EffectContract:
 
         for name, (lo, hi) in self.bounded.items():
             if name not in proposal.arguments:
-                continue                      # absent means the default
+                # An earlier version skipped absent bounded fields as
+                # "means the default". But the default is chosen by the
+                # server, which is the party we do not trust, and it may
+                # sit anywhere -- including outside the bound the user
+                # approved. Silently accepting it authorizes a value
+                # nobody checked, so the proposal must state it.
+                return Verdict(False, "bounded field left unspecified, so its "
+                                      "value would be the server's own default",
+                               name, (lo, hi), None)
             v = proposal.arguments[name]
             try:
                 out_of_range = not (lo <= v <= hi)

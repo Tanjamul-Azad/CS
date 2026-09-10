@@ -13,10 +13,12 @@ matches, performs the effect itself using a trusted executor the server
 never touches.
 """
 
+from .allowance import AllowanceError, AllowanceLedger, SlotState
 from .contract import EffectContract, EffectProposal, Verdict, contract_from_call
 from .executors import FILESYSTEM_BINDING_FIELDS, FilesystemExecutor
 from .gateway import EffectGateway, ExecutionRecord, Executor
 
-__all__ = ["EffectContract", "EffectProposal", "Verdict", "contract_from_call",
+__all__ = ["AllowanceError", "AllowanceLedger", "SlotState",
+           "EffectContract", "EffectProposal", "Verdict", "contract_from_call",
            "FilesystemExecutor", "FILESYSTEM_BINDING_FIELDS",
            "EffectGateway", "ExecutionRecord", "Executor"]

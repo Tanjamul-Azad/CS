@@ -44,9 +44,11 @@ WHAT THIS DOES NOT CLAIM.
 
 from __future__ import annotations
 
+import uuid
 from dataclasses import dataclass, field
 from typing import Any, Callable, Protocol
 
+from .allowance import AllowanceError, AllowanceLedger, SlotState
 from .contract import EffectContract, EffectProposal, Verdict
 
 
@@ -93,6 +95,7 @@ class EffectGateway:
     executors: list[Executor] = field(default_factory=list)
     binding_fields: set[str] = field(default_factory=set)
     records: list[ExecutionRecord] = field(default_factory=list)
+    allowance: AllowanceLedger = field(default_factory=AllowanceLedger)
 
     def _executor_for(self, operation: str) -> Executor | None:
         for ex in self.executors:
@@ -101,18 +104,26 @@ class EffectGateway:
         return None
 
     def call(self, operation: str, intent_args: dict,
-             contract: EffectContract | None = None) -> Any:
+             contract: EffectContract | None = None,
+             request_id: str | None = None) -> Any:
         """Run one agent-intended effect through the gateway.
 
         `intent_args` is what the AGENT asked for. The contract defaults to
         that request, which is the prototype's stand-in for intent
         extraction (see contract.py). The server is consulted for a
         proposal but never for an action.
+
+        `request_id` identifies one logical attempt. Repeating it returns
+        the recorded outcome of the first attempt without executing again,
+        which is what makes a retry safe to expose to a caller we do not
+        trust. Omitting it generates a fresh one, so every call is a new
+        attempt and charges the allowance.
         """
         if contract is None:
             from .contract import contract_from_call
             contract = contract_from_call(operation, intent_args,
                                           self.binding_fields)
+        rid = request_id or uuid.uuid4().hex
 
         executor = self._executor_for(operation)
         if executor is None:
@@ -131,10 +142,33 @@ class EffectGateway:
         differed = proposal.arguments != intent_args
 
         if not verdict.allowed:
+            # No slot is charged: execution never started, so a refusal
+            # must not spend the user's allowance. Otherwise a server could
+            # exhaust an authorization purely by proposing nonsense.
             rec = ExecutionRecord(operation, dict(proposal.arguments),
                                   False, str(verdict), proposal_differed=differed)
             self.records.append(rec)
             raise PermissionError(str(rec))
+
+        # Reserve BEFORE executing, atomically. Checking the count and
+        # then executing lets two concurrent calls both observe the same
+        # last free slot.
+        prior = self.allowance.reserve(contract.contract_id, rid,
+                                       contract.max_invocations)
+        if prior is not None:
+            # This request_id has been here before. Answer from the record;
+            # do not reach the executor a second time.
+            if prior.state is SlotState.COMMITTED:
+                return prior.result
+            if prior.state is SlotState.FAILED:
+                raise RuntimeError(
+                    f"request {rid} already failed after execution began: "
+                    f"{prior.error}")
+            raise AllowanceError(
+                f"request {rid} is still RESERVED -- its effect was started "
+                f"and its outcome was never observed. Retrying could perform "
+                f"it a second time, so this needs reconciliation against real "
+                f"state, not a retry.")
 
         # The gateway performs it. Note it executes the CONTRACT's binding
         # values, not the proposal's: they were just proven equal, and
@@ -143,8 +177,20 @@ class EffectGateway:
         # effect lands.
         approved = dict(proposal.arguments)
         approved.update(contract.binding)
-        result = executor.perform(EffectProposal(operation, approved))
+        try:
+            result = executor.perform(EffectProposal(operation, approved))
+        except Exception as e:  # noqa: BLE001
+            # The slot stays spent. The executor was entered and the effect
+            # may already have happened; handing the slot back would let a
+            # server perform it, raise, and retry indefinitely.
+            self.allowance.fail(contract.contract_id, rid, f"{type(e).__name__}: {e}")
+            rec = ExecutionRecord(operation, approved, False,
+                                  f"executor raised after entry: {e}",
+                                  proposal_differed=differed)
+            self.records.append(rec)
+            raise
 
+        self.allowance.commit(contract.contract_id, rid, result)
         rec = ExecutionRecord(operation, approved, True, str(verdict),
                               result=result, proposal_differed=differed)
         self.records.append(rec)
