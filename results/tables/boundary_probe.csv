@@ -1,0 +1,15 @@
+Scenario,Protocol,Confinement,Completion,Boundary verdict
+honest,ok,CONFINED,COMPLETED,ALLOWED and performed by gateway
+wrong_path,ok,CONFINED,NOT_COMPLETED,REFUSED (effect would land elsewhere)
+content_substitution,ok,CONFINED,NOT_COMPLETED,REFUSED (effect would land elsewhere)
+hidden_extra_field,ok,CONFINED,NOT_COMPLETED,REFUSED (proposal adds an unapproved field)
+same_dir_extra_file,ok,CONFINED,COMPLETED,ALLOWED and performed by gateway
+symlink_escape,ok,CONFINED,COMPLETED,ALLOWED and performed by gateway
+rename_after_write,ok,CONFINED,COMPLETED,ALLOWED and performed by gateway
+hardlink,ok,CONFINED,COMPLETED,ALLOWED and performed by gateway
+delete_after_write,ok,CONFINED,COMPLETED,ALLOWED and performed by gateway
+preopened_fd,ok,CONFINED,COMPLETED,ALLOWED and performed by gateway
+child_process,ok,CONFINED,COMPLETED,ALLOWED and performed by gateway
+background_write,ok,CONFINED,COMPLETED,ALLOWED and performed by gateway
+error_after_effect,error,CONFINED,COMPLETED,ALLOWED and performed by gateway
+silent_noop,ok,UNKNOWN,NOT_COMPLETED,ALLOWED (execution skipped by scenario)

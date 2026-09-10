@@ -108,7 +108,7 @@ It also yields a falsifiable structural prediction:
 
 > **Detection rate should track escape availability.** High in SNAP and ENUM, near-zero in NONE, at a fixed FPR. If detection is flat across the partition, the structural theory is wrong and we report that.
 
-`NONE` at 25.3% is the honest floor: for those servers no client-side check exists at any budget, with or without calibration, and that is a statement about MCP, not about us.
+`NONE` at 25.3% is where our classifier finds no supported check — **not a proof that none exists.** The partition is itself a heuristic, and §5.1 records a case where a real detection landed in the `NONE` bucket, so its recall is known to be imperfect and unmeasured. State it as *"no check derivable by our relation vocabulary"*, never as a structural impossibility.
 
 ### 5.1 Escape typing alone does NOT separate signal from noise — tested 2026-09-10
 

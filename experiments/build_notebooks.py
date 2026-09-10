@@ -281,6 +281,20 @@ NB04 = nb(
     "detection rate is achieved and at what false-positive cost?",
     "data/processed/pilot_*.json",
     [
+        new_markdown_cell(
+            "> ### Read this before the numbers\n>\n"
+            "> Three of the four runs below were recorded **before "
+            "2026-09-10**, when `live.py` read the MCP error flag under a "
+            "name the SDK does not define. Their `write_errored` was False "
+            "on every trial, so writes the server had REFUSED were counted "
+            "as landed attacks. They are labelled *(flag broken)* and "
+            "cannot be corrected retrospectively -- the write's response is "
+            "not kept in the trace.\n>\n"
+            "> A second, deeper problem affects **all four**: "
+            "`attack_landed` means only that the proxy selected a target "
+            "field, never that an unauthorized effect occurred. Read every "
+            "'landed' below as *mutation attempted*. Notebook 06 measures "
+            "the gap."),
         new_markdown_cell("**Definitions, chosen so a detection cannot be an "
                           "artifact.**\n\n"
                           "- *landed* -- the tampering proxy reports it "
@@ -485,11 +499,123 @@ for r in ids:
     ])
 
 
+# ---------------------------------------------------------------- 06
+NB06 = nb(
+    "06 - Ground truth: attempted vs happened vs detected",
+    "Every detection rate in this project divides by a count of attacks "
+    "that 'landed'. That count came from a flag meaning only that the "
+    "proxy selected a target field. How far is it from the truth?",
+    "data/processed/effect_oracle.json",
+    [
+        new_markdown_cell("`attack_landed = any(p.active for p in plans)` is "
+                          "true as soon as the proxy CHANGES AN ARGUMENT. It "
+                          "says nothing about whether an unauthorized effect "
+                          "occurred -- a server that ignored the argument, "
+                          "no-opped, or failed at the application level "
+                          "counts the same as one that really wrote to the "
+                          "attacker's path.\n\n"
+                          "The replacement records five independent fields, "
+                          "none derived from another, decided by an observer "
+                          "reading real state before and after."),
+        new_code_cell("""rows = load("effect_oracle.json")
+hdr = f"{'behaviour':<20}{'mut':>5}{'err':>5}{'authz':>7}{'unauth':>8}{'unk':>5}{'violation':>11}"
+print(hdr); print("-"*len(hdr))
+for r in rows:
+    print(f"{r['behaviour']:<20}"
+          f"{str(r['mutation_attempted'])[0]:>5}"
+          f"{str(r['protocol_error'])[0]:>5}"
+          f"{str(r['authorized_effect_observed'])[0]:>7}"
+          f"{str(r['unauthorized_effect_observed'])[0]:>8}"
+          f"{str(r['outcome_unknown'])[0]:>5}"
+          f"{str(r['detector_violation'])[0]:>11}")"""),
+        new_markdown_cell("## The gap between the old label and the truth"),
+        new_code_cell("""old_label = [r for r in rows if r["mutation_attempted"] and not r["protocol_error"]]
+real      = [r for r in rows if r["unauthorized_effect_observed"]]
+err_real  = [r for r in rows if r["protocol_error"] and r["unauthorized_effect_observed"]]
+print(f"trials the old `attack_landed` counts : {len(old_label)}")
+print(f"trials with a REAL unauthorized effect: {len(real)}")
+print(f"protocol error, yet a real effect     : {len(err_real)}")
+print()
+print("That last row is why excluding errored trials -- the correction made")
+print("on 2026-09-10 -- is ALSO wrong: it discards a genuine compromise.")
+print("Neither the mutation plan nor the protocol status is ground truth.")"""),
+        new_code_cell("""caught = [r for r in real if r["detector_violation"]]
+print(f"detector violations on real compromises: {len(caught)}/{len(real)}")
+for r in real:
+    mark = "caught " if r["detector_violation"] else "MISSED "
+    print(f"  {mark} {r['behaviour']:<20} {r['note']}")"""),
+        new_markdown_cell("Controlled behaviours, not real servers. This is "
+                          "**methodology validation**: it shows that neither "
+                          "the mutation plan nor the protocol status is "
+                          "ground truth, and that independent world-state "
+                          "observation is required."),
+    ])
+
+# ---------------------------------------------------------------- 07
+NB07 = nb(
+    "07 - M2: does a real boundary confine a real adversarial server?",
+    "An untrusted server running as a separate OS process under a "
+    "different user actively attacks the protected area. What does an "
+    "OS-enforced boundary stop, and what does it leave unadjudicated?",
+    "data/processed/boundary_probe.json",
+    [
+        new_markdown_cell("Enforcement is real: `/protected` belongs to the "
+                          "gateway's user and is not writable by the user "
+                          "the server runs as. This replaces the "
+                          "same-process callback used earlier, which could "
+                          "show a proposal being validated but not execution "
+                          "authority removed -- a Python function that does "
+                          "not write has only chosen not to.\n\n"
+                          "Every verdict comes from an observer reading the "
+                          "filesystem. The server's account of what it "
+                          "attempted is shown separately and is **not "
+                          "evidence**: it is written by the adversary."),
+        new_code_cell("""rows = load("boundary_probe.json")
+print(f"{'scenario':<22}{'proto':>7}{'confinement':>13}{'completion':>16}")
+print("-"*58)
+for r in rows:
+    print(f"{r['scenario']:<22}{r['protocol_status']:>7}"
+          f"{r['confinement_verdict']:>13}{r['completion_verdict']:>16}")
+
+n=len(rows)
+conf=sum(1 for r in rows if r['confinement_verdict']=='CONFINED')
+viol=sum(1 for r in rows if r['confinement_verdict']=='VIOLATED')
+unk =sum(1 for r in rows if r['confinement_verdict']=='UNKNOWN')
+done=sum(1 for r in rows if r['completion_verdict']=='COMPLETED')
+print()
+print(f"confined {conf}/{n}   violated {viol}/{n}   "
+      f"unknown {unk}/{n}   completed {done}/{n}")"""),
+        new_markdown_cell("## What the operating system actually refused"),
+        new_code_cell("""for r in rows:
+    for a in r["server_claimed_attempts"]:
+        print(f"{r['scenario']:<22} {a}")"""),
+        new_markdown_cell("## Where the boundary is not the thing doing the work"),
+        new_code_cell("""refused = [r for r in rows if r["boundary_verdict"].startswith("REFUSED")]
+print("Refused by the CONTRACT CHECK, not by the boundary:")
+print()
+for r in refused:
+    print(f"  {r['scenario']:<22} {r['boundary_verdict'][:60]}")
+print()
+print("A boundary sees paths and permissions. It cannot tell that a")
+print("proposed destination is the wrong one, or that the payload was")
+print("substituted -- those need the contract. Confinement and")
+print("authorization are different jobs.")"""),
+        new_code_cell("""unknown = [r for r in rows if r["confinement_verdict"] == "UNKNOWN"]
+for r in unknown:
+    print(f"{r['scenario']}: {r['unknown_reason']}")
+print()
+print("Blocking cannot make a server do work, so a silent no-op is")
+print("NOT_COMPLETED -- never credited to the boundary as prevention.")"""),
+    ])
+
+
 NOTEBOOKS = [("01_corpus_and_funnel", NB01),
              ("02_resource_channel", NB02),
              ("03_escape_channels", NB03),
              ("04_detector_operating_points", NB04),
-             ("05_enumeration_and_calibration", NB05)]
+             ("05_enumeration_and_calibration", NB05),
+             ("06_effect_oracle", NB06),
+             ("07_boundary_probe", NB07)]
 
 
 def main() -> None:

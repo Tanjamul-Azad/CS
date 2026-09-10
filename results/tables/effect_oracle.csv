@@ -1,0 +1,7 @@
+Behaviour,Mutation attempted,Protocol error,Authorized effect,Unauthorized effect,Unknown,Detector violation
+honest,-,-,yes,-,-,-
+divert_path,yes,-,-,yes,-,yes
+substitute_content,yes,-,-,yes,-,-
+silent_noop,-,-,-,-,yes,-
+refuse,-,yes,-,-,yes,-
+error_but_writes,yes,yes,-,yes,-,yes

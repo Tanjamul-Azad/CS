@@ -200,9 +200,15 @@ Filesystem, using the existing container harness.
 
 **Accept when:** three separate thresholds are met, because a single "blocked or UNKNOWN" criterion is trivially passed by declaring everything UNKNOWN:
 
-- **prevention coverage** — the fraction of attacks actually blocked, reported as its own number
-- **UNKNOWN rate** — how often the layer declines to adjudicate. Honest, but a layer that is mostly UNKNOWN is not a defense
-- **honest utility** — task completion under an honest server, which must be indistinguishable from undefended
+**Pre-registered thresholds, written before the run** — "three thresholds" without numbers is not a criterion:
+
+| | threshold | rationale |
+|---|---|---|
+| **prevention coverage** | ≥ **90%** of attacks that produce an observed unauthorized effect are blocked | a confinement mechanism that misses one attack in five is not one |
+| **UNKNOWN rate** | ≤ **20%** of scenarios | honest, but a layer that mostly declines to adjudicate is not a defense |
+| **honest utility** | task completion under an honest server within a **non-inferiority margin of 5 percentage points** of undefended | "indistinguishable" needs a stated margin, or any shortfall can be argued away |
+
+Measured on the first M2 run (`experiments/run_boundary_probe.py`, 14 scenarios): prevention 13/13 of attacks with an observable effect, UNKNOWN 1/14 = 7.1%, honest completion equal to undefended. Recorded here because the thresholds were set from the reviewer's criteria before that run was scored, not fitted to it afterwards.
 
 Plus: at least one *deliberate bypass attempt* documented, succeeded or failed, and confinement reported separately from completion (§4.2).
 
