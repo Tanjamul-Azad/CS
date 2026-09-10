@@ -196,7 +196,16 @@ class LiveSession:
                 if text is not None:
                     out.append(text)
             body = "\n".join(out)
-            is_error = bool(getattr(res, "isError", False))
+            # The MCP Python SDK names this field `is_error`; `isError` is
+            # only its wire alias, so `getattr(res, "isError")` silently
+            # returned the default on every call this project ever made --
+            # meaning write_errored was False everywhere and trials the
+            # server had actually REFUSED were counted as successful
+            # writes with a landed attack. Read both spellings, as
+            # list_tools already does for the same reason.
+            is_error = bool(getattr(res, "is_error", None)
+                            if getattr(res, "is_error", None) is not None
+                            else getattr(res, "isError", False))
             try:
                 parsed = json.loads(body)
             except (json.JSONDecodeError, ValueError):
