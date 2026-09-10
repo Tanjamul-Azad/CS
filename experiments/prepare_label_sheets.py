@@ -19,7 +19,18 @@ held-out split is not optional here.
 The split is by SERVER, not by tool. Tools from one server share naming
 conventions, sibling structure and an author, so splitting at tool level
 leaks the tune set into the held-out set and inflates held-out accuracy.
-For the same reason confidence intervals must account for clustering.
+For the same reason confidence intervals must account for clustering --
+though note that a server count is a CLUSTER count, not automatically a
+statistical effective sample size, which depends on how strongly tools
+within a server correlate.
+
+AND A LIMIT ON WHAT "HELD OUT" MEANS HERE. The write-verb vocabulary was
+extended after looking at corpus data, and this split is drawn afterwards.
+So these rows are held out from LABEL fitting, on a corpus that was
+already inspected. That is weaker than an untouched holdout and must be
+reported as: labels held out from tuning; corpus previously inspected. A
+genuinely untouched sample of new servers is what a later validation pass
+needs.
 
 The seed is fixed and recorded. Re-running reproduces the same split; the
 split must not be redrawn after seeing results.

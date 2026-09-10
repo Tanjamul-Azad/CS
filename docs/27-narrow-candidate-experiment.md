@@ -29,16 +29,43 @@ Three workflow classes, all three carried through every condition:
 |---|---|---|
 | **Exact** | target and final bytes both fixed in advance | `write_file(path, content)` |
 | **Constrained** | output not known in advance; an executable postcondition exists | "append a row" — file grows by one well-formed record, prior rows unchanged |
-| **Underspecified** | no trusted specification determines the acceptable effect | "summarise the report" — many outputs are correct |
+| **Underspecified** | no trusted specification determines the acceptable *content* | "summarise the report" — many outputs are correct |
 
-**The underspecified class is never silently dropped.** It is reported in coverage, in human specification effort, and in the UNKNOWN rate. Dropping it is how the easy case becomes a generality claim.
+**Underspecified is a property of PROPERTIES, not of workflows.** "Summarise the report into `summary.txt`" leaves the summary's semantic acceptability undetermined while leaving the destination and the frame condition perfectly checkable:
+
+| Property | Verdict available |
+|---|---|
+| approved destination | PASS / FAIL |
+| other protected files unchanged | PASS / FAIL |
+| output produced | PASS / FAIL |
+| summary semantically acceptable | UNKNOWN |
+
+So verdicts are **per property**, and a semantic UNKNOWN must never mask a known violation elsewhere in the same execution. **Verdict and action are also separate**: what to do when a property is UNKNOWN — commit, block, or ask for confirmation — is a policy written in advance, not a consequence of the code.
+
+**And UNKNOWN is not a finding by itself.** Withholding a specification and then observing that something is undetermined is a design consequence. What is measured is how often real workflows leave a property undetermined and *how much is recoverable by stating more* — which is what the ladder in §2.1 does.
+
+### 2.1 The ladder — graded trusted information
+
+The same workflow is run at increasing rungs, and protection, honest completion, per-property UNKNOWN and specification effort are measured at each:
+
+| Rung | What is stated |
+|---|---|
+| **L1** | destination only |
+| **L2** | + structural constraints |
+| **L3** | + task-specific content constraints, *where they exist* |
+
+The question this turns Q1 into:
+
+> **How much trusted specification buys how much useful protection, and at what cost?**
+
+`experiments/run_specification_ladder.py` implements this. Specification effort is counted as declared fields per rung, which is a **proxy** — it counts what had to be stated, not the time or expertise to arrive at it.
 
 ## 3. Conditions
 
 | Condition | What it is |
 |---|---|
 | **Undefended** | server holds the capability and acts. Establishes whether each attack lands at all |
-| **Resource permission** | path-level grant, no content constraint. **If AgentBound itself is not run, this is a "path-permission baseline", never "the AgentBound baseline"** |
+| **File-allowlist commit** | the server runs in a staging copy and only allowlisted files are committed. **Not equivalent to OS path-permission enforcement**, where a forbidden write fails at the syscall and the server learns it failed. And its semantics are **partial commit**: an unpermitted file is dropped and the rest commits, rather than the transaction being rejected whole — so its utility and consistency need measuring separately rather than folding into a prevention number. **If AgentBound itself is not run, this is never "the AgentBound baseline"** |
 | **Simple contract validator** | same contract, same trusted observation, minimal machinery: stage, run, diff, compare, commit or discard |
 | **Proposed mediation** | the full mechanism |
 
