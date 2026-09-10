@@ -73,9 +73,24 @@ OPAQUE_TOKENS = {
 }
 
 
+# Names that read as boundary vocabulary but plausibly denote something a
+# boundary cannot adjudicate. `file_id` is a remote object handle, not a
+# path; `email_address` is a recipient, not a host to connect to. Guessing
+# either way biases the headline, so they get their own category and are
+# excluded from the candidate count rather than silently resolved.
+AMBIGUOUS_PATTERNS = (
+    ("file", "id"), ("file", "key"), ("document", "id"), ("doc", "id"),
+    ("email", "address"), ("email", "id"), ("mail", "address"),
+    ("source", "id"), ("target", "id"), ("dest", "id"),
+)
+
+
 def token_class(field: str) -> str:
     f = field.strip().lower().replace("-", "_")
     parts = set(f.split("_")) | {f}
+    for a, b in AMBIGUOUS_PATTERNS:
+        if a in parts and b in parts:
+            return "ambiguous"
     if parts & FS_TOKENS:
         return "filesystem"
     if parts & NET_TOKENS:
@@ -113,38 +128,61 @@ def main() -> None:
             boundary = {c for c in classes if c in
                         ("filesystem", "network", "process")}
             opaque = [f for f, c in zip(fields, classes) if c == "opaque"]
+            unknown = [f for f, c in zip(fields, classes)
+                       if c == "unclassified"]
+            ambiguous = [f for f, c in zip(fields, classes) if c == "ambiguous"]
             per_tool.append({
                 "server_id": r["server_id"], "tool": t["name"],
                 "fields": fields, "classes": classes,
                 "boundary_kinds": sorted(boundary),
                 "opaque_fields": opaque,
-                # The decisive category. A tool is fully boundary-
-                # expressible only if NOTHING about its effect identity
-                # lives somewhere a boundary cannot adjudicate.
-                "fully_boundary": bool(fields) and not opaque and bool(boundary),
-                "needs_adapter": bool(opaque),
+                "unknown_fields": unknown,
+                "ambiguous_fields": ambiguous,
+                # A CANDIDATE, not a verdict. Every argument must fall in a
+                # recognised boundary category -- an earlier version asked
+                # only that no argument be recognisably opaque, which let
+                # a tool with arguments (path, mystery_option) count as
+                # "fully boundary-expressible" on the strength of one
+                # recognised field and one the vocabulary simply did not
+                # know. That is a definition error, not a conservative
+                # estimate, and it inflated the headline number.
+                "boundary_candidate": bool(classes) and all(
+                    c in ("filesystem", "network", "process") for c in classes),
+                "has_opaque": bool(opaque),
+                "has_unknown": bool(unknown),
+                "has_ambiguous": bool(ambiguous),
                 "no_args": not fields,
             })
 
     n = len(per_tool) or 1
-    full = sum(1 for t in per_tool if t["fully_boundary"])
-    adapter = sum(1 for t in per_tool if t["needs_adapter"])
+    cand = sum(1 for t in per_tool if t["boundary_candidate"])
+    opaque_t = sum(1 for t in per_tool if t["has_opaque"])
+    unknown_t = sum(1 for t in per_tool
+                    if t["has_unknown"] and not t["has_opaque"])
+    ambig_t = sum(1 for t in per_tool if t["has_ambiguous"])
     noargs = sum(1 for t in per_tool if t["no_args"])
     partial = sum(1 for t in per_tool
-                  if t["boundary_kinds"] and t["needs_adapter"])
+                  if t["boundary_kinds"] and t["has_opaque"])
 
     print("=" * 70)
-    print("BOUNDARY FEASIBILITY -- upper bound from declarations alone")
+    print("BOUNDARY FEASIBILITY -- heuristic estimate from declarations")
     print("=" * 70)
     print(f"\nwrite tools examined: {n}   (servers: {len(rows)})\n")
-    print(f"  fully boundary-expressible      {full:>5}  {100*full/n:>5.1f}%")
-    print(f"    -- every argument is a path, host or command\n")
-    print(f"  needs an application adapter    {adapter:>5}  {100*adapter/n:>5.1f}%")
-    print(f"    -- at least one argument decides the effect somewhere")
-    print(f"       a boundary cannot adjudicate (payload, recipient,")
-    print(f"       remote record id, quantity)\n")
-    print(f"    of those, PARTLY constrainable {partial:>5}  {100*partial/n:>5.1f}%")
-    print(f"    -- a boundary narrows it, but cannot fully authorize it\n")
+    print(f"  boundary CANDIDATE              {cand:>5}  {100*cand/n:>5.1f}%")
+    print(f"    -- every argument falls in a recognised boundary category.")
+    print(f"       A candidate, not a verdict: enforceability still has to")
+    print(f"       survive symlinks, renames, partial writes and TOCTOU.\n")
+    print(f"  has a recognisably opaque arg   {opaque_t:>5}  {100*opaque_t/n:>5.1f}%")
+    print(f"    -- payload, recipient, remote record id or quantity.")
+    print(f"       Suggests an adapter; does not prove one is unavoidable,")
+    print(f"       which needs the field's real semantics and whether the")
+    print(f"       contract must constrain it at all.\n")
+    print(f"    of those, boundary narrows it  {partial:>5}  {100*partial/n:>5.1f}%\n")
+    print(f"  unknown args only               {unknown_t:>5}  {100*unknown_t/n:>5.1f}%")
+    print(f"    -- outside the vocabulary entirely; unclassifiable either way\n")
+    print(f"  has an ambiguous arg            {ambig_t:>5}  {100*ambig_t/n:>5.1f}%")
+    print(f"    -- file_id, email_address: reads as boundary vocabulary but")
+    print(f"       may denote a remote handle or a recipient\n")
     print(f"  no declared arguments           {noargs:>5}  {100*noargs/n:>5.1f}%")
 
     print("\nargument kinds across all write tools")
