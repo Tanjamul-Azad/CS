@@ -88,6 +88,52 @@ STOPWORDS = {
     "returns", "get", "gets", "set", "list", "using", "use", "you",
 }
 
+# A field name whose LAST underscore-separated token is one of these marks
+# it as pointing at a specific resource instance ("order_id", "file_key",
+# "doc_slug") rather than describing a value. This is the basis of the
+# strongest pairing tier below: MCP mandates input schemas (unlike output
+# schemas, see ExtractedTool.output_fields -- "almost always empty" for
+# real servers), so input-to-input identifier matching is evidence that is
+# actually available at real-corpus scale, where output-field overlap is
+# starved of data.
+ID_FIELD_MARKERS = {"id", "key", "uuid", "guid", "slug", "ref", "reference"}
+
+# Excluded even though they end in a marker above: these identify the
+# CALL (auth, a request, a client session) rather than the RESOURCE the
+# write touched. A field like `api_key` or `session_id` tends to appear on
+# nearly every tool a server exposes, so treating it as a pairing key would
+# link every write to every read that also happens to need authenticating
+# -- precisely the spurious-pairing failure mode this tier exists to avoid.
+ID_FIELD_EXCLUDE = {
+    "api_key", "apikey", "secret_key", "secretkey", "access_key",
+    "auth_key", "authkey", "session_key", "session_id", "sessionid",
+    "request_id", "requestid", "trace_id", "traceid",
+    "correlation_id", "correlationid", "idempotency_key", "idempotencykey",
+    "client_id", "clientid", "user_key",
+}
+
+# Verbs whose write typically MINTS a new resource and returns its
+# identifier, rather than accepting one. A create-style write paired with
+# a reader that takes an identifier is still strong evidence -- the reader
+# can be pointed at exactly the thing just created -- but the identifier
+# has to come from the write's own RESPONSE at audit time, not its
+# arguments, which is why this is kept as a distinct, narrower condition
+# (also requires a shared resource noun) rather than folded into the plain
+# input-input overlap above.
+CREATE_VERBS = {
+    "create", "add", "insert", "register", "upload", "submit", "book",
+    "reserve", "publish", "provision", "schedule", "open",
+}
+
+
+def _is_id_field(name: str) -> bool:
+    n = name.strip().lower().replace("-", "_")
+    if n in ID_FIELD_EXCLUDE:
+        return False
+    if n in ID_FIELD_MARKERS:
+        return True
+    return n.split("_")[-1] in ID_FIELD_MARKERS
+
 
 def verb_of(name: str) -> str:
     return name.replace("-", "_").split("_")[0].lower()
@@ -224,6 +270,42 @@ def derive_for_server(tools: list[ExtractedTool]) -> list[DerivedRelation]:
                 rels.append(DerivedRelation(
                     "R2", (w.name, r.name), server,
                     basis=f"{sorted(w_numeric)[0]} vs {sorted(r_quantity)[0]}",
+                ))
+
+            # R1, keyed tier -- identifier-input overlap. If a write ACCEPTS
+            # `order_id` and a read also ACCEPTS `order_id`, the read can be
+            # pointed at the EXACT instance the write touched, not merely a
+            # same-topic list. This is independent of output-field overlap
+            # above (and fires far more often on real servers, since input
+            # schemas are declared reliably while output schemas mostly
+            # aren't) and independent of noun overlap (an identifier name
+            # match is evidence on its own). Emitted unconditionally, ahead
+            # of the shared/field_overlap gate below, so it is never skipped
+            # for lacking either of those.
+            w_id_fields = {f.lower() for f in w.input_fields if _is_id_field(f)}
+            r_id_fields = {f.lower() for f in r.input_fields if _is_id_field(f)}
+            key_overlap = w_id_fields & r_id_fields
+            if key_overlap:
+                rels.append(DerivedRelation(
+                    "R1", (w.name, r.name), server,
+                    basis=f"keyed by {sorted(key_overlap)[0]}",
+                ))
+            elif r_id_fields and shared and verb_of(w.name) in CREATE_VERBS:
+                # R1, keyed-after-create tier -- the write MINTS a new
+                # resource (create/register/upload/...) rather than
+                # accepting an existing identifier, so there is no
+                # input-input overlap to match on. But if the reader takes
+                # an identifier for the same resource (shared noun), the
+                # write's own RESPONSE is the likely source of that
+                # identifier at audit time (see _probe_args in auditor.py,
+                # which now also looks there). Weaker than direct
+                # input-input overlap -- it depends on the write's runtime
+                # response shape, which we cannot see statically -- so it
+                # is recorded distinctly in the basis string even though it
+                # is treated the same strength by the auditor.
+                rels.append(DerivedRelation(
+                    "R1", (w.name, r.name), server,
+                    basis=f"keyed by {sorted(r_id_fields)[0]} (post-create fetch)",
                 ))
 
             if not shared and not field_overlap:

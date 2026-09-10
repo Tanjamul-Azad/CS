@@ -44,7 +44,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Any, Callable, Sequence
 
-from measure.classify import classify, derive_all, is_write, nouns_of
+from measure.classify import classify, derive_all, is_write, nouns_of, _is_id_field
 from measure.extract import ExtractedTool
 
 from .policy import Action, Policy, Rule
@@ -121,43 +121,65 @@ class Auditor:
         self.relations = derive_all(self.tools)
         self.classes = classify(self.tools, self.relations)
 
-        # tool -> read tools that can corroborate it, ordered field-overlap
-        # readers first. derive_for_server emits an R1/R5 relation whenever
-        # a write and a read share EITHER an output-field name (strong: the
-        # read actually returns what the write accepted) OR merely a
-        # resource noun in their names/descriptions (weak: `create_order`
-        # and `search_products` both mention "product", but a catalog
-        # browse cannot reflect a freshly created order). A noun-only
-        # reader routinely names something that structurally cannot
-        # corroborate the write -- wrong resource type, a different index,
-        # paginated or eventually consistent -- and then fires identically
-        # on an honest and a tampered server. Measured on the real-server
-        # registry run: of the servers where BOTH the honest and tampered
-        # trial were flagged, 136/144 had the reader picked this way and
-        # the tampering attack never even landed. Preferring the
-        # field-overlap reader when one exists, and marking the reader's
-        # strength so _check_write_read can decline to call a noun-only
-        # finding a confirmed "violation", is the fix.
+        # tool -> read tools that can corroborate it, ranked strongest
+        # reader first. derive_for_server emits an R1/R5 relation on one of
+        # three bases, from strongest to weakest:
+        #   "keyed"  an identifier field (e.g. `order_id`) appears in BOTH
+        #            the write's and the read's own input schema (basis
+        #            starts with "keyed by") -- the read can be pointed at
+        #            the EXACT instance the write touched. This is the tier
+        #            that matters most at real-corpus scale: MCP mandates
+        #            input schemas but not output schemas, so this evidence
+        #            is actually available where field-overlap below is not.
+        #   "field"  an output-field name (basis starts with "read
+        #            returns") -- the read actually returns what the write
+        #            accepted. Strong, but real servers rarely declare
+        #            output schemas, so this fires far less often in
+        #            practice than the keyed tier above.
+        #   "noun"   the write and read merely share a resource word in
+        #            their names/descriptions (weak: `create_order` and
+        #            `search_products` both mention "product", but a
+        #            catalog browse cannot reflect a freshly created
+        #            order). A noun-only reader routinely names something
+        #            that structurally cannot corroborate the write --
+        #            wrong resource type, a different index, paginated or
+        #            eventually consistent -- and then fires identically on
+        #            an honest and a tampered server. Measured on the
+        #            real-server registry run: of the servers where BOTH
+        #            the honest and tampered trial were flagged, 136/144
+        #            had the reader picked this way and the tampering
+        #            attack never even landed.
+        # Preferring the strongest available reader, and marking the
+        # reader's strength so _check_write_read can decline to call a
+        # noun-only finding a confirmed "violation", is the fix.
+        _STRENGTH_RANK = {"noun": 0, "field": 1, "keyed": 2}
         self._readers: dict[str, list[str]] = defaultdict(list)
         self._reader_strength: dict[tuple[str, str], str] = {}
         _pending: dict[str, list[tuple[str, str]]] = defaultdict(list)
         for rel in self.relations:
             if rel.kind in ("R1", "R5") and len(rel.tools) == 2:
                 w, r = rel.tools
-                strength = "field" if rel.basis.startswith("read returns") else "noun"
-                # A write/reader pair can carry BOTH an R1 relation (field
-                # or noun basis) and an R5 canary relation (always a "field:
-                # <name>" basis, which does not start with "read returns").
-                # Once a pair has earned "field" from any relation, a later
-                # R5 entry for the same pair must not downgrade it back to
-                # "noun" just because canary's basis string reads differently.
-                if self._reader_strength.get((w, r)) != "field":
+                if rel.basis.startswith("keyed by"):
+                    strength = "keyed"
+                elif rel.basis.startswith("read returns"):
+                    strength = "field"
+                else:
+                    strength = "noun"
+                # A write/reader pair can carry more than one relation for
+                # the same pair (an R1 on one basis, an R5 canary on
+                # another -- always a "canary field: <name>" basis, which
+                # never starts with "keyed by" or "read returns"). Only
+                # ever UPGRADE a pair's recorded strength, never downgrade
+                # it, regardless of which relation happens to be seen last.
+                existing = self._reader_strength.get((w, r))
+                if existing is None or _STRENGTH_RANK[strength] > _STRENGTH_RANK[existing]:
                     self._reader_strength[(w, r)] = strength
                 _pending[w].append((r, strength))
         for w, pairs in _pending.items():
-            # Stable sort: field-overlap pairs first, noun-only as fallback,
-            # original discovery order preserved within each tier.
-            for r, _ in sorted(pairs, key=lambda p: p[1] != "field"):
+            # Stable sort: keyed readers first, then field-overlap, then
+            # noun-only as last resort, original discovery order preserved
+            # within each tier.
+            for r, _ in sorted(pairs, key=lambda p: -_STRENGTH_RANK[p[1]]):
                 if r not in self._readers[w]:
                     self._readers[w].append(r)
 
@@ -417,21 +439,44 @@ class Auditor:
 
         reader = readers[0]
         self._audits += 1
-        # "field" means this reader actually returns what the write
-        # accepted -- a real corroboration. "noun" means it was the only
-        # reader available and shares nothing but a resource word with the
-        # write (see the comment on self._readers in __init__); a mismatch
-        # there is too weak a signal to call a confirmed violation, so it
-        # is reported but does not count toward fp/detection rates.
+        # "keyed" and "field" both mean this reader can actually be pointed
+        # at (or actually returns) what the write touched -- a real
+        # corroboration. "noun" means it was the only reader available and
+        # shares nothing but a resource word with the write (see the
+        # comment on self._readers in __init__); a mismatch there is too
+        # weak a signal to call a confirmed violation, so it is reported
+        # but does not count toward fp/detection rates.
         strength = self._reader_strength.get((name, reader), "noun")
-        weak = strength != "field"
+        weak = strength == "noun"
         # Fill the reader's parameters from the write we are checking.
         # read_file(path) must be asked about the path just written; calling
         # it bare returns an error, the error text naturally does not contain
         # the value we wrote, and the auditor reports a violation against a
         # perfectly honest server. Every simulated reader in the benchmark
         # was parameterless, so only a live server surfaced this.
-        probe_args = _probe_args(self.by_name.get(reader), args)
+        #
+        # Also try the write's own RESPONSE, not just its arguments: a
+        # create-style write typically MINTS a new identifier and returns
+        # it rather than accepting one (see the "post-create fetch" tier
+        # in classify.py's derive_for_server) -- the reader's identifier
+        # parameter has to come from there.
+        probe_args, id_from_response = _probe_args(
+            self.by_name.get(reader), args, result)
+        # For a pair whose ONLY evidence is an identifier match ("keyed"),
+        # the identifier's SOURCE decides how much to trust an "absent" or
+        # mismatched read-back. Measured on the real-server registry run:
+        # every new false positive this tier introduced was an
+        # update-style write probed with an identifier taken from the
+        # write's own ARGUMENTS -- in this harness that value is one
+        # synth_args invented, not a reference to any resource known to
+        # exist, so "not found" proves nothing (see _probe_args). An
+        # identifier taken from the write's RESPONSE is different: a
+        # create-style write that just told us it minted resource X ought
+        # to be able to show us X, so that case keeps full strength.
+        # Scoped to "keyed" only -- a "field" pair's confidence comes from
+        # genuine output-field overlap and does not depend on this at all.
+        if strength == "keyed" and not id_from_response:
+            weak = True
         try:
             observed = call_fn(reader, probe_args)
         except Exception as e:  # noqa: BLE001
@@ -457,11 +502,39 @@ class Auditor:
         # takes `path` and returns content; demanding the path appear in the
         # content flags every honest write. Only the remaining arguments must
         # actually be reflected.
+        #
+        # Compare each written field against the SAME KEY in the read-back
+        # response first, not just a blob-wide substring search. Found on
+        # the real-server pilot (2026-09-08): a plain substring search
+        # against the whole response text misses a genuine diversion
+        # whenever the write had no OTHER checkable argument besides the
+        # one used to scope the probe (e.g. an update call whose only
+        # payload beyond the id is a boolean/enum) -- there is nothing
+        # left to search the blob for, so the check passes vacuously even
+        # though the write's effect landed somewhere else entirely. A
+        # structured lookup instead asks "what does the read-back say
+        # THIS field's value is", which stays meaningful even when no
+        # other argument value happens to reappear verbatim in the
+        # response text. Falls back to the blob-wide search only when the
+        # key cannot be found under any name in the response at all, since
+        # servers are not obliged to name a field the same way it was
+        # accepted.
         blob = _stringify(observed)
-        missing = [
-            f"{k}={v}" for k, v in args.items()
-            if k not in probe_args and _is_checkable(v) and str(v) not in blob
-        ]
+        missing = []
+        for k, v in args.items():
+            if k in probe_args or not _is_checkable(v):
+                continue
+            found_values = _find_field_values(observed, k.lower())
+            if found_values:
+                if not any(str(v) in str(fv) or str(fv) in str(v)
+                          for fv in found_values):
+                    shown = found_values[:5]
+                    missing.append(
+                        f"{k}={v} (read-back shows {k} in "
+                        f"{shown!r}{', ...' if len(found_values) > 5 else ''}, "
+                        f"none match)")
+            elif str(v) not in blob:
+                missing.append(f"{k}={v}")
         if missing:
             return [Alert(
                 "warning" if weak else "violation", name, "R1",
@@ -570,23 +643,46 @@ _UNUSABLE_MARKERS = ("required", "invalid", "denied", "not allowed",
                      "unauthorized", "forbidden", "must be", "expected")
 
 
-def _probe_args(reader: ExtractedTool | None, write_args: dict) -> dict:
-    """Arguments for a read-back probe, taken from the write being checked.
+def _probe_args(reader: ExtractedTool | None, write_args: dict,
+                 write_result: Any = None) -> tuple[dict, bool]:
+    """Arguments for a read-back probe, taken from the write being checked,
+    plus whether an IDENTIFIER field among them came from the write's own
+    RESPONSE rather than its arguments.
 
-    Only fields the reader declares AND the write supplied are passed, so a
-    parameterless reader still gets {} and a parameterised one gets the
-    value it needs to look in the right place.
+    Only fields the reader declares are filled, and only from two sources:
+    the write's own ARGUMENTS (an update-style write that was TOLD which
+    instance to touch), and failing that the write's own RESPONSE (a
+    create-style write that MINTS a new identifier and returns it -- see
+    the "post-create fetch" pairing tier in classify.py). A parameterless
+    reader still gets {}; a parameterised one gets whichever of the two
+    actually has the value it needs to look in the right place.
+
+    The second return value matters downstream (see the "keyed" strength
+    handling in _check_write_read): an identifier the WRITE'S ARGUMENTS
+    supplied is, in this harness, a value synth_args invented -- a random
+    probe string, not a reference to any resource known to actually
+    exist. Probing an update-style write's own made-up id and finding
+    nothing proves nothing about the server; probing the id a create-style
+    write just told us it minted and finding nothing is real evidence,
+    because the server itself vouched for that identifier.
     """
     if reader is None or not reader.input_fields:
-        return {}
+        return {}, False
     lowered = {k.lower(): v for k, v in write_args.items()}
-    out = {}
+    result_lowered = ({k.lower(): v for k, v in write_result.items()}
+                       if isinstance(write_result, dict) else {})
+    out: dict = {}
+    id_from_response = False
     for f in reader.input_fields:
         if f in write_args:
             out[f] = write_args[f]
         elif f.lower() in lowered:
             out[f] = lowered[f.lower()]
-    return out
+        elif f.lower() in result_lowered:
+            out[f] = result_lowered[f.lower()]
+            if _is_id_field(f):
+                id_from_response = True
+    return out, id_from_response
 
 
 def _classify_probe(x: Any) -> str:
@@ -625,6 +721,37 @@ def _is_checkable(v: Any) -> bool:
     if isinstance(v, (int, float)):
         return abs(v) > 0
     return isinstance(v, str) and len(v) >= 3
+
+
+def _find_field_values(obj: Any, key_lower: str, depth: int = 3) -> list:
+    """Every value keyed by `key_lower` (case-insensitive) anywhere in a
+    JSON-ish structure, up to `depth` levels of nesting -- e.g. every
+    "recipient" across every row of a transaction list, not just the
+    first one found.
+
+    A response that lists many records (a ledger, a directory listing) has
+    to be compared as a WHOLE: the one row that actually corresponds to
+    THIS write need not be first, so collecting every occurrence and
+    letting the caller ask "is my value among them" is the only correct
+    comparison against a collection response. Returning the first match
+    only (an earlier version of this function did) broke exactly this
+    case: a concurrent, unrelated, perfectly honest transaction that
+    happens to sort first made every other row's fields unreachable and
+    produced a false violation on an honest server.
+    """
+    out: list = []
+    if depth < 0:
+        return out
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if k.lower() == key_lower:
+                out.append(v)
+            else:
+                out.extend(_find_field_values(v, key_lower, depth - 1))
+    elif isinstance(obj, list):
+        for item in obj:
+            out.extend(_find_field_values(item, key_lower, depth - 1))
+    return out
 
 
 # typing shim for the defaultdict above

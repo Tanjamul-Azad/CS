@@ -107,6 +107,68 @@ class LiveSession:
             return out
         return self._loop.run_until_complete(go())
 
+    def list_resources(self) -> dict:
+        """The server's RESOURCE channel, alongside its tools.
+
+        Why this exists: MCP exposes server state through two independent
+        channels, `tools/*` and `resources/*`, and until now this project
+        only ever looked at the first. That biases the headline
+        auditability number in a way we cannot defend -- a `write_file`
+        with no sibling `read_file` TOOL is scored A0 (nothing can check
+        it), yet if the same server exposes the written path as a
+        `file:///...` RESOURCE, a client does have a read-back path and
+        the tool is not A0 at all.
+
+        Two important caveats, both of which belong in the paper rather
+        than in a comment, but which shape how this result may be used:
+
+          1. A resource read is exactly as forgeable as a tool response.
+             This widens the observation surface, not the trust model,
+             and leaves Theorem 1 untouched.
+          2. Resource support is optional in MCP. A server that does not
+             declare the capability answers with a protocol error, which
+             is a legitimate finding ("no resource channel"), not a
+             failure of this probe -- hence the per-channel error capture
+             rather than a raised exception.
+
+        Returns a dict with `resources`, `templates`, and, when a channel
+        is unavailable, the reason -- so a caller can tell "this server
+        has no resources" apart from "we failed to ask".
+        """
+        async def go():
+            out: dict = {"resources": [], "templates": [],
+                         "resources_error": None, "templates_error": None}
+            try:
+                res = await self._session.list_resources()
+                for r in res.resources:
+                    out["resources"].append({
+                        "uri": str(getattr(r, "uri", "") or ""),
+                        "name": getattr(r, "name", "") or "",
+                        "description": getattr(r, "description", "") or "",
+                        "mimeType": getattr(r, "mimeType", None)
+                                    or getattr(r, "mime_type", None) or "",
+                    })
+            except Exception as e:  # noqa: BLE001
+                out["resources_error"] = f"{type(e).__name__}: {e}"[:300]
+
+            # Templates are the parameterised form (`file:///{path}`) and
+            # matter more than static resources for auditing: a template
+            # is the resource-channel equivalent of a read tool that takes
+            # a key, which is exactly the shape a write-read check needs.
+            try:
+                res = await self._session.list_resource_templates()
+                for t in res.resourceTemplates:
+                    out["templates"].append({
+                        "uriTemplate": str(getattr(t, "uriTemplate", None)
+                                           or getattr(t, "uri_template", "") or ""),
+                        "name": getattr(t, "name", "") or "",
+                        "description": getattr(t, "description", "") or "",
+                    })
+            except Exception as e:  # noqa: BLE001
+                out["templates_error"] = f"{type(e).__name__}: {e}"[:300]
+            return out
+        return self._loop.run_until_complete(go())
+
     def call(self, name: str, args: dict, _record_error: bool = True) -> Any:
         """Call one tool. Records `self.last_was_error` from the protocol's
         own `isError` flag.
