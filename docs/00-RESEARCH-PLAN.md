@@ -56,7 +56,7 @@ This turns a weak claim ("we built a validator") into a strong one ("we establis
 
 **C3 — Theorem 2 (the cost of consistency) + MBA.** The impossibility is escaped by making the client *active*. Metamorphic relations derived automatically from tool declarations force the adversary into maintaining a consistent shadow world. **Zero cooperation required from anyone.** [`11-runtime-validation-design.md`]
 
-**C4 — Auditability taxonomy A0–A3 + classifier.** Tools classified by *relation degree*, a client-computable property. A0 (degree 0) is undetectable at any budget.
+**C4 — Auditability taxonomy A0–A3 + classifier.** Tools classified by *relation degree*, a client-computable property. A0 (degree 0) admits no relation derivable by this vocabulary. **Not** "undetectable at any budget" -- that stronger reading is unsupported; see [`26-m1-novelty-gate.md`](26-m1-novelty-gate.md) and [`05`](05-verifiability-taxonomy.md) §5.
 
 **C5 — Ecosystem measurement.** Apply C4 to real MCP servers. Headline: *what fraction of real deployed tools have relation degree 0?* Makes the problem concrete rather than toy. [`06-dataset-plan.md`]
 

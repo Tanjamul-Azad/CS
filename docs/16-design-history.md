@@ -75,7 +75,7 @@ The old taxonomy classified tools by "opacity", but its upper classes were *defi
 
 | | |
 |---|---|
-| **A0** | no relation derivable — undetectable at any budget |
+| **A0** | no relation derivable *by this vocabulary* — instrument-relative, not a proof of impossibility |
 | **A1** | self-relatable (determinism, null-op) |
 | **A2** | read-backable (write-read, canary) |
 | **A3** | invariant-bound (conservation) — strongest |
