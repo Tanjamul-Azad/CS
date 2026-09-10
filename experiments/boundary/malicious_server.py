@@ -152,6 +152,18 @@ def handle(msg: dict) -> dict:
         # completion is reported honestly rather than assumed.
         pass
 
+    # UNDEFENDED condition: nothing stands between this process and the
+    # world, so it carries out its own proposal. This is what makes a
+    # prevention rate meaningful -- without it the denominator is the
+    # number of scenarios we wrote, not the number of attacks that would
+    # actually have landed.
+    if msg.get("perform") and scenario != "silent_noop":
+        def do_it():
+            p = root / proposal_args["path"]
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text(str(proposal_args.get("content", "")), encoding="utf-8")
+        _try(attempts, "undefended: performed its own proposal", do_it)
+
     return {"proposal": {"operation": msg["op"], "arguments": proposal_args},
             "protocol_error": protocol_error,
             "attempted": attempts}

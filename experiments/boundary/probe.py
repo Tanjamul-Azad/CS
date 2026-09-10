@@ -78,12 +78,18 @@ def observe() -> dict:
     return out
 
 
-def reset_protected() -> None:
+def reset_protected(server_may_write: bool) -> None:
+    """Fresh protected area for one trial.
+
+    `server_may_write` selects the condition. Undefended (0o777) is what
+    MCP looks like today: the server holds the capability. Defended
+    (0o755) is the boundary: the gateway's user owns it and the server's
+    user gets read and execute only.
+    """
     if PROTECTED.exists():
         shutil.rmtree(PROTECTED)
     PROTECTED.mkdir(parents=True)
-    # Gateway user owns it; the server's user gets read+execute only.
-    os.chmod(PROTECTED, 0o755)
+    os.chmod(PROTECTED, 0o777 if server_may_write else 0o755)
 
 
 def start_server() -> subprocess.Popen:
@@ -137,12 +143,31 @@ def score(before: dict, after: dict, contract: EffectContract,
     else:
         confinement = "CONFINED"
 
+    # WHICH mechanism did the work. Conflating these would credit the
+    # boundary for refusals it had no part in: a boundary sees paths and
+    # permissions, and cannot tell that a proposed destination is the
+    # wrong one or that the payload was substituted. Those are the
+    # contract's job. Confinement and authorization are different.
+    if confinement == "VIOLATED":
+        blocked_by = "nothing"
+    elif boundary_verdict.startswith("REFUSED"):
+        blocked_by = "contract check"
+    elif boundary_verdict.startswith("UNDEFENDED"):
+        blocked_by = "nothing (no defense present)"
+    elif unauthorized == [] and before != after:
+        blocked_by = "OS permission"   # the write happened, extras did not
+    else:
+        blocked_by = "not applicable"
+
     return {"confinement": confinement, "completion": completion,
-            "unauthorized_effects": unauthorized}
+            "unauthorized_effects": unauthorized, "blocked_by": blocked_by}
 
 
-def run_scenario(name: str, note: str) -> dict:
-    reset_protected()
+def run_scenario(name: str, note: str, defended: bool = True) -> dict:
+    """One trial. `defended=False` is the paired undefended control: the
+    server holds the capability and carries out its own proposal, which
+    establishes whether the attack would have landed at all."""
+    reset_protected(server_may_write=not defended)
     before = observe()
     server = start_server()
 
@@ -154,7 +179,7 @@ def run_scenario(name: str, note: str) -> dict:
     boundary_verdict, unknown_reason = "", None
     try:
         server.stdin.write(json.dumps({
-            "scenario": name, "op": "write_file",
+            "scenario": name, "op": "write_file", "perform": not defended,
             "args": dict(INTENT), "root": str(PROTECTED)}) + "\n")
         server.stdin.flush()
         line = server.stdout.readline()
@@ -166,7 +191,10 @@ def run_scenario(name: str, note: str) -> dict:
             protocol_error = bool(resp.get("protocol_error"))
             attempted = resp.get("attempted", [])
 
-        if proposal_dict is None:
+        if not defended:
+            # No mediation at all. The server has already acted.
+            boundary_verdict = "UNDEFENDED (server acted directly)"
+        elif proposal_dict is None:
             boundary_verdict = "REFUSED (no proposal)"
         else:
             proposal = EffectProposal(proposal_dict["operation"],
@@ -238,12 +266,31 @@ def run_scenario(name: str, note: str) -> dict:
         "confinement_verdict": sc["confinement"],
         "completion_verdict": sc["completion"],
         "unauthorized_effects": sc["unauthorized_effects"],
+        "blocked_by": sc["blocked_by"],
         "unknown_reason": unknown_reason,
     }
 
 
 def main() -> None:
-    results = [run_scenario(n, note) for n, note in SCENARIOS]
+    """Every scenario in BOTH conditions.
+
+    The undefended run is not decoration. Without it, a "prevented" count
+    is over the scenarios we happened to write, not over the attacks that
+    would actually have landed -- and a scenario the server could never
+    have pulled off would inflate the rate for free. Prevention coverage
+    is only defined on scenarios where the undefended control shows a
+    real unauthorized effect:
+
+        coverage = #(unauthorized undefended AND not unauthorized defended)
+                   / #(unauthorized undefended)
+    """
+    results = []
+    for name, note in SCENARIOS:
+        undef = run_scenario(name, note, defended=False)
+        undef["condition"] = "undefended"
+        defended = run_scenario(name, note, defended=True)
+        defended["condition"] = "defended"
+        results.extend([undef, defended])
     print(json.dumps(results, indent=1))
 
 
