@@ -252,7 +252,21 @@ def trial(sc: Scenario, condition: str) -> dict:
             after = committed = observe(root)
             decision = "no defense"
 
-        elif condition == "path_permission":
+        elif condition == "file_allowlist_commit":
+            # NAME MATTERS. This is a file-allowlist COMMIT baseline: the
+            # server runs in a staging copy and only files on the allowlist
+            # are committed. It is NOT equivalent to OS path-permission
+            # enforcement, where a forbidden write fails at the syscall and
+            # the server learns it failed. Calling it "path permission"
+            # overstated what it models.
+            #
+            # SEMANTICS: PARTIAL COMMIT. An unpermitted file is dropped and
+            # the rest is committed -- the transaction is not rejected as a
+            # whole. So `extra_file` completes the approved task here while
+            # the extra write is discarded. Whole-transaction rejection
+            # would score differently, and the utility and consistency of
+            # partial commit have to be measured on their own rather than
+            # folded into a prevention number.
             # A FILE-SCOPED grant, and it is enforced rather than assumed.
             # An earlier version of this script ran the server exactly as
             # in the undefended condition and merely relabelled the row,
@@ -278,7 +292,7 @@ def trial(sc: Scenario, condition: str) -> dict:
                     (root / k).parent.mkdir(parents=True, exist_ok=True)
                     (root / k).write_text(v, encoding="utf-8")
                 after = committed = observe(root)
-                decision = ("committed (file-scoped grant)" if not refused
+                decision = ("committed (file allowlist, nothing dropped)" if not refused
                             else f"committed; refused writes to {refused}")
             finally:
                 shutil.rmtree(stage, ignore_errors=True)
@@ -332,7 +346,7 @@ def trial(sc: Scenario, condition: str) -> dict:
         shutil.rmtree(root, ignore_errors=True)
 
 
-CONDITIONS = ["undefended", "path_permission", "contract_validator"]
+CONDITIONS = ["undefended", "file_allowlist_commit", "contract_validator"]
 
 
 def main() -> None:
@@ -352,11 +366,11 @@ def main() -> None:
     print("refuses none of them -- that is what makes them the interesting")
     print("case, not a weakness of the baseline.\n")
 
-    hdr = (f"{'scenario':<26}{'undef':>7}{'path':>7}{'contract':>10}"
+    hdr = (f"{'scenario':<26}{'undef':>7}{'allow':>7}{'contract':>10}"
            f"{'authz':>7}{'oracle finding':>32}")
     print(hdr); print("-" * 100)
     for name, p in by.items():
-        u = p["undefended"]; pp = p["path_permission"]; cv = p["contract_validator"]
+        u = p["undefended"]; pp = p["file_allowlist_commit"]; cv = p["contract_validator"]
         f = (cv["oracle_findings"] or ["-"])[0]
         print(f"{name:<26}"
               f"{'BAD' if u['unauthorized_effect_observed'] else 'ok':>7}"
@@ -368,7 +382,7 @@ def main() -> None:
     attacks = [n for n, p in by.items() if p["undefended"]["is_attack"]]
     landed = [n for n in attacks
               if by[n]["undefended"]["unauthorized_effect_observed"]]
-    for cond in ("path_permission", "contract_validator"):
+    for cond in ("file_allowlist_commit", "contract_validator"):
         stopped = [n for n in landed
                    if not by[n][cond]["unauthorized_effect_observed"]]
         print(f"\n  {cond:<20} prevented {len(stopped)}/{len(landed)} "
@@ -376,7 +390,7 @@ def main() -> None:
 
     honest = by["honest"]
     print("\n  what happened to the attacks that landed:")
-    for cond in ("path_permission", "contract_validator"):
+    for cond in ("file_allowlist_commit", "contract_validator"):
         rolled = [n for n in landed if by[n][cond]["no_observable_change"]]
         still = [n for n in landed
                  if by[n][cond]["unauthorized_effect_observed"]]
@@ -384,7 +398,7 @@ def main() -> None:
               f"still compromised {len(still)}")
 
     print(f"\n  honest completion   undefended={honest['undefended']['authorized_effect_observed']}"
-          f"  path={honest['path_permission']['authorized_effect_observed']}"
+          f"  allowlist={honest['file_allowlist_commit']['authorized_effect_observed']}"
           f"  contract={honest['contract_validator']['authorized_effect_observed']}")
 
     never = [n for n in attacks if n not in landed]

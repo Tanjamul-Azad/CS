@@ -108,8 +108,14 @@ def main() -> None:
     print("\n  Tools are nested within servers and are not independent")
     print("  samples: several tools by one author share naming and sibling")
     print("  structure. A binomial interval over tools will be too narrow.")
-    print("  Report a clustered interval, using the server count above as")
-    print("  the effective sample size.")
+    print("  Report a clustered interval. The server count above is a")
+    print("  CLUSTER count, not automatically the effective sample size --")
+    print("  that depends on the within-server correlation.")
+    print("\n  HELD OUT means held out from LABEL fitting. The write-verb")
+    print("  vocabulary was extended after inspecting the corpus and this")
+    print("  split was drawn afterwards, so report it as: labels held out")
+    print("  from tuning; corpus previously inspected. That is weaker than")
+    print("  an untouched holdout, which needs a fresh sample of servers.")
 
 
 if __name__ == "__main__":
