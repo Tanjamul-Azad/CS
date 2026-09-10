@@ -232,6 +232,19 @@ class Auditor:
         self.alerts: list[Alert] = []
         self._snapshots: dict[str, float] = {}
         self._ledger_snapshots: dict[str, float] = {}
+
+        # write tool -> enumeration readers (R7). Keyed lookups are
+        # excluded at derivation time; these can be called bare, so what
+        # they return is decided by the server's state rather than by an
+        # argument we chose.
+        self._enumerators: dict[str, list[str]] = defaultdict(list)
+        for rel in self.relations:
+            if rel.kind == "R7" and len(rel.tools) == 2:
+                w, r = rel.tools
+                if r not in self._enumerators[w]:
+                    self._enumerators[w].append(r)
+        # write tool -> {reader: entries seen before the write}
+        self._enum_snapshots: dict[str, dict[str, list[str]]] = {}
         self._calls = 0
         self._audits = 0
 
@@ -316,6 +329,49 @@ class Auditor:
                 if ltotal is not None:
                     self._ledger_snapshots[f"{lreader}.{lqty}"] = ltotal
 
+            # R7 -- snapshot every enumeration reader BEFORE the write, so
+            # _check_enumeration can diff against it afterwards.
+            #
+            # CALIBRATION, and it is free. Read the enumerator TWICE with
+            # no write in between. If it already differs from itself, its
+            # output is not a function of server state -- and diffing it
+            # across a write measures that nondeterminism, not the write.
+            #
+            # This is not hypothetical. Measured on the 218-server pilot
+            # (2026-09-10), an uncalibrated version of this check raised 30
+            # violations on HONEST servers and zero true detections,
+            # pushing FPR from 1.8% to 6.9%. Every one was a reader whose
+            # own output changes per call: an auth error carrying a fresh
+            # request id ("Status: 401 ... ID: d44a7395-..."), a heartbeat
+            # timestamp, a rate-limit page. Nothing had been written.
+            #
+            # The important property is that this calibration costs no
+            # write. An unstable-or-erroring reader is excluded BEFORE it
+            # can manufacture evidence, using reads the client was already
+            # allowed to make -- so for enumeration-capable servers the
+            # safety rule ("never issue a write the agent did not ask
+            # for") is free rather than blinding.
+            snaps: dict[str, list[str]] = {}
+            for reader in self._enumerators.get(name, []):
+                if not self._safe_to_call(reader):
+                    continue
+                try:
+                    first = call_fn(reader, {})
+                    second = call_fn(reader, {})
+                except Exception:  # noqa: BLE001
+                    continue      # unreachable reader is not evidence
+                # An error response is not an enumeration. Diffing two
+                # error pages compares request ids.
+                if (_classify_probe(first) == "unusable"
+                        or _classify_probe(second) == "unusable"):
+                    continue
+                a, b = _entries(first), _entries(second)
+                if _multiset_added(a, b) or _multiset_added(b, a):
+                    continue      # self-inconsistent: BLIND, not evidence
+                snaps[reader] = b
+            if snaps:
+                self._enum_snapshots[name] = snaps
+
         return Decision(rule.action, rule, cls, deg)
 
     def after_call(
@@ -345,9 +401,89 @@ class Auditor:
             return out
 
         out.extend(self._check_conservation(name, args, call_fn))
+        out.extend(self._check_enumeration(name, args, call_fn))
         out.extend(self._check_write_read(name, args, result, call_fn))
 
         self.alerts.extend(out)
+        return out
+
+    def _check_enumeration(
+        self, name: str, args: dict, call_fn: CallFn
+    ) -> list[Alert]:
+        """R7: diff a collection reader across the agent's own write.
+
+        This is the check that was missing, and its absence is the direct
+        explanation for 0% detection on real servers: 45.9% of the corpus
+        offers this escape and only this escape (docs/24).
+
+        Three outcomes, and the middle one is the point:
+
+          nothing appeared   the reader did not change across a write that
+                             claimed success. Either it does not observe
+                             this write, or the write did nothing. Both
+                             are UNVERIFIABLE -- reporting a violation
+                             here is what produced a 76.5% false-positive
+                             rate when warnings were counted.
+
+          our value appeared CONFIRMED. The write is reflected in the
+                             server's own enumeration.
+
+          something else     VIOLATION, with POSITIVE evidence: a new
+          appeared           entry exists and it does not contain what we
+                             wrote. This is the shape of a real diversion
+                             -- on one corpus server the attacker's
+                             /tmp/exfil.dat appeared here in plain sight.
+
+        The distinction matters because it is self-calibrating. An
+        unchanged enumeration proves the reader is blind to this write
+        WITHOUT needing a probe write of our own, so for enumeration-
+        capable servers the safety rule costs nothing. That is not true of
+        read-back at an intended key, where absence and blindness are
+        indistinguishable.
+        """
+        snaps = self._enum_snapshots.pop(name, None)
+        if not snaps:
+            return []
+
+        out: list[Alert] = []
+        for reader, before in snaps.items():
+            self._audits += 1
+            try:
+                after = _entries(call_fn(reader, {}))
+            except Exception as e:  # noqa: BLE001
+                out.append(Alert("warning", name, "R7",
+                                 f"enumeration via {reader} failed after the "
+                                 f"write: {type(e).__name__}"))
+                continue
+
+            appeared = _multiset_added(before, after)
+            if not appeared:
+                out.append(Alert(
+                    "info", name, "R7",
+                    f"{reader} did not change across this write; it does not "
+                    f"observe this call -- unverifiable via enumeration"))
+                continue
+
+            # Only values distinctive enough that their absence means
+            # something -- the same bar the read-back check uses.
+            written = [str(v) for v in args.values() if _is_checkable(v)]
+            blob = " ".join(appeared)
+            if not written:
+                out.append(Alert(
+                    "info", name, "R7",
+                    f"{reader} gained {len(appeared)} entr"
+                    f"{'y' if len(appeared) == 1 else 'ies'}, but this call "
+                    f"supplied no distinctive value to match against"))
+            elif any(w in blob for w in written):
+                out.append(Alert("info", name, "R7",
+                                 f"confirmed via enumeration of {reader}"))
+            else:
+                out.append(Alert(
+                    "violation", name, "R7",
+                    f"{reader} gained {sorted(appeared)[:3]} after this "
+                    f"write, which reflects none of {written[:3]} -- the "
+                    f"effect landed somewhere other than where the response "
+                    f"claimed"))
         return out
 
     def _check_conservation(
@@ -721,6 +857,59 @@ def _is_checkable(v: Any) -> bool:
     if isinstance(v, (int, float)):
         return abs(v) > 0
     return isinstance(v, str) and len(v) >= 3
+
+
+def _entries(obj: Any) -> list[str]:
+    """A collection response as a list of comparable entry strings.
+
+    Servers return collections in every shape there is: a bare JSON array,
+    an array wrapped in `{"items": [...]}` / `{"results": [...]}`, or --
+    very commonly for MCP -- a single text block with one record per line.
+    The enumeration check only needs entries it can diff, so normalise all
+    three to a list of strings rather than trying to model the payload.
+
+    Deliberately shallow. Guessing deeply at nested structure would make
+    the diff depend on our parsing rather than on the server's behaviour,
+    and a wrong guess shows up as a fabricated violation.
+    """
+    if obj is None:
+        return []
+    if isinstance(obj, str):
+        return [ln.strip() for ln in obj.splitlines() if ln.strip()]
+    if isinstance(obj, list):
+        return [_stringify(x) for x in obj]
+    if isinstance(obj, dict):
+        # The first list-valued field is the collection: {"items": [...]}.
+        for v in obj.values():
+            if isinstance(v, list):
+                return [_stringify(x) for x in v]
+        # A dict of records keyed by id is also an enumeration.
+        if obj and all(isinstance(v, (dict, list)) for v in obj.values()):
+            return [f"{k}: {_stringify(v)}" for k, v in obj.items()]
+        # Single object, or text content -- fall back to its own text.
+        text = _stringify(obj)
+        lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+        return lines if len(lines) > 1 else [text]
+    return [_stringify(obj)]
+
+
+def _multiset_added(before: list[str], after: list[str]) -> list[str]:
+    """Entries present in `after` beyond their count in `before`.
+
+    A multiset difference, not a set one: appending a second identical row
+    IS a change, and a set difference would silently score it as nothing
+    happening -- turning a real write into "this reader is blind" and
+    losing the detection.
+    """
+    from collections import Counter
+    remaining = Counter(before)
+    added: list[str] = []
+    for item in after:
+        if remaining.get(item, 0) > 0:
+            remaining[item] -= 1
+        else:
+            added.append(item)
+    return added
 
 
 def _find_field_values(obj: Any, key_lower: str, depth: int = 3) -> list:
