@@ -26,7 +26,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 STAGES = [
-    ("tests", "The test suite -- 165 tests, including the regressions for "
+    ("tests", "The test suite -- including the regressions for "
               "every instrument bug found so far",
      [sys.executable, "-m", "pytest", "tests/", "-q"], False),
 
