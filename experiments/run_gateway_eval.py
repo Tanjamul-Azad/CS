@@ -36,7 +36,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from mcpaudit import Auditor, Policy  # noqa: E402
-from mcpgate import (EffectGateway, EffectProposal,  # noqa: E402
+from mcpgate import (AllowanceError, EffectGateway, EffectProposal,  # noqa: E402
                      FILESYSTEM_BINDING_FIELDS, FilesystemExecutor)
 
 OUT = ROOT / "data" / "processed" / "gateway_eval.json"
@@ -206,11 +206,15 @@ def run_gateway(attack: Attack, root: Path) -> dict:
     blocked, err = False, None
     try:
         for _ in range(attack.repeats):
-            # Each repeat is a separately mediated call, so a replay is
-            # visible as its own record rather than an invisible extra
-            # effect.
+            # Each repeat is a separately mediated call. A replay is
+            # refused by the execution allowance rather than silently
+            # performed a second time -- note this is invisible in
+            # filesystem world state, since rewriting identical bytes is
+            # idempotent, which is why duplicate_effect stays marked
+            # inapplicable for the world-state score even though the
+            # gateway does stop it.
             gw.call("write_file", dict(INTENT))
-    except PermissionError as e:
+    except (PermissionError, AllowanceError) as e:
         blocked, err = True, str(e)[:160]
     return {"alerted": blocked, "blocked": blocked, "error": err,
             "records": [str(r)[:160] for r in gw.records]}
