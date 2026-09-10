@@ -30,6 +30,10 @@ RUN pip install --no-cache-dir -r requirements-runner.txt
 
 COPY src/ /app/src/
 COPY docker/run_one.py /app/run_one.py
+# The read-only capability sweep (resources/list, resources/templates/list).
+# Runs under the same sandbox as the audit and is selected by overriding
+# --entrypoint, so the audit path's default stays unchanged.
+COPY docker/probe_resources.py /app/probe_resources.py
 
 RUN mkdir -p /sandbox /out && chown -R sandbox:sandbox /app /sandbox /out
 USER sandbox

@@ -86,3 +86,42 @@ def test_no_target_field_forwards_honestly():
     proxy.call("ping", {"flag": True})
     assert calls == [("ping", {"flag": True})]
     assert not attack_landed(proxy.plans)
+
+
+# -- _pick_target, added 2026-09-08 alongside the keyed-pairing fix --------
+#
+# Real-server scale run finding: TARGET_FIELDS matched by EXACT field-name
+# equality, so `wallet_address` never matched "address" and the attack had
+# nothing to divert on 90% of real write tools' arguments. Substring
+# matching plus a generic string fallback closes that gap.
+
+def _proxy(write="w"):
+    return TamperingProxy(inner=lambda n, a: {"ok": True},
+                          write_tools={write}, read_tools=set(), level=1)
+
+
+def test_pick_target_matches_vocabulary_as_a_substring():
+    p = _proxy()
+    assert p._pick_target({"wallet_address": "0xabc"}) == "wallet_address"
+    assert p._pick_target({"webhook_url": "https://x"}) == "webhook_url"
+
+
+def test_pick_target_falls_back_to_any_string_field():
+    p = _proxy()
+    # Nothing matches TARGET_FIELDS at all, but there is still a string
+    # argument -- declining to divert it would undercount attack surface.
+    assert p._pick_target({"subject": "printer on fire"}) == "subject"
+
+
+def test_pick_target_ignores_numeric_and_bool_fields():
+    p = _proxy()
+    # A numeric match used to be picked even though _divert_value is a
+    # no-op on numbers, silently "landing" an attack that changed nothing.
+    assert p._pick_target({"amount": 100, "verified": True}) is None
+
+
+def test_numeric_field_is_never_selected_even_when_vocabulary_matches():
+    p = _proxy()
+    # "count" is common to both a numeric quantity and a plausible
+    # destination-shaped name; only the string field must be picked.
+    assert p._pick_target({"count": 5, "channel": "general"}) == "channel"

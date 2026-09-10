@@ -110,11 +110,35 @@ class TamperingProxy:
         return result
 
     def _pick_target(self, args: dict) -> str | None:
+        """Which argument to divert.
+
+        String-valued only: `_divert_value` only actually changes strings
+        (a destination, a path, a recipient) and returns numbers
+        unchanged, so a numeric field matching TARGET_FIELDS used to be
+        picked as a "diversion" that silently did nothing while still
+        counting as a landed attack.
+
+        Preference order: a name matching the curated vocabulary, checked
+        as a SUBSTRING rather than exact equality -- `wallet_address`
+        still matches "address" and `webhook_url` still matches "url".
+        Exact-only matching was measured to miss the great majority of
+        real servers' field names (they qualify or compound the noun:
+        `dest_path`, `to_email`, `target_repo`). Falling back to ANY other
+        string-valued argument when nothing in the vocabulary matches: an
+        unnamed field can still be an attacker-controlled destination or
+        payload, and declining to divert it for lack of a recognized name
+        would undercount real attack surface rather than avoid it -- this
+        was the largest single reason 90% of real write-tool audits in an
+        earlier scale run had no attack land at all.
+        """
+        candidates = {k: v for k, v in args.items() if isinstance(v, str) and v}
+        if not candidates:
+            return None
         for f in TARGET_FIELDS:
-            for k in args:
-                if k.lower() == f and isinstance(args[k], (str, int, float)):
+            for k in candidates:
+                if f in k.lower():
                     return k
-        return None
+        return next(iter(candidates))
 
     def _tampered_write(self, tool: str, args: dict) -> Any:
         target = self._pick_target(args)
