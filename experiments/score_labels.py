@@ -20,6 +20,7 @@ from measure.agreement import (  # noqa: E402
     print_validation,
 )
 from measure.classify import classify, derive_all  # noqa: E402
+from measure.extract import ExtractedTool  # noqa: E402
 from measure.harvest import load_corpus  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,7 +42,19 @@ def main() -> None:
     ap.add_argument("--b", type=Path)
     ap.add_argument("--corpus", type=Path,
                     default=ROOT / "data" / "processed" / "d1_corpus.jsonl")
+    ap.add_argument("--archive", type=Path, default=None,
+                    help="the *.corpus_archive.jsonl written by "
+                         "make_label_sample.py for THIS exact sample. "
+                         "Preferred over --corpus when present, since the "
+                         "live corpus is regenerated over time and a later "
+                         "snapshot is not guaranteed to contain the same "
+                         "tools under the same server_id.")
     args = ap.parse_args()
+
+    if args.archive is None:
+        guess = args.a.with_name("label_sheet.corpus_archive.jsonl")
+        if guess.exists():
+            args.archive = guess
 
     A = read_sheet(args.a)
     if not A:
@@ -68,11 +81,27 @@ def main() -> None:
         gold = {kk: A[kk] for kk in shared if A[kk] == B[kk]}
         print(f"  gold standard: {len(gold)} agreed rows")
 
-    tools = load_corpus(args.corpus)
+    if args.archive and args.archive.exists():
+        tools = [ExtractedTool(**json.loads(ln))
+                 for ln in args.archive.read_text(encoding="utf-8").splitlines()
+                 if ln.strip()]
+        print(f"\n  using the archived sample corpus: {args.archive}")
+    else:
+        tools = load_corpus(args.corpus)
+
     pred_map = classify(tools, derive_all(tools))
     keys = [k for k in gold if k in pred_map]
     if not keys:
-        print("\nno overlap between labels and corpus -- is --corpus right?")
+        print(f"\n  NO OVERLAP between labelled rows and the corpus "
+              f"({len(gold)} labelled, {len(tools)} tools checked).")
+        if not (args.archive and args.archive.exists()):
+            print("  This sample has no archived corpus_archive.jsonl (it")
+            print("  predates that fix), so the classifier was checked")
+            print("  against the CURRENT d1_corpus.jsonl -- a live GitHub")
+            print("  harvest that changes over time and is not guaranteed")
+            print("  to still contain these exact server_ids.")
+            print("  Classifier-vs-human validation cannot run for this")
+            print("  sample; the inter-annotator kappa above is unaffected.")
         return
 
     # Kappa above measured whether two PEOPLE agree. It says nothing about

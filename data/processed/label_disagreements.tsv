@@ -1,0 +1,45 @@
+server_id	tool	description	label_A	label_B	check_A	check_B
+AILIFE1/Cathedral	cathedral_wake	Restore full agent identity from Cathedral memory.	A0	A2	-	call cathedral_remember/search/snapshot and verify the restored identity state
+CarC96/google-tag-manager-mcp/gtm_mcp	list_containers	Lists all containers in a GTM account.	A0	A2	-	call get_container/get_account and verify the container created/updated/deleted by the sibling tool
+Cyreslab-AI/builtwith-mcp-server/handlers	domain_lookup	Get technology stack information for a specific domain	A0	A2	-	call technology_search for the same domain and compare the returned technology information
+D0NMEGA/MoltGrid	send_message	Send a message to another agent via relay	A0	A2	-	call check_inbox/read_message and verify the sent message appears in the receiving agent's inbox
+Daniel-Barta/mcp-rag-server	read_file	Read a specific file under	A0	A3	-	call get_analytic_data and verify the productivity metrics reflect the posted activity
+Digital-Crew-Technologies/max-mcp-server	linkedin_create_post	Create a LinkedIn post from the connected account.	A0	A2	-	call the LinkedIn post retrieval/list tool and verify the created post
+Fast-Transients/lodgify-mcp-server	get_properties	Get a list of properties with optional filtering.	A0	A2	-	call get_property_by_id for a created/updated property and verify its state
+JuanCMPDev/mediabox-mcp/chat-core	series	Manage TV series via Sonarr. action:	A0	A2	-	call media_query/server_info and verify the managed series state
+KennethanCeyer/build-game-with-ai	adjust_camera_view	카메라의 각도(yaw, pitch)와 줌(zoom)을 조정합니다.	A0	A2	-	call inspect_game_state/capture_visual_observation and verify the camera state change
+KennethanCeyer/build-game-with-ai	capture_visual_observation	시각 검증이 꼭 필요한 경우에만 현재 화면을 캡처합니다.	A0	A2	-	call inspect_game_state/capture_visual_observation and verify the captured game state
+KennethanCeyer/build-game-with-ai	save_memory	판단, 이동 경로, 발견 사실 등 중요 정보를 런타임 작업 기억에 저장합니다.	A0	A2	-	call load_memory and verify the saved key/value
+MetaBrain-Labs/ComfyUI-MCP-Server-TypeScript/tools	save_custom_workflow	tool.save_custom_workflow.description	A0	A2	-	call the workflow/task retrieval tool and verify the saved workflow
+RFingAdam/drawio-engineering-mcp/tools	create_emc_test_setup	Generates an EMC test setup cross-section diagram from a template and opens it in draw.io.	A0	A2	-	call read_drawio and verify the generated diagram is present
+RFingAdam/drawio-engineering-mcp/tools	create_rf_block_diagram	Generates an RF signal chain block diagram from a JSON description and opens it in draw.io.	A0	A2	-	call read_drawio and verify the generated RF diagram
+albidev/bdh-graph-harness	hebbian	Get the full Hebbian synaptic state — all learned connections between notes.	A0	A2	-	call query/graph/stats and verify the Hebbian state
+albidev/bdh-graph-harness	stats	Get graph statistics: neuron count, synapse count, Hebbian state, top hubs.	A0	A2	-	call query/graph and compare graph statistics with the graph state
+angrysky56/textualize-mcp	debug_running_apps	Debug tool to see what's actually stored in running_apps.	A0	A2	-	-
+arclat-ai/relay-mcp	apply_fix	Apply a fix recommendation from the last audit to a file.	A0	A2	-	call verify_audit/audit_codebase and verify the finding is no longer present
+aswinayyolath/kafka-mcp-server	list_topics	List all topics in the Kafka cluster.	A0	A2	-	call list_topics again after create_topic/delete_topic and verify the topic list changes accordingly
+bitflight-devops/mcp-json-yaml-toml/mcp_json_yaml_toml	data_query	Extract specific data, filter content, or transform structure without modification.	A0	A2	-	call data_query again for the same file and verify the underlying data reflects the operation
+caitao-ct/knowledge-base	get_document	获取完整文档内容	A0	A2	-	call get_document/search_knowledge and verify the document state
+caitao-ct/knowledge-base	refresh_index	重新索引知识库（新增/修改文档后调用）	A0	A2	-	call search_knowledge/get_document and verify the index reflects the refresh
+caitao-ct/knowledge-base	search_knowledge	语义搜索知识库，返回最相关的知识片段（包含组件用法、业务规则、编码规范）	A2	A0	After refresh_index, call search_knowledge and expect newly indexed content to be searchable.	-
+coo-quack/calc-mcp/tools	char_info	Get Unicode information about characters (code point, block, category)	A1	A0	Call char_info for the same character and expect the same Unicode metadata.	-
+ebowman/rescuetime-mcp/rescuetime_mcp	get_focus_session_status	Get current FocusTime session status from RescueTime.	A0	A2	-	call get_analytic_data/get_focus_session_status and verify the session state
+ebowman/rescuetime-mcp/rescuetime_mcp	post_offline_time	Post offline time to RescueTime.	A2	A3	After post_offline_time, call the server's productivity/activity summary tool and expect the offline period to be reflected.	call get_analytic_data and reconcile the posted offline hours
+eraincc/emlog-mcp	search_articles	Search articles by keyword, tag, or category	A2	A0	After create_article/update_article, call get_article and expect the created or updated article.	-
+fritzprix/TheArena	start	Starts a new chess game	A0	A2	-	call pollUserMove or finish and verify the started game's state
+github-yjc/context-chronicle/mcp	memoryGraph	Manage and inspect knowledge graph entities and relations	A0	A2	-	call memoryHistory/memoryStatus or memorySearch and verify the graph entity/relation state
+gitmem-dev/gitmem/tools	analyze	Session analytics and insights engine. Returns formatted markdown by default. Use format=json for raw data.	A0	A2	-	call get_transcript or a related session/history read and compare the recorded session data
+giulianoberteo/vcf-mcp	get_endpoint	Get full details for one API operation: HTTP method, path template, all	A0	A1	-	call get_endpoint again for the same operation and compare the API specification
+lifeodyssey/share-html/worker	get_public_share	Fetch public metadata for a Share HTML slug.	A0	A2	-	call get_public_share again/describe_share_html and compare the share metadata
+lordbasilaiassistant-sudo/base-gasless-deploy-mcp	deploy_gasless_token	Deploy an ERC-20 token on Base using CDP Paymaster (zero gas for user). Falls back to normal gas if no paymaster configured. Requires DEPLOYER_PRIVATE_KEY.	A0	A2	-	call get_token_info/list_deployed_tokens and verify the deployed token
+reminia/task-tracker/task_tracker	get_my_tasks	Get the Linear tasks assigned to me. Support task status: backlog, unstarted, started, completed, canceled, triage.Default is started and unstarted.	A0	A2	-	call search_tasks/get_active_tracking and verify task status
+roccoangelella/PiLink	agent_work_list	List durable collaboration work lifecycles and public session IDs. Only a server-verified manager role may use this to identify workers that can be explicitly released.	A0	A2	-	call agent_memory_get/manifest or read and verify the lifecycle/session state
+samueljayasingh/WhatsAppMCP	download_media	Download media from a WhatsApp message and get the local file path.	A0	A2	-	call list_messages/get_message_context for the same message and verify the media reference
+samueljayasingh/WhatsAppMCP	list_messages	Get WhatsApp messages matching specified criteria with optional context.	A0	A2	-	call get_chat/get_message_context and verify the messages after a send
+secure-ssid/centralmcp	update_device_settings	Update device metadata (name, location, notes, banner). device_scope_id required for switch-system path.	A2	A0	After update_device_settings, call aos8_get and expect the changed device metadata.	-
+signalclaude/interagent	get_all_statuses	Dashboard view of all agent statuses.	A0	A2	-	call get_status/get_agent and verify the registered agent state
+tosin2013/documcp	sync_code_to_docs	Automatically synchronize documentation with code changes using AST-based drift detection (Phase 3)	A0	A2	-	call verify_deployment/analyze_repository and verify the documentation reflects the synchronized code
+vilasone455/vscode-context-mcp/tools	get_open_tabs	Retrieve a list of all open tabs/editors in VS Code.	A0	A2	-	call read_file/get_current_file and verify the open-file state
+whyy9527/ariadne	query_chains	Query cross-service chains by business term or endpoint name. Returns candidate clusters of related GraphQL operations, HTTP endpoints, Kafka topics, and frontend queries across al	A2	A0	After rescan, call query_chains and expect results from the refreshed index.	-
+zuohuiyang/dump-analyzer-mcp-server/dump_analyzer_mcp_server	close_analysis_session	Close the analysis session, release all resources, and delete temporary files.	A0	A2	-	call get_async_windbg_command_status/result and verify the analysis session state
+zuohuiyang/dump-analyzer-mcp-server/dump_analyzer_mcp_server	start_analysis_session	Start a crash dump analysis session and load the dump file and symbols. sym_noisy defaults to true so the session enables !sym noisy before later commands. For hosts without visibl	A0	A2	-	call get_async_windbg_command_status/result and verify the analysis session state

@@ -19,6 +19,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from measure.harvest import load_corpus  # noqa: E402
+import json
 
 ROOT = Path(__file__).resolve().parents[1]
 BUCKETS = [(1, 1), (2, 3), (4, 7), (8, 15), (16, 10**6)]
