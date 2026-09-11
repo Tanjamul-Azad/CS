@@ -66,13 +66,45 @@ def main() -> None:
         f.write("server_id\ttool\tdescription\tinput_fields\tsiblings\t"
                 "label\tcheck\thint_conflict\n")
         for t in picked:
-            sibs = ", ".join(x.name for x in by_server[t.server_id]
-                             if x.name != t.name)[:200]
+            # Round 2 format (docs/14): name alone let Round 1 annotators
+            # infer a plausible-sounding check from vocabulary rather than
+            # from a demonstrated relation, and that was the cause of 40 of
+            # 44 disagreements. Each sibling now carries its own
+            # (truncated) description, so a judgment can be grounded in
+            # what that tool actually claims to do.
+            sib_entries = []
+            for x in by_server[t.server_id]:
+                if x.name == t.name:
+                    continue
+                sd = (x.description or "").replace("\t", " ").replace("\n", " ").strip()
+                sd = sd[:100] if sd else "(no usable description)"
+                sib_entries.append(f"{x.name}: {sd}")
+            sibs = " | ".join(sib_entries)[:600]
             desc = (t.description or "").replace("\t", " ").replace("\n", " ")[:180]
             fields = ",".join(t.input_fields)[:80]
             f.write(f"{t.server_id}\t{t.name}\t{desc}\t{fields}\t{sibs}\t\t\t\n")
 
+    # Archive the exact records sampled -- everything classify() needs
+    # (output_fields, annotations), not the truncated display fields
+    # written above. Without this, classifier-vs-human validation is
+    # orphaned the moment the live corpus is regenerated: d1_corpus.jsonl
+    # comes from a GitHub harvest that changes over time, so "the same
+    # server_id" on a later date is not guaranteed to contain the same
+    # tools, or to exist at all. This is what went wrong with the Round 1
+    # sample -- see docs/28.
+    archive = args.out.with_suffix(".corpus_archive.jsonl")
+    with archive.open("w", encoding="utf-8") as f:
+        for t in picked:
+            f.write(json.dumps({
+                "name": t.name, "server_id": t.server_id,
+                "description": t.description,
+                "input_fields": t.input_fields,
+                "output_fields": t.output_fields,
+                "annotations": t.annotations,
+            }) + "\n")
+
     print(f"\nwrote {len(picked)} rows -> {args.out}")
+    print(f"wrote the matching corpus archive -> {archive}")
     print("Two annotators fill `label`, `check`, `hint_conflict` INDEPENDENTLY.")
     print("Then: python experiments/score_labels.py --a a.tsv --b b.tsv")
 
