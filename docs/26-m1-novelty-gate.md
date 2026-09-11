@@ -1,17 +1,17 @@
 # M1 — Novelty gate
 
-Written 2026-09-10. The gate defined in [`25-research-program.md`](25-research-program.md) §6 M1, which exists to be failable.
+Written 2026-09-10; extended 2026-09-11 (§5.1, §5.2). The gate defined in [`25-research-program.md`](25-research-program.md) §6 M1, which exists to be failable.
 
 ## Verdict
 
 | | |
 |---|---|
 | **Broad architectural claim** — "confine an untrusted MCP server's effects at an enforcement boundary derived from a per-call authorization" | **NO-GO.** Taken, by primary sources below. |
-| **Narrow candidate** — permission-compatible but contract-violating effects | Survives, unresolved. Thin on its own, and its test is specified in [`27`](27-narrow-candidate-experiment.md). |
+| **Narrow candidate** — permission-compatible but contract-violating effects | Survives, and now precisely bounded: three adjacent systems (TxOS, Alcatraz, SAFEFLOW) each hold a piece of it from a different layer, none holds the whole. Its test is specified in [`27`](27-narrow-candidate-experiment.md). |
 | **Measurement and instruments** | Not removed by the gate — but the large-scale results carry an unresolved evidence caveat, see §4. |
-| **The design space** | **Not closed.** Four named claims were rejected against named prior work. That is not an enumeration. |
+| **The design space** | **Not closed.** Named claims were rejected against named prior work. That is not an enumeration. |
 
-The gate did its job. It cost a day and it stopped a month of building on claims that four separate systems already hold.
+The gate did its job. It cost two days and it stopped a month of building on claims that five separate systems already hold between them.
 
 ---
 
@@ -99,12 +99,39 @@ Four burdens it carries, each testable:
 
 Positioned against AgentBound as the primary baseline, not against a strawman sandbox.
 
+## 5.1 SAFEFLOW, full text (2026-09-11) — the specific finding that matters
+
+The abstract retired the broad "transactional agent execution is new" claim. The full text (arXiv HTML, v3, Appendix C) answers the sharper question: does SAFEFLOW's transaction machinery already do what our narrow candidate proposes?
+
+**No, and the reason is precise, not incidental.**
+
+| | SAFEFLOW (verified, App. C.2.1–C.2.3) | Our candidate (docs/27) |
+|---|---|---|
+| Transaction unit | one agent operation / message | one MCP invocation |
+| Conflict handling | **pessimistic** — a global mutex guards critical sections before modification | not yet decided; concurrency is an open Mediated() failure mode ([`25`](25-research-program.md) §5) |
+| What rollback restores | **internal execution state** — "selectively replaying only log entries with incomplete status." Section C.2.2: "localized rollback or logical substitution" within its own DAG | **external, real side effects** — a file a server actually wrote |
+| Third-party tools | mediated as part of the Environment entity, but only the call is logged — **"true rollback of external side effects is not addressed"** (direct finding from the source) | this is the entire point of the candidate |
+| Write-ahead log content | operation metadata, source/destination entities, intent — an audit trail of *reasoning*, not of *filesystem state* | a byte-level diff of what actually changed on disk |
+
+**The one sentence this buys:** SAFEFLOW's "rollback" is a checkpoint of the agent's own bookkeeping, not a commit/discard over a real external effect. It does not compete with the candidate; it operates one layer up. This must be stated exactly this way — not as "SAFEFLOW doesn't do transactions," which it demonstrably does, but as "SAFEFLOW's transactions do not reach the external system."
+
+## 5.2 TxOS — kernel-level transactional system calls (2026-09-11)
+
+**Operating System Transactions**, Porter, Hofmann, Rossbach, Benn, Witchel, [SOSP 2009](https://dl.acm.org/doi/10.1145/1629575.1629591) (not OSDI, corrected from an earlier draft's guess). Implemented in the Linux 2.6.22.6 kernel, [source available](https://github.com/ut-osa/txos): ~150 system calls made transactional, with checkpoint/rollback of kernel objects (file metadata, address-space state) via a custom object-based software transactional memory layer using lazy version management — private copies until commit.
+
+**What this closes.** "Staging + diff + commit/discard for filesystem operations" was already closed by Alcatraz (§2); TxOS closes it a second time, one layer lower, and rules out a fallback claim of novelty at the syscall level. **What it does not close:** TxOS operates *inside* the kernel the transacted process runs under — it requires a modified kernel, not a wrapper around an unmodified untrusted binary. The candidate in docs/27 stages by copying a directory tree around an ordinary, unmodified MCP server process. That is a real implementation difference in *mechanism* (kernel-resident vs. process-external), though not in the *underlying idea* (transactional staging and commit), which both TxOS (2009) and Alcatraz (2003) hold.
+
+**Dropped.** "Solitude" was named in an earlier draft as a third comparison point. It could not be verified against any primary source — a search returned no paper by that name matching the described mechanism. Per the citation quarantine rule ([`22`](22-research-diagnosis-and-10-day-plan.md), [`23`](23-frozen-direction-auditability-analyzer.md) §5), it is removed rather than left in on the strength of a half-remembered reference.
+
 ## 6. Gate status
 
-**M1 is not fully cleared, and this document does not claim it is.** Remaining:
+**M1 is substantially cleared; capability-systems review remains partial.** Both items open at the previous writing are now closed:
 
-- SAFEFLOW **full text** — the abstract is enough to retire the broad transactional claim, not enough to judge implementation-level differences.
-- Traditional transactional sandbox and commit systems beyond Alcatraz — TxOS, Solitude, union/overlay-mount sandboxes.
-- Traditional capability systems review is partial.
+- ~~SAFEFLOW full text~~ — done, §5.1. Sharpens rather than merely retires the earlier finding: SAFEFLOW is transactional but never reaches the external system.
+- ~~Traditional transactional sandbox/commit systems beyond Alcatraz~~ — TxOS done, §5.2. "Solitude" dropped as unverifiable.
 
-What the gate has already delivered is worth more than a pass would have been: three broad claims retired, one of our own overclaims corrected, and the primary competitor identified before implementation rather than after.
+**Still open:** the capability-systems review (Capsicum is checked; the broader literature — seL4-style capability kernels, object-capability languages — is not).
+
+**Cumulative finding, stated once.** Three independent systems, at three different layers, already do staging/transactional confinement of *something*: TxOS at the kernel syscall layer (2009), Alcatraz at the process/filesystem layer (2003), SAFEFLOW at the agent-reasoning layer (2025). None of the three commits or discards an untrusted MCP server's *external, real* filesystem effect from *outside* an *unmodified* process. That gap — narrow, precisely bounded by three adjacent systems rather than asserted against none — is what docs/27's candidate has left to test. It is a real gap. It is also now a small one, and the paper must say so in those words rather than as an unqualified "novel mechanism."
+
+What the gate has delivered is worth more than a pass would have been: three broad claims retired, two further systems closing the narrow one from adjacent layers, one of our own overclaims corrected, and the primary competitor (AgentBound) identified before implementation rather than after.
