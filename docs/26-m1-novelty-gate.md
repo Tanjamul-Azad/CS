@@ -123,14 +123,21 @@ The abstract retired the broad "transactional agent execution is new" claim. The
 
 **Dropped.** "Solitude" was named in an earlier draft as a third comparison point. It could not be verified against any primary source — a search returned no paper by that name matching the described mechanism. Per the citation quarantine rule ([`22`](22-research-diagnosis-and-10-day-plan.md), [`23`](23-frozen-direction-auditability-analyzer.md) §5), it is removed rather than left in on the strength of a half-remembered reference.
 
+## 5.3 The rest of the capability-systems literature: seL4, object capabilities
+
+**seL4** — Klein et al., **Formal Verification of an OS Kernel**, [SOSP 2009](https://sel4.systems/Research/pdfs/sel4-formal-verification-os-kernel.pdf), full PDF fetched and read. Machine-checked functional-correctness proof (Isabelle/HOL) of a complete microkernel, down to the C implementation — the first of its kind. Capabilities in seL4 are **kernel-internal**: unforgeable tokens governing which kernel objects (endpoints, memory regions, other capabilities) a thread may manipulate through system calls, stored in a kernel-managed CSpace user code cannot touch directly. The paper verifies kernel behavior; it does not discuss deriving a policy from an application-level per-call declaration, staging an effect before commit, or auditing an unmodified user-space server's external side effects from outside. **What it closes:** nothing in our narrow candidate — the layer, the mechanism, and the question (kernel correctness vs. external effect mediation of an unmodified process) are different.
+
+**Capability Myths Demolished** — Miller, Yee, Shapiro, [2003](https://papers.agoric.com/assets/pdf/papers/capability-myths-demolished.pdf), abstract and introduction read directly from the PDF. The foundational object-capability paper: refutes the Equivalence Myth (ACLs and capabilities are not formally equivalent), the Confinement Myth, and the Irrevocability Myth, via a comparison of ACLs-as-columns against three capability interpretations (rows, keys, object capabilities), framed around least privilege and the confused-deputy problem. It is a **conceptual security-properties comparison**, not a systems mechanism — no staging, no commit/discard, no schema-derived per-call contract, no treatment of an untrusted process's effects from outside. **What it closes:** nothing directly applicable; it does, however, supply the correct vocabulary (confused deputy, least authority) for framing why a per-call contract derived from a tool's own declaration is a least-authority mechanism, which is worth keeping for the paper's related-work section even though it does not compete with the candidate.
+
+**What this leaves standing.** Neither the verified-kernel line (seL4) nor the foundational object-capability line (Miller/Yee/Shapiro, and by extension the broader object-capability-language tradition it anchors, e.g. E, Joe-E) proposes or evaluates staging-and-commit mediation of an *unmodified* process's *external* effects, checked against a contract *derived from that process's own tool declaration*. Both operate at a different layer (kernel object access, or language/object-reference discipline) than the candidate (process-external, protocol-level, schema-derived).
+
 ## 6. Gate status
 
-**M1 is substantially cleared; capability-systems review remains partial.** Both items open at the previous writing are now closed:
+**M1 is cleared.** All items open at earlier writings are now closed:
 
 - ~~SAFEFLOW full text~~ — done, §5.1. Sharpens rather than merely retires the earlier finding: SAFEFLOW is transactional but never reaches the external system.
 - ~~Traditional transactional sandbox/commit systems beyond Alcatraz~~ — TxOS done, §5.2. "Solitude" dropped as unverifiable.
-
-**Still open:** the capability-systems review (Capsicum is checked; the broader literature — seL4-style capability kernels, object-capability languages — is not).
+- ~~Capability-systems review (seL4-style kernels, object-capability languages)~~ — done, §5.3. Neither closes the narrow candidate; both operate at a different layer.
 
 **Cumulative finding, stated once.** Three independent systems, at three different layers, already do staging/transactional confinement of *something*: TxOS at the kernel syscall layer (2009), Alcatraz at the process/filesystem layer (2003), SAFEFLOW at the agent-reasoning layer (2025). None of the three commits or discards an untrusted MCP server's *external, real* filesystem effect from *outside* an *unmodified* process. That gap — narrow, precisely bounded by three adjacent systems rather than asserted against none — is what docs/27's candidate has left to test. It is a real gap. It is also now a small one, and the paper must say so in those words rather than as an unqualified "novel mechanism."
 
