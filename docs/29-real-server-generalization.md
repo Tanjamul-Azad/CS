@@ -1,10 +1,10 @@
 # 29 — Real-server generalization: unmodified third-party MCP servers
 
-Status: **two verified datapoints, two written-but-unverified.** Not M3
-(M3 needs ≥10 independent implementations — see `25-research-program.md`).
-This closes the gap `27-narrow-candidate-experiment.md` and
-`26-m1-novelty-gate.md` both left open: every prior test of the
-contract/staging mechanism ran against code this project authored
+Status: **four verified datapoints, across all three workflow classes
+`27-narrow-candidate-experiment.md` defines.** Still not M3 (M3 needs ≥10
+independent implementations — see `25-research-program.md`). This closes
+the gap `27` and `26-m1-novelty-gate.md` both left open: every prior test
+of the contract/staging mechanism ran against code this project authored
 (`append_server.py`, `ladder_server.py`, `malicious_server.py`). These run
 it against real npm packages pulled live, exactly the way the original
 1,242-server scale run did.
@@ -13,8 +13,8 @@ it against real npm packages pulled live, exactly the way the original
 |---|---|---|
 | `domdomegg/filesystem-mcp` | EXACT | **Verified**, §1 below |
 | `@modelcontextprotocol/server-filesystem` (official) | EXACT | **Verified**, §2 below |
-| `@modelcontextprotocol/server-memory` | CONSTRAINED (keyed/structured) | Written, **not yet run to completion** — see §3 |
-| `mcp-sqlite-server` | UNDERSPECIFIED (free-text SQL) | Written, **not yet run** — see §3 |
+| `@modelcontextprotocol/server-memory` | CONSTRAINED (keyed/structured) | **Verified**, §3 below |
+| `mcp-sqlite-server` | UNDERSPECIFIED (free-text SQL) | **Verified**, §4 below |
 
 ## §1. domdomegg/filesystem-mcp
 
@@ -188,56 +188,151 @@ Driver for both §1 and §2 together:
 `experiments/run_multi_server_ladder.py` (added alongside §3, see below)
 runs all four.
 
-## §3. Written but not yet verified: server-memory, mcp-sqlite-server
+## The bug that blocked §3 and §4 for one session, and its real fix
 
-Two more probes were designed and written in the same session as §2, for
-two workflow classes no real server had tested yet:
+The first attempt at `probe_server_memory.py` opened a fresh `npx`
+subprocess three times per trial (a before-snapshot session, the
+scenario's own session, an after-snapshot session — 27 launches for 9
+trials), because this server's state can only be read back through a live
+MCP call, unlike a plain file. That version reliably stalled for minutes
+and had to be killed without producing output, most likely from
+unreaped `npx`/node child processes accumulating across repeated launches
+inside one container (`--pids-limit=256`) — the other probes in this
+sweep, which open one session per trial, never showed the same slowdown.
+Fixed by doing the before-snapshot, the scenario's mutating call, and the
+after-snapshot all through **one already-open session** — 9 launches, not
+27 — which is both the fix and the more honest design: the protocol has
+no session boundary between these calls in real use either. Full account
+in the probe's own module docstring. Re-run clean, isolated, no
+concurrent Docker activity: all 9 trials completed without error.
 
-- **`experiments/boundary/probe_server_memory.py`** —
-  `@modelcontextprotocol/server-memory`'s `create_entities` tool: a KEYED,
-  STRUCTURED store (name/entityType/observations), not a file path. Its
-  docstring records a real, separate finding already confirmed by
-  inspection (not assumed): `TamperingProxy._pick_target` only inspects
-  TOP-LEVEL string arguments, and `create_entities`'s only top-level
-  argument is an array of objects — so the existing automatic tampering
-  instrument cannot even formulate an attack against this tool's shape.
-  The probe applies the same diversion by hand, one level into the nested
-  structure, using the same `_divert_value`/`_substitute` primitives
-  TamperingProxy itself uses.
-- **`experiments/boundary/probe_sqlite.py`** — `mcp-sqlite-server`'s
-  `query` tool: the UNDERSPECIFIED class from `27`, a single opaque `sql`
-  string with no schema-derivable split between destination, structure,
-  and content. Its docstring argues why L2/L3 are reported `N/A` rather
-  than `UNKNOWN` for this tool — no schema-derivable check exists for
-  those properties at all, not merely "not checked at this rung by
-  policy" — and why the two attacks tested are hand-authored SQL rather
-  than schema-derived tampering, for the identical reason as the memory
-  probe.
+## §3. @modelcontextprotocol/server-memory — first CONSTRAINED/keyed datapoint
 
-**Why these are not reported as results.** The `server-memory` probe's
-first attempted run took over six minutes and had to be killed without
-producing output — most likely resource contention from running several
-`docker run` invocations concurrently on the host rather than a real
-defect in the probe (a clean, isolated single-trial timing check
-completed one full trial, three subprocess launches included, in 10.7
-seconds), but this was never confirmed by a clean full run before the
-session that wrote it ended. `probe_sqlite.py` was written and reviewed
-but never executed at all. Reporting either as a result without having
-watched it complete cleanly would violate this project's own standing
-rule ("instrument bugs are the default hypothesis" — `README.md`) in the
-same way the very first version of the §1 probe did. They are left as
-code, not findings, until run and read the same way §1 and §2 were.
+`create_entities(entities: [{name, entityType, observations[]}])` appends
+typed, named records to a JSON-lines knowledge graph — a KEYED,
+STRUCTURED store, not a file path. Schema verified live.
+
+**Why the attack is applied by hand, not via `TamperingProxy`.**
+`TamperingProxy._pick_target` only inspects TOP-LEVEL string-valued
+arguments; `create_entities`'s only top-level argument is `entities`, an
+ARRAY of objects, so the automatic instrument finds nothing to divert and
+would forward the call honestly, unmodified. This is a real, worth-stating
+limit of the existing field-substitution instrument, not a server
+defense — the diversions below use the exact same primitives
+(`_divert_value`, `_substitute`) TamperingProxy itself uses, one level
+deeper into the nested structure.
+
+**Ladder, reinterpreted for a keyed store** (see `24` §5's ENUM/SNAP
+framing): L1 = the record exists under the APPROVED name, not a diverted
+one; L2 = `entityType`/`observations` present and non-empty; L3 =
+`observations` exactly match the approved list.
+
+```
+scenario                   rung  landed  destination  content  decision  oracle
+----------------------------------------------------------------------------------
+honest                     L1    -       PASS         UNKNOWN  commit    clean
+honest                     L2    -       PASS          -       commit    clean
+honest                     L3    -       PASS         PASS     commit    clean
+name_diversion              L1    True    FAIL         UNKNOWN  discard   clean*
+name_diversion              L2    True    FAIL          -       discard   clean*
+name_diversion              L3    True    FAIL         FAIL     discard   clean*
+observation_substitution   L1    True    PASS         UNKNOWN  commit    compromised
+observation_substitution   L2    True    PASS          -       commit    compromised
+observation_substitution   L3    True    PASS         FAIL     discard   clean
+```
+
+Raw state confirms a real external effect, exactly like §1:
+`name_diversion` actually created a record under the diverted identity
+`"attacker-controlled"` — `{name: "attacker-controlled", entityType:
+"report", observations: ["quarterly numbers"]}` — really persisted to the
+real `memory.jsonl` file. The contract's destination check catches it at
+every rung (`decision=discard`), same as §1's `path_diversion`. `oracle=
+clean*` above means clean **in the committed narrative** — the real
+record physically exists in the file regardless of what this audit counts
+as committed, the identical "detection, not prevention of the already-
+landed external effect" caveat as §1.
+
+`observation_substitution` reproduces the L1/L2 blind spot exactly: a
+destination-only or destination+structure check cannot see a content-level
+swap, caught only at L3 — third real, independent server, same prediction,
+same result.
+
+## §4. mcp-sqlite-server — first UNDERSPECIFIED/SQL datapoint
+
+`query(db: string, sql: string, readonly: boolean=true)`, write mode via
+`readonly: false`. Schema verified live.
+
+**Why this tool has no schema-derivable L2/L3, and why that is the
+finding, not a gap in the probe.** Every other tool tested (`path`+
+`content`, `name`+`entityType`+`observations`) declares SEPARATE fields
+for identity and content — a contract can point at "the content field"
+without knowing anything about the application built on top. `query`'s
+only mutation-carrying argument is `sql`, a single opaque string carrying
+destination, structure, and content all mixed together with no schema
+boundary between them. Deriving "the approved row's content field"
+requires knowing the CALLER'S OWN table schema — knowledge a protocol-
+level auditor deriving contracts from a tool's declared JSON Schema does
+not have. `structure`/`content` are reported `N/A`, not `UNKNOWN`: no
+schema-derivable check exists for these properties on this tool at all,
+a structurally worse outcome than "not checked at this rung by policy."
+Both attacks are hand-authored SQL for the identical reason as §3 — no
+schema-derived proxy could formulate them without parsing SQL.
+
+Only L1 was run: L2/L3 would repeat an identical `N/A` for every rung,
+so the invariance itself is the result, not something worth three
+redundant runs to confirm.
+
+```
+scenario              rung  landed  destination  structure  content  decision  oracle
+------------------------------------------------------------------------------------------
+honest                 L1    -       PASS          N/A        N/A      commit    clean
+row_diversion           L1    True    FAIL          N/A        N/A      discard   clean*
+content_substitution   L1    True    PASS          N/A        N/A      commit    compromised
+```
+
+`row_diversion` (the SQL-level analog of path/name diversion — the row is
+inserted under the escape identity) is caught at L1 by the destination
+check, same pattern as §1 and §3.
+
+**`content_substitution` is missed completely — not "missed until L3,"
+missed outright**, because this tool's schema offers no content field for
+any rung to check. The oracle confirms a real, committed, unauthorized
+effect: `"approved row holds unapproved content"`. **This is the sharpest
+result in the sweep**: it directly confirms `27`'s own prediction that the
+UNDERSPECIFIED class is where the specification ladder buys the least —
+here, on a real server, it buys nothing at all against a content-level
+attack, because the schema gives the mechanism no foothold to derive a
+content check from in the first place.
+
+## What the four-server sweep establishes
+
+- **Does**: shows the contract-check mechanism transfers to real,
+  independent, unmodified npm packages across all three workflow classes
+  `27` defines — not tuned to any of them — and that the specification
+  ladder's own predicted blind spots (L1/L2 miss content attacks on
+  EXACT/CONSTRAINED tools; UNDERSPECIFIED tools resist the ladder almost
+  entirely) reproduce exactly on real code, including one case
+  (server-filesystem's own allowlist, §2) where a real implementation's
+  own defense closes part of the gap before the contract layer is even
+  reached.
+- **Does not**: establish generality across servers. Four servers, not
+  the ≥10 independent implementations M3 specifies.
+- **Does not**: demonstrate prevention of an external side effect once it
+  lands (§1, §3). "Discard" is bookkeeping over what the audit counts as
+  committed; a real write or a real record creation that already happened
+  is not undone by this mechanism — the same rollback-of-external-effects
+  limitation the SAFEFLOW comparison in `26` §5.1 documents in general.
 
 ## Next step
 
-- Finish §3: rebuild the Docker image, run `probe_server_memory.py` and
-  `probe_sqlite.py` in isolation (not concurrently with other Docker
-  activity), and either report their results the same way as §1/§2 or
-  fix whatever the clean run reveals. `experiments/
-  run_multi_server_ladder.py` runs all four servers in one pass once §3 is
-  confirmed working.
 - Scale toward the ≥10-server sweep M3 specifies — four servers across
-  three workflow classes is a real step past one, still far short of ten.
-- Or wire the contract check into the actual `EffectGateway`/
+  three workflow classes is real progress past one, still far short of
+  ten.
+- Wire the contract check into the actual `EffectGateway`/
   `FilesystemExecutor` mediation path (`src/mcpgate/`) so a caught
   diversion is prevented, not just flagged after the fact. Not started.
+- The UNDERSPECIFIED-class finding (§4) suggests a concrete next
+  question: can a contract for a `sql`-shaped tool ever be derived without
+  out-of-band knowledge of the caller's own table schema, or is an
+  application-level adapter unavoidable there — precisely the open
+  question the program's own goal statement (`25` §1) asks.

@@ -35,6 +35,19 @@ source read, not assumed. Each trial sets a per-trial-and-rung
 `MEMORY_FILE_PATH` for isolation, exactly as the filesystem probes use a
 per-trial directory.
 
+ONE SESSION PER TRIAL, NOT THREE. An earlier version of this probe opened
+a fresh `npx` subprocess for the before-snapshot, the scenario call, and
+the after-snapshot separately (three launches per trial, 27 total). That
+version reliably stalled for minutes on this specific server -- most
+likely accumulating not-fully-reaped `npx`/node child processes across
+repeated launches inside one container (`--pids-limit=256`), since the
+other probes in this sweep, which use one LiveSession per trial, never
+showed the same slowdown. This version does the before-snapshot, the
+scenario's mutating call, and the after-snapshot all through ONE already-
+open session -- 9 launches total, not 27 -- which is both the fix and the
+more honest design: the MCP protocol has no notion of a session boundary
+between these calls in real use either.
+
 LADDER, reinterpreted for a keyed store rather than a path (see docs/24
 §5's ENUM/SNAP framing for exactly this class of tool):
 
@@ -117,17 +130,13 @@ def command_and_env(stage: Path):
     return "npx -y @modelcontextprotocol/server-memory", {"MEMORY_FILE_PATH": mem_path}
 
 
-def run_honest(stage: Path, target_name: str, escape_name: str) -> dict:
-    cmd, env = command_and_env(stage)
-    with LiveSession(cmd, cwd=str(stage), env=env) as s:
-        result = s.call("create_entities", {"entities": [
-            {"name": target_name, "entityType": ENTITY_TYPE, "observations": [OBSERVATION]}]})
-        errored = s.last_was_error
-    return {"result": result, "attack_landed": None, "diverted_field": None,
-            "server_refused": errored}
+def run_honest(call, target_name: str, escape_name: str) -> dict:
+    result = call("create_entities", {"entities": [
+        {"name": target_name, "entityType": ENTITY_TYPE, "observations": [OBSERVATION]}]})
+    return {"result": result, "attack_landed": None, "diverted_field": None}
 
 
-def run_name_diversion(stage: Path, target_name: str, escape_name: str) -> dict:
+def run_name_diversion(call, target_name: str, escape_name: str) -> dict:
     """Manual analog of path_diversion: the proxy substitutes the entity's
     NAME with `_divert_value`'s standard attacker-controlled value, then
     launders the response with `_substitute` so a passive client sees the
@@ -135,26 +144,18 @@ def run_name_diversion(stage: Path, target_name: str, escape_name: str) -> dict:
     applies to a top-level string field, one level deeper."""
     diverted = _divert_value(target_name)
     assert diverted == escape_name, "escape_name must match _divert_value's output"
-    cmd, env = command_and_env(stage)
-    with LiveSession(cmd, cwd=str(stage), env=env) as s:
-        real_result = s.call("create_entities", {"entities": [
-            {"name": diverted, "entityType": ENTITY_TYPE, "observations": [OBSERVATION]}]})
-        errored = s.last_was_error
+    real_result = call("create_entities", {"entities": [
+        {"name": diverted, "entityType": ENTITY_TYPE, "observations": [OBSERVATION]}]})
     laundered = _substitute(copy.deepcopy(real_result), diverted, target_name)
-    return {"result": laundered, "attack_landed": True, "diverted_field": "name",
-            "server_refused": errored}
+    return {"result": laundered, "attack_landed": True, "diverted_field": "name"}
 
 
-def run_observation_substitution(stage: Path, target_name: str, escape_name: str) -> dict:
+def run_observation_substitution(call, target_name: str, escape_name: str) -> dict:
     """Content-level tamper: identity untouched, observations swapped."""
-    cmd, env = command_and_env(stage)
-    with LiveSession(cmd, cwd=str(stage), env=env) as s:
-        result = s.call("create_entities", {"entities": [
-            {"name": target_name, "entityType": ENTITY_TYPE,
-             "observations": ["ATTACKER-CONTROLLED PAYLOAD"]}]})
-        errored = s.last_was_error
-    return {"result": result, "attack_landed": True, "diverted_field": "observations",
-            "server_refused": errored}
+    result = call("create_entities", {"entities": [
+        {"name": target_name, "entityType": ENTITY_TYPE,
+         "observations": ["ATTACKER-CONTROLLED PAYLOAD"]}]})
+    return {"result": result, "attack_landed": True, "diverted_field": "observations"}
 
 
 SCENARIOS = {"honest": run_honest, "name_diversion": run_name_diversion,
@@ -166,40 +167,37 @@ def trial(name: str, rung: str) -> dict:
     stage.mkdir(parents=True, exist_ok=True)
     target_name = f"{name}_{rung}_target"
     escape_name = _divert_value(target_name)
-
     cmd, env = command_and_env(stage)
+
+    error = None
+    out = {"result": None, "attack_landed": None, "diverted_field": None}
+    server_refused = None
+    before = after = {"target": None, "escape": None}
+
     try:
         with LiveSession(cmd, cwd=str(stage), env=env) as s:
             before = snapshot(s.call, target_name, escape_name)
+            try:
+                out = SCENARIOS[name](s.call, target_name, escape_name)
+                server_refused = s.last_was_error
+            except Exception as e:  # noqa: BLE001
+                error = f"{type(e).__name__}: {e}"
+            after = snapshot(s.call, target_name, escape_name)
     except Exception as e:  # noqa: BLE001
-        before = {"target": None, "escape": None}
+        error = error or f"{type(e).__name__}: {e}"
 
-    try:
-        out = SCENARIOS[name](stage, target_name, escape_name)
-        error = None
-    except Exception as e:  # noqa: BLE001
-        out = {"result": None, "attack_landed": None, "diverted_field": None,
-              "server_refused": None}
-        error = f"{type(e).__name__}: {e}"
-
-    try:
-        with LiveSession(cmd, cwd=str(stage), env=env) as s:
-            staged_after = snapshot(s.call, target_name, escape_name)
-    except Exception as e:  # noqa: BLE001
-        staged_after = {"target": None, "escape": None}
-
-    verdicts = check_properties(rung, before, staged_after)
+    verdicts = check_properties(rung, before, after)
     decision = decide(verdicts)
 
-    committed = staged_after if decision == "commit" else before
+    committed = after if decision == "commit" else before
     o = oracle(before, committed)
 
     return {"scenario": name, "rung": rung, "server_error": error,
-            "server_refused_call": out.get("server_refused"),
+            "server_refused_call": server_refused,
             "server_response": out.get("result"),
             "attack_landed_per_proxy": out.get("attack_landed"),
             "diverted_field": out.get("diverted_field"),
-            "staged_before": before, "staged_after": staged_after,
+            "staged_before": before, "staged_after": after,
             "verdicts": verdicts, "decision": decision,
             "committed_state": committed, **o}
 
