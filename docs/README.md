@@ -22,7 +22,7 @@ Full statement, threat model and milestones: [`25-research-program.md`](25-resea
 | 6 | [`25-research-program.md`](25-research-program.md) | **The plan.** Goal, scope, permit rule, milestones M0–M6 with acceptance criteria | long |
 | 7 | [`27-narrow-candidate-experiment.md`](27-narrow-candidate-experiment.md) | **What runs next.** The comparison that decides whether a system contribution exists | short |
 | 8 | [`28-kappa-result.md`](28-kappa-result.md) | **M0c result.** κ = 0.559, below gate — one clean A0/A2 confusion, and a data-provenance bug fixed | short |
-| 9 | [`29-real-server-generalization.md`](29-real-server-generalization.md) | **First real-server datapoint.** The contract ladder against an unmodified npm package — one server, not yet M3 | short |
+| 9 | [`29-real-server-generalization.md`](29-real-server-generalization.md) | **Real-server datapoints.** Two verified (incl. a per-implementation behavior difference), two written but unverified — not yet M3 | short |
 
 After those nine you know the problem, the impossibility result, the measured failure, the diagnosis, and the plan. Nothing else is required.
 
