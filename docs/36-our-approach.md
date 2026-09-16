@@ -150,17 +150,28 @@ carrying most of the weight, and a design that skips it in favor of "just
 sandbox the process" would not reproduce this mechanism's coverage.
 
 **Confirmed directly against the alternative a careful engineer would
-actually deploy** (`41`, M5 pilot): a task-specific static least-privilege
-sandbox — directory permissions locked to root, the one approved file
-pre-created and writable only by the untrusted identity, no software
-check at all — was compared head-to-head against this mechanism on a
-real server. It caught **neither** a path-diversion nor a content-
-substitution attack: the former targets an absolute path entirely outside
-the permission-locked directory, which directory permissions cannot
-reach; the latter writes the correct bytes to the wrong content at the
-CORRECT, permitted path, which no permission system checks in the first
-place. Static permissions alone measured no better than no defense at
-all on this evidence. Only the software-level diff caught both.
+actually deploy** (`41`, `42`, M5 pilot): a task-specific static
+least-privilege sandbox — directory permissions locked to root, the one
+approved file pre-created and writable only by the untrusted identity, no
+software check at all — was compared head-to-head against this mechanism
+on TWO independent real servers. It was **structurally blind to content
+substitution on both**: the attack writes the correct bytes to the wrong
+content at the CORRECT, permitted path, which no permission system checks
+in the first place — permissions govern *who* may write *where*, never
+*what* is written, so this failure mode does not depend on which server
+is tested. Path diversion is a different story: caught on **neither**
+server when the diversion targets an absolute path entirely outside the
+permission-locked directory (`41`), but actually **refused by the OS
+itself** — a real `PermissionError` — on the second server, whose tool
+resolves paths *relatively*, so the diversion lands as a new sibling
+entry inside the SAME locked directory, which the missing directory
+write-bit blocks outright (`42`). This is not a defender-controlled
+property: it depends entirely on how the target tool happens to resolve
+its own path argument, not on anything a static-permission design chooses
+or can choose. Static permissions alone measured no better than no
+defense at all against content attacks on any server tested, and against
+path attacks their apparent success is contingent, not designed. Only the
+software-level diff caught both attacks on both servers.
 
 ## 6. What this mechanism cannot do, by its own definition — stated once, not scattered
 

@@ -43,12 +43,15 @@ replay/allowance-exhaustion double-commit, `38`, fixed by reusing an
 already-tested component of this project's own gateway), and two
 demonstrated genuine, unfixable-within-this-mechanism limits stated
 plainly rather than argued away (unmediated-channel exfiltration, `39`;
-a fixed-window timing tradeoff, `40`). Held-out-comparison pilot (`41`):
-against the specific baseline the research program itself calls "the
-demanding one" — a task-specific static least-privilege sandbox built
-from plain Unix permissions — this mechanism caught both attacks tested
-while the permission-only baseline caught neither, measuring no better
-than no defense at all.
+a fixed-window timing tradeoff, `40`). Held-out-comparison pilot (`41`, `42`), now across two independent real
+servers: against the specific baseline the research program itself calls
+"the demanding one" — a task-specific static least-privilege sandbox
+built from plain Unix permissions — this mechanism caught both attacks
+tested on both servers, while the permission-only baseline was
+structurally blind to content substitution on both (a property of what
+permissions can express at all, not of either server) and caught
+path-diversion on only one of the two — contingently, as a side effect of
+that server's own relative-path resolution, not by design (`42`).
 
 ---
 
@@ -531,12 +534,18 @@ before being claimed:
    correctly identifies what it cannot promise is a different, and more
    useful, deliverable than one that quietly omits the question.
 7. **A measured win against the specific baseline the research program's
-   own plan calls "the demanding one"** (`25` §6 M5, `41`): a
+   own plan calls "the demanding one"** (`25` §6 M5, `41`, `42`): a
    task-specific static least-privilege sandbox, built the common way
-   from plain Unix permissions with no software layer, caught NEITHER a
-   path-diversion nor a content-substitution attack against a real
-   server — zero measurable protection beyond no defense at all. Only
-   the mechanism this project built caught both, on the same real code.
+   from plain Unix permissions with no software layer, was tested against
+   both a path-diversion and a content-substitution attack on TWO
+   independent real servers. Content substitution slipped past it on
+   both — a structural blind spot, since permissions govern *who* may
+   write *where*, never *what* is written. Path diversion was caught on
+   only one of the two, and even then only as a side effect of that
+   server's own relative-path resolution colliding with the directory's
+   missing write bit, not by any property the defender controls (`42`).
+   The mechanism this project built caught both attacks on both servers,
+   with no dependence on a third-party tool's own path-handling luck.
 
 ---
 
@@ -549,7 +558,7 @@ before being claimed:
 | **M2** — mediation boundary, one domain | **Architectural gap closed; pre-registered thresholds met; hidden_extra_field gap closed; corner cases pass; combined with a real M3 server** (§8.2, `34`, `37`). Genuine concurrency (overlapping, not sequential, calls) still untested |
 | **M3** — generality, ≥10 real servers | **In progress.** 7 of 7 written probes verified, spanning all three workflow classes plus one git-native shape and one two-field-content shape, incl. one replication; ≥10-server threshold and the network domain not reached |
 | **M4** — adaptive adversary | **All four named attack families tried.** Two found-and-fixed (TOCTOU race `32`, 25%→0%; replay/allowance-exhaustion `38`, via the existing `AllowanceLedger`). Two demonstrated as genuine structural limits, not bugs: unmediated-channel exfiltration (`39`) and utility degradation (`40` — an honest write slower than the fixed grace window is discarded exactly like a malicious one; no single timeout value solves both) |
-| **M5** — held-out evaluation | **Pilot run** (`41`): M2 vs. no-defense vs. static least-privilege, one real server. Static least-privilege caught NEITHER attack tested — zero measurable protection beyond no defense; only M2 caught both. Two of six named baselines not run (needs a human; already measured elsewhere) |
+| **M5** — held-out evaluation | **Pilot, two real servers** (`41`, `42`): M2 vs. no-defense vs. static least-privilege. Static least-privilege was blind to content substitution on both servers; caught path-diversion on only one, contingently on that server's own relative-path resolution, not by design. M2 caught both attacks on both servers. Two of six named baselines not run (needs a human; already measured elsewhere) |
 | **M6** — write-up | This document plus `25`–`41` are the write-up's current draft state |
 
 ---
@@ -586,12 +595,16 @@ before being claimed:
   that cannot simultaneously tolerate every honest slow write and catch
   every malicious hidden one. Every attack tested before `32` (M0
   through M3) was written before, not after, the defense existed.
-- **M5 is a one-server pilot, and two of its six named baselines were
-  never run.** `41` compares M2 against no-defense and static
-  least-privilege on one real server, three scenarios — a real result,
-  not a general one. The project's own auditor and MCP confirmation
-  prompts are explicitly not included (the former already measured
-  elsewhere, the latter needs a real human and was not simulated).
+- **M5 is a two-server pilot, not ten, and two of its six named baselines
+  were never run.** `41`/`42` compare M2 against no-defense and static
+  least-privilege on two real servers, three scenarios each — real
+  results, not a general claim across servers. The second server
+  specifically showed the static-least-privilege result is not uniform:
+  it depends on how the target tool resolves paths, a property the
+  defender does not control (`42`). The project's own auditor and MCP
+  confirmation prompts are explicitly not included (the former already
+  measured elsewhere, the latter needs a real human and was not
+  simulated).
 - **A boundary sees syscalls, not meaning** (`25` §3.1): it cannot tell
   whether a write's final bytes are the approved bytes without a contract
   saying so, cannot see inside TLS, and cannot attribute an effect to the
@@ -606,7 +619,7 @@ before being claimed:
 | Every reported number | `results/tables/*.md` — regenerated by `python experiments/make_results.py`, hashed against raw inputs in `results/MANIFEST.md` |
 | Every figure | `results/figures/*.png` |
 | Executed analysis | `notebooks/01`–`07`, outputs embedded, no kernel needed to read them |
-| Full narrative history | `docs/25` (plan) → `26` (novelty gate) → `27` (candidate spec) → `28` (κ result) → `29` (real-server pilot) → `31` (M2 proper) → `32` (M4 TOCTOU) → `33` (security argument) → `34` (corner cases) → `35` (mitigation strategies) → `36` (our approach, clean spec) → `37` (M2 + real server) → `38` (M4 replay) → `39` (M4 unmediated channel) → `40` (M4 utility degradation) → `41` (M5 pilot) → this document |
+| Full narrative history | `docs/25` (plan) → `26` (novelty gate) → `27` (candidate spec) → `28` (κ result) → `29` (real-server pilot) → `31` (M2 proper) → `32` (M4 TOCTOU) → `33` (security argument) → `34` (corner cases) → `35` (mitigation strategies) → `36` (our approach, clean spec) → `37` (M2 + real server) → `38` (M4 replay) → `39` (M4 unmediated channel) → `40` (M4 utility degradation) → `41` (M5 pilot) → `42` (M5 second server) → this document |
 | Source | `github.com/Tanjamul-Azad/CS` |
 
 No Docker command, container log, or terminal screenshot appears in any

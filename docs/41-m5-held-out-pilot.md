@@ -4,7 +4,12 @@ Written 2026-09-16. `25-research-program.md` §6 M5: compare this layer
 against baselines including "the demanding one" — a task-specific static
 least-privilege sandbox — and report unauthorized-effect rate, honest
 completion, false blocks, and latency overhead. First attempt at this
-comparison in the project.
+comparison in the project. **A second server (`42`) later refines this
+document's static-least-privilege finding**: content-substitution
+blindness replicates exactly, but this doc's "caught neither attack"
+result for path-diversion turns out to be specific to this server's
+absolute-path escape, not a general property of the baseline — read `42`
+alongside this one, not as a replacement for it.
 
 ## Scope, stated before any result
 

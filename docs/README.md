@@ -2,7 +2,7 @@
 
 **In a hurry? Read [`30-project-status-and-contributions.md`](30-project-status-and-contributions.md) alone — it is the consolidated summary of every experiment, every result, and the contribution versus prior work, with a pointer into the full spine for anything it compresses.**
 
-**For the full story in the order it was actually reasoned through, read the twenty-one documents in "The spine" below. Everything else is reference.**
+**For the full story in the order it was actually reasoned through, read the twenty-two documents in "The spine" below. Everything else is reference.**
 
 Current goal, fixed 2026-09-10:
 
@@ -12,7 +12,7 @@ Full statement, threat model and milestones: [`25-research-program.md`](25-resea
 
 ---
 
-## The spine — read these twenty-one, in this order
+## The spine — read these twenty-two, in this order
 
 | # | Doc | What you learn | Length |
 |---|---|---|---|
@@ -36,9 +36,10 @@ Full statement, threat model and milestones: [`25-research-program.md`](25-resea
 | 18 | [`39-m4-unmediated-channel.md`](39-m4-unmediated-channel.md) | **M4's third attack.** A secret sent over a local socket is invisible to the file-only mediator — demonstrated as a scope boundary, not a bug to fix | short |
 | 19 | [`40-m4-utility-degradation.md`](40-m4-utility-degradation.md) | **M4's fourth attack, completing the milestone.** An honest slow write is discarded like a malicious one — a genuine timing tradeoff, named not patched | short |
 | 20 | [`41-m5-held-out-pilot.md`](41-m5-held-out-pilot.md) | **M5's first datapoint.** Static least-privilege — "the demanding baseline" — catches neither attack tested; only M2 catches both | short |
-| 21 | [`30-project-status-and-contributions.md`](30-project-status-and-contributions.md) | **Consolidated status.** Every experiment, every result, and the contribution vs. prior work, in one place | medium |
+| 21 | [`42-m5-second-server.md`](42-m5-second-server.md) | **M5's second datapoint.** Refines, not repeats, `41`'s finding: content-substitution blindness replicates; path-diversion protection turns out contingent on the target tool's own path semantics, not the defender's choice | short |
+| 22 | [`30-project-status-and-contributions.md`](30-project-status-and-contributions.md) | **Consolidated status.** Every experiment, every result, and the contribution vs. prior work, in one place | medium |
 
-After those twenty-one you know the problem, the impossibility result, the measured failure, the diagnosis, the plan, the mechanism itself, and exactly where execution against it currently stands. Nothing else is required.
+After those twenty-two you know the problem, the impossibility result, the measured failure, the diagnosis, the plan, the mechanism itself, and exactly where execution against it currently stands. Nothing else is required.
 
 ## To see the evidence rather than read about it
 
