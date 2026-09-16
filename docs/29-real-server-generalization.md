@@ -1,9 +1,10 @@
 # 29 — Real-server generalization: unmodified third-party MCP servers
 
-Status: **five verified datapoints, across all three workflow classes
-`27-narrow-candidate-experiment.md` defines, plus one git-native shape.**
-Still not M3 (M3 needs ≥10 independent implementations — see
-`25-research-program.md`). This closes the gap `27` and
+Status: **six verified datapoints, across all three workflow classes
+`27-narrow-candidate-experiment.md` defines, plus one git-native shape,
+including a replication of the sharpest finding on a second independent
+implementation.** Still not M3 (M3 needs ≥10 independent implementations
+— see `25-research-program.md`). This closes the gap `27` and
 `26-m1-novelty-gate.md` both left open: every prior test of the
 contract/staging mechanism ran against code this project authored
 (`append_server.py`, `ladder_server.py`, `malicious_server.py`). These run
@@ -17,6 +18,7 @@ original 1,242-server scale run did.
 | `@modelcontextprotocol/server-memory` | CONSTRAINED (keyed/structured) | **Verified**, §3 below |
 | `mcp-sqlite-server` | UNDERSPECIFIED (free-text SQL) | **Verified**, §4 below |
 | `mcp-server-git` (official, PyPI/uv) | CONSTRAINED (git-native, no content argument at all) | **Verified**, §5 below |
+| `mcp-server-sqlite-npx` | UNDERSPECIFIED (free-text SQL, independent implementation) | **Verified**, §6 below |
 
 ## §1. domdomegg/filesystem-mcp
 
@@ -356,10 +358,44 @@ implementations.
 attacker's message is permanently recorded as real git history, missed
 until L3 catches it via the exact-match content check.
 
-## What the five-server sweep establishes
+## §6. mcp-server-sqlite-npx — replicating the UNDERSPECIFIED finding on a second, independent implementation
+
+`§4`'s finding — content substitution against a SQL tool is not caught
+at **any** rung, because the schema gives the mechanism no field to
+derive a content check from — is the sharpest single result in this
+sweep. A sharp result from one package invites an obvious question: is
+it a property of the UNDERSPECIFIED *class*, or an artifact of that one
+package's particular design? `mcp-server-sqlite-npx` (`npx -y
+mcp-server-sqlite-npx <db>`) is a second, independent implementation of
+the same class, chosen specifically to answer that.
+
+Genuinely different shape from `§4`'s server, even though the *class* is
+identical: `write_query(query: string)`, `read_query(query: string)`,
+`create_table(query: string)` — no `db` argument (fixed once at launch
+via CLI arg, unlike `§4`'s per-call `db` field) and no `readonly` toggle
+at all. If anything, less schema structure than `§4`'s server offered,
+not more.
+
+```
+scenario                rung  landed  destination  structure  content  decision  oracle
+------------------------------------------------------------------------------------------
+honest                    L1    -       PASS          N/A        N/A      commit    clean
+row_diversion              L1    True    FAIL          N/A        N/A      discard   clean
+content_substitution      L1    True    PASS          N/A        N/A      commit    compromised
+```
+
+Identical pattern to `§4`, on unrelated code: `row_diversion` (the
+SQL-level destination analog) is caught by the destination check;
+`content_substitution` **commits**, undetected, at the only rung this
+class supports — the oracle confirms a real, committed, unauthorized
+effect (`"approved row holds unapproved content"`). The finding
+replicates. It is a property of what the UNDERSPECIFIED class's schema
+does and does not expose, not a quirk of one package.
+
+## What the six-server sweep establishes
 
 - **Does**: shows the contract-check mechanism transfers to real,
-  independent, unmodified packages (four npm, one PyPI) across all three
+  independent, unmodified packages (five npm, one PyPI) across all three
   workflow classes `27` defines plus one git-native shape — not tuned to
   any of them — and that the specification ladder's own predicted blind
   spots (L1/L2 miss content attacks on EXACT/CONSTRAINED tools;
@@ -367,8 +403,11 @@ until L3 catches it via the exact-match content check.
   exactly on real code. Two independent cases (server-filesystem §2,
   mcp-server-git §5) show a real implementation's own defense can close
   part of the gap before the contract layer is even reached — not a
-  one-off, a recurring pattern across unrelated tool families.
-- **Does not**: establish generality across servers. Five servers, not
+  one-off, a recurring pattern across unrelated tool families. The
+  UNDERSPECIFIED-class blind spot itself now replicates across two
+  independent implementations (§4, §6) — a class property, not one
+  package's quirk.
+- **Does not**: establish generality across servers. Six servers, not
   the ≥10 independent implementations M3 specifies.
 - **Does not**: demonstrate prevention of an external side effect once it
   lands (§1, §3). "Discard" is bookkeeping over what the audit counts as
@@ -379,17 +418,17 @@ until L3 catches it via the exact-match content check.
 
 ## Next step
 
-- Scale toward the ≥10-server sweep M3 specifies — five servers across
-  three workflow classes (plus a git-native one) is real progress past
-  one, still far short of ten.
+- Scale toward the ≥10-server sweep M3 specifies — six servers across
+  three workflow classes (plus a git-native one, plus a replication) is
+  real progress past one, still short of ten.
 - Wire the contract check into the actual `EffectGateway`/
   `FilesystemExecutor` mediation path (`src/mcpgate/`) so a caught
   diversion is prevented, not just flagged after the fact. Not started.
-- The UNDERSPECIFIED-class finding (§4) suggests a concrete next
-  question: can a contract for a `sql`-shaped tool ever be derived without
-  out-of-band knowledge of the caller's own table schema, or is an
-  application-level adapter unavoidable there — precisely the open
-  question the program's own goal statement (`25` §1) asks.
+- The UNDERSPECIFIED-class finding (§4, replicated §6) suggests a
+  concrete next question: can a contract for a `sql`-shaped tool ever be
+  derived without out-of-band knowledge of the caller's own table schema,
+  or is an application-level adapter unavoidable there — precisely the
+  open question the program's own goal statement (`25` §1) asks.
 - The recurring own-defense pattern (§2, §5) suggests another: how often
   does a real server's own destination confinement already cover what the
   contract would catch, and does that change where the contract layer's

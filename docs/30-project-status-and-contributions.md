@@ -353,10 +353,12 @@ live — not stubs this project wrote.
 | `@modelcontextprotocol/server-memory` | CONSTRAINED (keyed/structured) | **Verified** |
 | `mcp-sqlite-server` | UNDERSPECIFIED (free-text SQL) | **Verified** |
 | `mcp-server-git` (official, PyPI/uv) | CONSTRAINED (git-native, no content argument) | **Verified** |
+| `mcp-server-sqlite-npx` | UNDERSPECIFIED (free-text SQL, 2nd independent impl.) | **Verified** |
 
-**Result across all five verified servers**, spanning every workflow
+**Result across all six verified servers**, spanning every workflow
 class `27-narrow-candidate-experiment.md` defines plus one git-native
-shape:
+shape, including a replication of the UNDERSPECIFIED finding on a second
+independent implementation:
 
 - **Honest workflows complete and commit correctly at every rung, on
   every server.**
@@ -397,7 +399,7 @@ shape:
   gives it no structure to derive a check from.
 
 **What this does not establish:** generality across servers (M3 as
-specified needs ≥10 independent implementations; this is five) or
+specified needs ≥10 independent implementations; this is six) or
 prevention of an external effect once it happens (the mechanism detects
 and refuses to *count* an unauthorized effect as committed; it does not
 undo a write, record creation, or commit that already landed for real —
@@ -431,7 +433,7 @@ before being claimed:
 3. **The specification ladder itself** (L1/L2/L3, per-property verdicts
    rather than one execution-level verdict) as the concrete mechanism for
    that gap, with pre-registered, falsifiable predictions — tested first
-   on controlled servers, then **reproduced unchanged on five real,
+   on controlled servers, then **reproduced unchanged on six real,
    unmodified, independent third-party servers spanning all three
    workflow classes plus one git-native shape**: L1/L2 miss content-level attacks on structured
    tools, caught only at L3, exactly as predicted; a real, measured
@@ -471,7 +473,7 @@ before being claimed:
 | **M0** — repair the evidence base | Mechanics done (five independent outcome fields, matched-denominator re-run, funnel/selection characterised). **M0c open**: κ = 0.559 < 0.60 gate; Round 2 labelling prepared, not yet run |
 | **M1** — threat model + novelty gate | **Cleared.** Broad claim retired; narrow candidate precisely bounded; capability-systems literature closed |
 | **M2** — mediation boundary, one domain | **Architectural gap closed; pre-registered thresholds met** (§8.2) on one synthetic adversarial process. Not yet combined with a real M3 server or a multi-write honest workflow |
-| **M3** — generality, ≥10 real servers | **In progress.** 5 of 5 written probes verified, spanning all three workflow classes plus one git-native shape; ≥10-server threshold and the network domain not reached |
+| **M3** — generality, ≥10 real servers | **In progress.** 6 of 6 written probes verified, spanning all three workflow classes plus one git-native shape, incl. one replication; ≥10-server threshold and the network domain not reached |
 | **M4** — adaptive adversary | **First concrete attack found, fixed, re-verified** (`32`): a TOCTOU race against the M2 mediator's own commit logic, 25% win rate, fixed to 0%. One of several attack families `25` names; the rest untried |
 | **M5** — held-out evaluation | Not started (M2's probe stands as one baseline for it) |
 | **M6** — write-up | This document plus `25`–`29` are the write-up's current draft state |
@@ -489,11 +491,12 @@ before being claimed:
   is `malicious_server.py`, the same stub used throughout, not yet a
   real M3 server, and the honest workflow tested is a single write, not
   the multi-write-plus-rename case `25` §6 names explicitly.
-- **M3 is five servers, not ten.** No generalization claim is
-  supportable yet, and the network domain is completely untouched. One of
-  the five servers (the SQL/underspecified one) also shows the mechanism
-  can fail completely, not just partially — a real negative result to
-  carry forward, not only a positive one.
+- **M3 is six servers, not ten.** No generalization claim is
+  supportable yet, and the network domain is completely untouched. Two of
+  the six servers (both SQL/underspecified) show the mechanism can fail
+  completely, not just partially — a real negative result, now
+  replicated across independent implementations, to carry forward, not
+  only a positive one.
 - **No real rollback of an external effect.** "Discard" is bookkeeping
   over what the audit counts as committed; a write that already landed on
   a real filesystem is not undone by this mechanism, mirroring the exact
