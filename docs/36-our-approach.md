@@ -196,6 +196,16 @@ sandbox the process" would not reproduce this mechanism's coverage.
   ever in its observation surface. No fix for this exists WITHIN a
   filesystem-only mechanism; covering it needs a different layer
   entirely (network namespace isolation, an egress allowlist).
+- **Its fixed timing window cannot simultaneously tolerate every honest
+  slow write and catch every malicious hidden one — a genuine tradeoff,
+  not a bug.** Demonstrated (`40`): an entirely honest write that lands
+  after the grace window is discarded exactly like a `background_write`
+  attack timed to land there deliberately, because the mediator's single
+  read at a fixed delay cannot distinguish "slow but honest" from
+  "malicious and patient." Widening the window trades one failure mode
+  for the other; it does not remove either. A real fix would replace the
+  timeout with an explicit completion signal or process-tree freezing,
+  neither implemented here.
 
 ## 7. Relationship to prior work, stated once (full account: `26`)
 
