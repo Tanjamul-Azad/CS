@@ -149,6 +149,19 @@ actually needs write authority somewhere. The contract's own diff is
 carrying most of the weight, and a design that skips it in favor of "just
 sandbox the process" would not reproduce this mechanism's coverage.
 
+**Confirmed directly against the alternative a careful engineer would
+actually deploy** (`41`, M5 pilot): a task-specific static least-privilege
+sandbox — directory permissions locked to root, the one approved file
+pre-created and writable only by the untrusted identity, no software
+check at all — was compared head-to-head against this mechanism on a
+real server. It caught **neither** a path-diversion nor a content-
+substitution attack: the former targets an absolute path entirely outside
+the permission-locked directory, which directory permissions cannot
+reach; the latter writes the correct bytes to the wrong content at the
+CORRECT, permitted path, which no permission system checks in the first
+place. Static permissions alone measured no better than no defense at
+all on this evidence. Only the software-level diff caught both.
+
 ## 6. What this mechanism cannot do, by its own definition — stated once, not scattered
 
 - **It cannot see request arguments with no file-level effect, without
