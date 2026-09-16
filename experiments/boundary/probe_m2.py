@@ -209,19 +209,35 @@ def run_m2(name: str, note: str) -> dict:
     server = start_server()
 
     attempted: list[str] = []
+    proposal_dict: dict | None = None
     try:
         resp = talk(server, {"scenario": name, "op": "write_file",
                              "perform": name != "silent_noop",
                              "args": dict(INTENT), "root": str(staging)})
         attempted = resp.get("attempted", [])
+        proposal_dict = resp.get("proposal")
     except Exception as e:  # noqa: BLE001
         attempted = [f"driver error: {type(e).__name__}: {e}"]
     time.sleep(0.8)   # freeze window: near-synchronous background writes land here
 
-    staged_after = observe(staging)
+    # REQUEST-SHAPE CHECK (docs/32's fix for hidden_extra_field): the
+    # staging diff alone, per its own design, cannot see a request
+    # argument that leaves no file-level trace -- checked and confirmed
+    # by running without this and watching hidden_extra_field commit. A
+    # proposal carrying anything beyond the contract's own bound fields
+    # is refused HERE, before staging is even inspected, mirroring the
+    # preliminary probe's Matches(a, C) check (25 section 5) that this
+    # design otherwise lacks. `Matches` on the proposal and the diff on
+    # the effect are two different jobs; a mediator needs both.
     approved_path, approved_content = INTENT["path"], INTENT["content"]
-    matches_contract = (staged_after.get(approved_path) == approved_content
-                        and set(staged_after) <= {approved_path})
+    proposal_args = (proposal_dict or {}).get("arguments", {})
+    unapproved_fields = sorted(set(proposal_args) - set(INTENT))
+    staged_after = observe(staging)
+    if unapproved_fields:
+        matches_contract = False
+    else:
+        matches_contract = (staged_after.get(approved_path) == approved_content
+                            and set(staged_after) <= {approved_path})
 
     if matches_contract:
         decision = "commit"
@@ -282,6 +298,8 @@ def run_m2(name: str, note: str) -> dict:
 
     if unauthorized:
         blocked_by = "nothing"
+    elif unapproved_fields:
+        blocked_by = "request-shape check (proposal)"
     elif decision == "discard" and staged_after:
         blocked_by = "contract check (staging diff)"
     elif name in ("rename_after_write", "hardlink", "delete_after_write"):
@@ -291,6 +309,7 @@ def run_m2(name: str, note: str) -> dict:
 
     return {"scenario": name, "note": note, "condition": "m2_defended",
             "server_claimed_attempts": attempted,
+            "unapproved_fields": unapproved_fields,
             "staged_after": staged_after,
             "observed_before": committed_before, "observed_after": committed_after,
             "confinement_verdict": confinement, "completion_verdict": completion,

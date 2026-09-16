@@ -2,7 +2,7 @@
 
 **In a hurry? Read [`30-project-status-and-contributions.md`](30-project-status-and-contributions.md) alone — it is the consolidated summary of every experiment, every result, and the contribution versus prior work, with a pointer into the full spine for anything it compresses.**
 
-**For the full story in the order it was actually reasoned through, read the twelve documents in "The spine" below. Everything else is reference.**
+**For the full story in the order it was actually reasoned through, read the sixteen documents in "The spine" below. Everything else is reference.**
 
 Current goal, fixed 2026-09-10:
 
@@ -12,7 +12,7 @@ Full statement, threat model and milestones: [`25-research-program.md`](25-resea
 
 ---
 
-## The spine — read these twelve, in this order
+## The spine — read these sixteen, in this order
 
 | # | Doc | What you learn | Length |
 |---|---|---|---|
@@ -27,9 +27,13 @@ Full statement, threat model and milestones: [`25-research-program.md`](25-resea
 | 9 | [`29-real-server-generalization.md`](29-real-server-generalization.md) | **Real-server datapoints.** Six verified, across all three workflow classes plus a git-native one, incl. a replicated finding — not yet the ≥10-server M3 | medium |
 | 10 | [`31-m2-proper.md`](31-m2-proper.md) | **M2's architectural gap closed.** The server performs its own effect; mechanism attribution flips from the preliminary result | medium |
 | 11 | [`32-m4-first-adaptive-attack.md`](32-m4-first-adaptive-attack.md) | **M4's first result.** A real TOCTOU race against our own mediator, found, fixed, re-verified | short |
-| 12 | [`30-project-status-and-contributions.md`](30-project-status-and-contributions.md) | **Consolidated status.** Every experiment, every result, and the contribution vs. prior work, in one place | medium |
+| 12 | [`36-our-approach.md`](36-our-approach.md) | **The mechanism, cleanly specified.** The Permit rule, the ladder, the mediator — one place, paper-ready | medium |
+| 13 | [`33-security-argument.md`](33-security-argument.md) | **What is proved vs. measured, and where each ends.** Theorem 1, the Cost Observation, the M2 Commit Invariant | medium |
+| 14 | [`34-m2-corner-cases.md`](34-m2-corner-cases.md) | **Edge cases, tested not assumed.** Multi-write/rename passes; a real effect-to-call binding failure, demonstrated | short |
+| 15 | [`35-mitigation-strategies.md`](35-mitigation-strategies.md) | **Every gap found, its fix, and its status.** Implemented-and-verified vs. recommended-only, never blurred | medium |
+| 16 | [`30-project-status-and-contributions.md`](30-project-status-and-contributions.md) | **Consolidated status.** Every experiment, every result, and the contribution vs. prior work, in one place | medium |
 
-After those twelve you know the problem, the impossibility result, the measured failure, the diagnosis, the plan, and exactly where execution against it currently stands. Nothing else is required.
+After those sixteen you know the problem, the impossibility result, the measured failure, the diagnosis, the plan, the mechanism itself, and exactly where execution against it currently stands. Nothing else is required.
 
 ## To see the evidence rather than read about it
 

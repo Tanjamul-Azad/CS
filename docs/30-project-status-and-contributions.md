@@ -325,17 +325,32 @@ permission's remaining, still-real job is protecting the *already-
 committed* artifact from post-hoc tampering, which is a narrower
 guarantee than the preliminary number implied.
 
-**A genuine, pre-registered limitation, not a patched-over bug:**
-`hidden_extra_field` **commits** under this design — a pure effect-diff
-mediator has no visibility into the raw request's argument shape, only
-the file-level effect it produced, so a field nobody approved that
-manifests as no file-level change is invisible to it. `25` §3.1's
-"a boundary sees effects, not requests" is now confirmed on real
-filesystem state, not only argued.
+**A genuine, pre-registered limitation, found and then closed:**
+`hidden_extra_field` **committed** under the first version of this
+design — a pure effect-diff mediator has no visibility into the raw
+request's argument shape, only the file-level effect it produced, so a
+field nobody approved that manifests as no file-level change was
+invisible to it. `25` §3.1's "a boundary sees effects, not requests" was
+confirmed on real filesystem state, not only argued. **Fixed** with a
+second, independent check on the raw proposal's argument keys, run
+before the staging diff — re-run of all 14 scenarios: **14/14** now
+correctly confined or legitimately `UNKNOWN` (`33` §4, `35` row C).
 
-**What remains open:** this is one synthetic adversarial stub, not yet
-combined with a real M3 server; the honest scenario is a single write,
-not the multi-write-plus-rename workflow `25` §6 names explicitly.
+**Corner cases, tested rather than assumed (`34`):** the honest-workflow
+multi-write-plus-rename case `25` §6 names explicitly — plus empty
+content, ~2.3MB content, and write-then-overwrite — all commit correctly.
+A separate, deliberately un-isolated test found a real (non-security)
+failure mode instead: two sequential honest calls sharing one staging
+directory cause the second call's own effect to be wrongly discarded
+because of the first call's leftover artifact — confirming why every
+other probe here isolates staging per invocation, by showing what breaks
+without it.
+
+**What remains open:** this is one synthetic adversarial stub plus one
+contract-aware adversary (`32`), not yet combined with a real M3 server;
+genuine concurrency (two calls truly overlapping, not sequential) is
+untested. Full account: `33` (security argument), `35` (every gap and
+its mitigation status).
 
 ---
 
@@ -472,7 +487,7 @@ before being claimed:
 |---|---|
 | **M0** — repair the evidence base | Mechanics done (five independent outcome fields, matched-denominator re-run, funnel/selection characterised). **M0c open**: κ = 0.559 < 0.60 gate; Round 2 labelling prepared, not yet run |
 | **M1** — threat model + novelty gate | **Cleared.** Broad claim retired; narrow candidate precisely bounded; capability-systems literature closed |
-| **M2** — mediation boundary, one domain | **Architectural gap closed; pre-registered thresholds met** (§8.2) on one synthetic adversarial process. Not yet combined with a real M3 server or a multi-write honest workflow |
+| **M2** — mediation boundary, one domain | **Architectural gap closed; pre-registered thresholds met; hidden_extra_field gap closed; corner cases (multi-write, empty/large content) pass** (§8.2, `34`). Not yet combined with a real M3 server or genuine concurrency |
 | **M3** — generality, ≥10 real servers | **In progress.** 6 of 6 written probes verified, spanning all three workflow classes plus one git-native shape, incl. one replication; ≥10-server threshold and the network domain not reached |
 | **M4** — adaptive adversary | **First concrete attack found, fixed, re-verified** (`32`): a TOCTOU race against the M2 mediator's own commit logic, 25% win rate, fixed to 0%. One of several attack families `25` names; the rest untried |
 | **M5** — held-out evaluation | Not started (M2's probe stands as one baseline for it) |
@@ -485,12 +500,14 @@ before being claimed:
 - **κ below gate.** Classifier validation is not closed; the 36.7%/A0
   numbers and everything built on the classifier are instrument readings
   until Round 2 closes this.
-- **M2's architectural gap is closed, but on a synthetic adversary
+- **M2's architectural gap is closed, but on synthetic adversaries
   only.** The server now genuinely performs its own effect inside a real
-  boundary, and all three pre-registered thresholds are met — but this
-  is `malicious_server.py`, the same stub used throughout, not yet a
-  real M3 server, and the honest workflow tested is a single write, not
-  the multi-write-plus-rename case `25` §6 names explicitly.
+  boundary, all three pre-registered thresholds are met, the
+  hidden_extra_field gap is closed, and the named multi-write-plus-rename
+  corner case (plus empty/large content) all pass (`34`) — but this is
+  `malicious_server.py` and `adaptive_server.py`, stubs built for this
+  project, not yet combined with a real M3 server. Genuine concurrency
+  (two calls truly overlapping, not sequential) is also untested.
 - **M3 is six servers, not ten.** No generalization claim is
   supportable yet, and the network domain is completely untouched. Two of
   the six servers (both SQL/underspecified) show the mechanism can fail
@@ -524,7 +541,7 @@ before being claimed:
 | Every reported number | `results/tables/*.md` — regenerated by `python experiments/make_results.py`, hashed against raw inputs in `results/MANIFEST.md` |
 | Every figure | `results/figures/*.png` |
 | Executed analysis | `notebooks/01`–`07`, outputs embedded, no kernel needed to read them |
-| Full narrative history | `docs/25` (plan) → `26` (novelty gate) → `27` (candidate spec) → `28` (κ result) → `29` (real-server pilot) → `31` (M2 proper) → `32` (M4 first attack) → this document |
+| Full narrative history | `docs/25` (plan) → `26` (novelty gate) → `27` (candidate spec) → `28` (κ result) → `29` (real-server pilot) → `31` (M2 proper) → `32` (M4 first attack) → `33` (security argument) → `34` (corner cases) → `35` (mitigation strategies) → `36` (our approach, clean spec) → this document |
 | Source | `github.com/Tanjamul-Azad/CS` |
 
 No Docker command, container log, or terminal screenshot appears in any

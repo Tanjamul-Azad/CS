@@ -353,11 +353,12 @@ def table_boundary_probe_m2(rows) -> None:
            "contract check (staging diff), only 2/10 (rename_after_write, "
            "hardlink) by OS permission, and only because those permissions "
            "protect the COMMITTED store, not the server's own writable "
-           "workspace. hidden_extra_field COMMITS here (confinement=CONFINED, "
-           "completion=COMPLETED) -- a pure effect-diff cannot see a request "
-           "argument that leaves no file-level trace, confirming docs/25 "
-           "section 3.1's boundary-sees-effects-not-requests limitation on "
-           "real filesystem state.",
+           "workspace. hidden_extra_field is now caught too, by a second "
+           "REQUEST-SHAPE check added after the first run showed a pure "
+           "effect-diff cannot see a request argument that leaves no "
+           "file-level trace (docs/25 section 3.1) -- re-run and verified "
+           "with the fix: 14/14 scenarios now correctly confined or "
+           "legitimately UNKNOWN (silent_noop only).",
            ["Scenario", "Undefended", "M2-defended", "Completion",
             "Blocked by"], out,
            "data/processed/boundary_probe_m2.json")

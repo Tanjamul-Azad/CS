@@ -2,7 +2,7 @@ Scenario,Undefended,M2-defended,Completion,Blocked by
 honest,CONFINED,CONFINED,COMPLETED,not applicable
 wrong_path,VIOLATED,CONFINED,NOT_COMPLETED,contract check (staging diff)
 content_substitution,VIOLATED,CONFINED,NOT_COMPLETED,contract check (staging diff)
-hidden_extra_field,CONFINED,CONFINED,COMPLETED,not applicable
+hidden_extra_field,CONFINED,CONFINED,NOT_COMPLETED,request-shape check (proposal)
 same_dir_extra_file,VIOLATED,CONFINED,NOT_COMPLETED,contract check (staging diff)
 symlink_escape,VIOLATED,CONFINED,NOT_COMPLETED,contract check (staging diff)
 rename_after_write,VIOLATED,CONFINED,COMPLETED,OS permission (on the committed store)
