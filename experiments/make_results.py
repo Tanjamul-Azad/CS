@@ -327,6 +327,42 @@ def table_boundary_probe(rows) -> None:
            "data/processed/boundary_probe.json")
 
 
+def table_boundary_probe_m2(rows) -> None:
+    if rows is None:
+        return
+    by = {}
+    for r in rows:
+        by.setdefault(r["scenario"], {})[r.get("condition", "m2_defended")] = r
+    out = []
+    for name, pair in by.items():
+        u, d = pair.get("undefended", {}), pair.get("m2_defended", {})
+        out.append([name,
+                    u.get("confinement_verdict", "-"),
+                    d.get("confinement_verdict", "-"),
+                    d.get("completion_verdict", "-"),
+                    d.get("blocked_by", "-")])
+    _write("boundary_probe_m2",
+           "M2 proper - the untrusted server performs its own effect",
+           "Closes the gap `boundary_probe` (the preliminary control) left "
+           "open: here the SERVER itself writes into an isolated staging "
+           "workspace it owns (0700), no executor in the path; a trusted "
+           "mediator diffs the workspace against the contract and only then "
+           "copies the approved file into a separate committed store the "
+           "server has zero permission on. Prevention coverage 10/10, same "
+           "as the preliminary probe -- but `blocked by` FLIPS: 8/10 by the "
+           "contract check (staging diff), only 2/10 (rename_after_write, "
+           "hardlink) by OS permission, and only because those permissions "
+           "protect the COMMITTED store, not the server's own writable "
+           "workspace. hidden_extra_field COMMITS here (confinement=CONFINED, "
+           "completion=COMPLETED) -- a pure effect-diff cannot see a request "
+           "argument that leaves no file-level trace, confirming docs/25 "
+           "section 3.1's boundary-sees-effects-not-requests limitation on "
+           "real filesystem state.",
+           ["Scenario", "Undefended", "M2-defended", "Completion",
+            "Blocked by"], out,
+           "data/processed/boundary_probe_m2.json")
+
+
 def write_manifest() -> None:
     try:
         commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"],
@@ -378,6 +414,7 @@ def main() -> None:
     errf = _load("Pilot, working error flag", PROC / "pilot_errflag.json")
     oracle = _load("Effect oracle", PROC / "effect_oracle.json")
     probe = _load("M2 boundary probe", PROC / "boundary_probe.json")
+    probe_m2 = _load("M2 proper boundary probe", PROC / "boundary_probe_m2.json")
     table_operating_points({"pre-R7 baseline (flag broken)": base,
                             "R7 uncalibrated (flag broken)": r7,
                             "R7 calibrated (flag broken)": cal,
@@ -385,6 +422,7 @@ def main() -> None:
     table_suppressed(base)
     table_effect_oracle(oracle)
     table_boundary_probe(probe)
+    table_boundary_probe_m2(probe_m2)
     write_manifest()
     print("\ndone. Open results/ -- every table names its source file.")
 

@@ -1,0 +1,15 @@
+Scenario,Undefended,M2-defended,Completion,Blocked by
+honest,CONFINED,CONFINED,COMPLETED,not applicable
+wrong_path,VIOLATED,CONFINED,NOT_COMPLETED,contract check (staging diff)
+content_substitution,VIOLATED,CONFINED,NOT_COMPLETED,contract check (staging diff)
+hidden_extra_field,CONFINED,CONFINED,COMPLETED,not applicable
+same_dir_extra_file,VIOLATED,CONFINED,NOT_COMPLETED,contract check (staging diff)
+symlink_escape,VIOLATED,CONFINED,NOT_COMPLETED,contract check (staging diff)
+rename_after_write,VIOLATED,CONFINED,COMPLETED,OS permission (on the committed store)
+hardlink,VIOLATED,CONFINED,COMPLETED,OS permission (on the committed store)
+delete_after_write,UNKNOWN,CONFINED,COMPLETED,OS permission (on the committed store)
+preopened_fd,VIOLATED,CONFINED,NOT_COMPLETED,contract check (staging diff)
+child_process,VIOLATED,CONFINED,NOT_COMPLETED,contract check (staging diff)
+background_write,VIOLATED,CONFINED,NOT_COMPLETED,contract check (staging diff)
+error_after_effect,VIOLATED,CONFINED,NOT_COMPLETED,contract check (staging diff)
+silent_noop,UNKNOWN,UNKNOWN,NOT_COMPLETED,not applicable

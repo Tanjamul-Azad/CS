@@ -268,10 +268,13 @@ actual finding of the gate, worth more than a pass would have been.
 
 ---
 
-## 8. M2 — Mediation boundary, preliminary control experiment
+## 8. M2 — Mediation boundary
 
-*Doc: `25` §6 M2, table: `results/tables/boundary_probe.md`, notebook
-`07_boundary_probe.ipynb`.*
+*Docs: `25` §6 M2, `31-m2-proper.md`. Tables: `results/tables/
+boundary_probe.md` (preliminary), `results/tables/boundary_probe_m2.md`
+(proper). Notebook `07_boundary_probe.ipynb` (preliminary run).*
+
+### 8.1 Preliminary control experiment (superseded as "M2's answer" by §8.2)
 
 An untrusted server process, launched as a separate OS user, actively
 attacks a protected staging area (14 scenarios), paired against an
@@ -287,18 +290,52 @@ that actually landed.
 | Blocked by **OS permission** | 8 |
 | Blocked by **contract check** | 2 (`wrong_path`, `content_substitution`) |
 
-**The finding worth keeping: confinement is not authorization.** A
-boundary sees paths and permissions and cannot tell a proposed
-destination is simply the wrong one — that's what the two contract-check
-catches supply, and no amount of sandboxing does.
+Named honestly at the time as a limitation, not hidden: the *gateway*
+performed the effect here via a per-tool executor; the confined server
+could not write at all. The actual research question — translating an
+authorization into a generic boundary while the *server itself* acts —
+was untested by this probe, which is why it was never counted as M2's
+answer, only as an M5 baseline ("executor-mediated gateway").
 
-**Named honestly as a limitation, not hidden:** this is a **preliminary
-control experiment**, not the M2 milestone itself. The *gateway* performs
-the effect here via a per-tool executor; the confined server cannot write
-at all. The actual research question — translating an authorization into
-a generic boundary while the *server itself* acts — is untested by this
-probe. It stands as the M5 baseline ("executor-mediated gateway"), not as
-M2's answer.
+### 8.2 M2 proper — the server performs the effect itself (`31`)
+
+Closes that exact gap. Same 14 scenarios, same adversarial stub process,
+but now the server genuinely writes into a staging workspace **it owns**
+(mode 0700, no executor in the path); a trusted mediator diffs that
+workspace against the contract and only then copies the approved result
+into a separate, server-inaccessible committed store.
+
+| | |
+|---|---|
+| Prevention coverage | **10/10 (100%)** — meets the ≥90% pre-registered threshold |
+| UNKNOWN rate | **7.1%** (1/14, `silent_noop`) — meets the ≤20% threshold |
+| Honest utility | **0pp gap** vs. undefended — meets the 5pp non-inferiority threshold |
+| Blocked by **contract check (staging diff)** | **8** |
+| Blocked by **OS permission (on the committed store)** | **2** (`rename_after_write`, `hardlink`) |
+
+**The finding: mechanism attribution flips once the server holds real
+authority.** The preliminary probe's 8-OS-permission/2-contract split
+inverts to 8-contract/2-OS-permission here — not a contradiction, the
+actual answer to the question the preliminary probe couldn't ask. Giving
+the untrusted process real write authority over its own workspace (which
+M2 requires) means an OS boundary around that workspace can't do much
+confining — the process legitimately needs to write there. What confines
+the outcome is the contract's own after-the-fact diff-and-discard; OS
+permission's remaining, still-real job is protecting the *already-
+committed* artifact from post-hoc tampering, which is a narrower
+guarantee than the preliminary number implied.
+
+**A genuine, pre-registered limitation, not a patched-over bug:**
+`hidden_extra_field` **commits** under this design — a pure effect-diff
+mediator has no visibility into the raw request's argument shape, only
+the file-level effect it produced, so a field nobody approved that
+manifests as no file-level change is invisible to it. `25` §3.1's
+"a boundary sees effects, not requests" is now confirmed on real
+filesystem state, not only argued.
+
+**What remains open:** this is one synthetic adversarial stub, not yet
+combined with a real M3 server; the honest scenario is a single write,
+not the multi-write-plus-rename workflow `25` §6 names explicitly.
 
 ---
 
@@ -405,10 +442,18 @@ before being claimed:
    **at any rung**, because the tool's own schema gives it no field to
    derive a content check from — the ladder's own predicted limit,
    confirmed rather than only argued.
-4. **The confinement-vs-authorization distinction, demonstrated, not just
-   argued**: in the M2 control experiment, 8 of 10 real attacks were
-   caught by OS permissions alone, and exactly the 2 that weren't are the
-   ones a contract check — not a sandbox — supplies.
+4. **The confinement-vs-authorization distinction, demonstrated twice,
+   with the SAME 14 attacks producing an INVERTED mechanism split
+   depending on who holds execution authority.** With the gateway
+   performing effects on the server's behalf (§8.1), OS permission alone
+   caught 8 of 10 real attacks. With the server genuinely performing its
+   own effect inside a real boundary instead (§8.2, M2 proper) — the
+   actual research question — that flips to 8 of 10 caught by the
+   contract's own diff-and-discard, and OS permission's job narrows to
+   protecting the already-committed artifact. Confinement is not
+   authorization, and which mechanism supplies which depends on where
+   execution authority actually sits — not asserted, measured twice under
+   controlled variation of exactly that one variable.
 
 ---
 
@@ -418,7 +463,7 @@ before being claimed:
 |---|---|
 | **M0** — repair the evidence base | Mechanics done (five independent outcome fields, matched-denominator re-run, funnel/selection characterised). **M0c open**: κ = 0.559 < 0.60 gate; Round 2 labelling prepared, not yet run |
 | **M1** — threat model + novelty gate | **Cleared.** Broad claim retired; narrow candidate precisely bounded; capability-systems literature closed |
-| **M2** — mediation boundary, one domain | **Not met.** Preliminary control experiment done and reported honestly as such (gateway acts, not the confined server) |
+| **M2** — mediation boundary, one domain | **Architectural gap closed; pre-registered thresholds met** (§8.2) on one synthetic adversarial process. Not yet combined with a real M3 server or a multi-write honest workflow |
 | **M3** — generality, ≥10 real servers | **In progress.** 5 of 5 written probes verified, spanning all three workflow classes plus one git-native shape; ≥10-server threshold and the network domain not reached |
 | **M4** — adaptive adversary | Not started |
 | **M5** — held-out evaluation | Not started (M2's probe stands as one baseline for it) |
@@ -431,10 +476,12 @@ before being claimed:
 - **κ below gate.** Classifier validation is not closed; the 36.7%/A0
   numbers and everything built on the classifier are instrument readings
   until Round 2 closes this.
-- **M2 is preliminary.** The authorization-to-boundary translation
-  problem — the actual research question — remains untested by the
-  control experiment; it establishes only that OS permissions and a
-  contract check catch different things.
+- **M2's architectural gap is closed, but on a synthetic adversary
+  only.** The server now genuinely performs its own effect inside a real
+  boundary, and all three pre-registered thresholds are met — but this
+  is `malicious_server.py`, the same stub used throughout, not yet a
+  real M3 server, and the honest workflow tested is a single write, not
+  the multi-write-plus-rename case `25` §6 names explicitly.
 - **M3 is five servers, not ten.** No generalization claim is
   supportable yet, and the network domain is completely untouched. One of
   the five servers (the SQL/underspecified one) also shows the mechanism

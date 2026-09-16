@@ -1,6 +1,6 @@
 # Results manifest
 
-Generated 2026-09-10 14:36 UTC from commit `ae7fb56` by `experiments/make_results.py`.
+Generated 2026-09-16 03:04 UTC from commit `64e4fee` by `experiments/make_results.py`.
 
 Raw per-server traces are gitignored (large, regenerable). This manifest records the exact bytes each table was computed from, so a number in the write-up traces to a file and a stale table is detectable.
 
@@ -15,6 +15,7 @@ Raw per-server traces are gitignored (large, regenerable). This manifest records
 | Pilot, working error flag | `data\processed\pilot_errflag.json` | yes | `72b81762e6c7c950` | 0.5 MB |
 | Effect oracle | `data\processed\effect_oracle.json` | yes | `8bb30e407b52985f` | 0.0 MB |
 | M2 boundary probe | `data\processed\boundary_probe.json` | yes | `6aeae72e016de24d` | 0.0 MB |
+| M2 proper boundary probe | `data\processed\boundary_probe_m2.json` | yes | `6c0e944d170f622a` | 0.0 MB |
 
 ## How to regenerate the raw inputs
 

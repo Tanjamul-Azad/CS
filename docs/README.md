@@ -2,7 +2,7 @@
 
 **In a hurry? Read [`30-project-status-and-contributions.md`](30-project-status-and-contributions.md) alone — it is the consolidated summary of every experiment, every result, and the contribution versus prior work, with a pointer into the full spine for anything it compresses.**
 
-**For the full story in the order it was actually reasoned through, read the ten documents in "The spine" below. Everything else is reference.**
+**For the full story in the order it was actually reasoned through, read the eleven documents in "The spine" below. Everything else is reference.**
 
 Current goal, fixed 2026-09-10:
 
@@ -12,7 +12,7 @@ Full statement, threat model and milestones: [`25-research-program.md`](25-resea
 
 ---
 
-## The spine — read these ten, in this order
+## The spine — read these eleven, in this order
 
 | # | Doc | What you learn | Length |
 |---|---|---|---|
@@ -25,9 +25,10 @@ Full statement, threat model and milestones: [`25-research-program.md`](25-resea
 | 7 | [`27-narrow-candidate-experiment.md`](27-narrow-candidate-experiment.md) | **What runs next.** The comparison that decides whether a system contribution exists | short |
 | 8 | [`28-kappa-result.md`](28-kappa-result.md) | **M0c result.** κ = 0.559, below gate — one clean A0/A2 confusion, and a data-provenance bug fixed | short |
 | 9 | [`29-real-server-generalization.md`](29-real-server-generalization.md) | **Real-server datapoints.** Five verified, across all three workflow classes plus a git-native one — not yet the ≥10-server M3 | medium |
-| 10 | [`30-project-status-and-contributions.md`](30-project-status-and-contributions.md) | **Consolidated status.** Every experiment, every result, and the contribution vs. prior work, in one place | medium |
+| 10 | [`31-m2-proper.md`](31-m2-proper.md) | **M2's architectural gap closed.** The server performs its own effect; mechanism attribution flips from the preliminary result | medium |
+| 11 | [`30-project-status-and-contributions.md`](30-project-status-and-contributions.md) | **Consolidated status.** Every experiment, every result, and the contribution vs. prior work, in one place | medium |
 
-After those ten you know the problem, the impossibility result, the measured failure, the diagnosis, the plan, and exactly where execution against it currently stands. Nothing else is required.
+After those eleven you know the problem, the impossibility result, the measured failure, the diagnosis, the plan, and exactly where execution against it currently stands. Nothing else is required.
 
 ## To see the evidence rather than read about it
 
