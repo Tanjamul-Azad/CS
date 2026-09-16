@@ -171,6 +171,12 @@ run:
   on the raw proposal still needs to be checked somewhere, most likely
   before staging even begins, not only after.
 
+**Update, same day**: all three items in the list above are now closed —
+the request-shape check (`33` §4), multi-write/rename and other corner
+cases (`34`), and combination with a real M3 server (`37`). Left as
+originally written above rather than edited away, so the "what remains"
+list at each point in time stays visible.
+
 So: M2's central architectural question — does a generic boundary confine
 a server that genuinely holds execution authority — now has a real,
 measured, mostly-positive answer, with one precisely-named gap
