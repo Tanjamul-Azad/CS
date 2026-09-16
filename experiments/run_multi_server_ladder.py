@@ -1,23 +1,25 @@
 """
-M3 sweep, run 2: six real, independent, unmodified third-party MCP
+M3 sweep, run 2: seven real, independent, unmodified third-party MCP
 servers, not one. Extends `run_real_server_ladder.py` (which ran only
-`real_server_probe.py`, docs/29) to also run the five servers added
+`real_server_probe.py`, docs/29) to also run the six servers added
 after that write-up: an official reference implementation of the same
 EXACT-class tool (server-filesystem), a keyed/structured store
 (server-memory), an underspecified SQL tool (mcp-sqlite-server), a
-git-native tool with no content argument at all (mcp-server-git), and a
+git-native tool with no content argument at all (mcp-server-git), a
 second, independent underspecified SQL implementation
 (mcp-server-sqlite-npx) that replicates the sharpest finding of the
-sweep.
+sweep, and a two-field-content tool (notes-mcp) whose approved effect is
+only fully specified by two separate arguments, not one.
 
     python experiments/run_multi_server_ladder.py
 
 Each probe runs INSIDE the project container exactly as
 `run_real_server_ladder.py` already does; see each probe script's own
 docstring for that server's schema, threat model, and ladder semantics.
-This is still not the >=10-server sweep M3 specifies -- six servers
-across three workflow classes plus one git-native shape (docs/27), not
-ten within one. Report it as exactly that.
+This is still not the >=10-server sweep M3 specifies -- seven servers
+across three workflow classes plus one git-native shape and one
+two-field-content shape (docs/27), not ten within one. Report it as
+exactly that.
 """
 
 from __future__ import annotations
@@ -40,6 +42,7 @@ PROBES = {
     "mcp-sqlite-server": ("/app/boundary/probe_sqlite.py", 180),
     "mcp-server-git": ("/app/boundary/probe_git.py", 180),
     "mcp-server-sqlite-npx": ("/app/boundary/probe_sqlite2.py", 180),
+    "notes-mcp": ("/app/boundary/probe_notes.py", 180),
 }
 
 
@@ -86,9 +89,10 @@ def report(rows: list[dict]) -> None:
                 print(f"      (error: {str(r['server_error'])[:150]})")
 
     print("\n" + "=" * 100)
-    print("  Six real, unmodified, third-party servers across three workflow classes")
+    print("  Seven real, unmodified, third-party servers across three workflow classes")
     print("  (docs/27): EXACT (x2 independent implementations), CONSTRAINED/keyed,")
-    print("  CONSTRAINED/git-native, UNDERSPECIFIED/SQL (x2 independent implementations).")
+    print("  CONSTRAINED/git-native, CONSTRAINED/two-field-content,")
+    print("  UNDERSPECIFIED/SQL (x2 independent implementations).")
     print("  This is still not the >=10-server sweep M3 specifies.")
 
 

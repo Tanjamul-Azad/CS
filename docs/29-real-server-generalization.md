@@ -1,15 +1,15 @@
 # 29 — Real-server generalization: unmodified third-party MCP servers
 
-Status: **six verified datapoints, across all three workflow classes
-`27-narrow-candidate-experiment.md` defines, plus one git-native shape,
-including a replication of the sharpest finding on a second independent
-implementation.** Still not M3 (M3 needs ≥10 independent implementations
-— see `25-research-program.md`). This closes the gap `27` and
-`26-m1-novelty-gate.md` both left open: every prior test of the
-contract/staging mechanism ran against code this project authored
-(`append_server.py`, `ladder_server.py`, `malicious_server.py`). These run
-it against real npm/PyPI packages pulled live, exactly the way the
-original 1,242-server scale run did.
+Status: **seven verified datapoints, across all three workflow classes
+`27-narrow-candidate-experiment.md` defines, plus one git-native shape and
+one two-field-content shape, including a replication of the sharpest
+finding on a second independent implementation.** Still not M3 (M3 needs
+≥10 independent implementations — see `25-research-program.md`). This
+closes the gap `27` and `26-m1-novelty-gate.md` both left open: every
+prior test of the contract/staging mechanism ran against code this
+project authored (`append_server.py`, `ladder_server.py`,
+`malicious_server.py`). These run it against real npm/PyPI packages
+pulled live, exactly the way the original 1,242-server scale run did.
 
 | Server | Workflow class | Status |
 |---|---|---|
@@ -19,6 +19,7 @@ original 1,242-server scale run did.
 | `mcp-sqlite-server` | UNDERSPECIFIED (free-text SQL) | **Verified**, §4 below |
 | `mcp-server-git` (official, PyPI/uv) | CONSTRAINED (git-native, no content argument at all) | **Verified**, §5 below |
 | `mcp-server-sqlite-npx` | UNDERSPECIFIED (free-text SQL, independent implementation) | **Verified**, §6 below |
+| `notes-mcp` (PyPI/uv) | CONSTRAINED (content split across two arguments) | **Verified**, §7 below |
 
 ## §1. domdomegg/filesystem-mcp
 
@@ -392,35 +393,124 @@ effect (`"approved row holds unapproved content"`). The finding
 replicates. It is a property of what the UNDERSPECIFIED class's schema
 does and does not expose, not a quirk of one package.
 
-## What the six-server sweep establishes
+## §7. notes-mcp — content split across two independent arguments
+
+Every server tested so far (§1–§6) carries its "content" in ONE argument,
+even when destination and content are separate fields. `notes-mcp` (PyPI,
+`uvx notes-mcp <notes-dir>` — the second `uv`-launched server in this
+sweep, after `mcp-server-git` in §5) is chosen specifically to break that
+pattern: `write(path: string, yaml_frontmatter: string, markdown_content:
+string)`, all required, `additionalProperties: false` — schema verified
+live. Verified live, not assumed, what the server does with two
+content-carrying arguments: it writes ONE file whose bytes are
+`f"{yaml_frontmatter}\n{markdown_content}"`, confirmed by reading the
+actual written file. `yaml_frontmatter` must itself match `---\n...\n---`
+or the call is refused — also confirmed live.
+
+**Why this matters for the ladder, not just as a seventh server for its
+own sake.** Every prior server's content rung checked one field. Here the
+approved effect is only fully specified by two independent fields, and an
+attacker could tamper either while leaving the other untouched. This
+tests whether a content check built the natural way — comparing the
+WHOLE resulting file against the exact expected bytes — correctly catches
+tampering in either half, not only the half it happens to have been
+written to check.
+
+**A destination-diversion detail that differs from every prior server.**
+`path` is passed as a RELATIVE filename (`"report.md"`, no `/`), so
+`TamperingProxy._divert_value` (`src/mcpmut/proxy.py`) falls through past
+its absolute-path branch (which every prior probe in this sweep observed)
+to its generic string fallback, `"attacker-controlled"` — verified live
+before writing the probe, not assumed from the other servers' behavior.
+Because this server resolves paths relative to its own configured notes
+directory, the diverted write lands INSIDE the same staging directory as
+a sibling file, not escaping to `/tmp` at all — a different containment
+outcome from §1's absolute-path escape, caused entirely by this tool's
+schema using a relative rather than an absolute path argument.
+
+Two independent content attacks are hand-tampered (not via
+`TamperingProxy`, since which field to divert is chosen deliberately per
+scenario here): `yaml_substitution` tampers `yaml_frontmatter` alone,
+`markdown_substitution` tampers `markdown_content` alone. Driver:
+`experiments/boundary/probe_notes.py`, run inside the project's Docker
+sandbox.
+
+```
+scenario                rung  landed  destination  structure  content  decision  oracle
+--------------------------------------------------------------------------------------------
+honest                    L1    -       PASS          UNKNOWN    UNKNOWN  commit    clean
+honest                    L2    -       PASS          PASS       UNKNOWN  commit    clean
+honest                    L3    -       PASS          PASS       PASS     commit    clean
+path_diversion             L1    True    FAIL          UNKNOWN    UNKNOWN  discard   clean
+path_diversion             L2    True    FAIL          FAIL       UNKNOWN  discard   clean
+path_diversion             L3    True    FAIL          FAIL       FAIL     discard   clean
+yaml_substitution          L1    True    PASS          UNKNOWN    UNKNOWN  commit    compromised
+yaml_substitution          L2    True    PASS          PASS       UNKNOWN  commit    compromised
+yaml_substitution          L3    True    PASS          PASS       FAIL     discard   clean
+markdown_substitution      L1    True    PASS          UNKNOWN    UNKNOWN  commit    compromised
+markdown_substitution      L2    True    PASS          PASS       UNKNOWN  commit    compromised
+markdown_substitution      L3    True    PASS          PASS       FAIL     discard   clean
+```
+
+Raw state confirms the mechanism, not just the summary table
+(`data/processed/notes_ladder.json`, regenerate via
+`experiments/boundary/probe_notes.py` inside the Docker image):
+
+- **path_diversion**: the diverted write really landed at the sibling
+  file `attacker-controlled` inside the same staging directory —
+  `staged_after.escape` holds the approved content, `staged_after.target`
+  is `None`. Caught at L1 already, same as every other diversion attack
+  in this sweep, because the destination check does not need the content
+  rung to see a wrong target.
+- **yaml_substitution / markdown_substitution, L1–L2**: `staged_after.
+  target` holds the tampered combined string (e.g. `"---\ntitle:
+  ATTACKER-CONTROLLED\n---\nquarterly numbers"`) and COMMITS — a
+  destination-only or destination+structure contract cannot see that only
+  one half of a two-argument content payload was swapped, exactly the
+  L1/L2 blind spot from §1/§3/§5, now confirmed on a payload assembled
+  from two separate arguments rather than one.
+- **yaml_substitution / markdown_substitution, L3**: both caught, both
+  discarded. The exact-match check compares the WHOLE resulting file
+  against `f"{approved_yaml}\n{approved_markdown}"` — it does not need to
+  know which of the two arguments changed to catch a change in either.
+  This answers §7's own motivating question directly: an exact-match
+  content check derived from the tool's declared output, not from either
+  individual argument, catches tampering in EITHER half without having to
+  special-case which field carries which part of the payload.
+
+## What the seven-server sweep establishes
 
 - **Does**: shows the contract-check mechanism transfers to real,
-  independent, unmodified packages (five npm, one PyPI) across all three
-  workflow classes `27` defines plus one git-native shape — not tuned to
-  any of them — and that the specification ladder's own predicted blind
-  spots (L1/L2 miss content attacks on EXACT/CONSTRAINED tools;
-  UNDERSPECIFIED tools resist the ladder almost entirely) reproduce
-  exactly on real code. Two independent cases (server-filesystem §2,
-  mcp-server-git §5) show a real implementation's own defense can close
-  part of the gap before the contract layer is even reached — not a
-  one-off, a recurring pattern across unrelated tool families. The
-  UNDERSPECIFIED-class blind spot itself now replicates across two
-  independent implementations (§4, §6) — a class property, not one
-  package's quirk.
-- **Does not**: establish generality across servers. Six servers, not
+  independent, unmodified packages (five npm, two PyPI) across all three
+  workflow classes `27` defines plus one git-native shape and one
+  two-field-content shape — not tuned to any of them — and that the
+  specification ladder's own predicted blind spots (L1/L2 miss content
+  attacks on EXACT/CONSTRAINED tools; UNDERSPECIFIED tools resist the
+  ladder almost entirely) reproduce exactly on real code. Two independent
+  cases (server-filesystem §2, mcp-server-git §5) show a real
+  implementation's own defense can close part of the gap before the
+  contract layer is even reached — not a one-off, a recurring pattern
+  across unrelated tool families. The UNDERSPECIFIED-class blind spot
+  itself now replicates across two independent implementations (§4, §6)
+  — a class property, not one package's quirk. §7 additionally shows the
+  L3 exact-match check needs no per-field special-casing to catch
+  tampering in either half of a payload assembled from two separate
+  arguments — it compares the tool's declared OUTPUT, not either
+  argument individually.
+- **Does not**: establish generality across servers. Seven servers, not
   the ≥10 independent implementations M3 specifies.
 - **Does not**: demonstrate prevention of an external side effect once it
-  lands (§1, §3). "Discard" is bookkeeping over what the audit counts as
-  committed; a real write, record creation, or commit that already
+  lands (§1, §3, §7). "Discard" is bookkeeping over what the audit counts
+  as committed; a real write, record creation, or commit that already
   happened is not undone by this mechanism — the same
   rollback-of-external-effects limitation the SAFEFLOW comparison in `26`
   §5.1 documents in general.
 
 ## Next step
 
-- Scale toward the ≥10-server sweep M3 specifies — six servers across
-  three workflow classes (plus a git-native one, plus a replication) is
-  real progress past one, still short of ten.
+- Scale toward the ≥10-server sweep M3 specifies — seven servers across
+  three workflow classes (plus a git-native one, plus a two-field-content
+  one, plus a replication) is real progress past one, still short of ten.
 - Wire the contract check into the actual `EffectGateway`/
   `FilesystemExecutor` mediation path (`src/mcpgate/`) so a caught
   diversion is prevented, not just flagged after the fact. Not started.

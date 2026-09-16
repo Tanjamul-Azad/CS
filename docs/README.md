@@ -24,7 +24,7 @@ Full statement, threat model and milestones: [`25-research-program.md`](25-resea
 | 6 | [`25-research-program.md`](25-research-program.md) | **The plan.** Goal, scope, permit rule, milestones M0–M6 with acceptance criteria | long |
 | 7 | [`27-narrow-candidate-experiment.md`](27-narrow-candidate-experiment.md) | **What runs next.** The comparison that decides whether a system contribution exists | short |
 | 8 | [`28-kappa-result.md`](28-kappa-result.md) | **M0c result.** κ = 0.559, below gate — one clean A0/A2 confusion, and a data-provenance bug fixed | short |
-| 9 | [`29-real-server-generalization.md`](29-real-server-generalization.md) | **Real-server datapoints.** Six verified, across all three workflow classes plus a git-native one, incl. a replicated finding — not yet the ≥10-server M3 | medium |
+| 9 | [`29-real-server-generalization.md`](29-real-server-generalization.md) | **Real-server datapoints.** Seven verified, across all three workflow classes plus a git-native one and a two-field-content one, incl. a replicated finding — not yet the ≥10-server M3 | medium |
 | 10 | [`31-m2-proper.md`](31-m2-proper.md) | **M2's architectural gap closed.** The server performs its own effect; mechanism attribution flips from the preliminary result | medium |
 | 11 | [`32-m4-first-adaptive-attack.md`](32-m4-first-adaptive-attack.md) | **M4's first result.** A real TOCTOU race against our own mediator, found, fixed, re-verified | short |
 | 12 | [`36-our-approach.md`](36-our-approach.md) | **The mechanism, cleanly specified.** The Permit rule, the ladder, the mediator — one place, paper-ready | medium |

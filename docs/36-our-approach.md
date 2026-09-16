@@ -228,7 +228,7 @@ modified kernel) both hold pieces of it. What is not held by any adjacent
 system checked (`26`): staging-and-commit mediation of an UNMODIFIED
 process's real, EXTERNAL effect, checked from OUTSIDE against a contract
 DERIVED FROM THE TOOL'S OWN DECLARATION — the specific combination this
-document specifies, now measured across six real, independent
+document specifies, now measured across seven real, independent
 third-party servers (`29`), one adaptive adversary (`32`), and the full
 mediation mechanism combined with one of those real servers directly
 (`37`), not only proposed.

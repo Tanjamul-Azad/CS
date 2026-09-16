@@ -27,10 +27,11 @@ tested a mechanism for that gap: a specification-ladder contract, enforced
 by an OS-isolated staging workspace, a request-shape check, and a single-
 read effect diff that commits or discards, using an independent trusted
 observer that never trusts the server's self-report. That mechanism has
-now been run against **six** real, unmodified, independent third-party
+now been run against **seven** real, unmodified, independent third-party
 MCP servers spanning every workflow class the design predicts should
-behave differently, plus a git-native shape and a replicated finding
-(`29`) — reproduced its own architectural gap being closed when the
+behave differently, plus a git-native shape, a two-field-content shape,
+and a replicated finding (`29`) — reproduced its own architectural gap
+being closed when the
 *server itself*, not a gateway, performs the effect (`31`) — and, as of
 this writing, has been combined with one of those real servers directly,
 confining a genuine external write attempt from unmodified third-party
@@ -403,11 +404,12 @@ live — not stubs this project wrote.
 | `mcp-sqlite-server` | UNDERSPECIFIED (free-text SQL) | **Verified** |
 | `mcp-server-git` (official, PyPI/uv) | CONSTRAINED (git-native, no content argument) | **Verified** |
 | `mcp-server-sqlite-npx` | UNDERSPECIFIED (free-text SQL, 2nd independent impl.) | **Verified** |
+| `notes-mcp` (PyPI/uv) | CONSTRAINED (content split across two arguments) | **Verified** |
 
-**Result across all six verified servers**, spanning every workflow
+**Result across all seven verified servers**, spanning every workflow
 class `27-narrow-candidate-experiment.md` defines plus one git-native
-shape, including a replication of the UNDERSPECIFIED finding on a second
-independent implementation:
+shape and one two-field-content shape, including a replication of the
+UNDERSPECIFIED finding on a second independent implementation:
 
 - **Honest workflows complete and commit correctly at every rung, on
   every server.**
@@ -429,14 +431,18 @@ independent implementation:
     real, measured, and now **recurring** difference between
     implementations that look identical from their tool declaration
     alone.
-- **Content-level substitution slips past L1 and L2 on the four
+- **Content-level substitution slips past L1 and L2 on the five
   structured servers** — a destination-only or destination+structure
   contract cannot see a content-level swap — **and is caught only at
   L3.** This reproduces, on real code, the exact ladder prediction made
   on the controlled stub server in `27`. On `mcp-server-git`, "content"
   means the commit *message* rather than file bytes — the tool has no
   content argument at all — and the same blind spot still reproduces
-  exactly.
+  exactly. On `notes-mcp`, content is split across TWO arguments
+  (`yaml_frontmatter`, `markdown_content`); tampering either one alone
+  still slips past L1/L2 and is still caught at L3, because the L3 check
+  compares the tool's declared combined OUTPUT rather than either
+  argument individually — no per-field special-casing needed.
 - **On the UNDERSPECIFIED server (SQL), content substitution is not
   caught at all, at any rung** — the sharpest single result in the
   sweep. `query`'s schema exposes no separate content field for any
@@ -448,12 +454,12 @@ independent implementation:
   gives it no structure to derive a check from.
 
 **What this does not establish:** generality across servers (M3 as
-specified needs ≥10 independent implementations; this is six) or
+specified needs ≥10 independent implementations; this is seven) or
 prevention of an external effect once it happens (the mechanism detects
 and refuses to *count* an unauthorized effect as committed; it does not
 undo a write, record creation, or commit that already landed for real —
 the same limitation SAFEFLOW's own paper documents for external side
-effects, now observed directly on three independent real servers rather
+effects, now observed directly on four independent real servers rather
 than only inferred).
 
 ---
@@ -482,9 +488,10 @@ before being claimed:
 3. **The specification ladder itself** (L1/L2/L3, per-property verdicts
    rather than one execution-level verdict) as the concrete mechanism for
    that gap, with pre-registered, falsifiable predictions — tested first
-   on controlled servers, then **reproduced unchanged on six real,
+   on controlled servers, then **reproduced unchanged on seven real,
    unmodified, independent third-party servers spanning all three
-   workflow classes plus one git-native shape**: L1/L2 miss content-level attacks on structured
+   workflow classes plus one git-native shape and one two-field-content
+   shape**: L1/L2 miss content-level attacks on structured
    tools, caught only at L3, exactly as predicted; a real, measured
    per-implementation difference (one server's own defenses already close
    part of the gap; another's don't) that a same-workflow-class
@@ -540,7 +547,7 @@ before being claimed:
 | **M0** — repair the evidence base | Mechanics done (five independent outcome fields, matched-denominator re-run, funnel/selection characterised). **M0c open**: κ = 0.559 < 0.60 gate; Round 2 labelling prepared, not yet run |
 | **M1** — threat model + novelty gate | **Cleared.** Broad claim retired; narrow candidate precisely bounded; capability-systems literature closed |
 | **M2** — mediation boundary, one domain | **Architectural gap closed; pre-registered thresholds met; hidden_extra_field gap closed; corner cases pass; combined with a real M3 server** (§8.2, `34`, `37`). Genuine concurrency (overlapping, not sequential, calls) still untested |
-| **M3** — generality, ≥10 real servers | **In progress.** 6 of 6 written probes verified, spanning all three workflow classes plus one git-native shape, incl. one replication; ≥10-server threshold and the network domain not reached |
+| **M3** — generality, ≥10 real servers | **In progress.** 7 of 7 written probes verified, spanning all three workflow classes plus one git-native shape and one two-field-content shape, incl. one replication; ≥10-server threshold and the network domain not reached |
 | **M4** — adaptive adversary | **All four named attack families tried.** Two found-and-fixed (TOCTOU race `32`, 25%→0%; replay/allowance-exhaustion `38`, via the existing `AllowanceLedger`). Two demonstrated as genuine structural limits, not bugs: unmediated-channel exfiltration (`39`) and utility degradation (`40` — an honest write slower than the fixed grace window is discarded exactly like a malicious one; no single timeout value solves both) |
 | **M5** — held-out evaluation | **Pilot run** (`41`): M2 vs. no-defense vs. static least-privilege, one real server. Static least-privilege caught NEITHER attack tested — zero measurable protection beyond no defense; only M2 caught both. Two of six named baselines not run (needs a human; already measured elsewhere) |
 | **M6** — write-up | This document plus `25`–`41` are the write-up's current draft state |
@@ -558,9 +565,9 @@ before being claimed:
   that is one server and three scenarios, the same scale caveat every M2
   result carries. Genuine concurrency (two calls truly overlapping, not
   sequential) is also untested.
-- **M3 is six servers, not ten.** No generalization claim is
+- **M3 is seven servers, not ten.** No generalization claim is
   supportable yet, and the network domain is completely untouched. Two of
-  the six servers (both SQL/underspecified) show the mechanism can fail
+  the seven servers (both SQL/underspecified) show the mechanism can fail
   completely, not just partially — a real negative result, now
   replicated across independent implementations, to carry forward, not
   only a positive one.
