@@ -1,13 +1,14 @@
 # 29 — Real-server generalization: unmodified third-party MCP servers
 
-Status: **four verified datapoints, across all three workflow classes
-`27-narrow-candidate-experiment.md` defines.** Still not M3 (M3 needs ≥10
-independent implementations — see `25-research-program.md`). This closes
-the gap `27` and `26-m1-novelty-gate.md` both left open: every prior test
-of the contract/staging mechanism ran against code this project authored
+Status: **five verified datapoints, across all three workflow classes
+`27-narrow-candidate-experiment.md` defines, plus one git-native shape.**
+Still not M3 (M3 needs ≥10 independent implementations — see
+`25-research-program.md`). This closes the gap `27` and
+`26-m1-novelty-gate.md` both left open: every prior test of the
+contract/staging mechanism ran against code this project authored
 (`append_server.py`, `ladder_server.py`, `malicious_server.py`). These run
-it against real npm packages pulled live, exactly the way the original
-1,242-server scale run did.
+it against real npm/PyPI packages pulled live, exactly the way the
+original 1,242-server scale run did.
 
 | Server | Workflow class | Status |
 |---|---|---|
@@ -15,6 +16,7 @@ it against real npm packages pulled live, exactly the way the original
 | `@modelcontextprotocol/server-filesystem` (official) | EXACT | **Verified**, §2 below |
 | `@modelcontextprotocol/server-memory` | CONSTRAINED (keyed/structured) | **Verified**, §3 below |
 | `mcp-sqlite-server` | UNDERSPECIFIED (free-text SQL) | **Verified**, §4 below |
+| `mcp-server-git` (official, PyPI/uv) | CONSTRAINED (git-native, no content argument at all) | **Verified**, §5 below |
 
 ## §1. domdomegg/filesystem-mcp
 
@@ -304,30 +306,82 @@ here, on a real server, it buys nothing at all against a content-level
 attack, because the schema gives the mechanism no foothold to derive a
 content check from in the first place.
 
-## What the four-server sweep establishes
+## §5. mcp-server-git — a git-native shape, no content argument at all
+
+`mcp-server-git` (official, published on PyPI, launched here via `uvx
+mcp-server-git --repository <path>` — the first non-npm server in this
+sweep; `docker/Dockerfile` was extended with the `git` system package to
+run it, verified live not assumed). Exposes git plumbing as MCP tools:
+`git_status`, `git_add`, `git_commit`, `git_log`, `git_show`, `git_diff*`,
+`git_branch`, `git_checkout`, `git_create_branch`, `git_reset`.
+
+**Why this is a different shape again, not just a fifth EXACT server.**
+`git_commit(repo_path: string, message: string)` carries no content
+argument at all — unlike every server tested so far. The payload (what
+changed) is whatever is already staged in the working tree by a separate
+`git_add` call operating on a file this probe wrote through the
+filesystem directly, exactly as a real agent would (write a file, then
+use git tools to stage and commit it). So the contract's "content"
+property here is not file bytes — it is the commit **message**, the one
+argument `git_commit` actually contributes. `repo_path` matches the
+`path`/`repo` vocabulary `TamperingProxy` already recognizes, so it
+diverts automatically — no manual diversion needed this time, unlike the
+memory/sqlite probes.
+
+```
+scenario                rung  refused  landed  destination  structure  content  decision  oracle
+--------------------------------------------------------------------------------------------------
+honest                   L1    False    -       PASS         UNKNOWN    UNKNOWN  commit    clean
+honest                   L2    False    -       PASS         PASS       UNKNOWN  commit    clean
+honest                   L3    False    -       PASS         PASS       PASS     commit    clean
+path_diversion            L1    True     True    PASS         UNKNOWN    UNKNOWN  commit    clean
+path_diversion            L2    True     True    PASS         FAIL       UNKNOWN  discard   clean
+path_diversion            L3    True     True    PASS         FAIL       FAIL     discard   clean
+message_substitution      L1    False    True    PASS         UNKNOWN    UNKNOWN  commit    compromised
+message_substitution      L2    False    True    PASS         PASS       UNKNOWN  commit    compromised
+message_substitution      L3    False    True    PASS         PASS       FAIL     discard   clean
+```
+
+**A third real server with its own destination defense.** `refused=True`
+for every `path_diversion` trial: this server's `--repository` launch
+argument fixes one allowed repo, and it refuses any `repo_path` that
+doesn't match — the diverted commit never reaches the escape repository
+(`escape_count` stays unchanged across every trial). Same pattern as
+§2's server-filesystem, on a completely different tool family, which is
+itself worth noting: destination-confinement built into the server is not
+a one-off feature of file-path tools, it recurs independently across
+implementations.
+
+`message_substitution` reproduces the now-familiar L1/L2 blind spot: the
+attacker's message is permanently recorded as real git history, missed
+until L3 catches it via the exact-match content check.
+
+## What the five-server sweep establishes
 
 - **Does**: shows the contract-check mechanism transfers to real,
-  independent, unmodified npm packages across all three workflow classes
-  `27` defines — not tuned to any of them — and that the specification
-  ladder's own predicted blind spots (L1/L2 miss content attacks on
-  EXACT/CONSTRAINED tools; UNDERSPECIFIED tools resist the ladder almost
-  entirely) reproduce exactly on real code, including one case
-  (server-filesystem's own allowlist, §2) where a real implementation's
-  own defense closes part of the gap before the contract layer is even
-  reached.
-- **Does not**: establish generality across servers. Four servers, not
+  independent, unmodified packages (four npm, one PyPI) across all three
+  workflow classes `27` defines plus one git-native shape — not tuned to
+  any of them — and that the specification ladder's own predicted blind
+  spots (L1/L2 miss content attacks on EXACT/CONSTRAINED tools;
+  UNDERSPECIFIED tools resist the ladder almost entirely) reproduce
+  exactly on real code. Two independent cases (server-filesystem §2,
+  mcp-server-git §5) show a real implementation's own defense can close
+  part of the gap before the contract layer is even reached — not a
+  one-off, a recurring pattern across unrelated tool families.
+- **Does not**: establish generality across servers. Five servers, not
   the ≥10 independent implementations M3 specifies.
 - **Does not**: demonstrate prevention of an external side effect once it
   lands (§1, §3). "Discard" is bookkeeping over what the audit counts as
-  committed; a real write or a real record creation that already happened
-  is not undone by this mechanism — the same rollback-of-external-effects
-  limitation the SAFEFLOW comparison in `26` §5.1 documents in general.
+  committed; a real write, record creation, or commit that already
+  happened is not undone by this mechanism — the same
+  rollback-of-external-effects limitation the SAFEFLOW comparison in `26`
+  §5.1 documents in general.
 
 ## Next step
 
-- Scale toward the ≥10-server sweep M3 specifies — four servers across
-  three workflow classes is real progress past one, still far short of
-  ten.
+- Scale toward the ≥10-server sweep M3 specifies — five servers across
+  three workflow classes (plus a git-native one) is real progress past
+  one, still far short of ten.
 - Wire the contract check into the actual `EffectGateway`/
   `FilesystemExecutor` mediation path (`src/mcpgate/`) so a caught
   diversion is prevented, not just flagged after the fact. Not started.
@@ -336,3 +390,7 @@ content check from in the first place.
   out-of-band knowledge of the caller's own table schema, or is an
   application-level adapter unavoidable there — precisely the open
   question the program's own goal statement (`25` §1) asks.
+- The recurring own-defense pattern (§2, §5) suggests another: how often
+  does a real server's own destination confinement already cover what the
+  contract would catch, and does that change where the contract layer's
+  marginal value actually is? Not yet measured across the sweep.

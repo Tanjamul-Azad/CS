@@ -315,15 +315,17 @@ live — not stubs this project wrote.
 | `@modelcontextprotocol/server-filesystem` (official) | EXACT (path + content) | **Verified** |
 | `@modelcontextprotocol/server-memory` | CONSTRAINED (keyed/structured) | **Verified** |
 | `mcp-sqlite-server` | UNDERSPECIFIED (free-text SQL) | **Verified** |
+| `mcp-server-git` (official, PyPI/uv) | CONSTRAINED (git-native, no content argument) | **Verified** |
 
-**Result across all four verified servers**, spanning every workflow
-class `27-narrow-candidate-experiment.md` defines:
+**Result across all five verified servers**, spanning every workflow
+class `27-narrow-candidate-experiment.md` defines plus one git-native
+shape:
 
 - **Honest workflows complete and commit correctly at every rung, on
   every server.**
-- **Destination-level diversion (path / entity name / SQL row identity)
-  is caught at every rung** by the contract's destination check, on
-  three of the four servers — but the *mechanism by which nothing lands*
+- **Destination-level diversion (path / entity name / SQL row identity /
+  git repo path) is caught at every rung** by the contract's destination
+  check, on every server — but the *mechanism by which nothing lands*
   differs by real implementation, and this is the sharpest per-
   implementation finding of the sweep:
   - `domdomegg/filesystem-mcp` and `@modelcontextprotocol/server-memory`
@@ -332,15 +334,21 @@ class `27-narrow-candidate-experiment.md` defines:
     entity literally named `"attacker-controlled"`). Genuine external
     unauthorized effects from unmodified third-party packages, caught by
     the contract's discard decision but not undone by it.
-  - The official `server-filesystem` enforces its *own* allowed-directory
-    check and refuses the identical tampered call outright — a real,
-    measured difference between two implementations that look identical
-    from their tool declaration alone.
-- **Content-level substitution slips past L1 and L2 on the three
+  - The official `server-filesystem` **and**, independently, the official
+    `mcp-server-git` (a completely different tool family — commits, not
+    file paths) each enforce their *own* allowed-directory/repository
+    check and refuse the identical class of tampered call outright — a
+    real, measured, and now **recurring** difference between
+    implementations that look identical from their tool declaration
+    alone.
+- **Content-level substitution slips past L1 and L2 on the four
   structured servers** — a destination-only or destination+structure
   contract cannot see a content-level swap — **and is caught only at
   L3.** This reproduces, on real code, the exact ladder prediction made
-  on the controlled stub server in `27`.
+  on the controlled stub server in `27`. On `mcp-server-git`, "content"
+  means the commit *message* rather than file bytes — the tool has no
+  content argument at all — and the same blind spot still reproduces
+  exactly.
 - **On the UNDERSPECIFIED server (SQL), content substitution is not
   caught at all, at any rung** — the sharpest single result in the
   sweep. `query`'s schema exposes no separate content field for any
@@ -352,13 +360,13 @@ class `27-narrow-candidate-experiment.md` defines:
   gives it no structure to derive a check from.
 
 **What this does not establish:** generality across servers (M3 as
-specified needs ≥10 independent implementations; this is four) or
+specified needs ≥10 independent implementations; this is five) or
 prevention of an external effect once it happens (the mechanism detects
 and refuses to *count* an unauthorized effect as committed; it does not
-undo a write or record creation that already landed for real — the same
-limitation SAFEFLOW's own paper documents for external side effects, now
-observed directly on three independent real servers rather than only
-inferred).
+undo a write, record creation, or commit that already landed for real —
+the same limitation SAFEFLOW's own paper documents for external side
+effects, now observed directly on three independent real servers rather
+than only inferred).
 
 ---
 
@@ -386,9 +394,9 @@ before being claimed:
 3. **The specification ladder itself** (L1/L2/L3, per-property verdicts
    rather than one execution-level verdict) as the concrete mechanism for
    that gap, with pre-registered, falsifiable predictions — tested first
-   on controlled servers, then **reproduced unchanged on four real,
+   on controlled servers, then **reproduced unchanged on five real,
    unmodified, independent third-party servers spanning all three
-   workflow classes**: L1/L2 miss content-level attacks on structured
+   workflow classes plus one git-native shape**: L1/L2 miss content-level attacks on structured
    tools, caught only at L3, exactly as predicted; a real, measured
    per-implementation difference (one server's own defenses already close
    part of the gap; another's don't) that a same-workflow-class
@@ -411,7 +419,7 @@ before being claimed:
 | **M0** — repair the evidence base | Mechanics done (five independent outcome fields, matched-denominator re-run, funnel/selection characterised). **M0c open**: κ = 0.559 < 0.60 gate; Round 2 labelling prepared, not yet run |
 | **M1** — threat model + novelty gate | **Cleared.** Broad claim retired; narrow candidate precisely bounded; capability-systems literature closed |
 | **M2** — mediation boundary, one domain | **Not met.** Preliminary control experiment done and reported honestly as such (gateway acts, not the confined server) |
-| **M3** — generality, ≥10 real servers | **In progress.** 4 of 4 written probes verified, spanning all three workflow classes; ≥10-server threshold and the network domain not reached |
+| **M3** — generality, ≥10 real servers | **In progress.** 5 of 5 written probes verified, spanning all three workflow classes plus one git-native shape; ≥10-server threshold and the network domain not reached |
 | **M4** — adaptive adversary | Not started |
 | **M5** — held-out evaluation | Not started (M2's probe stands as one baseline for it) |
 | **M6** — write-up | This document plus `25`–`29` are the write-up's current draft state |
@@ -427,9 +435,9 @@ before being claimed:
   problem — the actual research question — remains untested by the
   control experiment; it establishes only that OS permissions and a
   contract check catch different things.
-- **M3 is four servers, not ten.** No generalization claim is
+- **M3 is five servers, not ten.** No generalization claim is
   supportable yet, and the network domain is completely untouched. One of
-  the four servers (the SQL/underspecified one) also shows the mechanism
+  the five servers (the SQL/underspecified one) also shows the mechanism
   can fail completely, not just partially — a real negative result to
   carry forward, not only a positive one.
 - **No real rollback of an external effect.** "Discard" is bookkeeping

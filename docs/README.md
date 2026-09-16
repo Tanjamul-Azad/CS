@@ -24,7 +24,7 @@ Full statement, threat model and milestones: [`25-research-program.md`](25-resea
 | 6 | [`25-research-program.md`](25-research-program.md) | **The plan.** Goal, scope, permit rule, milestones M0–M6 with acceptance criteria | long |
 | 7 | [`27-narrow-candidate-experiment.md`](27-narrow-candidate-experiment.md) | **What runs next.** The comparison that decides whether a system contribution exists | short |
 | 8 | [`28-kappa-result.md`](28-kappa-result.md) | **M0c result.** κ = 0.559, below gate — one clean A0/A2 confusion, and a data-provenance bug fixed | short |
-| 9 | [`29-real-server-generalization.md`](29-real-server-generalization.md) | **Real-server datapoints.** Four verified, across all three workflow classes — not yet the ≥10-server M3 | medium |
+| 9 | [`29-real-server-generalization.md`](29-real-server-generalization.md) | **Real-server datapoints.** Five verified, across all three workflow classes plus a git-native one — not yet the ≥10-server M3 | medium |
 | 10 | [`30-project-status-and-contributions.md`](30-project-status-and-contributions.md) | **Consolidated status.** Every experiment, every result, and the contribution vs. prior work, in one place | medium |
 
 After those ten you know the problem, the impossibility result, the measured failure, the diagnosis, the plan, and exactly where execution against it currently stands. Nothing else is required.
