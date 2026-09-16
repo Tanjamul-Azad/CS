@@ -226,7 +226,17 @@ def run_m2(name: str, note: str) -> dict:
     if matches_contract:
         decision = "commit"
         try:
-            shutil.copy2(staging / approved_path, COMMITTED / approved_path)
+            # Write the bytes ALREADY READ for the diff -- never re-read
+            # staging from disk at commit time. `shutil.copy2` here would
+            # re-open the file independently of the read above, leaving a
+            # window between "diff verified X" and "copy reads whatever
+            # is on disk right now" with no lock in between. M4 found
+            # this race live (docs/32): an adversary racing that exact
+            # gap got attacker content into the committed store in 3 of
+            # 20 trials despite the diff having verified the approved
+            # content moments earlier.
+            (COMMITTED / approved_path).write_text(
+                staged_after[approved_path], encoding="utf-8")
         except Exception as e:  # noqa: BLE001
             decision = f"commit-failed ({type(e).__name__})"
     else:
