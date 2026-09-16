@@ -2,7 +2,7 @@
 
 **In a hurry? Read [`30-project-status-and-contributions.md`](30-project-status-and-contributions.md) alone — it is the consolidated summary of every experiment, every result, and the contribution versus prior work, with a pointer into the full spine for anything it compresses.**
 
-**For the full story in the order it was actually reasoned through, read the eighteen documents in "The spine" below. Everything else is reference.**
+**For the full story in the order it was actually reasoned through, read the nineteen documents in "The spine" below. Everything else is reference.**
 
 Current goal, fixed 2026-09-10:
 
@@ -12,7 +12,7 @@ Full statement, threat model and milestones: [`25-research-program.md`](25-resea
 
 ---
 
-## The spine — read these eighteen, in this order
+## The spine — read these nineteen, in this order
 
 | # | Doc | What you learn | Length |
 |---|---|---|---|
@@ -33,9 +33,10 @@ Full statement, threat model and milestones: [`25-research-program.md`](25-resea
 | 15 | [`35-mitigation-strategies.md`](35-mitigation-strategies.md) | **Every gap found, its fix, and its status.** Implemented-and-verified vs. recommended-only, never blurred | medium |
 | 16 | [`37-m2-plus-real-server.md`](37-m2-plus-real-server.md) | **The capstone integration.** M2's mediator, combined with a real server for the first time — the same real diversion, now kept out of the trusted store | short |
 | 17 | [`38-m4-replay-allowance.md`](38-m4-replay-allowance.md) | **M4's second attack.** A replay double-commits an already-used authorization; fixed by wiring in an existing, already-tested `AllowanceLedger` | short |
-| 18 | [`30-project-status-and-contributions.md`](30-project-status-and-contributions.md) | **Consolidated status.** Every experiment, every result, and the contribution vs. prior work, in one place | medium |
+| 18 | [`39-m4-unmediated-channel.md`](39-m4-unmediated-channel.md) | **M4's third attack.** A secret sent over a local socket is invisible to the file-only mediator — demonstrated as a scope boundary, not a bug to fix | short |
+| 19 | [`30-project-status-and-contributions.md`](30-project-status-and-contributions.md) | **Consolidated status.** Every experiment, every result, and the contribution vs. prior work, in one place | medium |
 
-After those eighteen you know the problem, the impossibility result, the measured failure, the diagnosis, the plan, the mechanism itself, and exactly where execution against it currently stands. Nothing else is required.
+After those nineteen you know the problem, the impossibility result, the measured failure, the diagnosis, the plan, the mechanism itself, and exactly where execution against it currently stands. Nothing else is required.
 
 ## To see the evidence rather than read about it
 

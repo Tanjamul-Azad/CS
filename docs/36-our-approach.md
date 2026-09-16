@@ -185,9 +185,17 @@ sandbox the process" would not reproduce this mechanism's coverage.
   just security** (`34` Part 2) — sharing one staging area across calls
   causes an entirely honest second call to be wrongly discarded because
   of a first call's leftover artifact. Demonstrated, not assumed.
-- **It says nothing about confidentiality.** The untrusted process reads
-  what it is already permitted to read; this mechanism's claim is
-  entirely about integrity of what reaches the committed store.
+- **It says nothing about confidentiality, and cannot see any channel it
+  does not watch.** The untrusted process reads what it is already
+  permitted to read; this mechanism's claim is entirely about integrity
+  of what reaches the committed store. Demonstrated directly, not only
+  argued (`39`): a secret sent over a plain local socket in the SAME
+  invocation as an approved, honest file write is completely invisible
+  to the mediator, which commits the honest write as cleanly as if
+  nothing else had happened — because nothing about that channel was
+  ever in its observation surface. No fix for this exists WITHIN a
+  filesystem-only mechanism; covering it needs a different layer
+  entirely (network namespace isolation, an egress allowlist).
 
 ## 7. Relationship to prior work, stated once (full account: `26`)
 
