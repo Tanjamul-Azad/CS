@@ -31,12 +31,18 @@ now been run against **six** real, unmodified, independent third-party
 MCP servers spanning every workflow class the design predicts should
 behave differently, plus a git-native shape and a replicated finding
 (`29`) — reproduced its own architectural gap being closed when the
-*server itself*, not a gateway, performs the effect (`31`) — survived a
-contract-aware adversary that raced its own commit logic, found and fixed
-a real TOCTOU vulnerability in the process (`32`) — and, as of this
-writing, has been combined with one of those real servers directly,
+*server itself*, not a gateway, performs the effect (`31`) — and, as of
+this writing, has been combined with one of those real servers directly,
 confining a genuine external write attempt from unmodified third-party
-code inside a real OS-enforced boundary for the first time (`37`).
+code inside a real OS-enforced boundary for the first time (`37`). Four
+contract-aware adversaries — built with knowledge of the mechanism's own
+code, after it existed, not written in advance — then attacked it
+directly: two found and closed real defects (a TOCTOU race, `32`; a
+replay/allowance-exhaustion double-commit, `38`, fixed by reusing an
+already-tested component of this project's own gateway), and two
+demonstrated genuine, unfixable-within-this-mechanism limits stated
+plainly rather than argued away (unmediated-channel exfiltration, `39`;
+a fixed-window timing tradeoff, `40`).
 
 ---
 
@@ -505,6 +511,13 @@ before being claimed:
    fixed by wiring in `AllowanceLedger`, an already-existing,
    already-unit-tested component of this project's own gateway that had
    simply never been connected to the newer mediator.
+6. **Two genuine structural limits of the mechanism, demonstrated rather
+   than left implicit or argued away**: unmediated-channel exfiltration
+   (`39`) and a fixed-window timing tradeoff that cannot simultaneously
+   tolerate every honest slow write and catch every patient malicious one
+   (`40`). Neither is reported as a bug with a fix — a defense that
+   correctly identifies what it cannot promise is a different, and more
+   useful, deliverable than one that quietly omits the question.
 
 ---
 
@@ -518,7 +531,7 @@ before being claimed:
 | **M3** — generality, ≥10 real servers | **In progress.** 6 of 6 written probes verified, spanning all three workflow classes plus one git-native shape, incl. one replication; ≥10-server threshold and the network domain not reached |
 | **M4** — adaptive adversary | **All four named attack families tried.** Two found-and-fixed (TOCTOU race `32`, 25%→0%; replay/allowance-exhaustion `38`, via the existing `AllowanceLedger`). Two demonstrated as genuine structural limits, not bugs: unmediated-channel exfiltration (`39`) and utility degradation (`40` — an honest write slower than the fixed grace window is discarded exactly like a malicious one; no single timeout value solves both) |
 | **M5** — held-out evaluation | Not started (M2's probe stands as one baseline for it) |
-| **M6** — write-up | This document plus `25`–`37` are the write-up's current draft state |
+| **M6** — write-up | This document plus `25`–`40` are the write-up's current draft state |
 
 ---
 
