@@ -40,7 +40,7 @@ imposed by showing what NOT to claim:
 | **Request-shape blindness**: a pure effect-diff mediator cannot see an MCP request argument (`hidden_extra_field`) that never manifests as a file-level change — it committed | A second, independent check on the raw proposal's argument keys, run BEFORE the staging diff: any key outside the contract's bound fields refuses the whole transaction | **Implemented, re-verified** — re-run of all 14 scenarios, 14/14 correctly confined or legitimately `UNKNOWN` (`33` §4, `results/tables/boundary_probe_m2.md`) |
 | **Effect-to-call binding**: sharing one staging directory across two sequential honest calls causes the second call's entirely honest effect to be wrongly discarded because of the first call's leftover artifact | Isolate staging per invocation (a fresh directory per call, reset before use) — already the design every other M2 probe in this project uses | **Design mitigation confirmed necessary by demonstrating the failure without it** (`34` Part 2). **Not fully verified for genuine concurrency** — tested sequentially, not with two calls genuinely overlapping in time, which would additionally need synchronization this project has not tested |
 | **UNDERSPECIFIED-class blindness**: a `sql`-shaped tool's schema gives the mechanism no field to derive a content check from at all — content substitution is uncaught at ANY rung, replicated on two independent real servers (`29` §4, §6) | **Recommended, not implemented**: an application-level adapter that understands the caller's own table schema (which columns exist, which identify a row) would need to sit between the generic contract layer and this class of tool. Whether that adapter can be derived automatically or must be hand-written per application is exactly the open question the program's own goal statement (`25` §1) asks | **Not implemented.** Stated as an open question, not silently left unaddressed |
-| **No genuine prevention of an already-landed external effect** (`domdomegg/filesystem-mcp`'s real write to `/tmp/exfil.dat`, `server-memory`'s real record under `"attacker-controlled"`) | **Recommended, not implemented**: true prevention (not just detection-and-discard) requires OS-level confinement of the untrusted process itself at the moment it acts — combining the M2 mediator's contract logic with the boundary-probe's separate-Linux-user confinement, applied to a REAL server rather than only the synthetic stub | **Not implemented.** This is the concrete next integration step named in `29`'s and `31`'s own "next step" sections |
+| **M2 mediator not yet combined with a real (non-stub) server** | Wrap the real server's launch command in `su sandbox -s /bin/sh -c '...'` — `LiveSession` has no built-in privilege-drop (verified against the MCP SDK's own launch-parameter type), so the OS-level identity switch happens inside the command string it's given, verified live before being relied on | **Implemented, verified** (`37`): run against `domdomegg/filesystem-mcp`, the identical `path_diversion` attack from `29` §1 still writes to `/tmp/exfil.dat` for real (detection, not prevention, of that specific escape — the real write is not undone) but is correctly kept out of the committed store |
 
 ## D. What "implemented and re-verified" means in this project, stated once
 
@@ -56,17 +56,18 @@ consistently rather than loosened as the project's own confidence grew.
 
 ## E. Summary — what remains genuinely open
 
-Three gaps in the table above are explicitly **not implemented**, and are
+Two gaps in the table above are explicitly **not implemented**, and are
 carried forward rather than hidden:
 
 1. An adapter strategy for UNDERSPECIFIED-class tools (SQL and similar) —
    open question, not yet attempted.
-2. Genuine OS-level prevention of an external effect for a REAL
-   (non-stub) server — the M2 mechanism exists, the M3 real-server harness
-   exists, they have not yet been combined.
-3. Verified behavior under genuine concurrency (two calls truly
+2. Verified behavior under genuine concurrency (two calls truly
    overlapping in time, not sequential) — only the sequential case was
-   tested.
+   tested (`34` Part 2).
+
+A third item — combining the M2 mediator with a real (non-stub) server —
+was open as of this document's first version and is now closed (`37`),
+kept in this list's history rather than silently removed.
 
 These three, plus the still-open κ gate and the remaining M4 attack
 families (`32`), are the concrete scope of work this project has left,

@@ -346,11 +346,26 @@ because of the first call's leftover artifact — confirming why every
 other probe here isolates staging per invocation, by showing what breaks
 without it.
 
-**What remains open:** this is one synthetic adversarial stub plus one
-contract-aware adversary (`32`), not yet combined with a real M3 server;
-genuine concurrency (two calls truly overlapping, not sequential) is
-untested. Full account: `33` (security argument), `35` (every gap and
-its mitigation status).
+**Combined with a real M3 server (`37`).** `LiveSession` has no built-in
+privilege-drop for the subprocess it launches — verified directly against
+the MCP SDK's own launch-parameter type, which exposes no `preexec_fn` or
+uid/gid. Fixed by wrapping the launch command in `su sandbox -s /bin/sh
+-c '...'`, verified live before relying on it. Run against
+`domdomegg/filesystem-mcp` (the same server `29` §1 used): the identical
+`path_diversion` attack that landed as a real, unconfined external write
+in `29` §1 now writes to `/tmp/exfil.dat` for real, exactly as before —
+but the mediator's escape-path check keeps it out of the committed store.
+Honest completion is byte-identical to the unconfined trial; content
+substitution is caught and discarded. The real write to `/tmp` still
+happens (detection, not prevention of that specific escape) — the
+mechanism's claim was always about what reaches the trusted store, not
+about stopping every syscall.
+
+**What remains open:** one real server, three scenarios — the same scale
+caveat every M2 result carries; genuine concurrency (two calls truly
+overlapping, not sequential) is untested. Full account: `33` (security
+argument), `35` (every gap and its mitigation status), `37` (the real-
+server integration).
 
 ---
 
@@ -487,11 +502,11 @@ before being claimed:
 |---|---|
 | **M0** — repair the evidence base | Mechanics done (five independent outcome fields, matched-denominator re-run, funnel/selection characterised). **M0c open**: κ = 0.559 < 0.60 gate; Round 2 labelling prepared, not yet run |
 | **M1** — threat model + novelty gate | **Cleared.** Broad claim retired; narrow candidate precisely bounded; capability-systems literature closed |
-| **M2** — mediation boundary, one domain | **Architectural gap closed; pre-registered thresholds met; hidden_extra_field gap closed; corner cases (multi-write, empty/large content) pass** (§8.2, `34`). Not yet combined with a real M3 server or genuine concurrency |
+| **M2** — mediation boundary, one domain | **Architectural gap closed; pre-registered thresholds met; hidden_extra_field gap closed; corner cases pass; combined with a real M3 server** (§8.2, `34`, `37`). Genuine concurrency (overlapping, not sequential, calls) still untested |
 | **M3** — generality, ≥10 real servers | **In progress.** 6 of 6 written probes verified, spanning all three workflow classes plus one git-native shape, incl. one replication; ≥10-server threshold and the network domain not reached |
 | **M4** — adaptive adversary | **First concrete attack found, fixed, re-verified** (`32`): a TOCTOU race against the M2 mediator's own commit logic, 25% win rate, fixed to 0%. One of several attack families `25` names; the rest untried |
 | **M5** — held-out evaluation | Not started (M2's probe stands as one baseline for it) |
-| **M6** — write-up | This document plus `25`–`29` are the write-up's current draft state |
+| **M6** — write-up | This document plus `25`–`37` are the write-up's current draft state |
 
 ---
 
@@ -500,14 +515,12 @@ before being claimed:
 - **κ below gate.** Classifier validation is not closed; the 36.7%/A0
   numbers and everything built on the classifier are instrument readings
   until Round 2 closes this.
-- **M2's architectural gap is closed, but on synthetic adversaries
-  only.** The server now genuinely performs its own effect inside a real
-  boundary, all three pre-registered thresholds are met, the
-  hidden_extra_field gap is closed, and the named multi-write-plus-rename
-  corner case (plus empty/large content) all pass (`34`) — but this is
-  `malicious_server.py` and `adaptive_server.py`, stubs built for this
-  project, not yet combined with a real M3 server. Genuine concurrency
-  (two calls truly overlapping, not sequential) is also untested.
+- **M2 is one real server, three scenarios.** Combined with
+  `domdomegg/filesystem-mcp` (`37`) — the identical attack that landed
+  unconfined in `29` §1 is kept out of the committed store here — but
+  that is one server and three scenarios, the same scale caveat every M2
+  result carries. Genuine concurrency (two calls truly overlapping, not
+  sequential) is also untested.
 - **M3 is six servers, not ten.** No generalization claim is
   supportable yet, and the network domain is completely untouched. Two of
   the six servers (both SQL/underspecified) show the mechanism can fail

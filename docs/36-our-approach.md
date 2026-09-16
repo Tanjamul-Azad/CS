@@ -148,12 +148,17 @@ sandbox the process" would not reproduce this mechanism's coverage.
 - **It cannot prevent an effect that already reached the world before the
   mediator's read** (§4 step 3). "Discard" is bookkeeping over what gets
   counted as committed; a real external write a genuinely unconfined
-  process already performed (`29` §1, §3) is not undone by this
-  mechanism. True prevention needs the mediator's logic combined with
-  real OS-level confinement of the untrusted process at the moment it
-  acts — the M2 mediator and the boundary-probe's OS confinement exist
-  separately in this project; they have not yet been combined against a
-  real (non-stub) server.
+  process already performed is not undone by this mechanism. Confirmed
+  directly by combining the mediator with a real server (`37`): the same
+  `path_diversion` attack from `29` §1 still writes to `/tmp/exfil.dat`
+  for real when run through this mechanism — the write happens, and is
+  correctly kept out of the committed store, but is not undone. Full
+  prevention of that specific escape would additionally need the
+  server's own writable scope restricted at the OS level before it runs
+  (a mount namespace or chroot confining it to `staging`), which this
+  mechanism does not add — it relies on the after-the-fact diff, exactly
+  as §5 found is the dominant mechanism once a process holds real write
+  authority.
 - **It requires per-invocation isolation to preserve honest utility, not
   just security** (`34` Part 2) — sharing one staging area across calls
   causes an entirely honest second call to be wrongly discarded because
@@ -171,5 +176,6 @@ system checked (`26`): staging-and-commit mediation of an UNMODIFIED
 process's real, EXTERNAL effect, checked from OUTSIDE against a contract
 DERIVED FROM THE TOOL'S OWN DECLARATION — the specific combination this
 document specifies, now measured across six real, independent
-third-party servers (`29`) and one adaptive adversary (`32`), not only
-proposed.
+third-party servers (`29`), one adaptive adversary (`32`), and the full
+mediation mechanism combined with one of those real servers directly
+(`37`), not only proposed.
