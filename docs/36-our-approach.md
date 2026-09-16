@@ -35,8 +35,13 @@ Permit(a, C) = Valid(C) ∧ Matches(a, C) ∧ Unused(C) ∧ Mediated(a)
 
 - **Valid** — `C` is authentic and unexpired.
 - **Matches** — `a`'s operation, target, and payload fall inside `C`'s
-  bound fields.
-- **Unused** — invocation allowance remains on `C`.
+  bound fields. Implemented as the request-shape check in §4 step 2.
+- **Unused** — invocation allowance remains on `C`. Implemented via
+  `AllowanceLedger.reserve()` (`src/mcpgate/allowance.py`) — a reservation
+  taken before staging even begins; a second reservation against an
+  exhausted contract raises before the effect is ever staged. Found
+  missing from the mediator by testing a replay attack, not assumed
+  present because the component existed elsewhere in the project (`38`).
 - **Mediated** — `a`'s effect took the enforced path; nothing reached the
   world around it unmediated.
 
@@ -62,20 +67,30 @@ Verdicts are **per-property**, never collapsed into one execution-level
 pass/fail (`27`) — a tool can be `destination=PASS, content=FAIL`
 simultaneously, and that distinction is what the ladder is measuring.
 
-## 4. The mediation mechanism: staging, request-shape, effect-diff, commit-or-discard
+## 4. The mediation mechanism: allowance, staging, request-shape, effect-diff, commit-or-discard
 
-Two independent checks, run in sequence, each catching what the other
+Three independent checks, run in sequence, each catching what the others
 structurally cannot (found necessary by testing, not designed in from
-the start — `33` §4):
+the start — `33` §4, `38`):
 
 ```
-1. ISOLATE   Each invocation gets its own staging workspace, owned by
+1. RESERVE THE ALLOWANCE (Unused(C))  Before anything else: reserve one
+             execution slot against this contract's identity
+             (`AllowanceLedger.reserve`, `src/mcpgate/allowance.py`). A
+             second reservation attempt against an exhausted contract
+             raises here — refused before staging even begins, let
+             alone the diff. Catches: replay of an already-used,
+             legitimate authorization, which an effect-diff alone
+             cannot see because a replay's effect matches the contract
+             by definition (`38`).
+
+2. ISOLATE   Each invocation gets its own staging workspace, owned by
              the untrusted server's OS identity, writable ONLY by that
              identity. No executor performs the effect on the server's
              behalf — the untrusted process acts normally, with no
              mediation in this path.
 
-2. REQUEST-SHAPE CHECK (Matches(a, C) on the raw proposal)
+3. REQUEST-SHAPE CHECK (Matches(a, C) on the raw proposal)
              Before the effect is even inspected: does the proposal's
              argument set fall entirely within C's bound fields? Any
              field outside C refuses the whole transaction here,
@@ -84,7 +99,7 @@ the start — `33` §4):
              (e.g. a hidden argument the tool's own schema didn't
              expose to the ladder).
 
-3. FREEZE + READ ONCE  When the call returns (plus a bounded grace
+4. FREEZE + READ ONCE  When the call returns (plus a bounded grace
              window for near-synchronous background work), a trusted
              mediator — a different OS identity than the server —
              reads the staging workspace EXACTLY ONCE. This single
@@ -93,21 +108,22 @@ the start — `33` §4):
              independent read of staging occurs after this point
              (the M2 Commit Invariant, `33` §3).
 
-4. EFFECT DIFF  The single read is checked against the contract at the
+5. EFFECT DIFF  The single read is checked against the contract at the
              ladder rung in force: exactly the approved path, exactly
              the approved bytes (by equality or hash), no extra paths.
              Catches: effect-level violations the request-shape check
              cannot see (a correct-looking request that nonetheless
              produces the wrong file, wrong bytes, or extra artifacts).
 
-5. COMMIT OR DISCARD  Exact match: the mediator itself — never the
-             server — writes the bytes from step 3 into a SEPARATE,
+6. COMMIT OR DISCARD  Exact match: the mediator itself — never the
+             server — writes the bytes from step 4 into a SEPARATE,
              committed store the server has no write permission on
-             at all. Any mismatch at steps 2 or 4: nothing is written;
-             the transaction is discarded, full stop.
+             at all, and marks the reserved slot COMMITTED. Any
+             mismatch at steps 3 or 5: nothing is written; the
+             transaction is discarded, full stop.
 ```
 
-Steps 3–5 are what close the concrete race found and fixed in this
+Steps 4–6 are what close the concrete race found and fixed in this
 project (`32`): because the committed bytes are taken from the SAME read
 used for the decision, not a fresh read, there is no window between
 "decided" and "committed" for a race to target.
@@ -115,12 +131,12 @@ used for the decision, not a fresh read, there is no window between
 ## 5. What confines vs. what authorizes, and why both layers are necessary
 
 Measured, not asserted (`31` §8.2): with the untrusted process genuinely
-holding write authority over its own staging area (required by step 1
+holding write authority over its own staging area (required by step 2
 above), an OS permission boundary drawn around that area does very little
 of the actual confining — the process legitimately needs to write there.
-What confines the outcome is step 4's diff-and-discard. OS permission's
+What confines the outcome is step 5's diff-and-discard. OS permission's
 remaining, still-necessary job narrows to protecting the
-ALREADY-COMMITTED artifact from post-hoc tampering (step 5's separate
+ALREADY-COMMITTED artifact from post-hoc tampering (step 6's separate
 store) — verified directly: `rename_after_write` and `hardlink` attempts
 against the committed store fail with a real `PermissionError`, the same
 attempts against the server's OWN staging area do not fail at all, since
@@ -136,9 +152,15 @@ sandbox the process" would not reproduce this mechanism's coverage.
 ## 6. What this mechanism cannot do, by its own definition — stated once, not scattered
 
 - **It cannot see request arguments with no file-level effect, without
-  step 2.** With step 2, it catches them — but step 2 only knows the
+  step 3.** With step 3, it catches them — but step 3 only knows the
   contract's OWN bound-field list, so a tool whose schema hides intent in
   a field the contract-deriver never recognized is still invisible.
+- **It cannot enforce a single-use allowance without step 1.** Found by
+  testing, not assumed present: a mediator built around step 4 (effect
+  diff) alone commits a replay of an already-used authorization, because
+  a replay's effect matches the contract by definition (`38`). With
+  step 1, a second reservation against an exhausted contract is refused
+  before staging even begins.
 - **It cannot derive a content check for a tool whose schema offers no
   content field to point at** (the UNDERSPECIFIED class — `27`, `29` §4,
   §6). Confirmed on two independent real SQL-shaped servers: content
@@ -146,7 +168,7 @@ sandbox the process" would not reproduce this mechanism's coverage.
   schema-derivable boundary between destination, structure, and content
   in a single opaque string.
 - **It cannot prevent an effect that already reached the world before the
-  mediator's read** (§4 step 3). "Discard" is bookkeeping over what gets
+  mediator's read** (§4 step 4). "Discard" is bookkeeping over what gets
   counted as committed; a real external write a genuinely unconfined
   process already performed is not undone by this mechanism. Confirmed
   directly by combining the mediator with a real server (`37`): the same
