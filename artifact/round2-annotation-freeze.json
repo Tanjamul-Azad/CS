@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "frozen_utc_date": "2026-09-25",
+  "row_count_excluding_header": 265,
+  "hash_algorithm": "SHA-256",
+  "files": {
+    "data/processed/label_sheet.tsv": "41046c3662ebdd9cb3e73d7366ae7b5e56060ded900481ec12a62649ce3016c3",
+    "data/processed/labels_annotator_A.tsv": "ba7d4c5e368bc58d03fd58865efc451197113c528aeb8ff3d0f8ea5898927fdb",
+    "data/processed/labels_annotator_B.tsv": "ba7d4c5e368bc58d03fd58865efc451197113c528aeb8ff3d0f8ea5898927fdb",
+    "data/processed/label_sheet.corpus_archive.jsonl": "9f038516120cf32a57b2c31bca745e2ae0c59feaec52a944373e3b0a4e544f3d",
+    "data/processed/label_split.json": "2c286659bd93d3136d9d02d118374ce6c4dc1c75fa5fa986a332d2101512773e",
+    "docs/14-labeling-codebook.md": "9a4ffff148e8f1c6253bbaffae0ce71402f7b20ae91c204db076273a130de60e"
+  },
+  "independence_rule": "Two different human annotators label A and B independently. Do not expose either completed file to the other annotator before both pre-adjudication files and hashes are frozen.",
+  "note": "The A and B hashes above are hashes of the identical blank starting sheets. Completed-sheet hashes must be recorded separately before scoring and adjudication."
+}

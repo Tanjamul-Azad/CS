@@ -1,0 +1,35 @@
+[
+  {
+    "scenario": "atomic_final_slot",
+    "passed": true,
+    "outcomes": [
+      "allowance_refused",
+      "committed"
+    ],
+    "child_processes_started": 1,
+    "distinct_child_pids": 1,
+    "ledger_used": 1
+  },
+  {
+    "scenario": "two_honest_overlapping_child_processes",
+    "passed": true,
+    "child_intervals": [
+      {
+        "pid": 24152,
+        "start_ns": 26914786106600,
+        "end_ns": 26914927021700
+      },
+      {
+        "pid": 9080,
+        "start_ns": 26914786246700,
+        "end_ns": 26914931874800
+      }
+    ],
+    "overlap_milliseconds": 140.775,
+    "distinct_staging_roots": true,
+    "committed_files": [
+      "a.txt",
+      "b.txt"
+    ]
+  }
+]

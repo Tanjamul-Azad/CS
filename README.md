@@ -19,6 +19,12 @@ servers. It then builds **MCPGate**, a declaration-derived effect-mediation
 framework, and tests the framework against unmodified third-party servers,
 adaptive attacks, and a static least-privilege baseline.
 
+> **Current submission status:** the working paper and local artifact checks
+> are substantial but not yet submission-ready. Independent Round-2 human
+> labels and fresh Linux/Docker held-out evidence remain mandatory. See
+> [`paper/SUBMISSION_STATUS_BN.md`](paper/SUBMISSION_STATUS_BN.md) and the
+> fail-closed [`paper/SUBMISSION_ROADMAP.md`](paper/SUBMISSION_ROADMAP.md).
+
 ---
 
 ## Executive summary
@@ -153,23 +159,33 @@ opaque command string. In that case the declaration does not expose enough
 structure to derive an L3 content contract. This negative result was reproduced
 on two independent SQL-shaped servers.
 
-### Six-step mediation pipeline
+### Eight-stage mediation pipeline
 
 ```text
-RESERVE → ISOLATE → REQUEST-SHAPE → READ ONCE → EFFECT DIFF → COMMIT / DISCARD
+PREFLIGHT SHAPE → RESERVE → ISOLATE/RUN → CLOSE WRITERS
+→ TRANSPORT SHAPE → READ ONCE → EFFECT DIFF → COMMIT / DISCARD
 ```
 
-1. **Reserve** one execution slot against the contract before staging begins.
-2. **Isolate** the call in a per-invocation workspace owned by the untrusted OS
+1. **Check the proposed request shape** before consuming an allowance or
+   entering untrusted code.
+2. **Reserve** one execution slot atomically against the contract.
+3. **Isolate and run** the call in a per-invocation workspace owned by the untrusted OS
    identity.
-3. **Check request shape** so an unlisted argument cannot bypass an effect-only
-   diff.
-4. **Read once** at the trusted observation point. The bytes used for the
+4. **Close the writer boundary**; a response alone is not proof that child or
+   background writers have stopped.
+5. **Re-check actual transport arguments** so a lower layer cannot rewrite an
+   approved proposal.
+6. **Read once** at the trusted observation point. The bytes used for the
    decision are the same bytes used for commit.
-5. **Diff the effect** against the contract: approved path, approved bytes, and
-   no extra artifacts.
-6. **Commit or discard**. A match is copied by the trusted mediator into a
+7. **Diff the effect** against the contract: approved path, approved bytes, no
+   symlink/hardlink alias, and no extra artifact. Extra file contents are not
+   loaded into trusted memory.
+8. **Commit or discard**. A match is copied by the trusted mediator into a
    server-inaccessible committed store; a mismatch is not promoted.
+
+The reusable integrated mediator currently implements one exact-content,
+single-file L3 mode. The L1/L2/L3 table is the broader contract vocabulary and
+expressibility experiment, not three fully implemented enforcement modes.
 
 The clean, paper-ready specification is in
 [`docs/36-our-approach.md`](docs/36-our-approach.md).
@@ -180,14 +196,20 @@ The clean, paper-ready specification is in
 |---|---|
 | [`src/mcpgate/contract.py`](src/mcpgate/contract.py) | Effect proposals, bound fields, canonical contract identity, and match verdicts |
 | [`src/mcpgate/allowance.py`](src/mcpgate/allowance.py) | Atomic reservation and replay/double-execution protection |
+| [`src/mcpgate/mediator.py`](src/mcpgate/mediator.py) | Reusable request/allowance/staging/freeze/diff/same-read-promotion path |
 | [`src/mcpgate/gateway.py`](src/mcpgate/gateway.py) | Proposal-based gateway prototype and trusted executor routing |
 | [`src/mcpgate/executors.py`](src/mcpgate/executors.py) | Filesystem executor with path confinement checks |
 | [`experiments/boundary/probe_m2.py`](experiments/boundary/probe_m2.py) | M2 proper: the untrusted process performs its own staged effect |
 | [`experiments/boundary/probe_m2_real_server.py`](experiments/boundary/probe_m2_real_server.py) | M2 mediation combined with an unmodified real MCP server |
 
-The reusable gateway, allowance ledger, synthetic boundary probe, and real-server
-integration are separate research artifacts; they are not yet packaged as one
-production daemon.
+The contract, durable allowance ledger, and staged filesystem path are now
+integrated in `FilesystemMediator`. The revised adapter passed against pinned
+`filesystem-mcp@1.3.0` in a Linux container; raw rows and image/kernel/package
+metadata are preserved in
+[`artifact/results/integrated_real_server.json`](artifact/results/integrated_real_server.json).
+The result proves trusted-store admission in three registered scenarios, not
+whole-world confinement: the path diversion still reached `/tmp/exfil.dat`.
+This is a research prototype, not a production daemon.
 
 ---
 

@@ -12,6 +12,7 @@ __pycache__/
 venv/
 .ipynb_checkpoints/
 .pytest_cache/
+artifact/annotator-packages/*.zip
 
 # Experiment outputs (regenerable; large)
 experiments/results/**/*.json

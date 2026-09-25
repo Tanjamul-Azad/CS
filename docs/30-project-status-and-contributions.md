@@ -272,10 +272,10 @@ official documentation) — the citation quarantine rule.
 
 | Claim | Verdict | Closed by |
 |---|---|---|
-| Confine an untrusted MCP server's effects at an enforcement boundary derived from a declaration | **Retired** | AgentBound (arXiv:2510.21236) — wraps unmodified MCP servers, concrete per-resource runtime permissions, container enforcement |
+| Confine an untrusted MCP server's effects at an enforcement boundary derived from a declaration | **Retired** | AgentBound (DOI 10.1145/3808103) — wraps unmodified MCP servers, concrete per-resource runtime permissions, container enforcement |
 | Authority separation / capability policy over an agent's plan | **Retired** | CaMeL (2503.18813) |
 | Per-call, programmable policy over tool arguments | **Retired** | Progent (2504.11703) |
-| Transactional agent execution with rollback | **Retired, but sharpened** | SAFEFLOW (2506.07564) — verified full text: rollback restores internal execution state only; *"true rollback of external side effects is not addressed"* (direct quote) |
+| Transactional agent execution with rollback | **Retired, but sharpened** | SAFEFLOW (2506.07564v3) — verified full text describes transactional logging, localized rollback/replanning, incomplete-log replay, and concurrency control; it does not specify a byte-level commit/undo boundary for arbitrary non-transactional world effects |
 | Staging + diff + commit/discard for filesystem effects | **Retired, twice** | Alcatraz (2003/2009, process layer) and TxOS (SOSP 2009, kernel syscall layer, requires a modified kernel) |
 | Kernel-enforced capabilities / object-capability theory | **Not competing** | seL4 (SOSP 2009) verifies kernel-internal access control; *Capability Myths Demolished* (Miller/Yee/Shapiro 2003) is a conceptual ACL-vs-capability comparison — neither addresses external-process effect mediation |
 | "No sandbox can enforce authorization" | **Our own earlier overclaim, corrected** | Landlock *can* restrict a destination given a policy; what it cannot do is *derive* the policy from user intent |

@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "run_date": "2026-09-25",
+  "host": "Windows PC with Docker Desktop Linux engine",
+  "container_image": "python:3.12-slim",
+  "container_image_digest": "sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea",
+  "requirements_file": "artifact/requirements-full-linux.txt",
+  "requirements_sha256": "6fcca9ef7f6c2935426261ff61ca584f2556dc69be04771c8f56d03d08d4d9a0",
+  "command": "python -m pip install --disable-pip-version-check --require-hashes -r /tmp/requirements.txt",
+  "network": "enabled only for package download during this clean-container rehearsal",
+  "exit_code": 0,
+  "status": "PASS"
+}

@@ -1,2 +1,4 @@
-mcp>=1.0.0
-httpx>=0.27
+# Exact direct versions exercised by the local 2026-09-21 regression.
+# The release image still needs a hash-locked transitive dependency set.
+mcp==2.1.1
+httpx==0.27.2

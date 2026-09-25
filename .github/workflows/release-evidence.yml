@@ -1,0 +1,101 @@
+name: MCPGate release evidence
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Evidence run to execute on an ephemeral Linux host
+        required: true
+        default: integrated-real-server
+        type: choice
+        options:
+          - integrated-real-server
+          - full-release
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mcpgate-release-evidence-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  evidence:
+    name: ${{ inputs.mode }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+      GITHUB_TOKEN: ""
+
+    steps:
+      - name: Check out the exact revision without retained credentials
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Use the paper's Python line
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install the trusted harness dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt -r docker/requirements-runner.txt
+
+      - name: Record the clean host before executing third-party code
+        run: |
+          mkdir -p artifact/results/ci-linux
+          git rev-parse HEAD > artifact/results/ci-linux/git-commit.txt
+          git status --porcelain > artifact/results/ci-linux/git-status.txt
+          uname -a > artifact/results/ci-linux/uname.txt
+          python --version > artifact/results/ci-linux/python.txt 2>&1
+          docker version > artifact/results/ci-linux/docker-version.txt
+          docker info > artifact/results/ci-linux/docker-info.txt
+
+      - name: Run the trusted local regression first
+        run: python -m pytest -q
+
+      - name: Run the pinned integrated real-server experiment
+        if: inputs.mode == 'integrated-real-server'
+        run: python experiments/run_m2_real_server.py
+
+      - name: Preserve the integrated raw result and hashes
+        if: inputs.mode == 'integrated-real-server'
+        run: |
+          cp data/processed/m2_real_server.json artifact/results/ci-linux/
+          sha256sum artifact/results/ci-linux/* > artifact/results/ci-linux/MANIFEST.sha256
+
+      - name: Install the official paper toolchain
+        if: inputs.mode == 'full-release'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-base texlive-latex-extra texlive-fonts-recommended \
+            texlive-bibtex-extra poppler-utils
+
+      - name: Execute the fail-closed full artifact
+        if: inputs.mode == 'full-release'
+        run: python scripts/run_full_artifact.py
+
+      - name: Preserve full-run outputs and hashes
+        if: inputs.mode == 'full-release' && always()
+        run: |
+          cp -R artifact/results/full artifact/results/ci-linux/full || true
+          find artifact/results/ci-linux -type f -print0 \
+            | sort -z \
+            | xargs -0 sha256sum > artifact/results/ci-linux/MANIFEST.sha256
+
+      - name: Upload immutable evidence from this run
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mcpgate-${{ inputs.mode }}-${{ github.sha }}
+          path: artifact/results/ci-linux/
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 9
+

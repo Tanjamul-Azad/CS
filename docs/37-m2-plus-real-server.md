@@ -1,5 +1,14 @@
 # 37 — M2 + a real server: the capstone integration
 
+> **2026-09-21 status note.** The result below is a valid historical run of the
+> original hand-written `mediate()` function. The probe has since been migrated
+> to the reusable integrated pipeline in `src/mcpgate/mediator.py`, including
+> allowance reservation, per-invocation staging, transport-shape validation,
+> explicit writer shutdown, atomic snapshot commit, and ledger finalization.
+> Docker is unavailable on the current laptop, so that revised code path has not
+> yet been rerun against the third-party server. See `docs/43`. Do not cite this
+> historical output as empirical validation of the newly integrated path.
+
 Written 2026-09-16. Every M2 probe until now (`31`, `32`, `34`) confined
 `malicious_server.py` or `adaptive_server.py` — synthetic processes
 written for this project. Every M3 probe (`29`) ran a real, unmodified

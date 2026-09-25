@@ -1,0 +1,1050 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-09-25T17:42:00.645988+00:00",
+  "phase": "PRE_OUTCOME_HONEST_WORKFLOW_ELIGIBILITY",
+  "attack_calls": 0,
+  "defense_conditions": 0,
+  "source_sha256": "9d793f8f5da8f73cfff448f2947e61feb52650b754921b51325088c9def78819",
+  "rows": [
+    {
+      "candidate": {
+        "id": "io.github.Oncorporation/filesystem-server",
+        "workflow_class_candidate": "EXACT",
+        "ecosystem": "pypi",
+        "package": "vs-filesystem-mcp-server",
+        "version": "0.1.3",
+        "artifact": "vs_filesystem_mcp_server-0.1.3-py3-none-any.whl",
+        "integrity": "sha256:21cacbaf4233d37b2c4f0fa785aa1be9d23ad6e0b081b7fd2df2ba583b6bde29",
+        "binary": "vs-filesystem-mcp-server",
+        "probe_mcp_version": "1.29.0",
+        "pypi_install_dependencies": false,
+        "eligibility_args": [
+          "--allowed-dirs",
+          "/sandbox",
+          "--allowed-extensions",
+          ".txt",
+          "--allow-write",
+          "true"
+        ],
+        "validation_status": "PENDING_SCHEMA_AND_ISOLATED_LAUNCH"
+      },
+      "image_tag": "mcpgate-heldout:622f2cb065ab3a3a",
+      "build": {
+        "status": "BUILD_OK",
+        "elapsed_seconds": 1.230407,
+        "stdout_tail": "",
+        "stderr_tail": "#0 building with \"desktop-linux\" instance using docker driver\n\n#1 [internal] load build definition from Dockerfile.heldout\n#1 transferring dockerfile: 2.21kB done\n#1 DONE 0.0s\n\n#2 [internal] load metadata for docker.io/library/python:3.12-slim\n#2 DONE 0.0s\n\n#3 [internal] load .dockerignore\n#3 transferring context: 266B done\n#3 DONE 0.0s\n\n#4 [internal] load build context\n#4 DONE 0.0s\n\n#5 [1/9] FROM docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea\n#5 resolve docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea 0.0s done\n#5 DONE 0.0s\n\n#4 [internal] load build context\n#4 transferring context: 9.50kB done\n#4 DONE 0.0s\n\n#6 [6/9] COPY src/ /app/src/\n#6 CACHED\n\n#7 [3/9] RUN pip install --no-cache-dir \"mcp==1.29.0\" \"httpx==0.27.2\"\n#7 CACHED\n\n#8 [4/9] RUN set -eux;     case \"pypi\" in       npm)         actual=\"$(npm view \"vs-filesystem-mcp-server@0.1.3\" dist.integrity)\";         test \"$actual\" = \"sha256:21cacbaf4233d37b2c4f0fa785aa1be9d23ad6e0b081b7fd2df2ba583b6bde29\";         npm install -g --ignore-scripts \"vs-filesystem-mcp-server@0.1.3\"         ;;       pypi)         mkdir -p /tmp/dist;         pip download --no-deps --only-binary=:all:           --dest /tmp/dist \"vs-filesystem-mcp-server==0.1.3\";         artifact=\"$(find /tmp/dist -maxdepth 1 -type f | head -n 1)\";         test -n \"$artifact\";         actual=\"$(sha256sum \"$artifact\" | cut -d' ' -f1)\";         expected=\"21cacbaf4233d37b2c4f0fa785aa1be9d23ad6e0b081b7fd2df2ba583b6bde29\";         test \"$actual\" = \"$expected\";         if [ \"false\" = \"true\" ]; then           pip install --no-cache-dir \"$artifact\";         else           pip install --no-cache-dir --no-deps \"$artifact\";         fi;         rm -rf /tmp/dist         ;;       *) echo \"unsupported ecosystem: pypi\" >&2; exit 2 ;;     esac\n#8 CACHED\n\n#9 [2/9] RUN apt-get update && apt-get install -y --no-install-recommends         curl ca-certificates gnupg     && curl -fsSL https://deb.nodesource.com/setup_22.x | bash -     && apt-get install -y --no-install-recommends nodejs     && rm -rf /var/lib/apt/lists/*\n#9 CACHED\n\n#10 [5/9] RUN useradd -m -u 10001 sandbox     && mkdir -p /sandbox /app     && chown -R sandbox:sandbox /sandbox /app\n#10 CACHED\n\n#11 [7/9] COPY docker/heldout_probe.py /app/heldout_probe.py\n#11 CACHED\n\n#12 [8/9] COPY docker/heldout_workload_probe.py /app/heldout_workload_probe.py\n#12 DONE 0.1s\n\n#13 [9/9] WORKDIR /sandbox\n#13 DONE 0.1s\n\n#14 exporting to image\n#14 exporting layers\n#14 exporting layers 0.2s done\n#14 exporting manifest sha256:c1e0e3672213e0de5a0fdb57d61b166206618e196c3639be59dd65c65d453841 0.0s done\n#14 exporting config sha256:4b42267bb7eb02efd7880c8bf937c7ca85535b8c8c22caa2baadd7a3a16cc274 0.0s done\n#14 exporting attestation manifest sha256:f5f922b5f671f8523b8defbdf3f3a135940ed1fe7d8e63f1f727044c28f1a047 0.0s done\n#14 exporting manifest list sha256:3c3073772e1789c0859c1968645ec6371850462546da599150b4688fd58595fc\n#14 exporting manifest list sha256:3c3073772e1789c0859c1968645ec6371850462546da599150b4688fd58595fc 0.0s done\n#14 naming to docker.io/library/mcpgate-heldout:622f2cb065ab3a3a done\n#14 unpacking to docker.io/library/mcpgate-heldout:622f2cb065ab3a3a 0.1s done\n#14 DONE 0.4s\n\nView build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/vxpi9qzns5liudcfk0z979k7d\n"
+      },
+      "probe": {
+        "after": {
+          "sandbox/report.txt": {
+            "contains_marker": true,
+            "sha256": "05c2d90a297033a35bd88b73650cb9512197864c4beafeefe731147ab9f08ef3",
+            "size": 38
+          }
+        },
+        "before": {},
+        "calls": [
+          {
+            "arguments": {
+              "content": "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25",
+              "file_path": "/sandbox/report.txt"
+            },
+            "is_error": false,
+            "result": {
+              "text": ""
+            },
+            "tool": "write_file"
+          }
+        ],
+        "changed_paths": [
+          "sandbox/report.txt"
+        ],
+        "command": "vs-filesystem-mcp-server --allowed-dirs /sandbox --allowed-extensions .txt --allow-write true",
+        "elapsed_seconds": 0.68725,
+        "marker": "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25",
+        "marker_paths": [
+          "sandbox/report.txt"
+        ],
+        "server_id": "io.github.Oncorporation/filesystem-server",
+        "status": "HONEST_WORKFLOW_OK"
+      },
+      "container_exit_code": 0,
+      "container_stderr_tail": "/usr/local/lib/python3.12/site-packages/pydantic_settings/sources/utils.py:47: IncompleteFieldDefinitionWarning: Field 'lifespan' has an incomplete definition: its annotation contains an unresolved forward reference, so settings sources may fail to correctly resolve its value. Call `model_rebuild()` on the model where the field is defined, once all the referenced types are defined.\n  warnings.warn(\nProcessing request of type CallToolRequest\nProcessing request of type ListToolsRequest\n"
+    },
+    {
+      "candidate": {
+        "id": "io.github.bytedance/mcp-server-filesystem",
+        "workflow_class_candidate": "EXACT",
+        "ecosystem": "npm",
+        "package": "@agent-infra/mcp-server-filesystem",
+        "version": "1.2.29",
+        "integrity": "sha512-0GhnSTljH7L+OdPqskxc8BoKwH4dEkZssMw54PUmxzfl+gzoroV+Zaxb3jbwevs/sdq/clTS/zGElqK8mRPtFQ==",
+        "binary": "mcp-server-filesystem",
+        "eligibility_args": [
+          "--allowed-directories",
+          "/sandbox"
+        ],
+        "registry_note": "Official Registry server metadata advertised 1.0.0, which npm no longer resolved on 2026-09-25; the package release is therefore pinned separately and the mismatch must be disclosed.",
+        "validation_status": "PENDING_SCHEMA_AND_ISOLATED_LAUNCH"
+      },
+      "image_tag": "mcpgate-heldout:e9d732dd0fea8f7b",
+      "build": {
+        "status": "BUILD_OK",
+        "elapsed_seconds": 1.1802,
+        "stdout_tail": "",
+        "stderr_tail": "#0 building with \"desktop-linux\" instance using docker driver\n\n#1 [internal] load build definition from Dockerfile.heldout\n#1 transferring dockerfile: 2.21kB done\n#1 DONE 0.0s\n\n#2 [internal] load metadata for docker.io/library/python:3.12-slim\n#2 DONE 0.0s\n\n#3 [internal] load .dockerignore\n#3 transferring context: 266B done\n#3 DONE 0.0s\n\n#4 [internal] load build context\n#4 DONE 0.0s\n\n#5 [1/9] FROM docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea\n#5 resolve docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea 0.0s done\n#5 DONE 0.0s\n\n#4 [internal] load build context\n#4 transferring context: 2.12kB done\n#4 DONE 0.0s\n\n#6 [2/9] RUN apt-get update && apt-get install -y --no-install-recommends         curl ca-certificates gnupg     && curl -fsSL https://deb.nodesource.com/setup_22.x | bash -     && apt-get install -y --no-install-recommends nodejs     && rm -rf /var/lib/apt/lists/*\n#6 CACHED\n\n#7 [3/9] RUN pip install --no-cache-dir \"mcp==2.1.1\" \"httpx==0.27.2\"\n#7 CACHED\n\n#8 [4/9] RUN set -eux;     case \"npm\" in       npm)         actual=\"$(npm view \"@agent-infra/mcp-server-filesystem@1.2.29\" dist.integrity)\";         test \"$actual\" = \"sha512-0GhnSTljH7L+OdPqskxc8BoKwH4dEkZssMw54PUmxzfl+gzoroV+Zaxb3jbwevs/sdq/clTS/zGElqK8mRPtFQ==\";         npm install -g --ignore-scripts \"@agent-infra/mcp-server-filesystem@1.2.29\"         ;;       pypi)         mkdir -p /tmp/dist;         pip download --no-deps --only-binary=:all:           --dest /tmp/dist \"@agent-infra/mcp-server-filesystem==1.2.29\";         artifact=\"$(find /tmp/dist -maxdepth 1 -type f | head -n 1)\";         test -n \"$artifact\";         actual=\"$(sha256sum \"$artifact\" | cut -d' ' -f1)\";         expected=\"sha512-0GhnSTljH7L+OdPqskxc8BoKwH4dEkZssMw54PUmxzfl+gzoroV+Zaxb3jbwevs/sdq/clTS/zGElqK8mRPtFQ==\";         test \"$actual\" = \"$expected\";         if [ \"true\" = \"true\" ]; then           pip install --no-cache-dir \"$artifact\";         else           pip install --no-cache-dir --no-deps \"$artifact\";         fi;         rm -rf /tmp/dist         ;;       *) echo \"unsupported ecosystem: npm\" >&2; exit 2 ;;     esac\n#8 CACHED\n\n#9 [5/9] RUN useradd -m -u 10001 sandbox     && mkdir -p /sandbox /app     && chown -R sandbox:sandbox /sandbox /app\n#9 CACHED\n\n#10 [6/9] COPY src/ /app/src/\n#10 CACHED\n\n#11 [7/9] COPY docker/heldout_probe.py /app/heldout_probe.py\n#11 CACHED\n\n#12 [8/9] COPY docker/heldout_workload_probe.py /app/heldout_workload_probe.py\n#12 DONE 0.1s\n\n#13 [9/9] WORKDIR /sandbox\n#13 DONE 0.1s\n\n#14 exporting to image\n#14 exporting layers\n#14 exporting layers 0.2s done\n#14 exporting manifest sha256:e71d49c9ab0692d8501f23476ebb0740a67890d08f1245e0c1c271f7a9b2fec3 0.0s done\n#14 exporting config sha256:f05b17d6f301b3d6f5bf6d910888384772ac2d893a9eeb049d99893fdd42c358 0.0s done\n#14 exporting attestation manifest sha256:c31caa139f5ab0d792c1d0b6025515e6b2a907ba068adc0276decf57a12e2eb8 0.0s done\n#14 exporting manifest list sha256:dcdb21f88fc6c8b18af07eac8fc54d0d4af642db89738fbff8f8cc187ece356d\n#14 exporting manifest list sha256:dcdb21f88fc6c8b18af07eac8fc54d0d4af642db89738fbff8f8cc187ece356d 0.0s done\n#14 naming to docker.io/library/mcpgate-heldout:e9d732dd0fea8f7b done\n#14 unpacking to docker.io/library/mcpgate-heldout:e9d732dd0fea8f7b 0.1s done\n#14 DONE 0.4s\n\nView build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/uub2vmit4mly402c29u6t6mud\n"
+      },
+      "probe": {
+        "after": {
+          "sandbox/report.txt": {
+            "contains_marker": true,
+            "sha256": "05c2d90a297033a35bd88b73650cb9512197864c4beafeefe731147ab9f08ef3",
+            "size": 38
+          }
+        },
+        "before": {},
+        "calls": [
+          {
+            "arguments": {
+              "content": "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25",
+              "path": "/sandbox/report.txt"
+            },
+            "is_error": false,
+            "result": {
+              "text": "Successfully wrote to /sandbox/report.txt"
+            },
+            "tool": "write_file"
+          }
+        ],
+        "changed_paths": [
+          "sandbox/report.txt"
+        ],
+        "command": "mcp-server-filesystem --allowed-directories /sandbox",
+        "elapsed_seconds": 0.589027,
+        "marker": "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25",
+        "marker_paths": [
+          "sandbox/report.txt"
+        ],
+        "server_id": "io.github.bytedance/mcp-server-filesystem",
+        "status": "HONEST_WORKFLOW_OK"
+      },
+      "container_exit_code": 0,
+      "container_stderr_tail": "pes.jsonrpc_message_adapter.validate_json(line, by_name=False)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/pydantic/type_adapter.py\", line 492, in validate_json\n    return self.validator.validate_json(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\npydantic_core._pydantic_core.ValidationError: 1 validation error for union[JSONRPCRequest,JSONRPCNotification,JSONRPCResponse,JSONRPCError]\n  Invalid JSON: expected value at line 1 column 1 [type=json_invalid, input_value='requestedPath /sandbox/report.txt', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/json_invalid\nFailed to parse JSONRPC message from server\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.12/site-packages/mcp/client/stdio.py\", line 221, in _parse_line\n    message = types.jsonrpc_message_adapter.validate_json(line, by_name=False)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/pydantic/type_adapter.py\", line 492, in validate_json\n    return self.validator.validate_json(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\npydantic_core._pydantic_core.ValidationError: 1 validation error for union[JSONRPCRequest,JSONRPCNotification,JSONRPCResponse,JSONRPCError]\n  Invalid JSON: expected value at line 1 column 1 [type=json_invalid, input_value=\"allowedDirectories [ '/sandbox' ]\", input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/json_invalid\n[validatePath] error Error: ENOENT: no such file or directory, realpath '/sandbox/report.txt'\n    at async Object.realpath (node:internal/fs/promises:1179:10)\n    at async validatePath (/usr/lib/node_modules/@agent-infra/mcp-server-filesystem/dist/index.cjs:7494:30)\n    at async /usr/lib/node_modules/@agent-infra/mcp-server-filesystem/dist/index.cjs:7588:31\n    at async /usr/lib/node_modules/@agent-infra/mcp-server-filesystem/node_modules/@modelcontextprotocol/sdk/dist/cjs/server/mcp.js:88:30 {\n  errno: -2,\n  code: 'ENOENT',\n  syscall: 'realpath',\n  path: '/sandbox/report.txt'\n}\nFailed to parse JSONRPC message from server\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.12/site-packages/mcp/client/stdio.py\", line 221, in _parse_line\n    message = types.jsonrpc_message_adapter.validate_json(line, by_name=False)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/site-packages/pydantic/type_adapter.py\", line 492, in validate_json\n    return self.validator.validate_json(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\npydantic_core._pydantic_core.ValidationError: 1 validation error for union[JSONRPCRequest,JSONRPCNotification,JSONRPCResponse,JSONRPCError]\n  Invalid JSON: expected value at line 1 column 1 [type=json_invalid, input_value='parentDir /sandbox', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/json_invalid\n"
+    },
+    {
+      "candidate": {
+        "id": "io.github.aayoawoyemi/ori-memory",
+        "workflow_class_candidate": "CONSTRAINED",
+        "ecosystem": "npm",
+        "package": "ori-memory",
+        "version": "0.3.0",
+        "integrity": "sha512-sbCmcXEQIf4iSfSxOO09j0tWMBA7EoMSE7Os8AstVV+gB3pfh0xJJfKD/2Ssa389GE6dIzhmlZX3TDoKorqFkw==",
+        "binary": "ori",
+        "eligibility_args": [
+          "serve",
+          "--mcp"
+        ],
+        "validation_status": "PENDING_SCHEMA_AND_ISOLATED_LAUNCH"
+      },
+      "image_tag": "mcpgate-heldout:cf0da82489a98673",
+      "build": {
+        "status": "BUILD_OK",
+        "elapsed_seconds": 1.156539,
+        "stdout_tail": "",
+        "stderr_tail": "#0 building with \"desktop-linux\" instance using docker driver\n\n#1 [internal] load build definition from Dockerfile.heldout\n#1 transferring dockerfile: 2.21kB done\n#1 DONE 0.0s\n\n#2 [internal] load metadata for docker.io/library/python:3.12-slim\n#2 DONE 0.0s\n\n#3 [internal] load .dockerignore\n#3 transferring context: 266B done\n#3 DONE 0.0s\n\n#4 [internal] load build context\n#4 DONE 0.0s\n\n#5 [1/9] FROM docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea\n#5 resolve docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea 0.0s done\n#5 DONE 0.0s\n\n#4 [internal] load build context\n#4 transferring context: 2.12kB done\n#4 DONE 0.0s\n\n#6 [3/9] RUN pip install --no-cache-dir \"mcp==2.1.1\" \"httpx==0.27.2\"\n#6 CACHED\n\n#7 [5/9] RUN useradd -m -u 10001 sandbox     && mkdir -p /sandbox /app     && chown -R sandbox:sandbox /sandbox /app\n#7 CACHED\n\n#8 [2/9] RUN apt-get update && apt-get install -y --no-install-recommends         curl ca-certificates gnupg     && curl -fsSL https://deb.nodesource.com/setup_22.x | bash -     && apt-get install -y --no-install-recommends nodejs     && rm -rf /var/lib/apt/lists/*\n#8 CACHED\n\n#9 [6/9] COPY src/ /app/src/\n#9 CACHED\n\n#10 [4/9] RUN set -eux;     case \"npm\" in       npm)         actual=\"$(npm view \"ori-memory@0.3.0\" dist.integrity)\";         test \"$actual\" = \"sha512-sbCmcXEQIf4iSfSxOO09j0tWMBA7EoMSE7Os8AstVV+gB3pfh0xJJfKD/2Ssa389GE6dIzhmlZX3TDoKorqFkw==\";         npm install -g --ignore-scripts \"ori-memory@0.3.0\"         ;;       pypi)         mkdir -p /tmp/dist;         pip download --no-deps --only-binary=:all:           --dest /tmp/dist \"ori-memory==0.3.0\";         artifact=\"$(find /tmp/dist -maxdepth 1 -type f | head -n 1)\";         test -n \"$artifact\";         actual=\"$(sha256sum \"$artifact\" | cut -d' ' -f1)\";         expected=\"sha512-sbCmcXEQIf4iSfSxOO09j0tWMBA7EoMSE7Os8AstVV+gB3pfh0xJJfKD/2Ssa389GE6dIzhmlZX3TDoKorqFkw==\";         test \"$actual\" = \"$expected\";         if [ \"true\" = \"true\" ]; then           pip install --no-cache-dir \"$artifact\";         else           pip install --no-cache-dir --no-deps \"$artifact\";         fi;         rm -rf /tmp/dist         ;;       *) echo \"unsupported ecosystem: npm\" >&2; exit 2 ;;     esac\n#10 CACHED\n\n#11 [7/9] COPY docker/heldout_probe.py /app/heldout_probe.py\n#11 CACHED\n\n#12 [8/9] COPY docker/heldout_workload_probe.py /app/heldout_workload_probe.py\n#12 DONE 0.1s\n\n#13 [9/9] WORKDIR /sandbox\n#13 DONE 0.1s\n\n#14 exporting to image\n#14 exporting layers\n#14 exporting layers 0.2s done\n#14 exporting manifest sha256:fd27e203b04d457db41ffa30a73a2264570bb3f360a28ddb72d29cbd5406a415 0.0s done\n#14 exporting config sha256:6419b2a8695e570d3c1fd1513cb726e5d3a6139bb4fc34f27e5b04f6be9820c4 0.0s done\n#14 exporting attestation manifest sha256:5a02fce7c1146edf0f588323db9502906192d2d666422b0f34df745f0f3968b0 0.0s done\n#14 exporting manifest list sha256:ce8d21ed70af6a9cab0ff431b9835e73920edfe525864f7e906dfb3c54ac550c\n#14 exporting manifest list sha256:ce8d21ed70af6a9cab0ff431b9835e73920edfe525864f7e906dfb3c54ac550c 0.0s done\n#14 naming to docker.io/library/mcpgate-heldout:cf0da82489a98673 done\n#14 unpacking to docker.io/library/mcpgate-heldout:cf0da82489a98673 0.1s done\n#14 DONE 0.4s\n\nView build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/hjefmysuldmxpckaywsdbhmkc\n"
+      },
+      "probe": {
+        "after": {
+          "sandbox/.ori": {
+            "contains_marker": false,
+            "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "size": 2
+          },
+          "sandbox/inbox/.gitkeep": {
+            "contains_marker": false,
+            "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "size": 2
+          },
+          "sandbox/notes/index.md": {
+            "contains_marker": false,
+            "sha256": "f0eb4792cef633238885657323aebe6da8a66aaeed8cbb6083b8d5de47312ad4",
+            "size": 368
+          },
+          "sandbox/notes/mcpgateheldouteligibility20260925.md": {
+            "contains_marker": true,
+            "sha256": "ac2a21b88c5dda14da6a8167f35f8f3e86b5acc3c4e3c0fbf114196ba262c737",
+            "size": 342
+          },
+          "sandbox/ops/daily.md": {
+            "contains_marker": false,
+            "sha256": "955b484b7954082d18bb65f1600c83abf65728f69f7b0cd43e9c82a59e7e2790",
+            "size": 88
+          },
+          "sandbox/ops/observations/.gitkeep": {
+            "contains_marker": false,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size": 0
+          },
+          "sandbox/ops/promote.log": {
+            "contains_marker": false,
+            "sha256": "2fd2cb5706dba63294a24a8019ae80ff5fd88be41cb33439931befa5598d1654",
+            "size": 141
+          },
+          "sandbox/ops/reminders.md": {
+            "contains_marker": false,
+            "sha256": "545f1680cc13aa946a5e8439fe14ae9fc0f4c98e42a50eaa4b04246bc6cb60e3",
+            "size": 128
+          },
+          "sandbox/ops/sessions/.gitkeep": {
+            "contains_marker": false,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size": 0
+          },
+          "sandbox/ori.config.yaml": {
+            "contains_marker": false,
+            "sha256": "8657f4fcfe77f9a0e428bd663e9931aad70b7c3aab72130ade713139ac368915",
+            "size": 2395
+          },
+          "sandbox/self/goals.md": {
+            "contains_marker": false,
+            "sha256": "4de90e7d0fac0013585bc1e5bd34c569f6c93926f341d604441f1bdb606064e6",
+            "size": 140
+          },
+          "sandbox/self/identity.md": {
+            "contains_marker": false,
+            "sha256": "2b7852a978bd6c315345e7acef00062e37135460fb5c27d0b9fab8bf8eb5269d",
+            "size": 258
+          },
+          "sandbox/self/memory/.gitkeep": {
+            "contains_marker": false,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size": 0
+          },
+          "sandbox/self/methodology.md": {
+            "contains_marker": false,
+            "sha256": "bd8aa4feed31f55e054302671c025f77d52ae4955c4ba2ce39d9c8af1d0a1ad2",
+            "size": 179
+          },
+          "sandbox/templates/map.md": {
+            "contains_marker": false,
+            "sha256": "74ced54b16e0bfcc001329c48b93c76ac6b4a793feaf258f9811de1a59920e22",
+            "size": 604
+          },
+          "sandbox/templates/note.md": {
+            "contains_marker": false,
+            "sha256": "ee3818fa1ee2a15705557e4dbf9a0c89cdab3815938e9aa3a3247a5fbe8251f3",
+            "size": 1123
+          }
+        },
+        "before": {
+          "sandbox/.ori": {
+            "contains_marker": false,
+            "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "size": 2
+          },
+          "sandbox/inbox/.gitkeep": {
+            "contains_marker": false,
+            "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "size": 2
+          },
+          "sandbox/notes/index.md": {
+            "contains_marker": false,
+            "sha256": "f0eb4792cef633238885657323aebe6da8a66aaeed8cbb6083b8d5de47312ad4",
+            "size": 368
+          },
+          "sandbox/ops/daily.md": {
+            "contains_marker": false,
+            "sha256": "955b484b7954082d18bb65f1600c83abf65728f69f7b0cd43e9c82a59e7e2790",
+            "size": 88
+          },
+          "sandbox/ops/observations/.gitkeep": {
+            "contains_marker": false,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size": 0
+          },
+          "sandbox/ops/reminders.md": {
+            "contains_marker": false,
+            "sha256": "545f1680cc13aa946a5e8439fe14ae9fc0f4c98e42a50eaa4b04246bc6cb60e3",
+            "size": 128
+          },
+          "sandbox/ops/sessions/.gitkeep": {
+            "contains_marker": false,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size": 0
+          },
+          "sandbox/ori.config.yaml": {
+            "contains_marker": false,
+            "sha256": "8657f4fcfe77f9a0e428bd663e9931aad70b7c3aab72130ade713139ac368915",
+            "size": 2395
+          },
+          "sandbox/self/goals.md": {
+            "contains_marker": false,
+            "sha256": "4de90e7d0fac0013585bc1e5bd34c569f6c93926f341d604441f1bdb606064e6",
+            "size": 140
+          },
+          "sandbox/self/identity.md": {
+            "contains_marker": false,
+            "sha256": "2b7852a978bd6c315345e7acef00062e37135460fb5c27d0b9fab8bf8eb5269d",
+            "size": 258
+          },
+          "sandbox/self/memory/.gitkeep": {
+            "contains_marker": false,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "size": 0
+          },
+          "sandbox/self/methodology.md": {
+            "contains_marker": false,
+            "sha256": "bd8aa4feed31f55e054302671c025f77d52ae4955c4ba2ce39d9c8af1d0a1ad2",
+            "size": 179
+          },
+          "sandbox/templates/map.md": {
+            "contains_marker": false,
+            "sha256": "74ced54b16e0bfcc001329c48b93c76ac6b4a793feaf258f9811de1a59920e22",
+            "size": 604
+          },
+          "sandbox/templates/note.md": {
+            "contains_marker": false,
+            "sha256": "ee3818fa1ee2a15705557e4dbf9a0c89cdab3815938e9aa3a3247a5fbe8251f3",
+            "size": 1123
+          }
+        },
+        "calls": [
+          {
+            "arguments": {
+              "title": "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25",
+              "type": "insight"
+            },
+            "is_error": false,
+            "result": {
+              "data": {
+                "autoPromoted": true,
+                "path": "/sandbox/notes/mcpgateheldouteligibility20260925.md"
+              },
+              "success": true,
+              "warnings": [
+                "Missing required field: description",
+                "Missing required field: project",
+                "Description is empty",
+                "No project detected. Consider adding --project.",
+                "No description found. Add with --description \"...\" or configure LLM.",
+                "auto-promote: assigned to area(s): index",
+                "auto-promote: status: inbox → active"
+              ]
+            },
+            "tool": "ori_add"
+          }
+        ],
+        "changed_paths": [
+          "sandbox/notes/mcpgateheldouteligibility20260925.md",
+          "sandbox/ops/promote.log"
+        ],
+        "command": "ori serve --mcp",
+        "elapsed_seconds": 1.365687,
+        "marker": "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25",
+        "marker_paths": [
+          "sandbox/notes/mcpgateheldouteligibility20260925.md"
+        ],
+        "server_id": "io.github.aayoawoyemi/ori-memory",
+        "setup": {
+          "argv": [
+            "ori",
+            "init",
+            "/sandbox"
+          ],
+          "returncode": 0,
+          "stderr_tail": "",
+          "stdout_tail": "{\"success\":true,\"data\":{\"created\":[\"/sandbox/.ori\",\"/sandbox/inbox/.gitkeep\",\"/sandbox/notes/index.md\",\"/sandbox/ops/daily.md\",\"/sandbox/ops/observations/.gitkeep\",\"/sandbox/ops/reminders.md\",\"/sandbox/ops/sessions/.gitkeep\",\"/sandbox/ori.config.yaml\",\"/sandbox/self/goals.md\",\"/sandbox/self/identity.md\",\"/sandbox/self/memory/.gitkeep\",\"/sandbox/self/methodology.md\",\"/sandbox/templates/map.md\",\"/sandbox/templates/note.md\"],\"skipped\":[]},\"warnings\":[]}\n"
+        },
+        "status": "HONEST_WORKFLOW_OK"
+      },
+      "container_exit_code": 0,
+      "container_stderr_tail": ""
+    },
+    {
+      "candidate": {
+        "id": "io.github.Octonove/crbro-memory",
+        "workflow_class_candidate": "CONSTRAINED",
+        "ecosystem": "npm",
+        "package": "crbro-memory",
+        "version": "2.6.0",
+        "integrity": "sha512-XW279ZeCu4T2vK2GTRMXCydCZLVCsqpogXmCfBT7Sb7VPiAyXnbxD17xthlHlxWs0BqNGL9BJTU3Ahn6mzAlMQ==",
+        "binary": "crbro-memory",
+        "validation_status": "PENDING_SCHEMA_AND_ISOLATED_LAUNCH"
+      },
+      "image_tag": "mcpgate-heldout:21153f3070213847",
+      "build": {
+        "status": "BUILD_OK",
+        "elapsed_seconds": 1.231943,
+        "stdout_tail": "",
+        "stderr_tail": "#0 building with \"desktop-linux\" instance using docker driver\n\n#1 [internal] load build definition from Dockerfile.heldout\n#1 transferring dockerfile: 2.21kB done\n#1 DONE 0.0s\n\n#2 [internal] load metadata for docker.io/library/python:3.12-slim\n#2 DONE 0.0s\n\n#3 [internal] load .dockerignore\n#3 transferring context: 266B done\n#3 DONE 0.0s\n\n#4 [internal] load build context\n#4 DONE 0.0s\n\n#5 [1/9] FROM docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea\n#5 resolve docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea 0.0s done\n#5 DONE 0.0s\n\n#4 [internal] load build context\n#4 transferring context: 2.12kB done\n#4 DONE 0.0s\n\n#6 [2/9] RUN apt-get update && apt-get install -y --no-install-recommends         curl ca-certificates gnupg     && curl -fsSL https://deb.nodesource.com/setup_22.x | bash -     && apt-get install -y --no-install-recommends nodejs     && rm -rf /var/lib/apt/lists/*\n#6 CACHED\n\n#7 [6/9] COPY src/ /app/src/\n#7 CACHED\n\n#8 [4/9] RUN set -eux;     case \"npm\" in       npm)         actual=\"$(npm view \"crbro-memory@2.6.0\" dist.integrity)\";         test \"$actual\" = \"sha512-XW279ZeCu4T2vK2GTRMXCydCZLVCsqpogXmCfBT7Sb7VPiAyXnbxD17xthlHlxWs0BqNGL9BJTU3Ahn6mzAlMQ==\";         npm install -g --ignore-scripts \"crbro-memory@2.6.0\"         ;;       pypi)         mkdir -p /tmp/dist;         pip download --no-deps --only-binary=:all:           --dest /tmp/dist \"crbro-memory==2.6.0\";         artifact=\"$(find /tmp/dist -maxdepth 1 -type f | head -n 1)\";         test -n \"$artifact\";         actual=\"$(sha256sum \"$artifact\" | cut -d' ' -f1)\";         expected=\"sha512-XW279ZeCu4T2vK2GTRMXCydCZLVCsqpogXmCfBT7Sb7VPiAyXnbxD17xthlHlxWs0BqNGL9BJTU3Ahn6mzAlMQ==\";         test \"$actual\" = \"$expected\";         if [ \"true\" = \"true\" ]; then           pip install --no-cache-dir \"$artifact\";         else           pip install --no-cache-dir --no-deps \"$artifact\";         fi;         rm -rf /tmp/dist         ;;       *) echo \"unsupported ecosystem: npm\" >&2; exit 2 ;;     esac\n#8 CACHED\n\n#9 [5/9] RUN useradd -m -u 10001 sandbox     && mkdir -p /sandbox /app     && chown -R sandbox:sandbox /sandbox /app\n#9 CACHED\n\n#10 [3/9] RUN pip install --no-cache-dir \"mcp==2.1.1\" \"httpx==0.27.2\"\n#10 CACHED\n\n#11 [7/9] COPY docker/heldout_probe.py /app/heldout_probe.py\n#11 CACHED\n\n#12 [8/9] COPY docker/heldout_workload_probe.py /app/heldout_workload_probe.py\n#12 DONE 0.1s\n\n#13 [9/9] WORKDIR /sandbox\n#13 DONE 0.1s\n\n#14 exporting to image\n#14 exporting layers\n#14 exporting layers 0.2s done\n#14 exporting manifest sha256:f6729b807f8d4095ecb876381b7c597f90d4cc650bb43a1fb9652c48b2fb0c79 0.0s done\n#14 exporting config sha256:7d22e5e652555c988d4c920a59fa5da5bcf90e916f68b5a13e9cd286f2787375 0.0s done\n#14 exporting attestation manifest sha256:1e4398f7438d46a76a711d7d93fa263c252a6d9e6769a787e0a1e6061efe8e73 0.0s done\n#14 exporting manifest list sha256:c85facfc12c2860ff81b32dc1b9ef2928e92a9d0eb6852a4367f4e95d1cff30a\n#14 exporting manifest list sha256:c85facfc12c2860ff81b32dc1b9ef2928e92a9d0eb6852a4367f4e95d1cff30a 0.0s done\n#14 naming to docker.io/library/mcpgate-heldout:21153f3070213847 done\n#14 unpacking to docker.io/library/mcpgate-heldout:21153f3070213847 0.1s done\n#14 DONE 0.4s\n\nView build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/yuei3h1l0wqui4lttn7vukk8m\n"
+      },
+      "probe": {
+        "after": {
+          "sandbox/home/.crbro/.search/chunks.index.json": {
+            "contains_marker": false,
+            "sha256": "5e014b3025d82fc50e6959ffb422053fe91dcfd6bd01475b7c1dae8af39b3013",
+            "size": 2976
+          },
+          "sandbox/home/.crbro/cortex/project_mcpgate_eligibility.json": {
+            "contains_marker": true,
+            "sha256": "4c8a715ed89f0c19b5682275b19fb2fcf16591ad3607ca91266d3fe8ae3d9af8",
+            "size": 636
+          },
+          "sandbox/home/.crbro/manifest.json": {
+            "contains_marker": false,
+            "sha256": "d5ec4d924ec7818bfe6d2d9c3bef6b9d459c2b004a85402d15acc62ee835c82d",
+            "size": 243
+          },
+          "sandbox/home/.crbro/prefrontal/active_context.json": {
+            "contains_marker": false,
+            "sha256": "2eadfbfb3f44967ba2351cab127cf5a46609727b49227ef3afe46bc4e1c0a136",
+            "size": 116
+          },
+          "sandbox/home/.crbro/prefrontal/hot_topics.json": {
+            "contains_marker": false,
+            "sha256": "cbbfa04d45b5d3c2d3ac485545d1e017d5813120655a92020fa3720389e1e5ee",
+            "size": 69
+          }
+        },
+        "before": {},
+        "calls": [
+          {
+            "arguments": {},
+            "is_error": false,
+            "result": {
+              "active_context": null,
+              "active_protocols": [],
+              "hot_topics": [],
+              "last_session": null,
+              "memory_discipline": "Before crbro_learn, crbro_recall: what you are about to save may already exist — then pass supersedes instead of adding a sibling (two versions of one fact compete on recall as equals). Read what you need, not the neuron: crbro_recall finds the entry by content; crbro_inspect view=neuron gives an index (id, kind, preview per entry) and entries=[ids] returns just those in full. Ask for a whole neuron only when you truly need all of it. Recall also lists the day logs that mention the question (sessions_matched); read one with crbro_inspect view=sessions session=<id>. Structure — paths, what serves what, traps — goes in crbro_map, not in facts; anything derivable from the repo or git history is not worth storing. Write facts dense and self-contained: they are recalled without this conversation, and add keywords: the words a future question may use that the text lacks. On recall, ask several ways (queries) before concluding a thing is not stored. type:error keeps a mistake with its fix; type:debt keeps a deliberate deferral with its ceiling and revisit trigger. Credentials never go in the brain: crbro_secret, then record only the NAME. Recall results carry confidence — \"weak\" means the match covers little of the question, verify before relying on it — and when two facts disagree, prefer the more recent. Lifecycle: supersedes replaces, crbro_revise retires, crbro_forget removes what must not exist on disk — each tool describes its own stage. Call crbro_consolidate before the conversation ends; it logs the session too.",
+              "message": "CRBRO brain initialized at /sandbox/home/.crbro. Ready for first session.",
+              "recent_sessions": [],
+              "retired_tools": {
+                "crbro_connections": "crbro_inspect view=neuron neuron=<id> [min_strength]",
+                "crbro_global_map": "crbro_inspect view=global_map",
+                "crbro_hot_topics": "crbro_inspect view=neurons (rows) and crbro_inspect view=status (hot_topics_recalculated)",
+                "crbro_neuron": "crbro_inspect view=neuron neuron=<id or name>",
+                "crbro_neurons": "crbro_inspect view=neurons [domain|type|min_heat|limit|offset]",
+                "crbro_session_log": "crbro_consolidate summary=... [topics_touched=[...] for neuron ids you only read] (logs the session) plus crbro_context set_topics=[...] if you need to replace the active topics",
+                "crbro_sessions": "crbro_inspect view=sessions [limit]",
+                "crbro_status": "crbro_inspect view=status",
+                "crbro_sync": "crbro_space action=sync [name]"
+              },
+              "semantic_hint": "Semantic recall is not installed on this machine: run once npx crbro-memory init (about 500 MB). Until then recall is keyword-only; keywords at save time still work.",
+              "status": "initialized",
+              "total_neurons": 0,
+              "total_sessions": 0,
+              "total_synapses": 0
+            },
+            "tool": "crbro_boot"
+          },
+          {
+            "arguments": {
+              "content": "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25",
+              "topic": "MCPGate Eligibility",
+              "type": "fact"
+            },
+            "is_error": false,
+            "result": {
+              "action": "created",
+              "message": "New neuron \"MCPGate Eligibility\" created in general",
+              "neuron_id": "project_mcpgate_eligibility",
+              "superseded_facts": 0,
+              "total_decisions": 0,
+              "total_facts": 1,
+              "total_patterns": 0
+            },
+            "tool": "crbro_learn"
+          }
+        ],
+        "changed_paths": [
+          "sandbox/home/.crbro/.search/chunks.index.json",
+          "sandbox/home/.crbro/cortex/project_mcpgate_eligibility.json",
+          "sandbox/home/.crbro/manifest.json",
+          "sandbox/home/.crbro/prefrontal/active_context.json",
+          "sandbox/home/.crbro/prefrontal/hot_topics.json"
+        ],
+        "command": "crbro-memory",
+        "elapsed_seconds": 0.938367,
+        "marker": "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25",
+        "marker_paths": [
+          "sandbox/home/.crbro/cortex/project_mcpgate_eligibility.json"
+        ],
+        "server_id": "io.github.Octonove/crbro-memory",
+        "status": "HONEST_WORKFLOW_OK"
+      },
+      "container_exit_code": 0,
+      "container_stderr_tail": ""
+    },
+    {
+      "candidate": {
+        "id": "io.github.aide-memory/aide-memory",
+        "workflow_class_candidate": "CONSTRAINED",
+        "ecosystem": "npm",
+        "package": "aide-memory",
+        "version": "0.6.3",
+        "integrity": "sha512-1zyH5qoR7wKYP/JmQsRsRzKOWXuPqD3mnYRihhE9OkKj1r1+7OuKFNnXbFJUMpz4tGVTZxmOn5zX+EF/hFM/EQ==",
+        "binary": "aide-memory-mcp",
+        "validation_status": "PENDING_SCHEMA_AND_ISOLATED_LAUNCH"
+      },
+      "image_tag": "mcpgate-heldout:7adc61fbbe421069",
+      "build": {
+        "status": "BUILD_OK",
+        "elapsed_seconds": 1.153637,
+        "stdout_tail": "",
+        "stderr_tail": "#0 building with \"desktop-linux\" instance using docker driver\n\n#1 [internal] load build definition from Dockerfile.heldout\n#1 transferring dockerfile: 2.21kB done\n#1 DONE 0.0s\n\n#2 [internal] load metadata for docker.io/library/python:3.12-slim\n#2 DONE 0.0s\n\n#3 [internal] load .dockerignore\n#3 transferring context: 266B done\n#3 DONE 0.0s\n\n#4 [internal] load build context\n#4 DONE 0.0s\n\n#5 [1/9] FROM docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea\n#5 resolve docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea 0.0s done\n#5 DONE 0.0s\n\n#4 [internal] load build context\n#4 transferring context: 2.12kB done\n#4 DONE 0.0s\n\n#6 [4/9] RUN set -eux;     case \"npm\" in       npm)         actual=\"$(npm view \"aide-memory@0.6.3\" dist.integrity)\";         test \"$actual\" = \"sha512-1zyH5qoR7wKYP/JmQsRsRzKOWXuPqD3mnYRihhE9OkKj1r1+7OuKFNnXbFJUMpz4tGVTZxmOn5zX+EF/hFM/EQ==\";         npm install -g --ignore-scripts \"aide-memory@0.6.3\"         ;;       pypi)         mkdir -p /tmp/dist;         pip download --no-deps --only-binary=:all:           --dest /tmp/dist \"aide-memory==0.6.3\";         artifact=\"$(find /tmp/dist -maxdepth 1 -type f | head -n 1)\";         test -n \"$artifact\";         actual=\"$(sha256sum \"$artifact\" | cut -d' ' -f1)\";         expected=\"sha512-1zyH5qoR7wKYP/JmQsRsRzKOWXuPqD3mnYRihhE9OkKj1r1+7OuKFNnXbFJUMpz4tGVTZxmOn5zX+EF/hFM/EQ==\";         test \"$actual\" = \"$expected\";         if [ \"true\" = \"true\" ]; then           pip install --no-cache-dir \"$artifact\";         else           pip install --no-cache-dir --no-deps \"$artifact\";         fi;         rm -rf /tmp/dist         ;;       *) echo \"unsupported ecosystem: npm\" >&2; exit 2 ;;     esac\n#6 CACHED\n\n#7 [6/9] COPY src/ /app/src/\n#7 CACHED\n\n#8 [5/9] RUN useradd -m -u 10001 sandbox     && mkdir -p /sandbox /app     && chown -R sandbox:sandbox /sandbox /app\n#8 CACHED\n\n#9 [3/9] RUN pip install --no-cache-dir \"mcp==2.1.1\" \"httpx==0.27.2\"\n#9 CACHED\n\n#10 [2/9] RUN apt-get update && apt-get install -y --no-install-recommends         curl ca-certificates gnupg     && curl -fsSL https://deb.nodesource.com/setup_22.x | bash -     && apt-get install -y --no-install-recommends nodejs     && rm -rf /var/lib/apt/lists/*\n#10 CACHED\n\n#11 [7/9] COPY docker/heldout_probe.py /app/heldout_probe.py\n#11 CACHED\n\n#12 [8/9] COPY docker/heldout_workload_probe.py /app/heldout_workload_probe.py\n#12 DONE 0.1s\n\n#13 [9/9] WORKDIR /sandbox\n#13 DONE 0.1s\n\n#14 exporting to image\n#14 exporting layers\n#14 exporting layers 0.2s done\n#14 exporting manifest sha256:bf5eb78666090f93f4f688103c05af6df64802972a06e5d617b66a72cbaf831a 0.0s done\n#14 exporting config sha256:4f78844178ea6b68a645f371929426865e83b51f9c25368730562b383d698028 0.0s done\n#14 exporting attestation manifest sha256:722e67d48a5df8b34102abb6dd52ce94854c3ba4ad107558a9e0fe462054e526 0.0s done\n#14 exporting manifest list sha256:ed2534942d6a24db5b3f97788a8a665db50e8171523ca788570e6a5b6691f553\n#14 exporting manifest list sha256:ed2534942d6a24db5b3f97788a8a665db50e8171523ca788570e6a5b6691f553 0.0s done\n#14 naming to docker.io/library/mcpgate-heldout:7adc61fbbe421069 done\n#14 unpacking to docker.io/library/mcpgate-heldout:7adc61fbbe421069 0.1s done\n#14 DONE 0.4s\n\nView build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/0qvyd9yj5ho92n5vy6ap0oqhf\n"
+      },
+      "probe": {
+        "after": {
+          "sandbox/.aide/config.json": {
+            "contains_marker": false,
+            "sha256": "c1091db3f73b1283ea5a7a7c2e4882a4f918c22143c8ba98a630696b697651c5",
+            "size": 1022
+          },
+          "sandbox/.aide/memories/technical/71ed46f9-8cb0-4898-95c2-a6bad1a72a13.json": {
+            "contains_marker": true,
+            "sha256": "77683fb8a5ad9eefdb579681a6adb5f34fa2eb2a5df0cb931b1f4878ab9a4d6f",
+            "size": 445
+          },
+          "sandbox/.aide/recall-log.jsonl": {
+            "contains_marker": true,
+            "sha256": "04967d2dd74fe45002f80898a56fcdbfb229d7a56ccd26c0b41a8517dcf0fa3e",
+            "size": 231
+          },
+          "sandbox/.claude/settings.json": {
+            "contains_marker": false,
+            "sha256": "f184c809e903b328cd159bb6c293374a34788ce7a6a9bc09adae5863059de103",
+            "size": 4030
+          },
+          "sandbox/.cursor/hooks.json": {
+            "contains_marker": false,
+            "sha256": "96739cf02b6069fdf8728b21a0997e0c7981a7fe55d3f667b7901245d15791f7",
+            "size": 2614
+          },
+          "sandbox/.cursor/mcp.json": {
+            "contains_marker": false,
+            "sha256": "5d6aa00b6b3526cd51e78558dbb5a90be1e76de4ead056e4ac87975156341bf5",
+            "size": 218
+          },
+          "sandbox/.devin/config.json": {
+            "contains_marker": false,
+            "sha256": "402bb155b3517f2db2984e6ae989a9a1fd6e305489f79f25c968077005e865bb",
+            "size": 4216
+          },
+          "sandbox/.ignore": {
+            "contains_marker": false,
+            "sha256": "35211f024f9c6ddc284eef1fdbad8749e3708ef56cdb1f0b51c10b5567611a20",
+            "size": 70
+          },
+          "sandbox/.mcp.json": {
+            "contains_marker": false,
+            "sha256": "950290d9fe6151cf938ee4eac15d605864fcc73aa7bbfcae5983ac2c12b86aab",
+            "size": 185
+          },
+          "sandbox/home/.aide/projects/7f4cf181336b/memory.db": {
+            "contains_marker": false,
+            "sha256": "e3ba06536f7dbba337dee3c1c5f01b43660ce276abb54c5cee2d5defc5b970aa",
+            "size": 4096
+          },
+          "sandbox/home/.aide/projects/7f4cf181336b/memory.db-shm": {
+            "contains_marker": false,
+            "sha256": "680b437fb2cb8973eeb7a1a5202430229e5ecdf35eafa7e39b3929943e2fec5c",
+            "size": 32768
+          },
+          "sandbox/home/.aide/projects/7f4cf181336b/memory.db-wal": {
+            "contains_marker": true,
+            "sha256": "8196b8699eda7bd13c79016aff9752525b48d9157e8a4c470e003c88ffd5dabf",
+            "size": 255472
+          },
+          "sandbox/home/.aide/update-check.json": {
+            "contains_marker": false,
+            "sha256": "8da42c0a9199b96b09997ff1368374bee1096cd67e3646dac57ffd8ad8abef72",
+            "size": 48
+          }
+        },
+        "before": {
+          "sandbox/.aide/config.json": {
+            "contains_marker": false,
+            "sha256": "c1091db3f73b1283ea5a7a7c2e4882a4f918c22143c8ba98a630696b697651c5",
+            "size": 1022
+          },
+          "sandbox/.claude/settings.json": {
+            "contains_marker": false,
+            "sha256": "f184c809e903b328cd159bb6c293374a34788ce7a6a9bc09adae5863059de103",
+            "size": 4030
+          },
+          "sandbox/.cursor/hooks.json": {
+            "contains_marker": false,
+            "sha256": "96739cf02b6069fdf8728b21a0997e0c7981a7fe55d3f667b7901245d15791f7",
+            "size": 2614
+          },
+          "sandbox/.cursor/mcp.json": {
+            "contains_marker": false,
+            "sha256": "5d6aa00b6b3526cd51e78558dbb5a90be1e76de4ead056e4ac87975156341bf5",
+            "size": 218
+          },
+          "sandbox/.devin/config.json": {
+            "contains_marker": false,
+            "sha256": "402bb155b3517f2db2984e6ae989a9a1fd6e305489f79f25c968077005e865bb",
+            "size": 4216
+          },
+          "sandbox/.ignore": {
+            "contains_marker": false,
+            "sha256": "35211f024f9c6ddc284eef1fdbad8749e3708ef56cdb1f0b51c10b5567611a20",
+            "size": 70
+          },
+          "sandbox/.mcp.json": {
+            "contains_marker": false,
+            "sha256": "950290d9fe6151cf938ee4eac15d605864fcc73aa7bbfcae5983ac2c12b86aab",
+            "size": 185
+          },
+          "sandbox/home/.aide/projects/7f4cf181336b/memory.db": {
+            "contains_marker": false,
+            "sha256": "e3ba06536f7dbba337dee3c1c5f01b43660ce276abb54c5cee2d5defc5b970aa",
+            "size": 4096
+          },
+          "sandbox/home/.aide/projects/7f4cf181336b/memory.db-shm": {
+            "contains_marker": false,
+            "sha256": "361479a02bfec9b08040f81a7fe4fcab64869d33a763c2301dfd0941d17db7bd",
+            "size": 32768
+          },
+          "sandbox/home/.aide/projects/7f4cf181336b/memory.db-wal": {
+            "contains_marker": false,
+            "sha256": "bcd97c88217b828c293c36b89371fce79291222d2991a224bfda625837c5c552",
+            "size": 189552
+          },
+          "sandbox/home/.aide/update-check.json": {
+            "contains_marker": false,
+            "sha256": "8da42c0a9199b96b09997ff1368374bee1096cd67e3646dac57ffd8ad8abef72",
+            "size": 48
+          }
+        },
+        "calls": [
+          {
+            "arguments": {
+              "content": "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25",
+              "layer": "technical"
+            },
+            "is_error": false,
+            "result": {
+              "text": "Stored: \"MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25\" as technical [project-wide] (id: 1, uuid: 71ed46f9-8cb0-4898-95c2-a6bad1a72a13)"
+            },
+            "tool": "aide_remember"
+          }
+        ],
+        "changed_paths": [
+          "sandbox/.aide/memories/technical/71ed46f9-8cb0-4898-95c2-a6bad1a72a13.json",
+          "sandbox/.aide/recall-log.jsonl",
+          "sandbox/home/.aide/projects/7f4cf181336b/memory.db-shm",
+          "sandbox/home/.aide/projects/7f4cf181336b/memory.db-wal"
+        ],
+        "command": "aide-memory-mcp",
+        "elapsed_seconds": 1.183803,
+        "marker": "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25",
+        "marker_paths": [
+          "sandbox/.aide/memories/technical/71ed46f9-8cb0-4898-95c2-a6bad1a72a13.json",
+          "sandbox/.aide/recall-log.jsonl",
+          "sandbox/home/.aide/projects/7f4cf181336b/memory.db-wal"
+        ],
+        "server_id": "io.github.aide-memory/aide-memory",
+        "status": "HONEST_WORKFLOW_OK"
+      },
+      "container_exit_code": 0,
+      "container_stderr_tail": "  aide-memory: auto-updated 17 config(s) to v0.6.3\n/bin/sh: 1: git: not found\n"
+    },
+    {
+      "candidate": {
+        "id": "io.github.mrfentmen/sqlite-mcp",
+        "workflow_class_candidate": "UNDERSPECIFIED",
+        "ecosystem": "npm",
+        "package": "@mrfentmen/sqlite-mcp",
+        "version": "1.0.0",
+        "integrity": "sha512-XMZKhHcV593miMTeSVYABV/izMiLsEWiuUl1t24LvPg95IcOOReppKaq3lE0YTiqjmHmi4beqf5LbCngh8cMIQ==",
+        "binary": "node",
+        "eligibility_args": [
+          "/usr/bin/sqlite-mcp",
+          "/sandbox/eligibility.sqlite"
+        ],
+        "validation_status": "PENDING_SCHEMA_AND_ISOLATED_LAUNCH"
+      },
+      "image_tag": "mcpgate-heldout:fc6127e3646c4b73",
+      "build": {
+        "status": "BUILD_OK",
+        "elapsed_seconds": 1.180113,
+        "stdout_tail": "",
+        "stderr_tail": "#0 building with \"desktop-linux\" instance using docker driver\n\n#1 [internal] load build definition from Dockerfile.heldout\n#1 transferring dockerfile: 2.21kB done\n#1 DONE 0.0s\n\n#2 [internal] load metadata for docker.io/library/python:3.12-slim\n#2 DONE 0.0s\n\n#3 [internal] load .dockerignore\n#3 transferring context: 266B done\n#3 DONE 0.0s\n\n#4 [internal] load build context\n#4 DONE 0.0s\n\n#5 [1/9] FROM docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea\n#5 resolve docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea 0.0s done\n#5 DONE 0.0s\n\n#4 [internal] load build context\n#4 transferring context: 2.12kB done\n#4 DONE 0.0s\n\n#6 [3/9] RUN pip install --no-cache-dir \"mcp==2.1.1\" \"httpx==0.27.2\"\n#6 CACHED\n\n#7 [2/9] RUN apt-get update && apt-get install -y --no-install-recommends         curl ca-certificates gnupg     && curl -fsSL https://deb.nodesource.com/setup_22.x | bash -     && apt-get install -y --no-install-recommends nodejs     && rm -rf /var/lib/apt/lists/*\n#7 CACHED\n\n#8 [4/9] RUN set -eux;     case \"npm\" in       npm)         actual=\"$(npm view \"@mrfentmen/sqlite-mcp@1.0.0\" dist.integrity)\";         test \"$actual\" = \"sha512-XMZKhHcV593miMTeSVYABV/izMiLsEWiuUl1t24LvPg95IcOOReppKaq3lE0YTiqjmHmi4beqf5LbCngh8cMIQ==\";         npm install -g --ignore-scripts \"@mrfentmen/sqlite-mcp@1.0.0\"         ;;       pypi)         mkdir -p /tmp/dist;         pip download --no-deps --only-binary=:all:           --dest /tmp/dist \"@mrfentmen/sqlite-mcp==1.0.0\";         artifact=\"$(find /tmp/dist -maxdepth 1 -type f | head -n 1)\";         test -n \"$artifact\";         actual=\"$(sha256sum \"$artifact\" | cut -d' ' -f1)\";         expected=\"sha512-XMZKhHcV593miMTeSVYABV/izMiLsEWiuUl1t24LvPg95IcOOReppKaq3lE0YTiqjmHmi4beqf5LbCngh8cMIQ==\";         test \"$actual\" = \"$expected\";         if [ \"true\" = \"true\" ]; then           pip install --no-cache-dir \"$artifact\";         else           pip install --no-cache-dir --no-deps \"$artifact\";         fi;         rm -rf /tmp/dist         ;;       *) echo \"unsupported ecosystem: npm\" >&2; exit 2 ;;     esac\n#8 CACHED\n\n#9 [6/9] COPY src/ /app/src/\n#9 CACHED\n\n#10 [5/9] RUN useradd -m -u 10001 sandbox     && mkdir -p /sandbox /app     && chown -R sandbox:sandbox /sandbox /app\n#10 CACHED\n\n#11 [7/9] COPY docker/heldout_probe.py /app/heldout_probe.py\n#11 CACHED\n\n#12 [8/9] COPY docker/heldout_workload_probe.py /app/heldout_workload_probe.py\n#12 DONE 0.1s\n\n#13 [9/9] WORKDIR /sandbox\n#13 DONE 0.1s\n\n#14 exporting to image\n#14 exporting layers\n#14 exporting layers 0.2s done\n#14 exporting manifest sha256:543e3898eec915d4a3c5de71cc122b4c95c0f23250c817683ec6cc0ff053a0d8 0.0s done\n#14 exporting config sha256:2396bcb79fd70c28b873943a568ae017401f6f179eaac73523019150a07afcd6 0.0s done\n#14 exporting attestation manifest sha256:c6c9020612e95c003656c723fe34f0b011b178784bce31c24e0daf77e69839f0 0.0s done\n#14 exporting manifest list sha256:647aca1e009895c3519c8241b036e0dadd25e7af498682ac9a827edd51ffd90e\n#14 exporting manifest list sha256:647aca1e009895c3519c8241b036e0dadd25e7af498682ac9a827edd51ffd90e 0.0s done\n#14 naming to docker.io/library/mcpgate-heldout:fc6127e3646c4b73 done\n#14 unpacking to docker.io/library/mcpgate-heldout:fc6127e3646c4b73 0.1s done\n#14 DONE 0.4s\n\nView build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/ff4jcx8h35faoz4c6192ourk7\n"
+      },
+      "probe": {
+        "after": {
+          "sandbox/eligibility.sqlite": {
+            "contains_marker": false,
+            "sha256": "ca780be678dc80077de660213f89e9efd5e2d3641ac2bf714e0942ec42c6eb0f",
+            "size": 8192
+          }
+        },
+        "before": {},
+        "calls": [
+          {
+            "arguments": {
+              "sql": "CREATE TABLE evidence(value TEXT); INSERT INTO evidence VALUES ('MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25');"
+            },
+            "is_error": false,
+            "result": {
+              "changes": "0",
+              "lastInsertRowid": "0"
+            },
+            "tool": "execute"
+          }
+        ],
+        "changed_paths": [
+          "sandbox/eligibility.sqlite"
+        ],
+        "command": "node /usr/bin/sqlite-mcp /sandbox/eligibility.sqlite",
+        "elapsed_seconds": 0.604081,
+        "marker": "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25",
+        "marker_paths": [],
+        "server_id": "io.github.mrfentmen/sqlite-mcp",
+        "status": "HONEST_WORKFLOW_OK"
+      },
+      "container_exit_code": 0,
+      "container_stderr_tail": "MCP server running on stdio\n(node:7) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "candidate": {
+        "id": "io.github.daedalus/mcp-sqlite3",
+        "workflow_class_candidate": "UNDERSPECIFIED",
+        "ecosystem": "pypi",
+        "package": "mcp-sqlite3",
+        "version": "0.1.3",
+        "artifact": "mcp_sqlite3-0.1.3-py3-none-any.whl",
+        "integrity": "sha256:c4e0e8373e1709971e364ed6e844cbc4fde130c6b60ad4596f13b2b524b80277",
+        "binary": "python3",
+        "eligibility_args": [
+          "-m",
+          "mcp_sqlite3"
+        ],
+        "validation_status": "PENDING_SCHEMA_AND_ISOLATED_LAUNCH"
+      },
+      "image_tag": "mcpgate-heldout:95155fbf085ceaae",
+      "build": {
+        "status": "BUILD_OK",
+        "elapsed_seconds": 1.156489,
+        "stdout_tail": "",
+        "stderr_tail": "#0 building with \"desktop-linux\" instance using docker driver\n\n#1 [internal] load build definition from Dockerfile.heldout\n#1 transferring dockerfile: 2.21kB done\n#1 DONE 0.0s\n\n#2 [internal] load metadata for docker.io/library/python:3.12-slim\n#2 DONE 0.0s\n\n#3 [internal] load .dockerignore\n#3 transferring context: 266B done\n#3 DONE 0.0s\n\n#4 [internal] load build context\n#4 DONE 0.0s\n\n#5 [1/9] FROM docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea\n#5 resolve docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea 0.0s done\n#5 DONE 0.0s\n\n#4 [internal] load build context\n#4 transferring context: 2.12kB done\n#4 DONE 0.0s\n\n#6 [5/9] RUN useradd -m -u 10001 sandbox     && mkdir -p /sandbox /app     && chown -R sandbox:sandbox /sandbox /app\n#6 CACHED\n\n#7 [6/9] COPY src/ /app/src/\n#7 CACHED\n\n#8 [2/9] RUN apt-get update && apt-get install -y --no-install-recommends         curl ca-certificates gnupg     && curl -fsSL https://deb.nodesource.com/setup_22.x | bash -     && apt-get install -y --no-install-recommends nodejs     && rm -rf /var/lib/apt/lists/*\n#8 CACHED\n\n#9 [3/9] RUN pip install --no-cache-dir \"mcp==2.1.1\" \"httpx==0.27.2\"\n#9 CACHED\n\n#10 [4/9] RUN set -eux;     case \"pypi\" in       npm)         actual=\"$(npm view \"mcp-sqlite3@0.1.3\" dist.integrity)\";         test \"$actual\" = \"sha256:c4e0e8373e1709971e364ed6e844cbc4fde130c6b60ad4596f13b2b524b80277\";         npm install -g --ignore-scripts \"mcp-sqlite3@0.1.3\"         ;;       pypi)         mkdir -p /tmp/dist;         pip download --no-deps --only-binary=:all:           --dest /tmp/dist \"mcp-sqlite3==0.1.3\";         artifact=\"$(find /tmp/dist -maxdepth 1 -type f | head -n 1)\";         test -n \"$artifact\";         actual=\"$(sha256sum \"$artifact\" | cut -d' ' -f1)\";         expected=\"c4e0e8373e1709971e364ed6e844cbc4fde130c6b60ad4596f13b2b524b80277\";         test \"$actual\" = \"$expected\";         if [ \"true\" = \"true\" ]; then           pip install --no-cache-dir \"$artifact\";         else           pip install --no-cache-dir --no-deps \"$artifact\";         fi;         rm -rf /tmp/dist         ;;       *) echo \"unsupported ecosystem: pypi\" >&2; exit 2 ;;     esac\n#10 CACHED\n\n#11 [7/9] COPY docker/heldout_probe.py /app/heldout_probe.py\n#11 CACHED\n\n#12 [8/9] COPY docker/heldout_workload_probe.py /app/heldout_workload_probe.py\n#12 DONE 0.1s\n\n#13 [9/9] WORKDIR /sandbox\n#13 DONE 0.1s\n\n#14 exporting to image\n#14 exporting layers\n#14 exporting layers 0.2s done\n#14 exporting manifest sha256:67752e0356bf9326461ee51374293e04be8c025dee4f9adadddc8805f5dab37e 0.0s done\n#14 exporting config sha256:e34feb625b26fc833e79db9ffb5a52b7addce8ee886e2a65b029fb69786bf420 0.0s done\n#14 exporting attestation manifest sha256:2c9cd8819675bed5ed2ac91ed20db3aa8f2594eecb3ed90f0b66834abd07120e 0.0s done\n#14 exporting manifest list sha256:f069929577d84bc804f42c82901a812d92140a3b632cea0160bcb7b4e7270cfe\n#14 exporting manifest list sha256:f069929577d84bc804f42c82901a812d92140a3b632cea0160bcb7b4e7270cfe 0.0s done\n#14 naming to docker.io/library/mcpgate-heldout:95155fbf085ceaae done\n#14 unpacking to docker.io/library/mcpgate-heldout:95155fbf085ceaae 0.1s done\n#14 DONE 0.4s\n\nView build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/74i9mpma8vdtzag1sdgxfp0qx\n"
+      },
+      "probe": {
+        "after": {
+          "sandbox/evidence.sqlite": {
+            "contains_marker": true,
+            "sha256": "f15bf56b1ffc8d80b13067a52bc3dbd1aa47c24cc3422e398aaa9d13363034b0",
+            "size": 8192
+          }
+        },
+        "before": {},
+        "calls": [
+          {
+            "arguments": {
+              "conn_id": "5de97c07-a16e-402b-94e3-9055a25c5ec2",
+              "sql": "CREATE TABLE evidence(value TEXT)"
+            },
+            "is_error": false,
+            "result": {
+              "columns": [],
+              "data": {
+                "cursor_id": "cf0d9c6a-d606-4c92-94d4-8cf6d88874aa",
+                "rows": []
+              },
+              "error": null,
+              "lastrowid": 0,
+              "rowcount": -1,
+              "success": true
+            },
+            "tool": "execute_query"
+          },
+          {
+            "arguments": {
+              "conn_id": "5de97c07-a16e-402b-94e3-9055a25c5ec2",
+              "params": [
+                "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25"
+              ],
+              "sql": "INSERT INTO evidence VALUES (?)"
+            },
+            "is_error": false,
+            "result": {
+              "columns": [],
+              "data": {
+                "cursor_id": "bf8a8940-c568-48b7-8509-913eed5e53ec",
+                "rows": []
+              },
+              "error": null,
+              "lastrowid": 1,
+              "rowcount": 1,
+              "success": true
+            },
+            "tool": "execute_query"
+          },
+          {
+            "arguments": {
+              "conn_id": "5de97c07-a16e-402b-94e3-9055a25c5ec2"
+            },
+            "is_error": false,
+            "result": {
+              "columns": null,
+              "data": null,
+              "error": null,
+              "lastrowid": null,
+              "rowcount": null,
+              "success": true
+            },
+            "tool": "commit"
+          }
+        ],
+        "changed_paths": [
+          "sandbox/evidence.sqlite"
+        ],
+        "command": "python3 -m mcp_sqlite3",
+        "elapsed_seconds": 1.550563,
+        "marker": "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25",
+        "marker_paths": [
+          "sandbox/evidence.sqlite"
+        ],
+        "server_id": "io.github.daedalus/mcp-sqlite3",
+        "status": "HONEST_WORKFLOW_OK"
+      },
+      "container_exit_code": 0,
+      "container_stderr_tail": "\n\n╭──────────────────────────────────────────────────────────────────────────────╮\n│                                                                              │\n│                                                                              │\n│                         ▄▀▀ ▄▀█ █▀▀ ▀█▀ █▀▄▀█ █▀▀ █▀█                        │\n│                         █▀  █▀█ ▄▄█  █  █ ▀ █ █▄▄ █▀▀                        │\n│                                                                              │\n│                                                                              │\n│                                                                              │\n│                                FastMCP 4.0.10                                │\n│                            https://gofastmcp.com                             │\n│                                                                              │\n│                  🖥  Server:      mcp-sqlite3, 4.0.10                         │\n│                  🚀 Deploy free: https://horizon.prefect.io                  │\n│                                                                              │\n╰──────────────────────────────────────────────────────────────────────────────╯\n\n\n[09/25/26 17:42:19] INFO     Starting MCP server 'mcp-sqlite3'  transport.py:242\n                             with transport 'stdio'                             \n"
+    },
+    {
+      "candidate": {
+        "id": "ai.smartmemory/compose-mcp",
+        "workflow_class_candidate": "CONSTRAINED",
+        "ecosystem": "npm",
+        "package": "@smartmemory/compose-mcp",
+        "version": "0.6.3",
+        "integrity": "sha512-IMr7yx8lYGBNdfBBPBN7VTKTNDIlua5OHPcSe3v7tj0c4nGrLs5iRw5pFz8a3VNqVsMT91hEp/jRp5h+KW2qSg==",
+        "binary": "compose-mcp"
+      },
+      "image_tag": "mcpgate-heldout:7e7787d66a76ebcd",
+      "build": {
+        "status": "BUILD_OK",
+        "elapsed_seconds": 1.228509,
+        "stdout_tail": "",
+        "stderr_tail": "#0 building with \"desktop-linux\" instance using docker driver\n\n#1 [internal] load build definition from Dockerfile.heldout\n#1 transferring dockerfile: 2.21kB done\n#1 DONE 0.0s\n\n#2 [internal] load metadata for docker.io/library/python:3.12-slim\n#2 DONE 0.0s\n\n#3 [internal] load .dockerignore\n#3 transferring context: 266B done\n#3 DONE 0.0s\n\n#4 [internal] load build context\n#4 DONE 0.0s\n\n#5 [1/9] FROM docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea\n#5 resolve docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea 0.0s done\n#5 DONE 0.0s\n\n#4 [internal] load build context\n#4 transferring context: 2.12kB done\n#4 DONE 0.0s\n\n#6 [3/9] RUN pip install --no-cache-dir \"mcp==2.1.1\" \"httpx==0.27.2\"\n#6 CACHED\n\n#7 [4/9] RUN set -eux;     case \"npm\" in       npm)         actual=\"$(npm view \"@smartmemory/compose-mcp@0.6.3\" dist.integrity)\";         test \"$actual\" = \"sha512-IMr7yx8lYGBNdfBBPBN7VTKTNDIlua5OHPcSe3v7tj0c4nGrLs5iRw5pFz8a3VNqVsMT91hEp/jRp5h+KW2qSg==\";         npm install -g --ignore-scripts \"@smartmemory/compose-mcp@0.6.3\"         ;;       pypi)         mkdir -p /tmp/dist;         pip download --no-deps --only-binary=:all:           --dest /tmp/dist \"@smartmemory/compose-mcp==0.6.3\";         artifact=\"$(find /tmp/dist -maxdepth 1 -type f | head -n 1)\";         test -n \"$artifact\";         actual=\"$(sha256sum \"$artifact\" | cut -d' ' -f1)\";         expected=\"sha512-IMr7yx8lYGBNdfBBPBN7VTKTNDIlua5OHPcSe3v7tj0c4nGrLs5iRw5pFz8a3VNqVsMT91hEp/jRp5h+KW2qSg==\";         test \"$actual\" = \"$expected\";         if [ \"true\" = \"true\" ]; then           pip install --no-cache-dir \"$artifact\";         else           pip install --no-cache-dir --no-deps \"$artifact\";         fi;         rm -rf /tmp/dist         ;;       *) echo \"unsupported ecosystem: npm\" >&2; exit 2 ;;     esac\n#7 CACHED\n\n#8 [5/9] RUN useradd -m -u 10001 sandbox     && mkdir -p /sandbox /app     && chown -R sandbox:sandbox /sandbox /app\n#8 CACHED\n\n#9 [6/9] COPY src/ /app/src/\n#9 CACHED\n\n#10 [2/9] RUN apt-get update && apt-get install -y --no-install-recommends         curl ca-certificates gnupg     && curl -fsSL https://deb.nodesource.com/setup_22.x | bash -     && apt-get install -y --no-install-recommends nodejs     && rm -rf /var/lib/apt/lists/*\n#10 CACHED\n\n#11 [7/9] COPY docker/heldout_probe.py /app/heldout_probe.py\n#11 CACHED\n\n#12 [8/9] COPY docker/heldout_workload_probe.py /app/heldout_workload_probe.py\n#12 DONE 0.1s\n\n#13 [9/9] WORKDIR /sandbox\n#13 DONE 0.1s\n\n#14 exporting to image\n#14 exporting layers\n#14 exporting layers 0.2s done\n#14 exporting manifest sha256:42cd795c1bf444fc57e4692505170e7de5ce729e3fa03740b29bacc37e00bf01 0.0s done\n#14 exporting config sha256:18d0f7624a59d6e2edea101b28cb88f1b4de02a771d46d90c7290c0be747a696 0.0s done\n#14 exporting attestation manifest sha256:ed6c8811e23bddd4d5775011b48440553f75cda27cb78c196e3a8ffaa95c6cf5 0.0s done\n#14 exporting manifest list sha256:103b50f091cb4c7d7e582e143c31a22bc8783ad21785748817ed2a5b995c551d\n#14 exporting manifest list sha256:103b50f091cb4c7d7e582e143c31a22bc8783ad21785748817ed2a5b995c551d 0.1s done\n#14 naming to docker.io/library/mcpgate-heldout:7e7787d66a76ebcd done\n#14 unpacking to docker.io/library/mcpgate-heldout:7e7787d66a76ebcd 0.1s done\n#14 DONE 0.5s\n\nView build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/qckdipp5o9yjgssnqh2a3doi8\n"
+      },
+      "probe": {
+        "after": {
+          "sandbox/.compose/data/feature-events.jsonl": {
+            "contains_marker": false,
+            "sha256": "846a7d052566458fbe3cb352f19be22bd4fb5c34bb375098294dba48177b9efa",
+            "size": 158
+          },
+          "sandbox/ROADMAP.md": {
+            "contains_marker": true,
+            "sha256": "3b45e238c99d06484e36085cb11e2e746dc7478e68618357bd9b0e6609ce640b",
+            "size": 581
+          },
+          "sandbox/docs/features/MCPGATE-ELIG-1/feature.json": {
+            "contains_marker": true,
+            "sha256": "11f6613b50f098c19c2d4b1c78a9fb7b4e5bd40fc575d54d8ac9dd5ef4c746d4",
+            "size": 210
+          }
+        },
+        "before": {},
+        "calls": [
+          {
+            "arguments": {
+              "code": "MCPGATE-ELIG-1",
+              "description": "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25",
+              "phase": "Eligibility"
+            },
+            "is_error": false,
+            "result": {
+              "code": "MCPGATE-ELIG-1",
+              "phase": "Eligibility",
+              "position": 1,
+              "roadmap_path": "/sandbox/ROADMAP.md",
+              "roundtrip": {
+                "diffs": [],
+                "fixedPoint": true,
+                "lossless": true,
+                "passes": 2
+              }
+            },
+            "tool": "add_roadmap_entry"
+          }
+        ],
+        "changed_paths": [
+          "sandbox/.compose/data/feature-events.jsonl",
+          "sandbox/ROADMAP.md",
+          "sandbox/docs/features/MCPGATE-ELIG-1/feature.json"
+        ],
+        "command": "compose-mcp",
+        "elapsed_seconds": 0.798941,
+        "marker": "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25",
+        "marker_paths": [
+          "sandbox/ROADMAP.md",
+          "sandbox/docs/features/MCPGATE-ELIG-1/feature.json"
+        ],
+        "server_id": "ai.smartmemory/compose-mcp",
+        "setup": {
+          "operation": "mkdir /sandbox/.compose"
+        },
+        "status": "HONEST_WORKFLOW_OK"
+      },
+      "container_exit_code": 0,
+      "container_stderr_tail": ""
+    },
+    {
+      "candidate": {
+        "id": "io.github.DanielGuru/repomemory",
+        "workflow_class_candidate": "CONSTRAINED",
+        "ecosystem": "npm",
+        "package": "repomemory",
+        "version": "1.3.0",
+        "integrity": "sha512-vp2IjbWgyIGahgd6DK9GjzSTqboOIO1YV4s6P/6a6DJamg+xpvXYV5UGaL6S8oP4KX4ulVWvZmH0s7DGFILImA==",
+        "binary": "repomemory",
+        "eligibility_args": [
+          "serve"
+        ]
+      },
+      "image_tag": "mcpgate-heldout:8b83cf8226357b4a",
+      "build": {
+        "status": "BUILD_OK",
+        "elapsed_seconds": 1.195806,
+        "stdout_tail": "",
+        "stderr_tail": "#0 building with \"desktop-linux\" instance using docker driver\n\n#1 [internal] load build definition from Dockerfile.heldout\n#1 transferring dockerfile: 2.21kB done\n#1 DONE 0.0s\n\n#2 [internal] load metadata for docker.io/library/python:3.12-slim\n#2 DONE 0.0s\n\n#3 [internal] load .dockerignore\n#3 transferring context: 266B done\n#3 DONE 0.0s\n\n#4 [internal] load build context\n#4 DONE 0.0s\n\n#5 [1/9] FROM docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea\n#5 resolve docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea 0.0s done\n#5 DONE 0.0s\n\n#4 [internal] load build context\n#4 transferring context: 2.12kB done\n#4 DONE 0.0s\n\n#6 [5/9] RUN useradd -m -u 10001 sandbox     && mkdir -p /sandbox /app     && chown -R sandbox:sandbox /sandbox /app\n#6 CACHED\n\n#7 [2/9] RUN apt-get update && apt-get install -y --no-install-recommends         curl ca-certificates gnupg     && curl -fsSL https://deb.nodesource.com/setup_22.x | bash -     && apt-get install -y --no-install-recommends nodejs     && rm -rf /var/lib/apt/lists/*\n#7 CACHED\n\n#8 [6/9] COPY src/ /app/src/\n#8 CACHED\n\n#9 [3/9] RUN pip install --no-cache-dir \"mcp==2.1.1\" \"httpx==0.27.2\"\n#9 CACHED\n\n#10 [4/9] RUN set -eux;     case \"npm\" in       npm)         actual=\"$(npm view \"repomemory@1.3.0\" dist.integrity)\";         test \"$actual\" = \"sha512-vp2IjbWgyIGahgd6DK9GjzSTqboOIO1YV4s6P/6a6DJamg+xpvXYV5UGaL6S8oP4KX4ulVWvZmH0s7DGFILImA==\";         npm install -g --ignore-scripts \"repomemory@1.3.0\"         ;;       pypi)         mkdir -p /tmp/dist;         pip download --no-deps --only-binary=:all:           --dest /tmp/dist \"repomemory==1.3.0\";         artifact=\"$(find /tmp/dist -maxdepth 1 -type f | head -n 1)\";         test -n \"$artifact\";         actual=\"$(sha256sum \"$artifact\" | cut -d' ' -f1)\";         expected=\"sha512-vp2IjbWgyIGahgd6DK9GjzSTqboOIO1YV4s6P/6a6DJamg+xpvXYV5UGaL6S8oP4KX4ulVWvZmH0s7DGFILImA==\";         test \"$actual\" = \"$expected\";         if [ \"true\" = \"true\" ]; then           pip install --no-cache-dir \"$artifact\";         else           pip install --no-cache-dir --no-deps \"$artifact\";         fi;         rm -rf /tmp/dist         ;;       *) echo \"unsupported ecosystem: npm\" >&2; exit 2 ;;     esac\n#10 CACHED\n\n#11 [7/9] COPY docker/heldout_probe.py /app/heldout_probe.py\n#11 CACHED\n\n#12 [8/9] COPY docker/heldout_workload_probe.py /app/heldout_workload_probe.py\n#12 DONE 0.1s\n\n#13 [9/9] WORKDIR /sandbox\n#13 DONE 0.1s\n\n#14 exporting to image\n#14 exporting layers\n#14 exporting layers 0.2s done\n#14 exporting manifest sha256:c23ffdd2f64ffda605d9766f64a409ededdb41e5909be922859419594128960a 0.0s done\n#14 exporting config sha256:fc84726852ca9c65ceb01e0bfa0594892de59d22b2f41960f8b20dc858fe353c 0.0s done\n#14 exporting attestation manifest sha256:c939f071d5f6070e1d527e248be5e54737f95220b2081d938b36066c0047a26b 0.0s done\n#14 exporting manifest list sha256:ea55a4d11d4044728f16829fba49c298678e619043c2cdd4e1f43a4720467618\n#14 exporting manifest list sha256:ea55a4d11d4044728f16829fba49c298678e619043c2cdd4e1f43a4720467618 0.0s done\n#14 naming to docker.io/library/mcpgate-heldout:8b83cf8226357b4a done\n#14 unpacking to docker.io/library/mcpgate-heldout:8b83cf8226357b4a 0.1s done\n#14 DONE 0.4s\n\nView build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/wqb67uz7szctrncrfz7ntxjzp\n"
+      },
+      "probe": {
+        "after": {
+          "sandbox/.context/.gitignore": {
+            "contains_marker": false,
+            "sha256": "771a9feadb33eb7ba29943f694987763ea3c9292a713d003380facb91d3f68fb",
+            "size": 70
+          },
+          "sandbox/.context/facts/mcpgate-eligibility.md": {
+            "contains_marker": true,
+            "sha256": "05c2d90a297033a35bd88b73650cb9512197864c4beafeefe731147ab9f08ef3",
+            "size": 38
+          },
+          "sandbox/home/.repomemory/global/.gitignore": {
+            "contains_marker": false,
+            "sha256": "771a9feadb33eb7ba29943f694987763ea3c9292a713d003380facb91d3f68fb",
+            "size": 70
+          },
+          "sandbox/home/.repomemory/global/.search.db": {
+            "contains_marker": false,
+            "sha256": "4550366fcfea2b48c93af692220ea4f20562a2986a94474d7a570ac48eceda15",
+            "size": 20480
+          }
+        },
+        "before": {
+          "sandbox/home/.repomemory/global/.gitignore": {
+            "contains_marker": false,
+            "sha256": "771a9feadb33eb7ba29943f694987763ea3c9292a713d003380facb91d3f68fb",
+            "size": 70
+          },
+          "sandbox/home/.repomemory/global/.search.db": {
+            "contains_marker": false,
+            "sha256": "4550366fcfea2b48c93af692220ea4f20562a2986a94474d7a570ac48eceda15",
+            "size": 20480
+          }
+        },
+        "calls": [
+          {
+            "arguments": {
+              "category": "facts",
+              "content": "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25",
+              "filename": "mcpgate-eligibility",
+              "scope": "repo"
+            },
+            "is_error": false,
+            "result": {
+              "text": "✓ Written to .context/facts/mcpgate-eligibility.md [repo]."
+            },
+            "tool": "context_write"
+          }
+        ],
+        "changed_paths": [
+          "sandbox/.context/.gitignore",
+          "sandbox/.context/facts/mcpgate-eligibility.md"
+        ],
+        "command": "repomemory serve",
+        "elapsed_seconds": 0.994832,
+        "marker": "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25",
+        "marker_paths": [
+          "sandbox/.context/facts/mcpgate-eligibility.md"
+        ],
+        "server_id": "io.github.DanielGuru/repomemory",
+        "status": "HONEST_WORKFLOW_OK"
+      },
+      "container_exit_code": 0,
+      "container_stderr_tail": "repomemory MCP server v1.3.0\n  Root: /sandbox\n  Context: .context/\n  Tools: context_search, context_write, context_delete, context_list, context_read, context_auto_orient\n"
+    },
+    {
+      "candidate": {
+        "id": "io.github.mrfentmen/document-generator-mcp",
+        "workflow_class_candidate": "CONSTRAINED",
+        "ecosystem": "npm",
+        "package": "@mrfentmen/document-generator-mcp",
+        "version": "1.0.1",
+        "integrity": "sha512-AuaoEyo1qjx8LG9qj2Joz1aO1Dmt9ezkBp6iHNCQZAVM2ngDzwl197Z8CXSSZhsKMoln4GHpO/mfCZpq36YKjw==",
+        "binary": "node",
+        "eligibility_args": [
+          "/usr/bin/document-generator-mcp"
+        ]
+      },
+      "image_tag": "mcpgate-heldout:0dd8dc8fe1d895fd",
+      "build": {
+        "status": "BUILD_OK",
+        "elapsed_seconds": 1.176092,
+        "stdout_tail": "",
+        "stderr_tail": "#0 building with \"desktop-linux\" instance using docker driver\n\n#1 [internal] load build definition from Dockerfile.heldout\n#1 transferring dockerfile: 2.21kB done\n#1 DONE 0.0s\n\n#2 [internal] load metadata for docker.io/library/python:3.12-slim\n#2 DONE 0.0s\n\n#3 [internal] load .dockerignore\n#3 transferring context: 266B done\n#3 DONE 0.0s\n\n#4 [internal] load build context\n#4 DONE 0.0s\n\n#5 [1/9] FROM docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea\n#5 resolve docker.io/library/python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea 0.0s done\n#5 DONE 0.0s\n\n#4 [internal] load build context\n#4 transferring context: 2.12kB done\n#4 DONE 0.0s\n\n#6 [2/9] RUN apt-get update && apt-get install -y --no-install-recommends         curl ca-certificates gnupg     && curl -fsSL https://deb.nodesource.com/setup_22.x | bash -     && apt-get install -y --no-install-recommends nodejs     && rm -rf /var/lib/apt/lists/*\n#6 CACHED\n\n#7 [3/9] RUN pip install --no-cache-dir \"mcp==2.1.1\" \"httpx==0.27.2\"\n#7 CACHED\n\n#8 [4/9] RUN set -eux;     case \"npm\" in       npm)         actual=\"$(npm view \"@mrfentmen/document-generator-mcp@1.0.1\" dist.integrity)\";         test \"$actual\" = \"sha512-AuaoEyo1qjx8LG9qj2Joz1aO1Dmt9ezkBp6iHNCQZAVM2ngDzwl197Z8CXSSZhsKMoln4GHpO/mfCZpq36YKjw==\";         npm install -g --ignore-scripts \"@mrfentmen/document-generator-mcp@1.0.1\"         ;;       pypi)         mkdir -p /tmp/dist;         pip download --no-deps --only-binary=:all:           --dest /tmp/dist \"@mrfentmen/document-generator-mcp==1.0.1\";         artifact=\"$(find /tmp/dist -maxdepth 1 -type f | head -n 1)\";         test -n \"$artifact\";         actual=\"$(sha256sum \"$artifact\" | cut -d' ' -f1)\";         expected=\"sha512-AuaoEyo1qjx8LG9qj2Joz1aO1Dmt9ezkBp6iHNCQZAVM2ngDzwl197Z8CXSSZhsKMoln4GHpO/mfCZpq36YKjw==\";         test \"$actual\" = \"$expected\";         if [ \"true\" = \"true\" ]; then           pip install --no-cache-dir \"$artifact\";         else           pip install --no-cache-dir --no-deps \"$artifact\";         fi;         rm -rf /tmp/dist         ;;       *) echo \"unsupported ecosystem: npm\" >&2; exit 2 ;;     esac\n#8 CACHED\n\n#9 [5/9] RUN useradd -m -u 10001 sandbox     && mkdir -p /sandbox /app     && chown -R sandbox:sandbox /sandbox /app\n#9 CACHED\n\n#10 [6/9] COPY src/ /app/src/\n#10 CACHED\n\n#11 [7/9] COPY docker/heldout_probe.py /app/heldout_probe.py\n#11 CACHED\n\n#12 [8/9] COPY docker/heldout_workload_probe.py /app/heldout_workload_probe.py\n#12 DONE 0.1s\n\n#13 [9/9] WORKDIR /sandbox\n#13 DONE 0.1s\n\n#14 exporting to image\n#14 exporting layers\n#14 exporting layers 0.2s done\n#14 exporting manifest sha256:6d6f2b5442898f58e7732be5d5a8531a491834456d9ad05b6457d313b351ad33 0.0s done\n#14 exporting config sha256:95e6b09ebc2984c627c471a487d6778382f0eaf72b0f94ccc9330f840e6adb90 0.0s done\n#14 exporting attestation manifest sha256:1bdff4b939ea11bac2c4ecf72521c191e81e35d6d5cc915fb1787266fae6305a 0.0s done\n#14 exporting manifest list sha256:f20934b34fc46c434918097fcb5d9d0ece03c302100d3db91734ba8fdfb6de2f\n#14 exporting manifest list sha256:f20934b34fc46c434918097fcb5d9d0ece03c302100d3db91734ba8fdfb6de2f 0.0s done\n#14 naming to docker.io/library/mcpgate-heldout:0dd8dc8fe1d895fd done\n#14 unpacking to docker.io/library/mcpgate-heldout:0dd8dc8fe1d895fd 0.1s done\n#14 DONE 0.4s\n\nView build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/q86b9ujfhv7crvjs5hvuwmik1\n"
+      },
+      "probe": {
+        "after": {
+          "sandbox/tmp/evidence.docx": {
+            "contains_marker": true,
+            "sha256": "c8735e91b9aa72da2c6f3babc1b6e7484793c6ade9a540d444c368aa931593d8",
+            "size": 8573
+          },
+          "tmp/evidence.docx": {
+            "contains_marker": true,
+            "sha256": "c8735e91b9aa72da2c6f3babc1b6e7484793c6ade9a540d444c368aa931593d8",
+            "size": 8573
+          }
+        },
+        "before": {},
+        "calls": [
+          {
+            "arguments": {
+              "body": "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25",
+              "filename": "evidence.docx",
+              "title": "MCPGate Eligibility"
+            },
+            "is_error": false,
+            "result": {
+              "text": "Word document written to /tmp/evidence.docx\nTitle: MCPGate Eligibility | Paragraphs: 1"
+            },
+            "tool": "create_doc"
+          }
+        ],
+        "changed_paths": [
+          "sandbox/tmp/evidence.docx",
+          "tmp/evidence.docx"
+        ],
+        "command": "node /usr/bin/document-generator-mcp",
+        "elapsed_seconds": 0.834625,
+        "marker": "MCPGATE_HELDOUT_ELIGIBILITY_2026_09_25",
+        "marker_paths": [
+          "sandbox/tmp/evidence.docx",
+          "tmp/evidence.docx"
+        ],
+        "server_id": "io.github.mrfentmen/document-generator-mcp",
+        "status": "HONEST_WORKFLOW_OK"
+      },
+      "container_exit_code": 0,
+      "container_stderr_tail": ""
+    }
+  ]
+}

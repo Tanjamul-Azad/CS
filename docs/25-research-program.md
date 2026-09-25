@@ -126,7 +126,9 @@ For a proposed effect `a` and approved contract `C`:
 Permit(a, C) = Valid(C) ∧ Matches(a, C) ∧ Unused(C) ∧ Mediated(a)
 ```
 
-- **Valid** — the contract is authentic and unexpired
+- **Valid** — the contract is authentic and unexpired. In the current
+  prototype this remains a trusted-input assumption: canonical identity and
+  immutability are implemented, but signing and expiry validation are not.
 - **Matches** — operation, target and payload fall inside the contract
 - **Unused** — invocation allowance remains
 - **Mediated** — the effect took the enforced path; nothing reached the world around it

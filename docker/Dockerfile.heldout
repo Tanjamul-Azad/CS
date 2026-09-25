@@ -1,0 +1,61 @@
+# Eligibility image for one pre-registered held-out MCP package.
+#
+# Build has network only to fetch the exact pinned artifact. Runtime is launched
+# with --network=none and no host mounts. Package install scripts therefore
+# cannot see repository files or user credentials.
+
+FROM python:3.12-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        curl ca-certificates gnupg \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+ARG HELDOUT_MCP_VERSION=2.1.1
+RUN pip install --no-cache-dir "mcp==$HELDOUT_MCP_VERSION" "httpx==0.27.2"
+
+ARG HELDOUT_ECOSYSTEM
+ARG HELDOUT_PACKAGE
+ARG HELDOUT_VERSION
+ARG HELDOUT_INTEGRITY
+ARG HELDOUT_PYPI_DEPS=true
+
+RUN set -eux; \
+    case "$HELDOUT_ECOSYSTEM" in \
+      npm) \
+        actual="$(npm view "$HELDOUT_PACKAGE@$HELDOUT_VERSION" dist.integrity)"; \
+        test "$actual" = "$HELDOUT_INTEGRITY"; \
+        npm install -g --ignore-scripts "$HELDOUT_PACKAGE@$HELDOUT_VERSION" \
+        ;; \
+      pypi) \
+        mkdir -p /tmp/dist; \
+        pip download --no-deps --only-binary=:all: \
+          --dest /tmp/dist "$HELDOUT_PACKAGE==$HELDOUT_VERSION"; \
+        artifact="$(find /tmp/dist -maxdepth 1 -type f | head -n 1)"; \
+        test -n "$artifact"; \
+        actual="$(sha256sum "$artifact" | cut -d' ' -f1)"; \
+        expected="${HELDOUT_INTEGRITY#sha256:}"; \
+        test "$actual" = "$expected"; \
+        if [ "$HELDOUT_PYPI_DEPS" = "true" ]; then \
+          pip install --no-cache-dir "$artifact"; \
+        else \
+          pip install --no-cache-dir --no-deps "$artifact"; \
+        fi; \
+        rm -rf /tmp/dist \
+        ;; \
+      *) echo "unsupported ecosystem: $HELDOUT_ECOSYSTEM" >&2; exit 2 ;; \
+    esac
+
+RUN useradd -m -u 10001 sandbox \
+    && mkdir -p /sandbox /app \
+    && chown -R sandbox:sandbox /sandbox /app
+
+COPY src/ /app/src/
+COPY docker/heldout_probe.py /app/heldout_probe.py
+COPY docker/heldout_workload_probe.py /app/heldout_workload_probe.py
+
+USER sandbox
+WORKDIR /sandbox
+ENV PYTHONPATH=/app/src
+ENTRYPOINT ["python3", "/app/heldout_probe.py"]

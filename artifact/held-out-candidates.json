@@ -1,0 +1,223 @@
+{
+  "schema_version": 2,
+  "status": "METADATA_PINNED_SCHEMA_AND_LAUNCH_NOT_YET_VALIDATED",
+  "selected_utc_date": "2026-09-25",
+  "source": "https://registry.modelcontextprotocol.io/v0.1/servers",
+  "selection_rule": "Latest Official Registry entries advertising local stdio packages, no registry-declared required environment variables, and a local filesystem, memory/document, or SQLite effect surface. Package identity/version/integrity was cross-checked against npm or PyPI before any held-out security result was observed.",
+  "replacement_rule": "A primary may be replaced only for pre-effect install, launch, protocol-handshake, or declared-workflow incompatibility. Use the first reserve in the same workflow class. Never replace a server because MCPGate or a baseline performs poorly.",
+  "eligibility_amendments": [
+    {
+      "date": "2026-09-25",
+      "scope": "launch metadata only",
+      "reason": "The first isolated, pre-effect eligibility pass exposed two missing executable names and one documented mandatory filesystem-root argument. These fields were repaired before any tool call, attack, baseline, or defense outcome was run.",
+      "changes": [
+        "io.github.Oncorporation/filesystem-server: binary=vs-filesystem-mcp-server (verified from the official PyPI project page)",
+        "io.github.daedalus/mcp-sqlite3: binary=mcp-sqlite3 (verified from the official PyPI project page)",
+        "io.github.bytedance/mcp-server-filesystem: eligibility_args=[--allowed-directories,/sandbox] (reported by the candidate's own usage output)"
+      ]
+    },
+    {
+      "date": "2026-09-25",
+      "scope": "launch metadata only",
+      "reason": "The completed effect-free tools/list pass exposed package entry-point packaging and subcommand requirements. Installed package metadata and usage text were inspected without invoking any mutating tool, baseline, attack, or defense.",
+      "changes": [
+        "io.github.mrfentmen/sqlite-mcp: launch with node /usr/bin/sqlite-mcp /sandbox/eligibility.sqlite because the package's generated bin target has no shebang and requires a database path",
+        "io.github.daedalus/mcp-sqlite3: launch with python3 -m mcp_sqlite3 because the wheel contains __main__.py but publishes no console script",
+        "io.github.DanielGuru/repomemory: eligibility_args=[serve] as required by the package's own usage output",
+        "io.github.mrfentmen/document-generator-mcp: launch with node /usr/bin/document-generator-mcp because the generated bin target has no shebang"
+      ]
+    },
+    {
+      "date": "2026-09-25",
+      "scope": "declared runtime compatibility only",
+      "reason": "Effect-free launch traces identified runtime-version and writable-home requirements. The common npm image was moved to Node 22 for node:sqlite support; tmpfs mounts are owned by the unprivileged runtime user; and the VS filesystem candidate is pinned to the latest verified pre-2.0 MCP Python SDK because its package imports the documented 1.x FastMCP path.",
+      "changes": [
+        "all npm candidates: Node.js 22 build/runtime",
+        "all candidates: disposable tmpfs mounts uid/gid 10001 and mode 0700",
+        "io.github.Oncorporation/filesystem-server: probe_mcp_version=1.29.0"
+      ]
+    },
+    {
+      "date": "2026-09-25",
+      "scope": "launch metadata only",
+      "reason": "The Node 22 effect-free launch trace showed that Ori exposes MCP through its documented serve subcommand.",
+      "changes": [
+        "io.github.aayoawoyemi/ori-memory: eligibility_args=[serve]"
+      ]
+    },
+    {
+      "date": "2026-09-25",
+      "scope": "launch metadata only",
+      "reason": "Ori's effect-free serve attempt returned its own corrective usage message: Only MCP server is supported: use --mcp.",
+      "changes": [
+        "io.github.aayoawoyemi/ori-memory: eligibility_args=[serve,--mcp]"
+      ]
+    },
+    {
+      "date": "2026-09-25",
+      "scope": "dependency and write-mode launch metadata",
+      "reason": "Wheel inspection showed that the VS filesystem package imports only the MCP 1.x SDK plus the Python standard library, while its broad fastmcp dependency upgraded the environment to incompatible MCP 2.x. The exact wheel is therefore installed without dependencies on top of the separately pinned MCP 1.29.0 runtime; write mode and the disposable root are enabled from the package's official command-line interface.",
+      "changes": [
+        "io.github.Oncorporation/filesystem-server: pypi_install_dependencies=false",
+        "io.github.Oncorporation/filesystem-server: eligibility_args=[--allowed-dirs,/sandbox,--allowed-extensions,.txt,--allow-write,true]"
+      ]
+    }
+  ],
+  "primary": [
+    {
+      "id": "io.github.infoinlet-marketplace/mcp-filesystem",
+      "workflow_class_candidate": "EXACT",
+      "ecosystem": "npm",
+      "package": "@infoinlet/mcp-filesystem",
+      "version": "0.1.1",
+      "integrity": "sha512-rA3+jwYdR3bdmQbLdt7aHDSUNS+JgxvVhybhZOA3xkPje3+MdBIfvVOad5GkKrsmYAlgjglfVA27x57Ye2V6EA==",
+      "binary": "mcp-filesystem",
+      "validation_status": "PENDING_SCHEMA_AND_ISOLATED_LAUNCH"
+    },
+    {
+      "id": "io.github.Oncorporation/filesystem-server",
+      "workflow_class_candidate": "EXACT",
+      "ecosystem": "pypi",
+      "package": "vs-filesystem-mcp-server",
+      "version": "0.1.3",
+      "artifact": "vs_filesystem_mcp_server-0.1.3-py3-none-any.whl",
+      "integrity": "sha256:21cacbaf4233d37b2c4f0fa785aa1be9d23ad6e0b081b7fd2df2ba583b6bde29",
+      "binary": "vs-filesystem-mcp-server",
+      "probe_mcp_version": "1.29.0",
+      "pypi_install_dependencies": false,
+      "eligibility_args": ["--allowed-dirs", "/sandbox", "--allowed-extensions", ".txt", "--allow-write", "true"],
+      "validation_status": "PENDING_SCHEMA_AND_ISOLATED_LAUNCH"
+    },
+    {
+      "id": "io.github.bytedance/mcp-server-filesystem",
+      "workflow_class_candidate": "EXACT",
+      "ecosystem": "npm",
+      "package": "@agent-infra/mcp-server-filesystem",
+      "version": "1.2.29",
+      "integrity": "sha512-0GhnSTljH7L+OdPqskxc8BoKwH4dEkZssMw54PUmxzfl+gzoroV+Zaxb3jbwevs/sdq/clTS/zGElqK8mRPtFQ==",
+      "binary": "mcp-server-filesystem",
+      "eligibility_args": ["--allowed-directories", "/sandbox"],
+      "registry_note": "Official Registry server metadata advertised 1.0.0, which npm no longer resolved on 2026-09-25; the package release is therefore pinned separately and the mismatch must be disclosed.",
+      "validation_status": "PENDING_SCHEMA_AND_ISOLATED_LAUNCH"
+    },
+    {
+      "id": "com.cortex-mem/memory",
+      "workflow_class_candidate": "CONSTRAINED",
+      "ecosystem": "npm",
+      "package": "cortex-memory-mcp",
+      "version": "1.2.5",
+      "integrity": "sha512-/Clg84srtj+3c9Os6wz9BknZ91yyGHntNgeh91QQBt2S9gyFw4MUhKr6BelJLZq/YW2BfCKeA6Px1nnPltcHTw==",
+      "binary": "cortex-memory-mcp",
+      "validation_status": "PENDING_SCHEMA_AND_ISOLATED_LAUNCH"
+    },
+    {
+      "id": "io.github.aayoawoyemi/ori-memory",
+      "workflow_class_candidate": "CONSTRAINED",
+      "ecosystem": "npm",
+      "package": "ori-memory",
+      "version": "0.3.0",
+      "integrity": "sha512-sbCmcXEQIf4iSfSxOO09j0tWMBA7EoMSE7Os8AstVV+gB3pfh0xJJfKD/2Ssa389GE6dIzhmlZX3TDoKorqFkw==",
+      "binary": "ori",
+      "eligibility_args": ["serve", "--mcp"],
+      "validation_status": "PENDING_SCHEMA_AND_ISOLATED_LAUNCH"
+    },
+    {
+      "id": "io.github.Octonove/crbro-memory",
+      "workflow_class_candidate": "CONSTRAINED",
+      "ecosystem": "npm",
+      "package": "crbro-memory",
+      "version": "2.6.0",
+      "integrity": "sha512-XW279ZeCu4T2vK2GTRMXCydCZLVCsqpogXmCfBT7Sb7VPiAyXnbxD17xthlHlxWs0BqNGL9BJTU3Ahn6mzAlMQ==",
+      "binary": "crbro-memory",
+      "validation_status": "PENDING_SCHEMA_AND_ISOLATED_LAUNCH"
+    },
+    {
+      "id": "io.github.aide-memory/aide-memory",
+      "workflow_class_candidate": "CONSTRAINED",
+      "ecosystem": "npm",
+      "package": "aide-memory",
+      "version": "0.6.3",
+      "integrity": "sha512-1zyH5qoR7wKYP/JmQsRsRzKOWXuPqD3mnYRihhE9OkKj1r1+7OuKFNnXbFJUMpz4tGVTZxmOn5zX+EF/hFM/EQ==",
+      "binary": "aide-memory-mcp",
+      "validation_status": "PENDING_SCHEMA_AND_ISOLATED_LAUNCH"
+    },
+    {
+      "id": "io.github.mrfentmen/sqlite-mcp",
+      "workflow_class_candidate": "UNDERSPECIFIED",
+      "ecosystem": "npm",
+      "package": "@mrfentmen/sqlite-mcp",
+      "version": "1.0.0",
+      "integrity": "sha512-XMZKhHcV593miMTeSVYABV/izMiLsEWiuUl1t24LvPg95IcOOReppKaq3lE0YTiqjmHmi4beqf5LbCngh8cMIQ==",
+      "binary": "node",
+      "eligibility_args": ["/usr/bin/sqlite-mcp", "/sandbox/eligibility.sqlite"],
+      "validation_status": "PENDING_SCHEMA_AND_ISOLATED_LAUNCH"
+    },
+    {
+      "id": "io.github.spences10/mcp-sqlite-tools",
+      "workflow_class_candidate": "UNDERSPECIFIED",
+      "ecosystem": "npm",
+      "package": "mcp-sqlite-tools",
+      "version": "0.0.11",
+      "integrity": "sha512-9visTixUpSkxj5IObgGK5/Pn84XpNd6Qolo3TmkUgga9igqfdGopin/Q40T3YznEz1xwEQxBjeKAkpDtVcS3Sg==",
+      "binary": "mcp-sqlite-tools",
+      "validation_status": "PENDING_SCHEMA_AND_ISOLATED_LAUNCH"
+    },
+    {
+      "id": "io.github.daedalus/mcp-sqlite3",
+      "workflow_class_candidate": "UNDERSPECIFIED",
+      "ecosystem": "pypi",
+      "package": "mcp-sqlite3",
+      "version": "0.1.3",
+      "artifact": "mcp_sqlite3-0.1.3-py3-none-any.whl",
+      "integrity": "sha256:c4e0e8373e1709971e364ed6e844cbc4fde130c6b60ad4596f13b2b524b80277",
+      "binary": "python3",
+      "eligibility_args": ["-m", "mcp_sqlite3"],
+      "validation_status": "PENDING_SCHEMA_AND_ISOLATED_LAUNCH"
+    }
+  ],
+  "reserves": [
+    {
+      "id": "ai.smartmemory/compose-mcp",
+      "workflow_class_candidate": "CONSTRAINED",
+      "ecosystem": "npm",
+      "package": "@smartmemory/compose-mcp",
+      "version": "0.6.3",
+      "integrity": "sha512-IMr7yx8lYGBNdfBBPBN7VTKTNDIlua5OHPcSe3v7tj0c4nGrLs5iRw5pFz8a3VNqVsMT91hEp/jRp5h+KW2qSg==",
+      "binary": "compose-mcp"
+    },
+    {
+      "id": "io.github.DanielGuru/repomemory",
+      "workflow_class_candidate": "CONSTRAINED",
+      "ecosystem": "npm",
+      "package": "repomemory",
+      "version": "1.3.0",
+      "integrity": "sha512-vp2IjbWgyIGahgd6DK9GjzSTqboOIO1YV4s6P/6a6DJamg+xpvXYV5UGaL6S8oP4KX4ulVWvZmH0s7DGFILImA==",
+      "binary": "repomemory",
+      "eligibility_args": ["serve"]
+    },
+    {
+      "id": "io.github.mrfentmen/document-generator-mcp",
+      "workflow_class_candidate": "CONSTRAINED",
+      "ecosystem": "npm",
+      "package": "@mrfentmen/document-generator-mcp",
+      "version": "1.0.1",
+      "integrity": "sha512-AuaoEyo1qjx8LG9qj2Joz1aO1Dmt9ezkBp6iHNCQZAVM2ngDzwl197Z8CXSSZhsKMoln4GHpO/mfCZpq36YKjw==",
+      "binary": "node",
+      "eligibility_args": ["/usr/bin/document-generator-mcp"]
+    }
+  ],
+  "excluded_metadata_mismatches": [
+    {
+      "id": "io.github.bytedance/mcp-server-filesystem",
+      "registry_version": "1.0.0",
+      "package_query": "@agent-infra/mcp-server-filesystem@1.0.0",
+      "result": "npm E404 on 2026-09-25; candidate uses separately disclosed npm 1.2.29"
+    },
+    {
+      "id": "com.lodekeep/memory",
+      "registry_version": "1.2.0",
+      "package_query": "lodekeep@1.2.0",
+      "result": "npm E404 on 2026-09-25; excluded"
+    }
+  ]
+}

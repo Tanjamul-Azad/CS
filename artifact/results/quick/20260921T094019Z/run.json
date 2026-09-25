@@ -1,0 +1,87 @@
+{
+  "all_commands_passed": true,
+  "commands": [
+    {
+      "command": [
+        "F:\\Python\\python.exe",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "elapsed_seconds": 8.89647,
+      "exit_code": 0,
+      "name": "pytest",
+      "stderr": "pytest.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "pytest.stdout.txt",
+      "stdout_sha256": "6d2f95d22a1a51484210973b7d3ee1c0c4e4998ba491bb398f91a2b99ceb198b"
+    },
+    {
+      "command": [
+        "F:\\Python\\python.exe",
+        "experiments/demo_theorem1.py"
+      ],
+      "elapsed_seconds": 0.071,
+      "exit_code": 0,
+      "name": "theorem1",
+      "stderr": "theorem1.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "theorem1.stdout.txt",
+      "stdout_sha256": "04b2a4549a41c6047891c964ae58d10c2e1653ff9de00a43b416328c68334342"
+    },
+    {
+      "command": [
+        "F:\\Python\\python.exe",
+        "experiments/run_effect_oracle.py"
+      ],
+      "elapsed_seconds": 0.079454,
+      "exit_code": 0,
+      "name": "effect_oracle",
+      "stderr": "effect_oracle.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "effect_oracle.stdout.txt",
+      "stdout_sha256": "b204992fc484c1e1f549aa430ce4c5fe7077525614f3a86b99f28255008bc643"
+    },
+    {
+      "command": [
+        "F:\\Python\\python.exe",
+        "experiments/run_gateway_eval.py"
+      ],
+      "elapsed_seconds": 0.112913,
+      "exit_code": 0,
+      "name": "gateway_eval",
+      "stderr": "gateway_eval.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "gateway_eval.stdout.txt",
+      "stdout_sha256": "19d826b8f95cbb045fd0e7c24f185ec294de748ed4cceb468d12621334b26241"
+    },
+    {
+      "command": [
+        "F:\\Python\\python.exe",
+        "scripts/verify_refs.py"
+      ],
+      "elapsed_seconds": 0.046893,
+      "exit_code": 0,
+      "name": "reference_gate",
+      "stderr": "reference_gate.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "reference_gate.stdout.txt",
+      "stdout_sha256": "617ef42745cc20a5b0a324de53e6463d2e800ec64a456e2cf631d4931244cf96"
+    }
+  ],
+  "created_utc": "2026-09-21T09:40:29.062106+00:00",
+  "git_commit": "5dd5403f60267a4cd8d6858ec6f5452c8f71e5ff",
+  "git_dirty": true,
+  "machine": "AMD64",
+  "packages": {
+    "httpx": "0.27.2",
+    "mcp": "2.1.1",
+    "pydantic": "2.13.4",
+    "pytest": "9.0.3",
+    "requests": "2.32.4"
+  },
+  "platform": "Windows-10-10.0.19045-SP0",
+  "python": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]",
+  "python_executable": "F:\\Python\\python.exe",
+  "schema_version": 1
+}

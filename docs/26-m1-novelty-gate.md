@@ -17,7 +17,8 @@ The gate did its job. It cost two days and it stopped a month of building on cla
 
 ## 1. The system that closes it: AgentBound
 
-**Securing AI Agent Execution**, Bühler et al., [arXiv:2510.21236v1](https://arxiv.org/abs/2510.21236) §2.3, §3.1, §3.2.
+**AgentBound: Securing Execution Boundaries of AI Agents**, B{\"u}hler et al.,
+[DOI 10.1145/3808103](https://doi.org/10.1145/3808103), §§2.3, 3.2--3.3.
 
 Verified to contain, together, everything the program's architecture section proposed:
 
@@ -110,10 +111,15 @@ The abstract retired the broad "transactional agent execution is new" claim. The
 | Transaction unit | one agent operation / message | one MCP invocation |
 | Conflict handling | **pessimistic** — a global mutex guards critical sections before modification | not yet decided; concurrency is an open Mediated() failure mode ([`25`](25-research-program.md) §5) |
 | What rollback restores | **internal execution state** — "selectively replaying only log entries with incomplete status." Section C.2.2: "localized rollback or logical substitution" within its own DAG | **external, real side effects** — a file a server actually wrote |
-| Third-party tools | mediated as part of the Environment entity, but only the call is logged — **"true rollback of external side effects is not addressed"** (direct finding from the source) | this is the entire point of the candidate |
+| Third-party tools | mediated as part of the Environment entity; the paper describes logged actions, localized rollback/replanning, and incomplete-log replay, but does not specify an atomic commit/undo mechanism for arbitrary non-transactional world effects | this is the entire point of the candidate |
 | Write-ahead log content | operation metadata, source/destination entities, intent — an audit trail of *reasoning*, not of *filesystem state* | a byte-level diff of what actually changed on disk |
 
-**The one sentence this buys:** SAFEFLOW's "rollback" is a checkpoint of the agent's own bookkeeping, not a commit/discard over a real external effect. It does not compete with the candidate; it operates one layer up. This must be stated exactly this way — not as "SAFEFLOW doesn't do transactions," which it demonstrably does, but as "SAFEFLOW's transactions do not reach the external system."
+**The one sentence this buys:** SAFEFLOW describes transactional logging,
+localized rollback/replanning, and concurrency control, but it does not specify
+the byte-level commit/discard boundary over an untrusted process's filesystem
+effects that this candidate evaluates. This must not be converted into the
+stronger claim that SAFEFLOW proves external effects cannot be rolled back; the
+paper simply does not establish that property.
 
 ## 5.2 TxOS — kernel-level transactional system calls (2026-09-11)
 

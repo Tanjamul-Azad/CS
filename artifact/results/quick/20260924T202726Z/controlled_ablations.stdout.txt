@@ -1,0 +1,10 @@
+full_mcpgate              failure_exposed=False refused=True; trusted_file_exists=False
+no_allowance_ledger       failure_exposed=True  runner_entries=2; expected_with_full=1
+no_request_shape          failure_exposed=True  runner_saw_hidden=True; decision=COMMITTED
+independent_second_read   failure_exposed=True  decision_matched=True; attacker_bytes_committed=True
+shared_staging            failure_exposed=True  outcomes=['refused', 'refused']; false_refusals=2
+path_policy_only          failure_exposed=True  approved_path_written=True; approved_content=False
+no_outer_namespace        failure_exposed=True  outside_effect=True; trusted_admission_correct=True
+ablation_expectations_met=True
+wrote artifact\results\controlled_ablations.json
+wrote results\tables\controlled_ablations.md

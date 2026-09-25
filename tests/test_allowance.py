@@ -23,8 +23,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import pytest  # noqa: E402
 
-from mcpgate import (AllowanceError, EffectContract, EffectGateway,  # noqa: E402
-                     EffectProposal, FilesystemExecutor, SlotState)
+from mcpgate import (AllowanceError, AllowanceLedger, EffectContract,  # noqa: E402
+                     EffectGateway, EffectProposal, FilesystemExecutor,
+                     SQLiteAllowanceLedger, SlotState)
 
 ARGS = {"path": "a.txt", "content": "x"}
 
@@ -163,6 +164,28 @@ def test_a_contract_cannot_be_edited_after_approval():
         c.binding["path"] = "hacked.txt"
 
 
+def test_nested_contract_values_are_frozen_and_type_sensitive():
+    original = {"rules": {"targets": ["a.txt", "b.txt"]}}
+    c = EffectContract("batch", binding=original)
+    original["rules"]["targets"].append("hacked.txt")
+
+    assert c.check(EffectProposal(
+        "batch", {"rules": {"targets": ["a.txt", "b.txt"]}}
+    )).allowed
+    with pytest.raises(TypeError):
+        c.binding["rules"]["targets"] += ("hacked.txt",)
+
+    bool_contract = EffectContract("set", binding={"value": True})
+    assert not bool_contract.check(EffectProposal("set", {"value": 1})).allowed
+
+
+def test_contract_rejects_ambiguous_or_overlapping_value_definitions():
+    with pytest.raises(TypeError):
+        EffectContract("write", binding={"value": object()})
+    with pytest.raises(ValueError, match="one policy kind"):
+        EffectContract("write", binding={"path": "a"}, free=frozenset({"path"}))
+
+
 def test_a_contract_authorizing_nothing_is_rejected_at_creation():
     with pytest.raises(ValueError):
         EffectContract("write_file", binding={"path": "a"}, max_invocations=0)
@@ -174,3 +197,112 @@ def test_an_unspecified_bounded_field_is_refused():
     c = EffectContract("send", binding={"to": "alice"}, bounded={"count": (1, 3)})
     v = c.check(EffectProposal("send", {"to": "alice"}))
     assert not v.allowed and v.violated_field == "count"
+
+
+def test_allowance_terminal_states_cannot_be_rewritten():
+    ledger = AllowanceLedger()
+    ledger.reserve("contract", "failed", 2)
+    ledger.fail("contract", "failed", "observed failure")
+    with pytest.raises(AllowanceError, match="state FAILED"):
+        ledger.commit("contract", "failed", "late success")
+
+    ledger.reserve("contract", "committed", 2)
+    ledger.commit("contract", "committed", "result")
+    with pytest.raises(AllowanceError, match="state COMMITTED"):
+        ledger.fail("contract", "committed", "late failure")
+
+    with pytest.raises(AllowanceError, match="unreserved"):
+        ledger.commit("missing", "request", "result")
+
+
+# -- durable allowance -----------------------------------------------------
+
+def test_sqlite_ledger_preserves_reserved_unknown_across_restart(tmp_path):
+    path = tmp_path / "allowance.sqlite3"
+    first = SQLiteAllowanceLedger(path)
+    first.reserve("contract", "orphan", 1)
+
+    restarted = SQLiteAllowanceLedger(path)
+    assert restarted.state_of("contract", "orphan") is SlotState.RESERVED
+    assert restarted.unknown_outcomes("contract") == ["orphan"]
+    with pytest.raises(AllowanceError, match="exhausted"):
+        restarted.reserve("contract", "new", 1)
+
+
+def test_sqlite_ledger_replays_committed_result_after_restart(tmp_path):
+    db = tmp_path / "allowance.sqlite3"
+    ex1 = FilesystemExecutor(root=tmp_path / "trusted")
+    first = EffectGateway(
+        server_propose=lambda op, args: EffectProposal(op, dict(args)),
+        executors=[ex1], binding_fields={"path", "content"},
+        allowance=SQLiteAllowanceLedger(db),
+    )
+    contract = EffectContract("write_file", binding=dict(ARGS), max_invocations=1)
+    expected = first.call(
+        "write_file", dict(ARGS), contract=contract, request_id="stable-id",
+    )
+
+    ex2 = FilesystemExecutor(root=tmp_path / "trusted")
+    restarted = EffectGateway(
+        server_propose=lambda op, args: EffectProposal(op, dict(args)),
+        executors=[ex2], binding_fields={"path", "content"},
+        allowance=SQLiteAllowanceLedger(db),
+    )
+    replay = restarted.call(
+        "write_file", dict(ARGS), contract=contract, request_id="stable-id",
+    )
+
+    assert replay == expected
+    assert ex2.written == [], "restart replay must not enter the executor"
+
+
+def test_two_sqlite_ledger_instances_cannot_take_the_same_last_slot(tmp_path):
+    db = tmp_path / "allowance.sqlite3"
+    ledgers = [SQLiteAllowanceLedger(db), SQLiteAllowanceLedger(db)]
+    start = threading.Barrier(2)
+    outcomes: list[str] = []
+
+    def attempt(index: int) -> None:
+        start.wait()
+        try:
+            ledgers[index].reserve("contract", f"r{index}", 1)
+            outcomes.append("reserved")
+        except AllowanceError:
+            outcomes.append("refused")
+
+    threads = [threading.Thread(target=attempt, args=(index,)) for index in range(2)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+
+    assert sorted(outcomes) == ["refused", "reserved"]
+    assert ledgers[0].used("contract") == 1
+
+
+def test_unserializable_durable_result_never_causes_reexecution(tmp_path):
+    class OpaqueExecutor(FilesystemExecutor):
+        def perform(self, proposal):
+            super().perform(proposal)
+            return object()
+
+    db = tmp_path / "allowance.sqlite3"
+    first = EffectGateway(
+        server_propose=lambda op, args: EffectProposal(op, dict(args)),
+        executors=[OpaqueExecutor(root=tmp_path / "trusted")],
+        binding_fields={"path", "content"}, allowance=SQLiteAllowanceLedger(db),
+    )
+    contract = EffectContract("write_file", binding=dict(ARGS), max_invocations=1)
+    first.call("write_file", dict(ARGS), contract=contract, request_id="opaque")
+
+    restarted_executor = FilesystemExecutor(root=tmp_path / "trusted")
+    restarted = EffectGateway(
+        server_propose=lambda op, args: EffectProposal(op, dict(args)),
+        executors=[restarted_executor], binding_fields={"path", "content"},
+        allowance=SQLiteAllowanceLedger(db),
+    )
+    with pytest.raises(AllowanceError, match="result is unavailable"):
+        restarted.call(
+            "write_file", dict(ARGS), contract=contract, request_id="opaque",
+        )
+    assert restarted_executor.written == []

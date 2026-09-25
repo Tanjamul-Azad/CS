@@ -33,10 +33,63 @@ from __future__ import annotations
 
 import hashlib
 import json
-from copy import deepcopy
+import math
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from types import MappingProxyType
 from typing import Any
+
+
+def _freeze_contract_value(value: Any) -> Any:
+    """Recursively freeze the JSON-like values admitted to a contract."""
+
+    if value is None or isinstance(value, (str, bytes, bool, int)):
+        return value
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            raise ValueError("contract floats must be finite")
+        return value
+    if isinstance(value, Mapping):
+        frozen: dict[str, Any] = {}
+        for key, nested in value.items():
+            if not isinstance(key, str):
+                raise TypeError("contract mapping keys must be strings")
+            frozen[key] = _freeze_contract_value(nested)
+        return MappingProxyType(frozen)
+    if isinstance(value, (list, tuple)):
+        return tuple(_freeze_contract_value(item) for item in value)
+    raise TypeError(
+        "contract values must be JSON-like primitives, mappings, sequences, "
+        f"or bytes; got {type(value).__name__}"
+    )
+
+
+def _canonical_contract_value(value: Any) -> list[Any]:
+    """Return an unambiguous, type-tagged representation for identity/equality."""
+
+    if value is None:
+        return ["null"]
+    if isinstance(value, bool):
+        return ["bool", value]
+    if isinstance(value, int):
+        return ["int", str(value)]
+    if isinstance(value, float):
+        return ["float", value.hex()]
+    if isinstance(value, str):
+        return ["str", value]
+    if isinstance(value, bytes):
+        return ["bytes", value.hex()]
+    if isinstance(value, Mapping):
+        return [
+            "map",
+            [
+                [key, _canonical_contract_value(value[key])]
+                for key in sorted(value)
+            ],
+        ]
+    if isinstance(value, tuple):
+        return ["sequence", [_canonical_contract_value(item) for item in value]]
+    raise TypeError(f"unfrozen contract value: {type(value).__name__}")
 
 
 @dataclass(frozen=True)
@@ -120,7 +173,9 @@ class EffectContract:
         `frozen=True` protects the dataclass's own attribute bindings and
         nothing inside them: a caller holding the dict passed as `binding`
         could still change where an approved effect lands, after approval.
-        The dicts are therefore deep-copied and wrapped read-only.
+        Values are therefore recursively normalized into immutable mappings
+        and tuples. Canonical identity uses explicit type tags rather than
+        ``str(value)``, so values such as ``True`` and ``1`` cannot collide.
 
         `contract_id` is derived from the canonical serialized content, so
         two contracts authorizing exactly the same thing share an id, and
@@ -133,20 +188,42 @@ class EffectContract:
                 f"max_invocations must be positive, got {self.max_invocations}; "
                 f"a contract that authorizes nothing should not be created")
 
-        object.__setattr__(self, "binding",
-                           MappingProxyType(deepcopy(dict(self.binding))))
-        object.__setattr__(self, "bounded",
-                           MappingProxyType({k: tuple(v) for k, v
-                                             in self.bounded.items()}))
-        object.__setattr__(self, "free", frozenset(self.free))
+        if not isinstance(self.operation, str) or not self.operation:
+            raise ValueError("contract operation must be a non-empty string")
+        binding = {
+            key: _freeze_contract_value(value)
+            for key, value in self.binding.items()
+        }
+        bounded: dict[str, tuple[Any, Any]] = {}
+        for key, limits in self.bounded.items():
+            if len(limits) != 2:
+                raise ValueError(f"bounded field {key!r} must have (lo, hi)")
+            bounded[key] = (
+                _freeze_contract_value(limits[0]),
+                _freeze_contract_value(limits[1]),
+            )
+        free = frozenset(self.free)
+        names = set(binding) | set(bounded) | set(free)
+        if any(not isinstance(name, str) or not name for name in names):
+            raise ValueError("contract field names must be non-empty strings")
+        overlap = ((set(binding) & set(bounded)) | (set(binding) & free)
+                   | (set(bounded) & free))
+        if overlap:
+            raise ValueError(
+                f"contract fields must have one policy kind: {sorted(overlap)}"
+            )
+
+        object.__setattr__(self, "binding", MappingProxyType(binding))
+        object.__setattr__(self, "bounded", MappingProxyType(bounded))
+        object.__setattr__(self, "free", free)
 
         canonical = json.dumps({
-            "operation": self.operation,
-            "binding": dict(self.binding),
-            "bounded": {k: list(v) for k, v in self.bounded.items()},
+            "operation": _canonical_contract_value(self.operation),
+            "binding": _canonical_contract_value(self.binding),
+            "bounded": _canonical_contract_value(self.bounded),
             "free": sorted(self.free),
             "max_invocations": self.max_invocations,
-        }, sort_keys=True, default=str, separators=(",", ":"))
+        }, sort_keys=True, separators=(",", ":"))
         object.__setattr__(self, "contract_id",
                            hashlib.sha256(canonical.encode()).hexdigest())
         object.__setattr__(self, "canonical", canonical)
@@ -161,7 +238,13 @@ class EffectContract:
                 return Verdict(False, "binding field missing from proposal",
                                name, expected, None)
             proposed = proposal.arguments[name]
-            if proposed != expected:
+            try:
+                proposed_frozen = _freeze_contract_value(proposed)
+            except (TypeError, ValueError) as error:
+                return Verdict(False, f"binding field has unsupported value: {error}",
+                               name, expected, proposed)
+            if (_canonical_contract_value(proposed_frozen)
+                    != _canonical_contract_value(expected)):
                 return Verdict(False, "effect would land elsewhere",
                                name, expected, proposed)
 

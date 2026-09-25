@@ -1,0 +1,58 @@
+{
+  "scope": "development-machine exact single-file microbenchmark; not a third-party-server or release-environment performance claim",
+  "environment": {
+    "platform": "Windows-10-10.0.19045-SP0",
+    "python": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]"
+  },
+  "content_sha256": "a35b3d381a02051b0d0d35ee40a1b12ac30bb8adf39ea02991073fb9f2188ffe",
+  "security_cases": [
+    {
+      "condition": "path_policy_only",
+      "case": "content_substitution",
+      "trusted_bytes_correct": false,
+      "outside_effect": false
+    },
+    {
+      "condition": "trusted_direct_writer",
+      "case": "content_substitution",
+      "trusted_bytes_correct": true,
+      "outside_effect": false
+    },
+    {
+      "condition": "mcpgate_exact_write",
+      "case": "content_substitution",
+      "trusted_bytes_correct": true,
+      "outside_effect": false
+    },
+    {
+      "condition": "mcpgate_exact_write",
+      "case": "unmediated_side_effect",
+      "trusted_bytes_correct": true,
+      "outside_effect": true
+    },
+    {
+      "condition": "trusted_direct_writer",
+      "case": "unmediated_side_effect",
+      "trusted_bytes_correct": true,
+      "outside_effect": false
+    }
+  ],
+  "performance": {
+    "trusted_direct_writer": {
+      "n": 100,
+      "mean_ms": 3.7803,
+      "p50_ms": 3.7432,
+      "p95_ms": 3.8588,
+      "p99_ms": 4.7782
+    },
+    "mcpgate_exact_write": {
+      "n": 100,
+      "mean_ms": 6.271,
+      "p50_ms": 6.2546,
+      "p95_ms": 6.3653,
+      "p99_ms": 6.5303
+    },
+    "p50_ratio_mcpgate_over_direct": 1.671
+  },
+  "decision": "For already-known exact bytes and one local write, the trusted writer is the simpler baseline. MCPGate needs a non-trivial independently verifiable server workload to justify invocation."
+}

@@ -1,5 +1,13 @@
 # Documentation map
 
+> **Current submission sources of truth (2026-09-21):** start with
+> [`../paper/MANUSCRIPT_DRAFT.md`](../paper/MANUSCRIPT_DRAFT.md),
+> [`../paper/CLAIM_EVIDENCE_MATRIX.md`](../paper/CLAIM_EVIDENCE_MATRIX.md),
+> [`../paper/SUBMISSION_ROADMAP.md`](../paper/SUBMISSION_ROADMAP.md), and
+> [`43-integrated-filesystem-mediator.md`](43-integrated-filesystem-mediator.md).
+> The numbered spine below preserves how the research evolved; where an older
+> document conflicts with these four files, the newer source controls.
+
 **In a hurry? Read [`30-project-status-and-contributions.md`](30-project-status-and-contributions.md) alone — it is the consolidated summary of every experiment, every result, and the contribution versus prior work, with a pointer into the full spine for anything it compresses.**
 
 **For the full story in the order it was actually reasoned through, read the twenty-two documents in "The spine" below. Everything else is reference.**
@@ -55,7 +63,16 @@ After those twenty-two you know the problem, the impossibility result, the measu
 | `src/measure/` | Static extraction and the A0–A3 classifier — the corpus measurement |
 | `src/mcpaudit/` | The auditor: relation derivation, R1/R2/R7 checks, calibration |
 | `src/mcpmut/` | The adversary (`proxy.py`) and live MCP session (`live.py`) |
-| `src/mcpgate/` | The contract layer for effect mediation — **prototype, architecture under revision (see `25` §3)** |
+| `src/mcpgate/` | Contract, allowance, and reusable staged-filesystem mediator; research prototype, not a production daemon |
+
+The scoped Phase-2 design for denied-egress network mediation and transactional
+SQLite mediation is in
+[`../paper/NETWORK_SQL_EXTENSION_PLAN.md`](../paper/NETWORK_SQL_EXTENSION_PLAN.md).
+It is a pre-registered plan, not current result evidence.
+
+The authoritative reusable path is now `src/mcpgate/mediator.py`; `gateway.py`
+is a distinct trusted-executor proposal architecture and must not be used as
+evidence for the server-performing staged path.
 
 ---
 
@@ -96,7 +113,10 @@ After those twenty-two you know the problem, the impossibility result, the measu
 
 These survive every replan. Full statements in [`25`](25-research-program.md) §8.
 
-- **Citation quarantine.** No citation enters the paper until a primary source is opened and its identifier recorded. All entries in `paper/references.bib` are still marked `[U]` unverified.
+- **Citation quarantine.** No citation enters the manuscript until a primary
+  source is opened and its identifier recorded. The working bibliography
+  currently contains 21 verified manuscript citations and 41 quarantined
+  `[U]` entries; `scripts/verify_refs.py` rejects any manuscript use of `[U]`.
 - **Pre-registration.** Every evaluation milestone gets its success criterion written down before the run.
 - **Instrument bugs are the default hypothesis.** Two have been found by self-audit: suppressed detections, and an MCP error flag read under a name the SDK does not define, which made 65% of "landed attacks" writes the server had actually refused. Assume a third exists.
 - **Report prevented / detected / UNKNOWN separately.** A refusal and a compromise are opposite events that look identical in world state.

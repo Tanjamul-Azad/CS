@@ -20,6 +20,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN pip install --no-cache-dir uv
 
+# The integrated M2 artifact passes an exact version here and then disables
+# runtime networking. General corpus images leave it empty and retain their
+# existing on-demand package behavior.
+ARG M2_FILESYSTEM_MCP_VERSION=""
+ARG M2_FILESYSTEM_MCP_INTEGRITY=""
+RUN if [ -n "$M2_FILESYSTEM_MCP_VERSION" ]; then \
+        test -n "$M2_FILESYSTEM_MCP_INTEGRITY"; \
+        ACTUAL_INTEGRITY="$(npm view \
+          "filesystem-mcp@$M2_FILESYSTEM_MCP_VERSION" dist.integrity)"; \
+        test "$ACTUAL_INTEGRITY" = "$M2_FILESYSTEM_MCP_INTEGRITY"; \
+        npm install -g "filesystem-mcp@$M2_FILESYSTEM_MCP_VERSION"; \
+    fi
+
 # Non-root: an unvetted package should not run as root even inside a
 # throwaway container.
 RUN useradd -m -u 10001 sandbox

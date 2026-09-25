@@ -1,0 +1,10 @@
+........................................................................ [ 37%]
+......................s................................................. [ 75%]
+...............................................                          [100%]
+============================== warnings summary ===============================
+..\..\..\..\..\Python\Lib\site-packages\_pytest\cacheprovider.py:475
+  F:\Python\Lib\site-packages\_pytest\cacheprovider.py:475: PytestCacheWarning: could not create cache path F:\UIU\12th\CS\Paper work\repo\.pytest_cache\v\cache\nodeids: [WinError 5] Access is denied: 'F:\\UIU\\12th\\CS\\Paper work\\repo\\.pytest_cache\\v\\cache'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+190 passed, 1 skipped, 1 warning in 8.95s

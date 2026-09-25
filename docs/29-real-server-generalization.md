@@ -126,10 +126,10 @@ not the stub we tuned the mechanism against — is the finding.
   — the real write to `/tmp/exfil.dat` already happened and this probe
   does not undo it. Report this as **detection at the contract-check
   layer**, not as proof the external effect was prevented. This is the
-  same rollback-of-external-effects limitation the SAFEFLOW comparison in
-  `26` §5.1 documents in general (*"true rollback of external side effects
-  is not addressed"*) — now observed directly rather than only inferred
-  from a paper's stated design.
+  same distinction highlighted by the SAFEFLOW comparison in `26` §5.1:
+  logging and logical recovery are not evidence that an already-issued,
+  non-transactional external effect was undone. Here the external write is
+  observed directly, so no inference from SAFEFLOW is needed.
 
 ## §2. @modelcontextprotocol/server-filesystem (official reference implementation)
 

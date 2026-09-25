@@ -159,6 +159,12 @@ class EffectGateway:
             # This request_id has been here before. Answer from the record;
             # do not reach the executor a second time.
             if prior.state is SlotState.COMMITTED:
+                if not prior.result_available:
+                    raise AllowanceError(
+                        f"request {rid} committed before restart, but its result "
+                        "is unavailable; reconcile the trusted effect without "
+                        "re-executing it"
+                    )
                 return prior.result
             if prior.state is SlotState.FAILED:
                 raise RuntimeError(

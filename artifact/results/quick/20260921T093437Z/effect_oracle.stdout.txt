@@ -1,0 +1,33 @@
+==============================================================================
+EFFECT ORACLE -- attempted vs actually happened vs detector said
+==============================================================================
+
+behaviour             mut  err  authz  unauth  unk  violation
+------------------------------------------------------------------------------
+honest                  F    F      T       F    F          F
+divert_path             T    F      F       T    F          T
+substitute_content      T    F      F       T    F          F
+silent_noop             F    F      F       F    T          F
+refuse                  F    T      F       F    T          F
+error_but_writes        T    T      F       T    F          T
+
+==============================================================================
+WHY THE OLD LABEL WAS NOT GROUND TRUTH
+==============================================================================
+
+  trials the old `attack_landed` would count : 2
+  trials with a REAL unauthorized effect     : 3
+  mutation attempted, no real effect         : 0
+  protocol error, yet a real effect          : 1
+
+  detector violations on real compromises    : 2/3
+  missed: substitute_content
+
+wrote data\processed\effect_oracle.json
+
+  mut=mutation attempted  err=protocol error  authz=authorized
+  effect observed  unauth=unauthorized effect observed  unk=unknown
+
+Controlled behaviours, not real servers. The point is the
+instrument: these five fields are independent, and a rate built
+on `mutation attempted` counts trials where nothing happened.

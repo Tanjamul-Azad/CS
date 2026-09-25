@@ -1,0 +1,40 @@
+attack                defense        prevented  completed  surfaced
+-------------------------------------------------------------------
+none                  undefended          True       True     False
+none                  detector            True       True     False
+none                  gateway             True       True     False
+path_diversion        undefended         False      False     False
+path_diversion        detector           False      False      True
+path_diversion        gateway             True      False      True
+hidden_extra_field    undefended          True       True     False
+hidden_extra_field    detector            True       True     False
+hidden_extra_field    gateway             True      False      True
+content_substitution  undefended         False      False     False
+content_substitution  detector           False      False     False
+content_substitution  gateway             True      False      True
+silent_noop           undefended          True      False     False
+silent_noop           detector            True      False     False
+silent_noop           gateway             True       True     False
+duplicate_effect      undefended          True       True     False
+duplicate_effect      detector            True       True     False
+duplicate_effect      gateway             True       True      True
+
+===================================================================
+SUMMARY -- attacks this domain can actually express
+===================================================================
+  undefended   prevented 1/3   task completed 0/3   surfaced 0/3
+  detector     prevented 1/3   task completed 0/3   surfaced 1/3
+  gateway      prevented 3/3   task completed 1/3   surfaced 2/3
+
+  honest baseline -- the task must still complete:
+    undefended   completed=True
+    detector     completed=True
+    gateway      completed=True
+
+  excluded, not expressible on a filesystem: hidden_extra_field, duplicate_effect
+
+wrote data\processed\gateway_eval.json
+
+Controlled experiment on a filesystem stub, not a measurement of
+real servers. Attack shapes are taken from what the tampering
+proxy produced against the real corpus; the server is ours.

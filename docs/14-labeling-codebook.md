@@ -123,7 +123,13 @@ This is not a stylistic preference. It is the exact failure mode the automatic c
 
 **`siblings` (Round 2 format).** Each sibling is listed as `name: truncated description`, not name alone. Round 1's sheets showed names only, which is what produced the A0/A2 confusion above — an annotator could not tell a genuinely corroborating sibling from one that merely shares a topic word without seeing what it actually claims to do. If a sibling's description is empty, a placeholder, or otherwise unusable, it is listed as `name: (no usable description)` — treat that sibling as **not** confirming A2, per the rule above.
 
-Label **300 tools**, stratified across servers so that small servers (where A0 is expected to concentrate) are not swamped by a handful of large ones.
+Label the **frozen 265-tool Round-2 sample**, stratified across servers so that
+small servers (where A0 is expected to concentrate) are not swamped by a
+handful of large ones. Do not silently add or remove rows after either
+annotator starts; a new sample requires a new version and new hashes.
+
+Operational instructions, independence rules, and freeze/adjudication steps
+are in [`paper/ROUND2_ANNOTATION_RUNBOOK_BN.md`](../paper/ROUND2_ANNOTATION_RUNBOOK_BN.md).
 
 ---
 

@@ -78,6 +78,14 @@ invariant, not a theorem, per the standing rule.
 
 ### 3.1 Statement
 
+> **Implementation update (2026-09-21).** The authoritative reusable version
+> of this invariant is now `src/mcpgate/mediator.py`, documented in `docs/43`.
+> The earlier probe code quoted below remains the experiment that discovered
+> and demonstrated the two-read bug. The reusable mediator writes the bytes in
+> `FilesystemSnapshot.files` through `_atomic_commit()` and never reopens
+> staging. Its integrated local tests pass; its revised third-party Docker run
+> is pending and is not implied by this code-inspection argument.
+
 **M2 Commit Invariant.** For any invocation processed by the M2-proper
 mediator (`experiments/boundary/probe_m2.py`, post-fix — see `32`), if
 the mediator commits, the bytes present at the committed path are
@@ -145,9 +153,10 @@ human.
   the *approved* directory tree freely; nothing here claims the server
   cannot exfiltrate data it can already see. The claim is entirely about
   integrity of what reaches the committed store.
-- **It is scoped to ONE mediator implementation, run against ONE
-  synthetic adversarial process plus one contract-aware adversary.** Not
-  yet combined with a real M3 server (`31` §"What remains open").
+- **Its current integrated implementation has local adversarial tests, while
+  the prior real-server result exercised older hand-written mediation code.**
+  The revised `FilesystemMediator` adapter must be rerun in Docker before the
+  paper calls the integrated real-server path empirically validated (`43`).
 
 ---
 

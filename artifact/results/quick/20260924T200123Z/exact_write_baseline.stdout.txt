@@ -1,0 +1,25 @@
+{
+  "trusted_direct_writer": {
+    "n": 100,
+    "mean_ms": 3.7536,
+    "p50_ms": 3.7564,
+    "p95_ms": 3.8424,
+    "p99_ms": 4.4128
+  },
+  "mcpgate_exact_write": {
+    "n": 100,
+    "mean_ms": 6.2773,
+    "p50_ms": 6.2474,
+    "p95_ms": 6.3894,
+    "p99_ms": 6.9375
+  },
+  "p50_ratio_mcpgate_over_direct": 1.663
+}
+{"case": "content_substitution", "condition": "path_policy_only", "outside_effect": false, "trusted_bytes_correct": false}
+{"case": "content_substitution", "condition": "trusted_direct_writer", "outside_effect": false, "trusted_bytes_correct": true}
+{"case": "content_substitution", "condition": "mcpgate_exact_write", "outside_effect": false, "trusted_bytes_correct": true}
+{"case": "unmediated_side_effect", "condition": "mcpgate_exact_write", "outside_effect": true, "trusted_bytes_correct": true}
+{"case": "unmediated_side_effect", "condition": "trusted_direct_writer", "outside_effect": false, "trusted_bytes_correct": true}
+For already-known exact bytes and one local write, the trusted writer is the simpler baseline. MCPGate needs a non-trivial independently verifiable server workload to justify invocation.
+wrote artifact\results\exact_write_baseline.json
+wrote results\tables\exact_write_baseline.md

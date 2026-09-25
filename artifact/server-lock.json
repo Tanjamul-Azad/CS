@@ -1,0 +1,9 @@
+{
+  "filesystem_mcp": {
+    "ecosystem": "npm",
+    "package": "filesystem-mcp",
+    "version": "1.3.0",
+    "integrity": "sha512-xL84LD46WmZUGGWdU2Rf6i/oDtMMdwiJ3k3I5bkku51khl7cS88SLKfkUFNa9478GtHjT46wTqTyly7aoNmneQ==",
+    "status": "PINNED_FROM_NPM_REGISTRY_METADATA_2026-09-25"
+  }
+}

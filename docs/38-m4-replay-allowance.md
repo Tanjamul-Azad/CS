@@ -86,9 +86,12 @@ reaches the staging step, let alone the diff.
   `RESERVED` / `UNKNOWN`) — `AllowanceLedger` models this explicitly and
   it is unit-tested in isolation, but not exercised here against the
   M2-proper mediator's own staging/commit flow.
-- **Durability.** `allowance.py`'s own docstring states this plainly:
-  "this is in-process state. It does not survive a restart." Unchanged by
-  this integration.
+- **Exactly-once world effects.** A new `SQLiteAllowanceLedger` durably
+  preserves RESERVED/COMMITTED/FAILED and prevents restart replay, including
+  competition across two backend instances. It cannot determine whether an
+  outside-world effect happened before a crash or atomically commit that effect
+  with the ledger row. Such an orphan remains RESERVED/UNKNOWN and requires a
+  domain-specific oracle.
 
 ## Reproduce
 

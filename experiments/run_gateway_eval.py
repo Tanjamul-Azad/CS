@@ -39,7 +39,8 @@ from mcpaudit import Auditor, Policy  # noqa: E402
 from mcpgate import (AllowanceError, EffectGateway, EffectProposal,  # noqa: E402
                      FILESYSTEM_BINDING_FIELDS, FilesystemExecutor)
 
-OUT = ROOT / "data" / "processed" / "gateway_eval.json"
+OUT = ROOT / "artifact" / "results" / "controlled_baselines.json"
+TABLE = ROOT / "results" / "tables" / "controlled_baselines.md"
 
 # The tool surface both defenses see. Deliberately gives the detector its
 # best case: a keyed read-back sibling AND an enumeration reader, so the
@@ -164,6 +165,34 @@ def run_undefended(attack: Attack, root: Path) -> dict:
     return {"alerted": False, "blocked": False}
 
 
+def run_plain_sandbox(attack: Attack, root: Path) -> dict:
+    """A process/container boundary with no per-call effect policy inside it.
+
+    The temporary root represents the sandbox-visible world. Within that root,
+    the server retains exactly the same write authority as the undefended
+    condition, so the effect result is intentionally identical. The baseline
+    isolates host exposure; it does not bind one invocation's path or bytes.
+    """
+    result = run_undefended(attack, root)
+    return {**result, "sandboxed": True, "policy": "container root only"}
+
+
+def run_path_policy(attack: Attack, root: Path) -> dict:
+    """Task-specific path allowlist, with no predicate over written bytes."""
+    args = attack.divert(INTENT)
+    blocked = args.get("path") != INTENT["path"]
+    if attack.performs and not blocked:
+        for _ in range(attack.repeats):
+            path = root / args["path"]
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(str(args.get("content", "")), encoding="utf-8")
+    return {
+        "alerted": blocked,
+        "blocked": blocked,
+        "policy": "exact approved path; content unconstrained",
+    }
+
+
 # -- condition B: post-hoc detection (the project's auditor) ---------------
 
 def run_detector(attack: Attack, root: Path) -> dict:
@@ -221,8 +250,41 @@ def run_gateway(attack: Attack, root: Path) -> dict:
 
 
 CONDITIONS = [("undefended", run_undefended),
-              ("detector", run_detector),
-              ("gateway", run_gateway)]
+              ("plain_sandbox", run_plain_sandbox),
+              ("response_auditor", run_detector),
+              ("path_policy", run_path_policy),
+              ("trusted_executor_gateway", run_gateway)]
+
+
+def markdown(rows: list[dict]) -> str:
+    lines = [
+        "# Controlled baseline comparison",
+        "",
+        "> Filesystem stub with corpus-derived attack shapes; not a held-out",
+        "> third-party-server result. A plain sandbox intentionally has the",
+        "> same within-sandbox effects as no defense because it adds no per-call",
+        "> path/content policy.",
+        "",
+        "| Attack | Applicable | Condition | Prevented | Task completed | Surfaced |",
+        "|---|---:|---|---:|---:|---:|",
+    ]
+    for row in rows:
+        lines.append(
+            f"| {row['attack']} | {'YES' if row['applicable'] else 'NO'} | "
+            f"{row['defense']} | {'YES' if row['attack_prevented'] else 'NO'} | "
+            f"{'YES' if row['task_completed'] else 'NO'} | "
+            f"{'YES' if row.get('alerted') else 'NO'} |"
+        )
+    lines.extend([
+        "",
+        "The response auditor may surface an attack after execution but does not",
+        "prevent the effect. The path policy blocks diversion but is blind to",
+        "substituted bytes at the allowed path. The trusted-executor gateway is",
+        "the simpler architecture when exact output bytes are already known; the",
+        "server never receives the write capability in that condition.",
+        "",
+    ])
+    return "\n".join(lines)
 
 
 def main() -> None:
@@ -249,6 +311,8 @@ def main() -> None:
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(rows, indent=1, default=str), encoding="utf-8")
+    TABLE.parent.mkdir(parents=True, exist_ok=True)
+    TABLE.write_text(markdown(rows), encoding="utf-8")
 
     print("\n" + "=" * 67)
     print("SUMMARY -- attacks this domain can actually express")
@@ -273,6 +337,7 @@ def main() -> None:
         print("  excluded, not expressible on a filesystem: "
               + ", ".join(skipped))
     print(f"\nwrote {OUT.relative_to(ROOT)}")
+    print(f"wrote {TABLE.relative_to(ROOT)}")
     print("\nControlled experiment on a filesystem stub, not a measurement of")
     print("real servers. Attack shapes are taken from what the tampering")
     print("proxy produced against the real corpus; the server is ours.")
