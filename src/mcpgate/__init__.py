@@ -27,6 +27,11 @@ from .network_broker import (HTTPBrokerRecord, HTTPBrokerRefused,
 from .sqlite_mediator import (SQLiteEffectContract, SQLiteMediationRecord,
                               SQLiteMediationRefused, SQLiteMediationResult,
                               SQLiteMediator, SQLiteState, snapshot_sqlite)
+from .tree_mediator import (ContentPredicate, PathRule, TreeChange,
+                            TreeEffectContract, TreeEntry, TreeMediationRecord,
+                            TreeMediationRefused, TreeMediationResult,
+                            TreeMediator, TreeSnapshot, TreeVerdict, diff_trees,
+                            snapshot_tree)
 
 __all__ = ["AllowanceError", "AllowanceLedger", "SQLiteAllowanceLedger", "SlotState",
            "EffectContract", "EffectProposal", "Verdict", "contract_from_call",
@@ -38,4 +43,8 @@ __all__ = ["AllowanceError", "AllowanceLedger", "SQLiteAllowanceLedger", "SlotSt
            "HTTPBrokerResult", "HTTPRequestContract", "HTTPRequestProposal",
            "TrustedHTTPBroker", "SQLiteEffectContract", "SQLiteMediationRecord",
            "SQLiteMediationRefused", "SQLiteMediationResult", "SQLiteMediator",
-           "SQLiteState", "snapshot_sqlite"]
+           "SQLiteState", "snapshot_sqlite", "ContentPredicate", "PathRule",
+           "TreeChange", "TreeEffectContract", "TreeEntry",
+           "TreeMediationRecord", "TreeMediationRefused",
+           "TreeMediationResult", "TreeMediator", "TreeSnapshot",
+           "TreeVerdict", "diff_trees", "snapshot_tree"]
