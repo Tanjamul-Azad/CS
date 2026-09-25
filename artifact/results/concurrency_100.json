@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-09-25T19:32:34.913498+00:00",
+  "phase": "STOCHASTIC_CONCURRENCY_MECHANISM_100_TRIALS",
+  "trials": 100,
+  "contenders_per_overlap_trial": 8,
+  "A9_overlapping_last_allowance": {
+    "trials_with_exactly_one_commit_and_distinct_stages": 100,
+    "trials_with_more_than_one_commit": 0,
+    "outcome_distribution": {
+      "(1, 7)": 100
+    }
+  },
+  "A8_background_writer": {
+    "trials_refused_at_freeze": 100,
+    "trials_with_any_committed_file": 0,
+    "refusal_distribution": {
+      "refused:freeze": 100
+    }
+  }
+}

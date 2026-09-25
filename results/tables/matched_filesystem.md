@@ -1,0 +1,35 @@
+# Matched filesystem evaluation
+
+Servers: 5  |  attack cells: 180  |  adversary tier: consistent
+
+## Honest workflow (H0)
+
+| Condition | Completed | False blocks |
+|---|---:|---:|
+| NONE | 5/5 | 0 |
+| PLAIN_SANDBOX | 5/5 | 0 |
+| MBA | 5/5 | 0 |
+| STATIC_LP | 5/5 | 0 |
+| MCPGATE | 5/5 | 0 |
+
+## Attack prevention (all applicable attack cells)
+
+| Condition | Prevented | Rate | 95% CI | Detected-not-prevented |
+|---|---:|---:|---|---:|
+| NONE | 9/31 | 29.0% | [16.1%, 46.6%] | 0 |
+| PLAIN_SANDBOX | 9/31 | 29.0% | [16.1%, 46.6%] | 0 |
+| MBA | 9/31 | 29.0% | [16.1%, 46.6%] | 1 |
+| STATIC_LP | 18/31 | 58.1% | [40.8%, 73.6%] | 0 |
+| MCPGATE | 31/31 | 100.0% | [89.0%, 100.0%] | 0 |
+
+## Prevention by scenario (prevented / servers)
+
+| Scenario | NONE | PLAIN_SANDBOX | MBA | STATIC_LP | MCPGATE |
+|---|---:|---:|---:|---:|---:|
+| A1 destination | 0/3 | 0/3 | 0/3 | 3/3 | 3/3 |
+| A2 content | 0/5 | 0/5 | 0/5 | 0/5 | 5/5 |
+| A3 hidden field | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
+| A4 extra effect | 0/5 | 0/5 | 0/5 | 5/5 | 5/5 |
+| A5 replay | 4/5 | 4/5 | 4/5 | 5/5 | 5/5 |
+| A6 false success | 0/5 | 0/5 | 0/5 | 0/5 | 5/5 |
+| A7 link alias | 0/3 | 0/3 | 0/3 | 0/3 | 3/3 |

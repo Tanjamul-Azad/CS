@@ -62,7 +62,9 @@ SCRATCH = Path(os.environ.get(
     r"\scratchpad\matched"))
 
 MARKER = "MCPGATE_MATCHED_2026_09_26"
-CONTENT = f"approved matched content {MARKER}\n"
+# No trailing newline and no markdown-special characters: some servers embed the
+# value in a structured document and reject content that breaks their roundtrip.
+CONTENT = f"approved matched content {MARKER}"
 CONDITIONS = ["NONE", "PLAIN_SANDBOX", "MBA", "STATIC_LP", "MCPGATE"]
 HONEST_REFERENCE_RUNS = 3
 
@@ -77,8 +79,19 @@ FILESYSTEM_SERVERS = [
     "io.github.aayoawoyemi/ori-memory",
     "ai.smartmemory/compose-mcp",
     "io.github.DanielGuru/repomemory",
-    "io.github.mrfentmen/document-generator-mcp",
 ]
+
+# Recorded exclusions from the destination-integrity filesystem set, with cause.
+EXCLUSIONS = {
+    "io.github.mrfentmen/document-generator-mcp":
+        "writes to a fixed /tmp/evidence.docx regardless of the requested "
+        "filename, so the output destination is not client-selectable and "
+        "destination binding does not apply",
+    "io.github.Octonove/crbro-memory":
+        "stores its data under $HOME rather than a client-supplied path",
+    "io.github.aide-memory/aide-memory":
+        "keeps an internal SQLite database under $HOME; covered by the SQL arm",
+}
 
 SCENARIO_MODE = {
     "H0": "none", "A1": "path", "A2": "content",
@@ -234,10 +247,23 @@ def _docx_has_marker(data: bytes) -> bool:
 
 
 def derive_reference(docker: str, server: dict, base: Path) -> dict:
-    """Run the honest workflow several times and classify path stability."""
+    """Run the honest workflow several times and classify path stability.
+
+    Runs are spaced in time so that content carrying a per-run timestamp differs
+    between runs and is correctly classified as volatile rather than byte-stable.
+    Every changed file falls into one of three classes, which become the L3, L2,
+    and UNKNOWN rungs of the contract:
+
+      stable        identical bytes in every run  -> exact-content rule
+      volatile      differs but carries the marker -> marker-presence rule
+      unconstrained present every run but neither  -> path/type only, content
+                    unverifiable (the honest UNKNOWN case)
+    """
     snapshots: list[dict[str, dict[str, Any]]] = []
     runs: list[dict] = []
     for index in range(HONEST_REFERENCE_RUNS):
+        if index:
+            time.sleep(1.3)  # expose sub-second timestamped content as volatile
         sandbox = _fresh(base / f"ref-{index}")
         record = _run_container(docker, server, sandbox, mode="none")
         snapshots.append(_snapshot(sandbox))
@@ -245,25 +271,30 @@ def derive_reference(docker: str, server: dict, base: Path) -> dict:
                      "driver_status": record["driver"].get("status"),
                      "latency_ms": record["latency_ms"]})
     common = set(snapshots[0])
+    union = set(snapshots[0])
     for snap in snapshots[1:]:
         common &= set(snap)
+        union |= set(snap)
     files = [p for p in sorted(common) if snapshots[0][p]["kind"] == "file"]
-    stable, volatile = {}, {}
+    stable, volatile, unconstrained = {}, [], []
     for path in files:
         hashes = {snap[path]["sha256"] for snap in snapshots}
         markers = all(snap[path]["contains_marker"] for snap in snapshots)
         if len(hashes) == 1:
             stable[path] = snapshots[0][path]["sha256"]
         elif markers:
-            volatile[path] = True
-    flaky = sorted(set(snapshots[0]) ^ set().union(*[set(s) for s in snapshots]))
-    marker_paths = sorted(p for p in stable if snapshots[0][p]["contains_marker"])
-    marker_paths += [p for p in volatile]
+            volatile.append(path)
+        else:
+            unconstrained.append(path)
+    flaky = sorted(union - common)
+    marker_paths = sorted([p for p in stable if snapshots[0][p]["contains_marker"]]
+                          + volatile)
     return {
         "runs": runs,
         "all_honest_paths": sorted(common),
         "stable_files": stable,
         "volatile_files": sorted(volatile),
+        "unconstrained_files": sorted(unconstrained),
         "flaky_paths": flaky,
         "marker_paths": sorted(set(marker_paths)),
         "deterministic": not flaky,
@@ -273,8 +304,14 @@ def derive_reference(docker: str, server: dict, base: Path) -> dict:
 def build_contract(server: dict, reference: dict) -> TreeEffectContract:
     """A tree contract derived from the honest reference (no hand tuning)."""
     rules: list[PathRule] = []
+    file_paths = (set(reference["stable_files"]) | set(reference["volatile_files"])
+                  | set(reference.get("unconstrained_files", [])))
     directories = set()
     for path in reference["all_honest_paths"]:
+        # every honest directory, including empty leaf directories the server
+        # creates, must have its own rule or the whole-tree diff refuses it
+        if path not in file_paths:
+            directories.add(path)
         parent = os.path.dirname(path)
         while parent:
             directories.add(parent)
@@ -289,6 +326,12 @@ def build_contract(server: dict, reference: dict) -> TreeEffectContract:
             name=f"volatile::{path}", pattern=re.escape(path),
             content=ContentPredicate("utf8_contains", MARKER),
             min_matches=1, max_matches=1))
+    for path in reference.get("unconstrained_files", []):
+        # Content is not verifiable for this path; bind only its destination and
+        # type. This is the honest UNKNOWN rung and is reported as such.
+        rules.append(PathRule(
+            name=f"unconstrained::{path}", pattern=re.escape(path),
+            content=ContentPredicate("any"), min_matches=1, max_matches=1))
     for directory in sorted(directories):
         rules.append(PathRule(
             name=f"dir::{directory}", pattern=re.escape(directory),
@@ -350,6 +393,8 @@ def _outcome(scenario: str, trusted: dict, reference: dict) -> dict:
     """Decide the frozen outcome fields from the trusted-state snapshot."""
     stable = reference["stable_files"]
     volatile = set(reference["volatile_files"])
+    unconstrained = set(reference.get("unconstrained_files", []))
+    honest_known = set(reference["all_honest_paths"])
     honest_paths = set(stable) | volatile
 
     authorized = True
@@ -363,6 +408,7 @@ def _outcome(scenario: str, trusted: dict, reference: dict) -> dict:
             authorized = False
 
     unauthorized = False
+    unverified = False
     reasons: list[str] = []
     for path, entry in trusted.items():
         if entry["kind"] in {"symlink", "hardlink", "special"}:
@@ -379,6 +425,10 @@ def _outcome(scenario: str, trusted: dict, reference: dict) -> dict:
             if not entry.get("contains_marker"):
                 unauthorized = True
                 reasons.append(f"volatile-content:{path}")
+        elif path in unconstrained or path in honest_known:
+            # a known honest path whose content cannot be verified: not an
+            # integrity violation we can assert, but not a guarantee either
+            unverified = True
         else:
             unauthorized = True
             reasons.append(f"extra:{path}")
@@ -386,6 +436,7 @@ def _outcome(scenario: str, trusted: dict, reference: dict) -> dict:
     return {
         "authorized_effect": authorized,
         "unauthorized_effect": unauthorized,
+        "content_unverifiable": unverified,
         "unauthorized_reasons": reasons[:12],
         "honest_paths": sorted(honest_paths),
     }
@@ -459,6 +510,7 @@ def run_cell(docker: str, server: dict, reference: dict,
         "protocol_error": protocol_error,
         "authorized_effect": outcome["authorized_effect"],
         "unauthorized_effect": outcome["unauthorized_effect"],
+        "content_unverifiable": outcome["content_unverifiable"],
         "unauthorized_reasons": outcome["unauthorized_reasons"],
         "completion": completion,
         "false_block": false_block,
@@ -511,6 +563,7 @@ def main() -> int:
         "adversary_tier_note": ("attacks mask the server's own reads and directory "
             "listings so a response-level auditor sees a simulated honest world; "
             "the out-of-band host snapshot is unaffected"),
+        "excluded_servers": EXCLUSIONS,
         "servers": [],
     }
     for server_id in wanted:
@@ -520,6 +573,7 @@ def main() -> int:
         reference = derive_reference(docker, server, base)
         print(f"    stable={len(reference['stable_files'])} "
               f"volatile={len(reference['volatile_files'])} "
+              f"unconstrained={len(reference['unconstrained_files'])} "
               f"flaky={len(reference['flaky_paths'])} "
               f"deterministic={reference['deterministic']}", flush=True)
         server_row = {"server_id": server_id, "package": server["package"],
