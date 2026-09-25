@@ -1,0 +1,233 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-09-25T18:24:23.972483+00:00",
+  "phase": "POST_FREEZE_HONEST_SQL_INTEGRATION_NO_SECURITY_OUTCOMES",
+  "matched_attack_calls": 0,
+  "matched_defense_conditions": 0,
+  "manifest_sha256": "5b8e17907091047c6db894c7326d8494389816012c5dbd8cc173fd9f25138851",
+  "evaluation_plan_sha256": "6385b2318cc38bf260f9426db4a2acf838f5a82b39596cf865f6ba484eb4b929",
+  "probe_sha256": "68ff108ace2d0dd326d2129869208ca58e226b4321dda0bc00d4c6452fe828d6",
+  "docker_server_version": "29.7.2",
+  "rows": [
+    {
+      "server_id": "io.github.mrfentmen/sqlite-mcp",
+      "package": "@mrfentmen/sqlite-mcp",
+      "version": "1.0.0",
+      "integrity": "sha512-XMZKhHcV593miMTeSVYABV/izMiLsEWiuUl1t24LvPg95IcOOReppKaq3lE0YTiqjmHmi4beqf5LbCngh8cMIQ==",
+      "image_tag": "mcpgate-heldout:fc6127e3646c4b73",
+      "manifest_image_id": "sha256:ad16eaab1c77f0fde8777a18fd2de320dbefa99605d4a1cb1e3be249fe9055fd",
+      "inspected_image_id": "sha256:647aca1e009895c3519c8241b036e0dadd25e7af498682ac9a827edd51ffd90e",
+      "runtime_image_reference": "sha256:647aca1e009895c3519c8241b036e0dadd25e7af498682ac9a827edd51ffd90e",
+      "request": {
+        "calls": [
+          {
+            "tool": "execute",
+            "sql": "CREATE TABLE evidence(value TEXT)"
+          },
+          {
+            "tool": "execute",
+            "sql": "INSERT INTO evidence VALUES (?)",
+            "params": [
+              "MCPGATE_SQL_INTEGRATION_2026_09_26"
+            ]
+          }
+        ]
+      },
+      "status": "HONEST_COMMITTED",
+      "before_sha256": "2c501df9bfc39d08e2f99ff0b24a9a1525e9a28c999f3ea1fd92303e87695771",
+      "after_sha256": "12a60e03c712b85265b25fa2559ebd609bda78ea8c72283c7c242386e1aa7ee5",
+      "trusted_state_matches": true,
+      "container": {
+        "exit_code": 0,
+        "stderr_tail": "MCP server running on stdio\n(node:7) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+        "runtime_command": [
+          "C:\\Users\\User\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.EXE",
+          "run",
+          "--rm",
+          "--network=none",
+          "--read-only",
+          "--memory=512m",
+          "--cpus=1",
+          "--pids-limit=256",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--mount",
+          "type=bind,src=C:\\Users\\User\\AppData\\Local\\Temp\\mcpgate-sql-integration-jyi97ia9\\stage\\inv-20688d0a6ad4bd8269de68fe,dst=/sandbox",
+          "--mount",
+          "type=bind,src=F:\\UIU\\12th\\CS\\Paper work\\repo\\docker\\heldout_sql_integration_probe.py,dst=/app/sql_probe.py,readonly",
+          "--entrypoint",
+          "python3",
+          "sha256:647aca1e009895c3519c8241b036e0dadd25e7af498682ac9a827edd51ffd90e",
+          "/app/sql_probe.py",
+          "--server-id",
+          "io.github.mrfentmen/sqlite-mcp",
+          "--command",
+          "node /usr/bin/sqlite-mcp /sandbox/database.sqlite"
+        ],
+        "probe": {
+          "calls": [
+            {
+              "arguments": {
+                "sql": "CREATE TABLE evidence(value TEXT)"
+              },
+              "is_error": false,
+              "result": {
+                "changes": "0",
+                "lastInsertRowid": "0"
+              },
+              "tool": "execute"
+            },
+            {
+              "arguments": {
+                "params": [
+                  "MCPGATE_SQL_INTEGRATION_2026_09_26"
+                ],
+                "sql": "INSERT INTO evidence VALUES (?)"
+              },
+              "is_error": false,
+              "result": {
+                "changes": "1",
+                "lastInsertRowid": "1"
+              },
+              "tool": "execute"
+            }
+          ],
+          "command": "node /usr/bin/sqlite-mcp /sandbox/database.sqlite",
+          "database": "/sandbox/database.sqlite",
+          "marker": "MCPGATE_SQL_INTEGRATION_2026_09_26",
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "status": "HONEST_WORKFLOW_OK"
+        }
+      }
+    },
+    {
+      "server_id": "io.github.daedalus/mcp-sqlite3",
+      "package": "mcp-sqlite3",
+      "version": "0.1.3",
+      "integrity": "sha256:c4e0e8373e1709971e364ed6e844cbc4fde130c6b60ad4596f13b2b524b80277",
+      "image_tag": "mcpgate-heldout:95155fbf085ceaae",
+      "manifest_image_id": "sha256:be969458fdbeef5e33a2a13bc3fb9da27c270d971f6d21df83343e5085ba84bd",
+      "inspected_image_id": "sha256:f069929577d84bc804f42c82901a812d92140a3b632cea0160bcb7b4e7270cfe",
+      "runtime_image_reference": "sha256:f069929577d84bc804f42c82901a812d92140a3b632cea0160bcb7b4e7270cfe",
+      "request": {
+        "calls": [
+          {
+            "tool": "connect_database",
+            "database": "private"
+          },
+          {
+            "tool": "execute_query",
+            "sql": "CREATE TABLE evidence(value TEXT)"
+          },
+          {
+            "tool": "execute_query",
+            "sql": "INSERT INTO evidence VALUES (?)",
+            "params": [
+              "MCPGATE_SQL_INTEGRATION_2026_09_26"
+            ]
+          },
+          {
+            "tool": "commit"
+          }
+        ]
+      },
+      "status": "HONEST_COMMITTED",
+      "before_sha256": "2c501df9bfc39d08e2f99ff0b24a9a1525e9a28c999f3ea1fd92303e87695771",
+      "after_sha256": "12a60e03c712b85265b25fa2559ebd609bda78ea8c72283c7c242386e1aa7ee5",
+      "trusted_state_matches": true,
+      "container": {
+        "exit_code": 0,
+        "stderr_tail": "\n\n\u00e2\u2022\u00ad\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u2022\u00ae\n\u00e2\u201d\u201a                                                                              \u00e2\u201d\u201a\n\u00e2\u201d\u201a                                                                              \u00e2\u201d\u201a\n\u00e2\u201d\u201a                         \u00e2\u2013\u201e\u00e2\u2013\u20ac\u00e2\u2013\u20ac \u00e2\u2013\u201e\u00e2\u2013\u20ac\u00e2\u2013\u02c6 \u00e2\u2013\u02c6\u00e2\u2013\u20ac\u00e2\u2013\u20ac \u00e2\u2013\u20ac\u00e2\u2013\u02c6\u00e2\u2013\u20ac \u00e2\u2013\u02c6\u00e2\u2013\u20ac\u00e2\u2013\u201e\u00e2\u2013\u20ac\u00e2\u2013\u02c6 \u00e2\u2013\u02c6\u00e2\u2013\u20ac\u00e2\u2013\u20ac \u00e2\u2013\u02c6\u00e2\u2013\u20ac\u00e2\u2013\u02c6                        \u00e2\u201d\u201a\n\u00e2\u201d\u201a                         \u00e2\u2013\u02c6\u00e2\u2013\u20ac  \u00e2\u2013\u02c6\u00e2\u2013\u20ac\u00e2\u2013\u02c6 \u00e2\u2013\u201e\u00e2\u2013\u201e\u00e2\u2013\u02c6  \u00e2\u2013\u02c6  \u00e2\u2013\u02c6 \u00e2\u2013\u20ac \u00e2\u2013\u02c6 \u00e2\u2013\u02c6\u00e2\u2013\u201e\u00e2\u2013\u201e \u00e2\u2013\u02c6\u00e2\u2013\u20ac\u00e2\u2013\u20ac                        \u00e2\u201d\u201a\n\u00e2\u201d\u201a                                                                              \u00e2\u201d\u201a\n\u00e2\u201d\u201a                                                                              \u00e2\u201d\u201a\n\u00e2\u201d\u201a                                                                              \u00e2\u201d\u201a\n\u00e2\u201d\u201a                                FastMCP 4.0.10                                \u00e2\u201d\u201a\n\u00e2\u201d\u201a                            https://gofastmcp.com                             \u00e2\u201d\u201a\n\u00e2\u201d\u201a                                                                              \u00e2\u201d\u201a\n\u00e2\u201d\u201a                  \u00f0\u0178\u2013\u00a5  Server:      mcp-sqlite3, 4.0.10                         \u00e2\u201d\u201a\n\u00e2\u201d\u201a                  \u00f0\u0178\u0161\u20ac Deploy free: https://horizon.prefect.io                  \u00e2\u201d\u201a\n\u00e2\u201d\u201a                                                                              \u00e2\u201d\u201a\n\u00e2\u2022\u00b0\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u2022\u00af\n\n\n[09/25/26 18:24:27] INFO     Starting MCP server 'mcp-sqlite3'  transport.py:242\n                             with transport 'stdio'                             \n",
+        "runtime_command": [
+          "C:\\Users\\User\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.EXE",
+          "run",
+          "--rm",
+          "--network=none",
+          "--read-only",
+          "--memory=512m",
+          "--cpus=1",
+          "--pids-limit=256",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--mount",
+          "type=bind,src=C:\\Users\\User\\AppData\\Local\\Temp\\mcpgate-sql-integration-m8w6vuii\\stage\\inv-9ca7eddcab91f0f1a2ec5e76,dst=/sandbox",
+          "--mount",
+          "type=bind,src=F:\\UIU\\12th\\CS\\Paper work\\repo\\docker\\heldout_sql_integration_probe.py,dst=/app/sql_probe.py,readonly",
+          "--entrypoint",
+          "python3",
+          "sha256:f069929577d84bc804f42c82901a812d92140a3b632cea0160bcb7b4e7270cfe",
+          "/app/sql_probe.py",
+          "--server-id",
+          "io.github.daedalus/mcp-sqlite3",
+          "--command",
+          "python3 -m mcp_sqlite3"
+        ],
+        "probe": {
+          "calls": [
+            {
+              "arguments": {
+                "conn_id": "4d1ff286-acdf-40a3-b21e-478157964d72",
+                "sql": "CREATE TABLE evidence(value TEXT)"
+              },
+              "is_error": false,
+              "result": {
+                "columns": [],
+                "data": {
+                  "cursor_id": "9cfc801b-5103-4cd1-9727-a5e2d966046d",
+                  "rows": []
+                },
+                "error": null,
+                "lastrowid": 0,
+                "rowcount": -1,
+                "success": true
+              },
+              "tool": "execute_query"
+            },
+            {
+              "arguments": {
+                "conn_id": "4d1ff286-acdf-40a3-b21e-478157964d72",
+                "params": [
+                  "MCPGATE_SQL_INTEGRATION_2026_09_26"
+                ],
+                "sql": "INSERT INTO evidence VALUES (?)"
+              },
+              "is_error": false,
+              "result": {
+                "columns": [],
+                "data": {
+                  "cursor_id": "f0014d68-fd97-4c9e-9f64-d649273ea5c7",
+                  "rows": []
+                },
+                "error": null,
+                "lastrowid": 1,
+                "rowcount": 1,
+                "success": true
+              },
+              "tool": "execute_query"
+            },
+            {
+              "arguments": {
+                "conn_id": "4d1ff286-acdf-40a3-b21e-478157964d72"
+              },
+              "is_error": false,
+              "result": {
+                "columns": null,
+                "data": null,
+                "error": null,
+                "lastrowid": null,
+                "rowcount": null,
+                "success": true
+              },
+              "tool": "commit"
+            }
+          ],
+          "command": "python3 -m mcp_sqlite3",
+          "database": "/sandbox/database.sqlite",
+          "marker": "MCPGATE_SQL_INTEGRATION_2026_09_26",
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "status": "HONEST_WORKFLOW_OK"
+        }
+      }
+    }
+  ]
+}

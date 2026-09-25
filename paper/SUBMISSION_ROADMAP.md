@@ -314,9 +314,11 @@ properties without inventing an experimental result.
 - [ ] Implement and evaluate SQLite effect mediation using a private database
       copy or controlled transaction and trusted before/after diff. The local
       private-copy core now compares complete schema and ordered row state and
-      atomically promotes a match; adversarial unit tests pass. Both frozen
-      real SQLite servers, writer closure, WAL integration, baselines, and raw
-      outcomes remain open. Do not generalize a SQLite result to PostgreSQL/MySQL.
+      atomically promotes a match; adversarial unit tests pass. Honest
+      integration now passes on both frozen SQLite servers after a disclosed
+      pre-outcome workflow correction. Writer-closure attacks, WAL attack
+      integration, matched baselines, and security outcomes remain open. Do
+      not generalize a SQLite result to PostgreSQL/MySQL.
 - [ ] Process-spawn mediation.
 - [ ] Natural-language-to-contract security evaluation.
 - [ ] User study of confirmation prompts.

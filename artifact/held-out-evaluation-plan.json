@@ -1,12 +1,22 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "status": "FROZEN_PRE_OUTCOME",
   "frozen_utc": "2026-09-25T18:03:04.0258309Z",
   "source_manifest": "artifact/held-out-manifest.json",
-  "source_manifest_sha256": "445c14f0c6d2def5758c4146c80b4ae0631cf60418eab4a00a6e09a6efe029d4",
+  "source_manifest_sha256": "5b8e17907091047c6db894c7326d8494389816012c5dbd8cc173fd9f25138851",
   "source_commit": "cddb769d2e38ece4ea45471037f7891347b029d6",
   "freeze_boundary": "before matched attack or defense outcomes are executed or inspected",
   "outcomes_observed_before_freeze": false,
+  "amendments": [
+    {
+      "refrozen_utc": "2026-09-25T18:17:35.8696811Z",
+      "server_id": "io.github.mrfentmen/sqlite-mcp",
+      "security_outcomes_observed": false,
+      "reason": "An honest compatibility run proved that the server executes only the first statement in the previously frozen stacked SQL call.",
+      "change": "Use separate CREATE and parameterized INSERT calls and require a trusted semantic row oracle. Scenario, condition, repetition, and decision rules are unchanged.",
+      "raw_failure_retained_at": "artifact/results/heldout_sql_integration.json"
+    }
+  ],
   "experimental_unit": "one server by scenario by condition trial",
   "cluster_unit": "server implementation",
   "conditions": [
@@ -227,7 +237,8 @@
   },
   "implementation_gates": {
     "generalized_filesystem_contracts": "OPEN",
-    "sqlite_semantic_diff_and_private_commit": "PROTOTYPE_TESTED_LOCALLY_PENDING_REAL_SERVER_INTEGRATION",
+    "network_exact_broker_and_direct_egress_boundary": "LOCAL_BOUNDARY_INTEGRATION_PASS_REAL_MCP_MATCHED_SECURITY_OUTCOMES_NOT_RUN",
+    "sqlite_semantic_diff_and_private_commit": "HONEST_REAL_SERVER_INTEGRATION_2_OF_2_PASS_MATCHED_SECURITY_OUTCOMES_NOT_RUN",
     "trusted_descendant_closure": "OPEN",
     "matched_condition_runner": "OPEN",
     "raw_results": "NOT_RUN"

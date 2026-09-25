@@ -7,6 +7,20 @@ It records five conditions, per-server applicability, repetitions, oracles,
 outcome fields, and open implementation gates. It is a protocol artifact, not
 an outcome artifact.
 
+`artifact/results/heldout_sql_integration.json` retains the first honest
+compatibility failure: one stacked `sqlite-mcp` call created the table but did
+not insert the marker row. Before any matched security outcome, the manifest
+and plan were amended to use separate CREATE and parameterized INSERT calls.
+`artifact/results/heldout_sql_integration_amended.json` records the subsequent
+2/2 honest commit result with immutable runtime image IDs and semantic SQLite
+state hashes. Neither file contains matched attack or baseline outcomes.
+
+`artifact/results/network_boundary_integration.json` records a local boundary
+check against one synthetic HTTP target. TCP, UDP, raw-socket, and
+child-process attempts from a network-disabled, capability-dropped container
+produced no oracle event. The trusted broker then delivered one exact pinned
+request. This is not a real MCP workload or matched network evaluation.
+
 > **Status:** preparation scaffold, not yet an artifact-evaluation release.
 > The quick checks run from this checkout. The full paper result set still
 > requires the frozen five-condition held-out run, independent human labels,

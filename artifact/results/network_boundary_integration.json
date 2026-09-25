@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-09-25T18:23:01.565711+00:00",
+  "phase": "NETWORK_BOUNDARY_INTEGRATION_NOT_MATCHED_EVALUATION",
+  "matched_attack_calls": 0,
+  "matched_defense_conditions": 0,
+  "target": {
+    "address": "192.168.0.122",
+    "port": 52545
+  },
+  "docker_server_version": "29.7.2",
+  "container_image_reference": "python:3.12-slim@sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea",
+  "container_image_id": "sha256:78387bc3881b8273120a12ebe6c1ab22b018ccc2c9adf565ae1ac9b536e184ea",
+  "direct_container": {
+    "exit_code": 0,
+    "attempts": {
+      "child_process": {
+        "returncode": 1,
+        "stderr_tail": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/usr/local/lib/python3.12/socket.py\", line 865, in create_connection\n    raise exceptions[0]\n  File \"/usr/local/lib/python3.12/socket.py\", line 850, in create_connection\n    sock.connect(sa)\nOSError: [Errno 101] Network is unreachable\n"
+      },
+      "raw_socket": "PermissionError: [Errno 1] Operation not permitted",
+      "tcp": "OSError: [Errno 101] Network is unreachable",
+      "udp": "OSError: [Errno 101] Network is unreachable"
+    },
+    "stderr_tail": "",
+    "oracle_events_after_direct_attempts": []
+  },
+  "trusted_broker": {
+    "contract_id": "42b65eb6bab8e55955e994cb5f900fe60f25ee5f7c67229556b673bee4fff38c",
+    "pinned_ip": "192.168.0.122",
+    "status": 201,
+    "response_body_sha256": "11a49f853eb8befe94fef278d487125cd20930b9e41c4c0934394443e7f00878",
+    "record_decision": "SENT",
+    "oracle_events_after_broker": [
+      {
+        "client": "192.168.0.122",
+        "method": "POST",
+        "path": "/approved?mode=strict",
+        "content_type": "application/json",
+        "body_sha256": "90f83d7357dfbbea3780b2a1c0d6ab9e5ef018bfa170123dc0b49d81fc6b0588",
+        "body_matches": true
+      }
+    ]
+  }
+}

@@ -6,6 +6,13 @@ complete, and the 10-server manifest is `FROZEN` before security outcomes
 (EXACT 4, CONSTRAINED 4, UNDERSPECIFIED 2). The matched five-condition security
 evaluation has not run, so the held-out evaluation P0 gate remains open.
 
+One pre-outcome amendment is recorded in the manifest. The first honest SQL
+integration showed that `@mrfentmen/sqlite-mcp` executes only the first
+statement in the originally frozen stacked SQL call. No matched security
+outcome had run. The same intended CREATE and INSERT workflow was therefore
+split into two calls, and a semantic schema and row oracle became mandatory.
+The failed raw run and the amended 2/2 passing run are both retained.
+
 ## 1. Selection frame
 
 Candidates came from the Official MCP Registry search API:

@@ -13,7 +13,7 @@ claim করা যাবে না।
   reusable code-এ আছে।
 - Controlled baselines, seven ablations, content/path/replay/TOCTOU/security
   cases, real child-process concurrency, এবং trusted-writer comparison আছে।
-- Current regression: 231 passed, 1 platform skip; reference gate passes।
+- Current regression: 241 passed, 1 platform skip; reference gate passes।
 - SQLite WAL/FULL-sync durable allowance backend restart replay এবং
   competing-backend final-slot race fail-closed করে; orphaned effect outcome
   এখনও domain-specific reconciliation ছাড়া UNKNOWN।
@@ -41,8 +41,18 @@ claim করা যাবে না।
   `paper/NETWORK_SQL_EXTENSION_PLAN.md`-এ pre-registered। Exact HTTP request,
   trusted DNS/address pinning, response bound, durable replay এবং SQLite full
   schema/row diff + atomic private-copy promotion-এর local core ও adversarial
-  unit tests আছে। Direct-egress namespace, real MCP adapters, matched baselines
-  ও raw artifacts না হওয়া পর্যন্ত এগুলো current result claim নয়।
+  unit tests আছে। Local network-disabled container integration-এ direct TCP,
+  UDP, raw-socket ও child-process attempt synthetic target-এ পৌঁছায়নি, আর
+  trusted broker exact request একবার পাঠিয়েছে। Real MCP network adapter,
+  broader bypass suite, matched baselines ও repeated results না হওয়া পর্যন্ত
+  এটি current paper claim নয়।
+- SQLite private-copy core এখন দুই frozen real server-এর honest workflow-এ
+  exact schema এবং row state match হওয়ার পর commit করেছে। প্রথম
+  `sqlite-mcp` compatibility run-এ stacked SQL-এর শুধু প্রথম statement execute
+  হওয়ার methodological bug ধরা পড়ে। Failed raw artifact রাখা হয়েছে, এবং কোনো
+  security outcome দেখার আগে disclosed amendment দিয়ে CREATE ও INSERT আলাদা
+  call করে 2/2 rerun pass করেছে। Frozen attacks ও five matched conditions এখনও
+  চালানো হয়নি।
 - 10-server matched evaluation plan outcome দেখার আগে
   `artifact/held-out-evaluation-plan.json`-এ frozen হয়েছে। এতে five conditions,
   per-server scenario applicability, 100-trial race counts, independent oracle,

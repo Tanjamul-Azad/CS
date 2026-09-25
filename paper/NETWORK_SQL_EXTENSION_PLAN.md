@@ -215,15 +215,21 @@ second connections invalidate the claim rather than being counted as blocked.
 | Trusted DNS decision and address pinning | Local prototype and injected resolver tests pass | Linux packet-level oracle and rebinding test |
 | Redirect-free bounded HTTP transport | Implemented in the broker | Live HTTP and TLS integration tests |
 | Durable network replay allowance | Local cross-process ledger replay test passes | Concurrent process race run in Linux |
-| Direct server egress denial | Not implemented in the integrated runner | Network namespace or equivalent policy plus bypass suite |
-| SQLite semantic snapshot | Local prototype and adversarial unit tests pass | Real server integration for both frozen SQLite servers |
-| Private SQLite state and atomic promotion | Local prototype and same-filesystem promotion test pass | Container writer-closure and WAL-mode integration |
+| Direct server egress denial | Local Docker integration denies TCP, UDP, raw socket, and child-process attempts to the synthetic target; the oracle sees zero direct events | Real MCP adapter, broader bypass suite, and repeated Linux run |
+| SQLite semantic snapshot | Local adversarial tests and honest integration on both frozen SQLite servers pass | Frozen attacks, matched baselines, and confidence intervals |
+| Private SQLite state and atomic promotion | Both frozen honest workflows committed only after exact schema and row match | Container bypass attacks, 100-trial writer-closure races, and WAL-mode attack integration |
 | PostgreSQL or arbitrary network protocols | Not implemented and not claimed | Separate future work |
 
-The network framework is therefore architecturally defined and partly
-implemented, but not complete. The SQL framework has a tested local core, but
-is also incomplete at the real-server boundary. The manuscript must keep both
-in future work until the frozen matched evaluations pass.
+The network framework is architecturally defined and now has a local boundary
+integration result: direct attempts from a network-disabled container did not
+reach the synthetic target, while the trusted pinned broker delivered exactly
+one contracted request. It is not complete because a real MCP adapter, matched
+baselines, frozen attacks, repeated races, and confidence intervals remain.
+The SQL framework now has a tested local core
+and honest integration with both frozen SQLite servers. It is still incomplete
+as a security result because the frozen attacks and matched conditions have not
+run. The manuscript must keep both extensions in future work until the full
+go/no-go criteria pass.
 
 ## Go/no-go rule for the current manuscript
 

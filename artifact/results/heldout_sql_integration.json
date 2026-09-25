@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-09-25T18:17:13.840819+00:00",
+  "phase": "POST_FREEZE_HONEST_SQL_INTEGRATION_NO_SECURITY_OUTCOMES",
+  "matched_attack_calls": 0,
+  "matched_defense_conditions": 0,
+  "manifest_sha256": "445c14f0c6d2def5758c4146c80b4ae0631cf60418eab4a00a6e09a6efe029d4",
+  "evaluation_plan_sha256": "5bdb9335bb998df1efb61d4f20f7781a154911ee4e011b3cf1a5e46988a2c9e3",
+  "probe_sha256": "72b698c324d6c0d5ab83bdb778f5b91cf1e05e181aa419a82b7e3ed017deb8ad",
+  "docker_server_version": "29.7.2",
+  "rows": [
+    {
+      "server_id": "io.github.mrfentmen/sqlite-mcp",
+      "package": "@mrfentmen/sqlite-mcp",
+      "version": "1.0.0",
+      "integrity": "sha512-XMZKhHcV593miMTeSVYABV/izMiLsEWiuUl1t24LvPg95IcOOReppKaq3lE0YTiqjmHmi4beqf5LbCngh8cMIQ==",
+      "image_tag": "mcpgate-heldout:fc6127e3646c4b73",
+      "manifest_image_id": "sha256:ad16eaab1c77f0fde8777a18fd2de320dbefa99605d4a1cb1e3be249fe9055fd",
+      "inspected_image_id": "sha256:647aca1e009895c3519c8241b036e0dadd25e7af498682ac9a827edd51ffd90e",
+      "request": {
+        "calls": [
+          {
+            "tool": "execute",
+            "sql": "CREATE TABLE evidence(value TEXT); INSERT INTO evidence VALUES ('MCPGATE_SQL_INTEGRATION_2026_09_26');"
+          }
+        ]
+      },
+      "status": "FAILED",
+      "error": "SQLiteMediationRefused: REFUSED during effect-diff: schema or row state differs from the contracted final state",
+      "observed_state": {
+        "sha256": "d9a8bd24a0f57b69d3d2262e7f58acddd6971ca6bbf172a73be429241cd93b58",
+        "schema": [
+          [
+            "table",
+            "evidence",
+            "evidence",
+            "CREATE TABLE evidence(value TEXT)"
+          ]
+        ],
+        "columns": {
+          "evidence": [
+            "value"
+          ]
+        },
+        "tables": {
+          "evidence": []
+        }
+      },
+      "expected_after_state": {
+        "sha256": "12a60e03c712b85265b25fa2559ebd609bda78ea8c72283c7c242386e1aa7ee5",
+        "schema": [
+          [
+            "table",
+            "evidence",
+            "evidence",
+            "CREATE TABLE evidence(value TEXT)"
+          ]
+        ],
+        "columns": {
+          "evidence": [
+            "value"
+          ]
+        },
+        "tables": {
+          "evidence": [
+            [
+              [
+                "text",
+                "MCPGATE_SQL_INTEGRATION_2026_09_26"
+              ]
+            ]
+          ]
+        }
+      },
+      "container": {
+        "exit_code": 0,
+        "stderr_tail": "MCP server running on stdio\n(node:7) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+        "runtime_command": [
+          "C:\\Users\\User\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.EXE",
+          "run",
+          "--rm",
+          "--network=none",
+          "--read-only",
+          "--memory=512m",
+          "--cpus=1",
+          "--pids-limit=256",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--mount",
+          "type=bind,src=C:\\Users\\User\\AppData\\Local\\Temp\\mcpgate-sql-integration-bga0cdl1\\stage\\inv-f513eab7b7ce0dd3bc339d77,dst=/sandbox",
+          "--mount",
+          "type=bind,src=F:\\UIU\\12th\\CS\\Paper work\\repo\\docker\\heldout_sql_integration_probe.py,dst=/app/sql_probe.py,readonly",
+          "--entrypoint",
+          "python3",
+          "mcpgate-heldout:fc6127e3646c4b73",
+          "/app/sql_probe.py",
+          "--server-id",
+          "io.github.mrfentmen/sqlite-mcp",
+          "--command",
+          "node /usr/bin/sqlite-mcp /sandbox/database.sqlite"
+        ],
+        "probe": {
+          "calls": [
+            {
+              "arguments": {
+                "sql": "CREATE TABLE evidence(value TEXT); INSERT INTO evidence VALUES ('MCPGATE_SQL_INTEGRATION_2026_09_26');"
+              },
+              "is_error": false,
+              "result": {
+                "changes": "0",
+                "lastInsertRowid": "0"
+              },
+              "tool": "execute"
+            }
+          ],
+          "command": "node /usr/bin/sqlite-mcp /sandbox/database.sqlite",
+          "database": "/sandbox/database.sqlite",
+          "marker": "MCPGATE_SQL_INTEGRATION_2026_09_26",
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "status": "HONEST_WORKFLOW_OK"
+        }
+      }
+    }
+  ]
+}
