@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "status": "FROZEN_PRE_OUTCOME",
   "frozen_utc": "2026-09-25T18:03:04.0258309Z",
   "source_manifest": "artifact/held-out-manifest.json",
@@ -15,6 +15,13 @@
       "reason": "An honest compatibility run proved that the server executes only the first statement in the previously frozen stacked SQL call.",
       "change": "Use separate CREATE and parameterized INSERT calls and require a trusted semantic row oracle. Scenario, condition, repetition, and decision rules are unchanged.",
       "raw_failure_retained_at": "artifact/results/heldout_sql_integration.json"
+    },
+    {
+      "refrozen_utc": "2026-09-25T19:01:35.631466+00:00",
+      "security_outcomes_observed": false,
+      "reason": "The attack realization method was underspecified: the earlier capstone rewrote arguments before the server, exercising only the request-shape check. This amendment fixes the realization to runtime interposition so that attacks reach the effect diff with an honest request and response, and specifies the host-side oracle.",
+      "change": "Add the attack_realization section mapping every scenario to its realization and defining the host-side comparison oracle. Scenarios, conditions, repetitions, and decision rules are unchanged.",
+      "validated_at_commit": "8ee679c"
     }
   ],
   "experimental_unit": "one server by scenario by condition trial",
@@ -136,74 +143,224 @@
       "adapter": "filesystem_exact_text",
       "approved_destination_field": "file_path",
       "approved_content_field": "content",
-      "applicable": ["H0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9"],
-      "not_applicable": ["S1", "S2", "S3"]
+      "applicable": [
+        "H0",
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7",
+        "A8",
+        "A9"
+      ],
+      "not_applicable": [
+        "S1",
+        "S2",
+        "S3"
+      ]
     },
     {
       "id": "io.github.bytedance/mcp-server-filesystem",
       "adapter": "filesystem_exact_text",
       "approved_destination_field": "path",
       "approved_content_field": "content",
-      "applicable": ["H0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9"],
-      "not_applicable": ["S1", "S2", "S3"]
+      "applicable": [
+        "H0",
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7",
+        "A8",
+        "A9"
+      ],
+      "not_applicable": [
+        "S1",
+        "S2",
+        "S3"
+      ]
     },
     {
       "id": "io.github.aayoawoyemi/ori-memory",
       "adapter": "ori_note_semantic",
       "approved_content_field": "title",
-      "applicable": ["H0", "A2", "A3", "A4", "A5", "A6", "A8", "A9"],
-      "not_applicable": ["A1", "A7", "S1", "S2", "S3"]
+      "applicable": [
+        "H0",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A8",
+        "A9"
+      ],
+      "not_applicable": [
+        "A1",
+        "A7",
+        "S1",
+        "S2",
+        "S3"
+      ]
     },
     {
       "id": "io.github.Octonove/crbro-memory",
       "adapter": "crbro_memory_semantic",
       "approved_content_field": "content",
-      "applicable": ["H0", "A2", "A3", "A4", "A5", "A6", "A8", "A9"],
-      "not_applicable": ["A1", "A7", "S1", "S2", "S3"]
+      "applicable": [
+        "H0",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A8",
+        "A9"
+      ],
+      "not_applicable": [
+        "A1",
+        "A7",
+        "S1",
+        "S2",
+        "S3"
+      ]
     },
     {
       "id": "io.github.aide-memory/aide-memory",
       "adapter": "aide_memory_semantic",
       "approved_content_field": "content",
-      "applicable": ["H0", "A2", "A3", "A4", "A5", "A6", "A8", "A9"],
-      "not_applicable": ["A1", "A7", "S1", "S2", "S3"]
+      "applicable": [
+        "H0",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A8",
+        "A9"
+      ],
+      "not_applicable": [
+        "A1",
+        "A7",
+        "S1",
+        "S2",
+        "S3"
+      ]
     },
     {
       "id": "io.github.mrfentmen/sqlite-mcp",
       "adapter": "sqlite_schema_row_diff",
       "approved_content_field": "sql",
-      "applicable": ["H0", "A2", "A3", "A4", "A5", "A6", "A8", "A9", "S1", "S2", "S3"],
-      "not_applicable": ["A1", "A7"]
+      "applicable": [
+        "H0",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A8",
+        "A9",
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "not_applicable": [
+        "A1",
+        "A7"
+      ]
     },
     {
       "id": "io.github.daedalus/mcp-sqlite3",
       "adapter": "sqlite_schema_row_diff",
       "approved_content_field": "sql",
-      "applicable": ["H0", "A2", "A3", "A4", "A5", "A6", "A8", "A9", "S1", "S2", "S3"],
-      "not_applicable": ["A1", "A7"]
+      "applicable": [
+        "H0",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A8",
+        "A9",
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "not_applicable": [
+        "A1",
+        "A7"
+      ]
     },
     {
       "id": "ai.smartmemory/compose-mcp",
       "adapter": "compose_roadmap_semantic",
       "approved_content_field": "description",
-      "applicable": ["H0", "A2", "A3", "A4", "A5", "A6", "A8", "A9"],
-      "not_applicable": ["A1", "A7", "S1", "S2", "S3"]
+      "applicable": [
+        "H0",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A8",
+        "A9"
+      ],
+      "not_applicable": [
+        "A1",
+        "A7",
+        "S1",
+        "S2",
+        "S3"
+      ]
     },
     {
       "id": "io.github.DanielGuru/repomemory",
       "adapter": "repomemory_exact_markdown",
       "approved_destination_field": "filename",
       "approved_content_field": "content",
-      "applicable": ["H0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9"],
-      "not_applicable": ["S1", "S2", "S3"]
+      "applicable": [
+        "H0",
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7",
+        "A8",
+        "A9"
+      ],
+      "not_applicable": [
+        "S1",
+        "S2",
+        "S3"
+      ]
     },
     {
       "id": "io.github.mrfentmen/document-generator-mcp",
       "adapter": "docx_semantic",
       "approved_destination_field": "filename",
       "approved_content_field": "body",
-      "applicable": ["H0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9"],
-      "not_applicable": ["S1", "S2", "S3"]
+      "applicable": [
+        "H0",
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7",
+        "A8",
+        "A9"
+      ],
+      "not_applicable": [
+        "S1",
+        "S2",
+        "S3"
+      ]
     }
   ],
   "oracle": {
@@ -236,12 +393,43 @@
     "not_applicable": "the scenario cannot be expressed for the frozen server interface and is excluded from both numerator and denominator"
   },
   "implementation_gates": {
-    "generalized_filesystem_contracts": "OPEN",
+    "generalized_filesystem_contracts": "IMPLEMENTED_TREE_CONTRACT_TESTED",
     "network_exact_broker_and_direct_egress_boundary": "LOCAL_BOUNDARY_INTEGRATION_PASS_REAL_MCP_MATCHED_SECURITY_OUTCOMES_NOT_RUN",
     "sqlite_semantic_diff_and_private_commit": "HONEST_REAL_SERVER_INTEGRATION_2_OF_2_PASS_MATCHED_SECURITY_OUTCOMES_NOT_RUN",
     "trusted_descendant_closure": "OPEN",
     "matched_condition_runner": "OPEN",
-    "raw_results": "NOT_RUN"
+    "raw_results": "NOT_RUN",
+    "attack_realization_shims": "VALIDATED_PRE_OUTCOME_TWO_FILESYSTEM_SERVERS_NODE_AND_PYTHON"
   },
-  "integrity_rule": "An implementation gate may change only before outcomes run. Any scenario, oracle, condition, or repetition change after the first outcome requires a new plan version and a disclosed deviation."
+  "integrity_rule": "An implementation gate may change only before outcomes run. Any scenario, oracle, condition, or repetition change after the first outcome requires a new plan version and a disclosed deviation.",
+  "attack_realization": {
+    "declared_before_outcomes": true,
+    "security_outcomes_observed": false,
+    "principle": "Each attack keeps the MCP request the client sends and the response the server returns identical to the honest world; only the filesystem effect differs. This is the declaration-implementation gap of Theorem 1, and it is what distinguishes admission control from response auditing.",
+    "mechanism": {
+      "node_servers": "NODE_OPTIONS=--require /app/impl_tamper.cjs preloads a shim that patches fs.writeFile, fs.writeFileSync and node:fs/promises writeFile. The published package is unchanged; the shim stands in for a compromised lower-layer dependency.",
+      "python_servers": "docker/tamper_site/sitecustomize.py on PYTHONPATH wraps builtins.open for write modes. sitecustomize is imported before the server module, so no package edit is required.",
+      "activation": "Both are inert unless MCPGATE_TAMPER names a mode, so the same image runs the honest and malicious worlds."
+    },
+    "scenario_to_mode": {
+      "H0": "no interposition (MCPGATE_TAMPER=none)",
+      "A1": "interposition mode 'path': approved bytes written to an unapproved sibling",
+      "A2": "interposition mode 'content': approved path, attacker payload bytes",
+      "A4": "interposition mode 'extra': honest write plus one unapproved file",
+      "A6": "interposition mode 'noop': write dropped, honest success returned",
+      "A7": "interposition mode 'symlink': approved path replaced by a symlink escape",
+      "A3": "request-shape: an unlisted field is added to the tool arguments (no interposition)",
+      "A5": "protocol: the same request identity is submitted twice (no interposition)",
+      "A8": "interposition mode 'noop' plus a detached late writer; the trusted snapshot is taken only after the container and all descendants exit",
+      "A9": "concurrency: overlapping invocations contend for the final allowance slot (no interposition)"
+    },
+    "oracle_determination": "Outcomes are decided host-side after the container and every descendant have exited, by comparing the trusted-state snapshot against an honest reference snapshot of the same server. authorized_effect requires every honest path present with its honest hash; unauthorized_effect is any other changed path, any hash change at an approved path, or any symlink, hard link, or special file. The server response is never authoritative.",
+    "condition_trusted_state": {
+      "NONE": "server writes directly into the trusted trial directory",
+      "MBA": "server writes directly into the trusted trial directory; mcpaudit runs its frozen default policy around the call and its alerts do not prevent effects",
+      "STATIC_LP": "server writes directly into a directory scoped to the honest workflow roots, with no per-call content or delta binding",
+      "PLAIN_SANDBOX": "server writes directly into the trusted directory under the same container limits as MCPGATE but with no per-call contract",
+      "MCPGATE": "server writes into an invocation-private copy; only a snapshot that satisfies the frozen tree contract is promoted into the trusted directory"
+    }
+  }
 }
