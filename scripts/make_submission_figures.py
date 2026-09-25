@@ -263,6 +263,53 @@ def operating_points() -> None:
     _save(fig, "fig6_auditor_operating_points")
 
 
+def matched_evaluation() -> None:
+    data = json.loads((ROOT / "artifact" / "results"
+                       / "matched_filesystem.json").read_text(encoding="utf-8"))
+    conditions = ["NONE", "PLAIN_SANDBOX", "MBA", "STATIC_LP", "MCPGATE"]
+    labels = ["No\ndefense", "Plain\nsandbox", "Response\nauditor",
+              "Static least\nprivilege", "MCPGate"]
+    scenarios = [("A1", "Destination"), ("A2", "Content"), ("A3", "Hidden field"),
+                 ("A4", "Extra effect"), ("A5", "Replay"),
+                 ("A6", "False success"), ("A7", "Link alias")]
+    prevented = {(s, c): [0, 0] for s, _ in scenarios for c in conditions}
+    for server in data["servers"]:
+        for cell in server.get("cells", []):
+            key = (cell["scenario"], cell["condition"])
+            if cell["scenario"] == "H0" or key not in prevented:
+                continue
+            prevented[key][1] += 1
+            if cell["prevented"]:
+                prevented[key][0] += 1
+    grid = np.full((len(scenarios), len(conditions)), np.nan)
+    for i, (scen, _) in enumerate(scenarios):
+        for j, cond in enumerate(conditions):
+            k, n = prevented[(scen, cond)]
+            if n:
+                grid[i, j] = k / n
+    fig, ax = plt.subplots(figsize=(10.8, 5.2))
+    cmap = plt.matplotlib.colors.LinearSegmentedColormap.from_list(
+        "prev", ["#FEE2E2", "#FEF3C7", "#DCFCE7"])
+    ax.imshow(grid, cmap=cmap, vmin=0, vmax=1, aspect="auto")
+    for i, (scen, _) in enumerate(scenarios):
+        for j, cond in enumerate(conditions):
+            k, n = prevented[(scen, cond)]
+            if not n:
+                continue
+            ax.text(j, i, f"{k}/{n}", ha="center", va="center", fontsize=9,
+                    color=TEAL if k == n else (RED if k == 0 else GRAY),
+                    fontweight="bold")
+    ax.set_xticks(range(len(conditions)), labels, fontsize=9)
+    ax.set_yticks(range(len(scenarios)),
+                  [f"{s}  {name}" for s, name in scenarios], fontsize=9)
+    ax.set_title("Attacks prevented per scenario across five conditions "
+                 "(prevented / servers)", fontsize=12.5, fontweight="bold")
+    ax.tick_params(length=0)
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+    _save(fig, "fig7_matched_evaluation")
+
+
 def contact_sheet() -> None:
     from PIL import Image, ImageOps, ImageDraw
 
@@ -270,6 +317,7 @@ def contact_sheet() -> None:
         "fig1_mcpgate_architecture", "fig2_study_flow",
         "fig3_controlled_baselines", "fig4_controlled_ablations",
         "fig5_exact_write_latency", "fig6_auditor_operating_points",
+        "fig7_matched_evaluation",
     ]
     images = [Image.open(OUT / f"{name}.png").convert("RGB") for name in names]
     thumb_width = 900
@@ -297,8 +345,9 @@ def main() -> None:
     ablation_matrix()
     latency_baseline()
     operating_points()
+    matched_evaluation()
     contact_sheet()
-    print("generated 6 submission figures and contact sheet")
+    print("generated 7 submission figures and contact sheet")
 
 
 if __name__ == "__main__":

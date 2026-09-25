@@ -244,8 +244,19 @@ properties without inventing an experimental result.
 - [x] Add the project's own auditor and a plain-policy sandbox to the
       controlled baseline suite. The checked-in table also includes no defense,
       a task-specific path policy, and the trusted-executor gateway.
-- [ ] Run the matched baseline set on the pinned held-out real-server
+- [x] Run the matched baseline set on the pinned held-out real-server
       workloads; controlled stub results do not establish external validity.
+      The filesystem arm is complete: five frozen third-party servers, 180
+      attack cells, five matched conditions, under a consistent-liar adversary
+      that masks the server's own reads so the response auditor sees an honest
+      world. Full MCPGate prevented 31/31 applicable attacks (Wilson 95%
+      [89.0, 100.0]) with no honest false block; static least privilege reached
+      58.1%; no defense, plain sandbox, and the response auditor 29.0%. Raw
+      per-cell outcomes are in `artifact/results/matched_filesystem.json`, the
+      100-trial concurrency scenarios in `artifact/results/concurrency_100.json`.
+      The network and SQL arms remain open and are tracked separately below.
+- [ ] Run the matched network and SQL arms against their frozen servers so the
+      effect-integrity claim is not filesystem-only.
 - [x] Add genuine overlapping-call evaluation. Two real child writers overlap
       in distinct staging roots and commit correctly; one-slot competition
       starts exactly one child. The claim remains qualified until the pinned

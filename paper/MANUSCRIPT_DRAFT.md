@@ -38,14 +38,18 @@ proves arbitrary world-effect rollback. Our result is deliberately narrow:
 MCPGate protects what enters a trusted filesystem store; it does not establish
 that no effect occurred outside that store.
 
-The same integrated path was then run against pinned
-`filesystem-mcp@1.3.0` inside a Linux container. The honest exact write
-committed byte-for-byte; path and content substitutions were both refused from
-the trusted store. The path-diversion trial nevertheless wrote the approved
-bytes to `/tmp/exfil.dat`, directly confirming that trusted-state admission is
-not whole-world effect prevention. Held-out generality, release overhead, and
-confidence-interval results remain outside the abstract until E3--E7 are
-complete.
+We then evaluate the same integrated path against five unmodified third-party
+servers frozen before any outcome was seen, under an adversary that also masks
+the server's own reads and directory listings so a response auditor observes a
+simulated honest world. Across 180 attack cells full MCPGate prevents every
+applicable attack (31 of 31; Wilson 95 percent interval 89.0 to 100.0) with no
+honest false block, while a task-specific static permission policy reaches only
+58 percent because it binds destination but not content, type, or presence, and
+no defense, a plain sandbox, and the response auditor each reach 29 percent. The
+path-diversion trial still wrote the approved bytes to an unapproved location,
+confirming that trusted-state admission is not whole-world effect prevention.
+Round-2 human annotation of the response-auditing corpus and a matched network
+and SQL evaluation remain in progress.
 
 ## 1. Introduction
 
@@ -403,17 +407,29 @@ changes staged objects to the trusted identity and removes write permission.
 Production should replace this UID-wide operation with a per-invocation cgroup,
 PID namespace, and mount namespace.
 
-Local regression currently contains 199 passing tests and one platform skip.
-The integrated mediator tests cover honest commit; request preflight;
-post-transport argument mutation; wrong content; extra files; symlinks and
-hardlinks; bounded materialization that never reads extra-file contents; absent
-writer closure; same-read mutation; replay; exhaustion; runner failure; unsafe
-paths; and genuinely overlapping threads competing for one slot.
+A fifth component generalizes admission from one known file to a whole
+workflow tree: `src/mcpgate/tree_mediator.py` snapshots the complete staged
+tree after writers close, checks every changed object against exactly one
+declarative path and content rule, and promotes the validated directory itself
+so commit never rereads attacker bytes. The matched evaluation derives these
+rules from repeated honest runs rather than writing them by hand.
 
-**EVIDENCE GATE:** These tests establish implementation behavior, not
-third-party-server validation. The revised integrated Docker adapter has not
-been rerun on the current machine. Historical real-server results used an older
-hand-written mediator and cannot be presented as if they exercised this module.
+Local regression contains 268 passing tests and two platform skips. The
+mediator tests cover honest commit; request preflight; post-transport argument
+mutation; wrong content; extra files; symlinks and hardlinks; bounded
+materialization that never reads extra-file contents; absent writer closure;
+same-read mutation; replay; exhaustion; runner failure; unsafe paths; and
+overlapping threads competing for one slot. The whole-tree tests add the case
+that matters most for the comparison in Section 4: an effect diverted by a
+compromised implementation, with an honest request and an honest response, is
+refused at the effect-diff stage rather than the request-shape stage, so the
+mechanism is verified to catch what request validation alone cannot.
+
+The revised integrated adapter has been rerun on the current machine against
+unmodified third-party servers, both for the pinned single-file capstone and
+for the matched five-condition evaluation in Section 6.4. Historical real-server
+results that used an older hand-written mediator are not presented as if they
+exercised this module.
 
 ## 6. Evaluation
 
@@ -477,9 +493,9 @@ independently reproduced the negative result that an opaque command argument
 does not expose a declaration-derived content boundary. Separately, before any
 security outcome was observed, we froze 10 exact-version third-party
 implementations after isolated schema and benign-effect/oracle eligibility
-(EXACT 4, CONSTRAINED 4, UNDERSPECIFIED 2). This closes corpus construction,
-not external validity: the matched five-condition evaluation on those frozen
-workloads remains unrun.
+(EXACT 4, CONSTRAINED 4, UNDERSPECIFIED 2). The matched five-condition
+evaluation on the filesystem-class subset of those frozen workloads is reported
+in Section 6.5; the network and SQL arms remain in progress.
 
 On two independent real servers, a task-specific static filesystem-permission
 baseline was blind to content substitution at an already-approved writable
@@ -497,7 +513,74 @@ can evade access control. MCPGate targets one such narrower case—exact content
 admission at an approved filesystem path—and should be composed with, not
 presented as replacing, a sandbox.
 
-### 6.5 Controlled baseline comparison
+### 6.5 Matched five-condition held-out evaluation
+
+We ran the frozen filesystem-class servers through one honest workflow and every
+applicable attack under five conditions that hold execution constant and vary
+only the admission policy: no defense, a plain hardened sandbox, the response
+auditor, a task-specific static permission policy, and full MCPGate. Five
+servers qualified for this arm, spanning two exact-write filesystem servers and
+three memory or document servers that write multi-file trees; document-generator
+was excluded because it writes to a fixed path the client cannot select, and the
+two memory servers that store under the home directory are handled by the SQL
+arm. The run covers 180 attack cells.
+
+Two properties make the comparison honest. First, attacks are realized by
+runtime interposition, not by rewriting the request: a preload shim for Node
+servers and a `sitecustomize` shim for Python servers divert the effect while
+the server still receives the approved arguments and returns its honest
+response. Second, the adversary operates a consistent-liar tier that also masks
+the server's own reads and directory listings, so the live response auditor,
+which sees only what a deployed client sees, observes a simulated honest world.
+The trusted host snapshot, taken after the container and all descendants exit,
+is unaffected by this masking.
+
+The MCPGate contract for each server is derived from three spaced honest runs,
+which sort every changed file into a byte-stable class checked by exact hash, a
+volatile class checked by required-marker presence, and an unconstrained class
+whose content cannot be verified and is reported as UNKNOWN rather than silently
+trusted. This is the L1/L2/L3 ladder of Section 4.1 emerging from real output
+rather than being assumed.
+
+Table 1 gives the result. Full MCPGate prevented every applicable attack, 31 of
+31, with a Wilson 95 percent interval of 89.0 to 100.0 percent, and produced no
+false block on any honest workflow. The static permission policy prevented 58.1
+percent: it blocks destination substitution and extra files because it binds
+where a server may write, but it admits attacker bytes at an already-approved
+path, admits a symlink placed at that path, and cannot tell a silent no-op from
+a real write. No defense, the plain sandbox, and the response auditor each
+prevented 29.0 percent, which corresponds to the two scenarios that are inert
+for these servers, a hidden unlisted field and an idempotent replay. The
+response auditor raised one confirmed violation, on a destination diversion the
+server could not fully simulate away, but it never prevented an effect that
+landed, and against content substitution under the consistent tier it reported
+the write as confirmed while the attacker bytes were on disk.
+
+| Scenario | None | Sandbox | Auditor | Static LP | MCPGate |
+|---|---:|---:|---:|---:|---:|
+| Destination substitution | 0/3 | 0/3 | 0/3 | 3/3 | 3/3 |
+| Content substitution | 0/5 | 0/5 | 0/5 | 0/5 | 5/5 |
+| Hidden field | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
+| Extra effect | 0/5 | 0/5 | 0/5 | 5/5 | 5/5 |
+| Replay | 4/5 | 4/5 | 4/5 | 5/5 | 5/5 |
+| Silent false success | 0/5 | 0/5 | 0/5 | 0/5 | 5/5 |
+| Link alias | 0/3 | 0/3 | 0/3 | 0/3 | 3/3 |
+| **Prevented / applicable** | **9/31** | **9/31** | **9/31** | **18/31** | **31/31** |
+
+Table 1: Attacks prevented per scenario, summed over servers, under the
+consistent-liar adversary. Cells are prevented over applicable. Raw per-cell
+outcomes are in `artifact/results/matched_filesystem.json`.
+
+Two stochastic scenarios are mechanism properties of the allowance ledger and
+the freeze step rather than of any server's content, and were run for 100 trials
+each against the mediator with real child processes. When eight invocations
+contended for one final allowance slot, exactly one committed and the other
+seven were refused in all 100 trials, each admitted invocation using a distinct
+private staging tree. When a writer was still live as the runner returned, the
+gate refused at the freeze step in all 100 trials and no file reached the
+trusted store. Raw counts are in `artifact/results/concurrency_100.json`.
+
+### 6.6 Controlled baseline comparison
 
 On the controlled filesystem domain, we compare no defense, a plain sandbox
 with no per-call policy, the project's response auditor, a task-specific path
@@ -513,7 +596,7 @@ the exact output is already known. Machine-readable rows and the generated
 table are checked in under `artifact/results/controlled_baselines.json` and
 `results/tables/controlled_baselines.md`.
 
-### 6.6 Controlled ablations
+### 6.7 Controlled ablations
 
 A deterministic local ablation suite removes one property at a time from the
 integrated design. The full mediator refused content substitution without
@@ -531,7 +614,7 @@ These ablations establish causal behavior in the local implementation. They do
 not replace the pending pinned real-server rerun or justify ecosystem-wide
 performance claims.
 
-### 6.7 Exact-write engineering baseline
+### 6.8 Exact-write engineering baseline
 
 We directly compare MCPGate's current exact single-file case with an atomic
 trusted writer over 100 interleaved repetitions on the development machine.
@@ -546,35 +629,36 @@ baseline. The present manuscript consequently claims exact-write admission as
 a security mechanism/testbed, not superior utility; broader utility requires a
 non-trivial computation with an independently checkable output projection.
 
-### 6.8 Process-backed concurrency
+### 6.9 Process-backed concurrency
 
-Two local evaluations replace simulated scheduling with real child writers.
-When two calls competed for one final allowance slot, only one child process
-started and one call committed. With two independent contracts, both child
-processes overlapped for 140.775 ms in the recorded run, received distinct
-staging roots, and committed `a.txt` and `b.txt` correctly. Separate SQLite
-ledger instances also cannot reserve the same final slot, and restart tests
-preserve RESERVED and COMMITTED states. The release run must still establish
-the full mediator plus Linux UID/cgroup behavior on pinned third-party servers.
+Local evaluations replace simulated scheduling with real child writers. In a
+demonstration run two independent contracts overlapped for 140.775 ms, received
+distinct staging roots, and committed `a.txt` and `b.txt` correctly. The
+stochastic contention scenarios were then run for 100 trials each, reported in
+Section 6.5: exactly one of eight contenders committed every trial, and a live
+background writer was refused at freeze every trial with nothing committed.
+Separate SQLite ledger instances also cannot reserve the same final slot, and
+restart tests preserve RESERVED and COMMITTED states. The release run must still
+establish the full mediator plus Linux UID/cgroup behavior on pinned
+third-party servers.
 
-### 6.9 Results still required for submission
+### 6.10 Results still required for submission
 
-The following are not optional polish; they determine whether the final paper's
-claims are valid:
+The filesystem arm of the matched evaluation is complete: the five-condition
+comparison on frozen third-party servers (Section 6.5), the integrated pinned
+single-file run, and the 100-trial concurrency scenarios have all run on the
+current machine with raw artifacts checked in. The following remain before
+submission:
 
-1. rerun the integrated mediator against the pinned real server and preserve
-   raw JSON, image digest, package version, kernel, and command;
-2. label Round 2 independently and either pass the kappa gate or retire the
+1. label Round 2 independently and either pass the kappa gate or retire the
    prevalence result;
-3. run undefended, response-auditor, static-permission, plain-container, and
-   full-MCPGate conditions;
-4. rerun the controlled ablations, exact-write baseline, and concurrency
-   evaluation in the release environment, including pinned third-party
-   processes;
-5. report p50/p95/p99 latency, CPU, peak memory, false-block and UNKNOWN rates;
-6. calculate server-clustered intervals rather than treating nested tools as
+2. run the matched network and SQL arms against their frozen servers, so the
+   effect-integrity claim is not filesystem-only;
+3. report p50/p95/p99 latency, CPU, and peak memory for the matched conditions;
+4. calculate server-clustered intervals rather than treating nested tools as
    independent samples; and
-7. publish compact raw result artifacts sufficient to regenerate every table.
+5. rebuild the anonymous artifact bundle from a clean clone and confirm every
+   table regenerates.
 
 ## 7. Security Analysis
 
