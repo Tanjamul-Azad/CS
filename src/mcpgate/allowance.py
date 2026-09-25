@@ -46,6 +46,7 @@ import dataclasses
 import json
 import sqlite3
 import threading
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -98,6 +99,12 @@ class AllowanceLedger:
         with self._lock:
             slot = self._slots.get(contract_id, {}).get(request_id)
             return slot.state if slot else None
+
+    def lookup(self, contract_id: str, request_id: str) -> _Slot | None:
+        """Return the recorded request without changing allowance state."""
+
+        with self._lock:
+            return self._slots.get(contract_id, {}).get(request_id)
 
     def unknown_outcomes(self, contract_id: str) -> list[str]:
         """Requests left RESERVED -- started, outcome unobserved.
@@ -174,14 +181,17 @@ def _jsonable_result(value: Any) -> Any:
     """
 
     if dataclasses.is_dataclass(value) and not isinstance(value, type):
-        return _jsonable_result(dataclasses.asdict(value))
+        return {
+            item.name: _jsonable_result(getattr(value, item.name))
+            for item in dataclasses.fields(value)
+        }
     if value is None or isinstance(value, (str, int, float, bool)):
         return value
     if isinstance(value, bytes):
         return {"__mcpgate_bytes_b64__": base64.b64encode(value).decode("ascii")}
     if isinstance(value, (list, tuple)):
         return [_jsonable_result(item) for item in value]
-    if isinstance(value, dict):
+    if isinstance(value, Mapping):
         if not all(isinstance(key, str) for key in value):
             raise TypeError("durable result dictionaries require string keys")
         return {key: _jsonable_result(item) for key, item in value.items()}
@@ -284,6 +294,20 @@ class SQLiteAllowanceLedger:
                 (contract_id, request_id),
             ).fetchone()
             return SlotState(row[0]) if row else None
+
+    def lookup(self, contract_id: str, request_id: str) -> _Slot | None:
+        """Return the durable request record without reserving a new slot."""
+
+        with self._lock, self._connect() as connection:
+            row = connection.execute(
+                """
+                SELECT request_id, state, result_json, result_available, error
+                FROM allowance_slots
+                WHERE contract_id = ? AND request_id = ?
+                """,
+                (contract_id, request_id),
+            ).fetchone()
+            return self._slot(row)
 
     def unknown_outcomes(self, contract_id: str) -> list[str]:
         with self._lock, self._connect() as connection:

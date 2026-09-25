@@ -21,7 +21,7 @@ adaptive attacks, and a static least-privilege baseline.
 
 > **Current submission status:** the working paper and local artifact checks
 > are substantial but not yet submission-ready. Independent Round-2 human
-> labels and fresh Linux/Docker held-out evidence remain mandatory. See
+> labels and the frozen five-condition held-out evaluation remain mandatory. See
 > [`paper/SUBMISSION_STATUS_BN.md`](paper/SUBMISSION_STATUS_BN.md) and the
 > fail-closed [`paper/SUBMISSION_ROADMAP.md`](paper/SUBMISSION_ROADMAP.md).
 
@@ -197,6 +197,8 @@ The clean, paper-ready specification is in
 | [`src/mcpgate/contract.py`](src/mcpgate/contract.py) | Effect proposals, bound fields, canonical contract identity, and match verdicts |
 | [`src/mcpgate/allowance.py`](src/mcpgate/allowance.py) | Atomic reservation and replay/double-execution protection |
 | [`src/mcpgate/mediator.py`](src/mcpgate/mediator.py) | Reusable request/allowance/staging/freeze/diff/same-read-promotion path |
+| [`src/mcpgate/network_broker.py`](src/mcpgate/network_broker.py) | Exact HTTP contract, trusted DNS decision, address pinning, bounded broker send, and replay control; direct-egress integration remains open |
+| [`src/mcpgate/sqlite_mediator.py`](src/mcpgate/sqlite_mediator.py) | Private SQLite state, complete schema/row snapshot, semantic diff, and atomic promotion; real-server integration remains open |
 | [`src/mcpgate/gateway.py`](src/mcpgate/gateway.py) | Proposal-based gateway prototype and trusted executor routing |
 | [`src/mcpgate/executors.py`](src/mcpgate/executors.py) | Filesystem executor with path confinement checks |
 | [`experiments/boundary/probe_m2.py`](experiments/boundary/probe_m2.py) | M2 proper: the untrusted process performs its own staged effect |
@@ -210,6 +212,13 @@ metadata are preserved in
 The result proves trusted-store admission in three registered scenarios, not
 whole-world confinement: the path diversion still reached `/tmp/exfil.dat`.
 This is a research prototype, not a production daemon.
+
+The venue, page budget, published-paper structural models, and prose rules are
+recorded in
+[`paper/VENUE_AND_WRITING_STANDARD.md`](paper/VENUE_AND_WRITING_STANDARD.md).
+The network and SQLite modules are tested local cores, not current paper
+results. Their remaining gates are listed in
+[`paper/NETWORK_SQL_EXTENSION_PLAN.md`](paper/NETWORK_SQL_EXTENSION_PLAN.md).
 
 ---
 

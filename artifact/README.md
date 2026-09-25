@@ -1,9 +1,16 @@
 # MCPGate Artifact — Working Guide
 
+The frozen matched-evaluation design is
+`artifact/held-out-evaluation-plan.json`. It was created before any matched
+attack or defense outcome and is hash-bound to `artifact/held-out-manifest.json`.
+It records five conditions, per-server applicability, repetitions, oracles,
+outcome fields, and open implementation gates. It is a protocol artifact, not
+an outcome artifact.
+
 > **Status:** preparation scaffold, not yet an artifact-evaluation release.
 > The quick checks run from this checkout. The full paper result set still
-> requires a Linux/Docker rerun, a frozen >=10-server held-out manifest, and
-> checked-in compact raw outputs.
+> requires the frozen five-condition held-out run, independent human labels,
+> a clean release rerun, and checked-in compact matched-outcome files.
 
 ## 1. Scope
 

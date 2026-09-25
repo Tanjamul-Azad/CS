@@ -1,4 +1,4 @@
-# MCPGate Submission Status (2026-09-25)
+# MCPGate Submission Status (2026-09-26)
 
 ## এক লাইনের verdict
 
@@ -13,7 +13,7 @@ claim করা যাবে না।
   reusable code-এ আছে।
 - Controlled baselines, seven ablations, content/path/replay/TOCTOU/security
   cases, real child-process concurrency, এবং trusted-writer comparison আছে।
-- Current regression: 212 passed, 1 platform skip; reference gate passes।
+- Current regression: 231 passed, 1 platform skip; reference gate passes।
 - SQLite WAL/FULL-sync durable allowance backend restart replay এবং
   competing-backend final-slot race fail-closed করে; orphaned effect outcome
   এখনও domain-specific reconciliation ছাড়া UNKNOWN।
@@ -38,8 +38,18 @@ claim করা যাবে না।
 - Quick runner pass করেছে; full runner incomplete evidence থাকলে fail-closed।
 - Network pre-send broker এবং transactional/private-copy SQL mediation-এর
   threat model, attack set, baselines, metrics ও go/no-go rule
-  `paper/NETWORK_SQL_EXTENSION_PLAN.md`-এ pre-registered; এগুলো current result
-  claim নয়।
+  `paper/NETWORK_SQL_EXTENSION_PLAN.md`-এ pre-registered। Exact HTTP request,
+  trusted DNS/address pinning, response bound, durable replay এবং SQLite full
+  schema/row diff + atomic private-copy promotion-এর local core ও adversarial
+  unit tests আছে। Direct-egress namespace, real MCP adapters, matched baselines
+  ও raw artifacts না হওয়া পর্যন্ত এগুলো current result claim নয়।
+- 10-server matched evaluation plan outcome দেখার আগে
+  `artifact/held-out-evaluation-plan.json`-এ frozen হয়েছে। এতে five conditions,
+  per-server scenario applicability, 100-trial race counts, independent oracle,
+  outcome fields এবং fail-closed decision rules আছে।
+- Primary target USENIX Security 2027 Cycle 2। Official page budget, deadlines,
+  anonymous/Open Science requirements, award-winning structural models এবং
+  human-readable prose rules `paper/VENUE_AND_WRITING_STANDARD.md`-এ fixed।
 
 ## যে কারণে এখনই submit করা যাবে না
 

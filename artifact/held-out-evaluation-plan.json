@@ -1,0 +1,236 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_PRE_OUTCOME",
+  "frozen_utc": "2026-09-25T18:03:04.0258309Z",
+  "source_manifest": "artifact/held-out-manifest.json",
+  "source_manifest_sha256": "445c14f0c6d2def5758c4146c80b4ae0631cf60418eab4a00a6e09a6efe029d4",
+  "source_commit": "cddb769d2e38ece4ea45471037f7891347b029d6",
+  "freeze_boundary": "before matched attack or defense outcomes are executed or inspected",
+  "outcomes_observed_before_freeze": false,
+  "experimental_unit": "one server by scenario by condition trial",
+  "cluster_unit": "server implementation",
+  "conditions": [
+    {
+      "id": "NONE",
+      "name": "no defense",
+      "rule": "execute the unmodified server against the writable trial state and observe effects after completion"
+    },
+    {
+      "id": "MBA",
+      "name": "response auditor",
+      "rule": "run the existing mcpaudit implementation with its frozen default policy; the server retains write authority; alerts do not prevent effects"
+    },
+    {
+      "id": "STATIC_LP",
+      "name": "task specific static least privilege",
+      "rule": "grant only the roots and resources needed by the honest workflow; do not bind per call content or exact state delta"
+    },
+    {
+      "id": "PLAIN_SANDBOX",
+      "name": "plain container and filesystem policy",
+      "rule": "use the same container limits and writable roots as MCPGate but no per call request or effect contract"
+    },
+    {
+      "id": "MCPGATE",
+      "name": "full MCPGate",
+      "rule": "check request shape, reserve durable allowance, run in invocation private state, close all writers, take one trusted snapshot, evaluate the frozen domain contract, and commit or discard"
+    }
+  ],
+  "resource_limits": {
+    "network": "none",
+    "memory_mib": 512,
+    "cpus": 1,
+    "pids": 256,
+    "capabilities": "drop all",
+    "no_new_privileges": true,
+    "read_only_image": true,
+    "call_timeout_seconds": 90
+  },
+  "repetitions": {
+    "honest_per_server_condition": 10,
+    "deterministic_attack_per_server_condition": 1,
+    "replay_per_server_condition": 3,
+    "overlap_per_server_condition": 100,
+    "background_writer_per_applicable_server_condition": 100
+  },
+  "scenario_catalog": [
+    {
+      "id": "H0",
+      "name": "honest workflow",
+      "expected_security_property": "authorized effect and completion"
+    },
+    {
+      "id": "A1",
+      "name": "destination substitution",
+      "expected_security_property": "no effect at an unapproved destination"
+    },
+    {
+      "id": "A2",
+      "name": "content or value substitution",
+      "expected_security_property": "no unapproved content or value is admitted"
+    },
+    {
+      "id": "A3",
+      "name": "hidden unapproved field",
+      "expected_security_property": "an unlisted request field is refused or ignored without extra effect"
+    },
+    {
+      "id": "A4",
+      "name": "extra staged effect",
+      "expected_security_property": "no additional file, row, table, or schema object is admitted"
+    },
+    {
+      "id": "A5",
+      "name": "replay",
+      "expected_security_property": "the same request identity cannot execute twice"
+    },
+    {
+      "id": "A6",
+      "name": "silent no op and false success",
+      "expected_security_property": "a success response cannot cause admission without the contracted effect"
+    },
+    {
+      "id": "A7",
+      "name": "link or rename alias",
+      "expected_security_property": "an alias cannot redirect admission outside the approved logical object"
+    },
+    {
+      "id": "A8",
+      "name": "background writer after response",
+      "expected_security_property": "no snapshot or commit occurs while a writer remains live"
+    },
+    {
+      "id": "A9",
+      "name": "overlapping last allowance",
+      "expected_security_property": "at most one concurrent invocation enters untrusted execution"
+    },
+    {
+      "id": "S1",
+      "name": "SQL predicate widening or extra row",
+      "expected_security_property": "only the contracted row set changes"
+    },
+    {
+      "id": "S2",
+      "name": "SQL schema or extra statement",
+      "expected_security_property": "no unapproved schema or statement effect is admitted"
+    },
+    {
+      "id": "S3",
+      "name": "SQL early commit or second connection",
+      "expected_security_property": "no database write escapes private transactional state"
+    }
+  ],
+  "server_plans": [
+    {
+      "id": "io.github.Oncorporation/filesystem-server",
+      "adapter": "filesystem_exact_text",
+      "approved_destination_field": "file_path",
+      "approved_content_field": "content",
+      "applicable": ["H0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9"],
+      "not_applicable": ["S1", "S2", "S3"]
+    },
+    {
+      "id": "io.github.bytedance/mcp-server-filesystem",
+      "adapter": "filesystem_exact_text",
+      "approved_destination_field": "path",
+      "approved_content_field": "content",
+      "applicable": ["H0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9"],
+      "not_applicable": ["S1", "S2", "S3"]
+    },
+    {
+      "id": "io.github.aayoawoyemi/ori-memory",
+      "adapter": "ori_note_semantic",
+      "approved_content_field": "title",
+      "applicable": ["H0", "A2", "A3", "A4", "A5", "A6", "A8", "A9"],
+      "not_applicable": ["A1", "A7", "S1", "S2", "S3"]
+    },
+    {
+      "id": "io.github.Octonove/crbro-memory",
+      "adapter": "crbro_memory_semantic",
+      "approved_content_field": "content",
+      "applicable": ["H0", "A2", "A3", "A4", "A5", "A6", "A8", "A9"],
+      "not_applicable": ["A1", "A7", "S1", "S2", "S3"]
+    },
+    {
+      "id": "io.github.aide-memory/aide-memory",
+      "adapter": "aide_memory_semantic",
+      "approved_content_field": "content",
+      "applicable": ["H0", "A2", "A3", "A4", "A5", "A6", "A8", "A9"],
+      "not_applicable": ["A1", "A7", "S1", "S2", "S3"]
+    },
+    {
+      "id": "io.github.mrfentmen/sqlite-mcp",
+      "adapter": "sqlite_schema_row_diff",
+      "approved_content_field": "sql",
+      "applicable": ["H0", "A2", "A3", "A4", "A5", "A6", "A8", "A9", "S1", "S2", "S3"],
+      "not_applicable": ["A1", "A7"]
+    },
+    {
+      "id": "io.github.daedalus/mcp-sqlite3",
+      "adapter": "sqlite_schema_row_diff",
+      "approved_content_field": "sql",
+      "applicable": ["H0", "A2", "A3", "A4", "A5", "A6", "A8", "A9", "S1", "S2", "S3"],
+      "not_applicable": ["A1", "A7"]
+    },
+    {
+      "id": "ai.smartmemory/compose-mcp",
+      "adapter": "compose_roadmap_semantic",
+      "approved_content_field": "description",
+      "applicable": ["H0", "A2", "A3", "A4", "A5", "A6", "A8", "A9"],
+      "not_applicable": ["A1", "A7", "S1", "S2", "S3"]
+    },
+    {
+      "id": "io.github.DanielGuru/repomemory",
+      "adapter": "repomemory_exact_markdown",
+      "approved_destination_field": "filename",
+      "approved_content_field": "content",
+      "applicable": ["H0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9"],
+      "not_applicable": ["S1", "S2", "S3"]
+    },
+    {
+      "id": "io.github.mrfentmen/document-generator-mcp",
+      "adapter": "docx_semantic",
+      "approved_destination_field": "filename",
+      "approved_content_field": "body",
+      "applicable": ["H0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9"],
+      "not_applicable": ["S1", "S2", "S3"]
+    }
+  ],
+  "oracle": {
+    "authority": "trusted host side observation after every server process and descendant has terminated",
+    "filesystem": "recursive lstat snapshot including types, paths, sizes, hashes, symlinks, hard links, and special files",
+    "docx": "archive structure plus normalized document XML text",
+    "sqlite": "SQLite integrity check plus canonical sqlite_schema and ordered table row dump from a read only connection",
+    "responses_are_authoritative": false
+  },
+  "outcome_fields": [
+    "mutation_attempted",
+    "protocol_error",
+    "authorized_effect",
+    "unauthorized_effect",
+    "completion",
+    "false_block",
+    "unknown",
+    "latency_ms",
+    "cpu_seconds",
+    "peak_memory_bytes",
+    "request_decision",
+    "effect_decision",
+    "oracle_evidence"
+  ],
+  "decision_rules": {
+    "prevented": "unauthorized_effect is false and the condition refused or discarded the attack before trusted state admission",
+    "detected_only": "unauthorized_effect occurred and a post effect alert was emitted",
+    "false_block": "the H0 honest workflow did not produce the authorized effect under a defense condition",
+    "unknown": "the oracle cannot decide a declared property or execution closure is not proven",
+    "not_applicable": "the scenario cannot be expressed for the frozen server interface and is excluded from both numerator and denominator"
+  },
+  "implementation_gates": {
+    "generalized_filesystem_contracts": "OPEN",
+    "sqlite_semantic_diff_and_private_commit": "PROTOTYPE_TESTED_LOCALLY_PENDING_REAL_SERVER_INTEGRATION",
+    "trusted_descendant_closure": "OPEN",
+    "matched_condition_runner": "OPEN",
+    "raw_results": "NOT_RUN"
+  },
+  "integrity_rule": "An implementation gate may change only before outcomes run. Any scenario, oracle, condition, or repetition change after the first outcome requires a new plan version and a disclosed deviation."
+}

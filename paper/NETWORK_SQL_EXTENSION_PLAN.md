@@ -2,11 +2,16 @@
 
 ## Status and claim boundary
 
-This is a **pre-registered extension plan**, not evidence that MCPGate currently
-mediates network or database effects. The filesystem paper keeps RQ1--RQ5 and
-its present trusted-state-admission claim unchanged. Network and SQL become
-RQ6--RQ7 only after their contracts, independent effect oracles, attacks,
-baselines, and success criteria are frozen.
+This began as a **pre-registered extension plan**. Two local core prototypes
+now exist: `src/mcpgate/network_broker.py` checks an exact HTTP request before a
+trusted pinned transport sends it, and `src/mcpgate/sqlite_mediator.py` compares
+a private SQLite database's complete schema and row state before atomic
+promotion. Their adversarial unit tests pass. This is not yet evidence that
+MCPGate mediates network or database effects for real MCP servers. Direct
+egress confinement, real-server adapters, matched baselines, container bypass
+tests, and raw outcome artifacts remain open. The filesystem paper keeps
+RQ1--RQ5 and its present trusted-state-admission claim unchanged. Network and
+SQL become RQ6--RQ7 only after every go/no-go condition below is satisfied.
 
 The unifying principle is:
 
@@ -202,6 +207,24 @@ second connections invalidate the claim rather than being counted as blocked.
 6. Freeze SQL attacks and baselines before running results.
 7. Treat PostgreSQL and arbitrary TCP as separate follow-on claims.
 
+## Current implementation audit, 2026-09-26
+
+| Component | Current state | What is still required |
+|---|---|---|
+| Exact HTTP request contract | Local prototype and adversarial unit tests pass | Real MCP adapter and frozen workload integration |
+| Trusted DNS decision and address pinning | Local prototype and injected resolver tests pass | Linux packet-level oracle and rebinding test |
+| Redirect-free bounded HTTP transport | Implemented in the broker | Live HTTP and TLS integration tests |
+| Durable network replay allowance | Local cross-process ledger replay test passes | Concurrent process race run in Linux |
+| Direct server egress denial | Not implemented in the integrated runner | Network namespace or equivalent policy plus bypass suite |
+| SQLite semantic snapshot | Local prototype and adversarial unit tests pass | Real server integration for both frozen SQLite servers |
+| Private SQLite state and atomic promotion | Local prototype and same-filesystem promotion test pass | Container writer-closure and WAL-mode integration |
+| PostgreSQL or arbitrary network protocols | Not implemented and not claimed | Separate future work |
+
+The network framework is therefore architecturally defined and partly
+implemented, but not complete. The SQL framework has a tested local core, but
+is also incomplete at the real-server boundary. The manuscript must keep both
+in future work until the frozen matched evaluations pass.
+
 ## Go/no-go rule for the current manuscript
 
 Network and SQL remain in **Limitations and Future Work** unless a complete
@@ -221,4 +244,3 @@ past-tense paper contribution.
 > schema diff মিললে commit, না মিললে rollback/discard করব। এই দুইটি এখন
 > pre-registered extension plan; result না পাওয়া পর্যন্ত আমরা prevention claim
 > করছি না।”
-

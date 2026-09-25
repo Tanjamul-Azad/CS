@@ -306,11 +306,17 @@ properties without inventing an experimental result.
       go/no-go rules in `paper/NETWORK_SQL_EXTENSION_PLAN.md`. This closes the
       planning task only; it is not implementation or evaluation evidence.
 - [ ] Implement and evaluate network-effect mediation under denied direct
-      egress. Do not add it to the current contribution list before its frozen
-      N3 success criteria pass.
+      egress. The exact-request broker, DNS decision, address pinning, bounded
+      transport, and durable replay core now pass local adversarial tests.
+      Linux namespace integration, packet oracle, real MCP adapter, bypass
+      suite, and matched evaluation remain open. Do not add it to the current
+      contribution list before its frozen N3 success criteria pass.
 - [ ] Implement and evaluate SQLite effect mediation using a private database
-      copy or controlled transaction and trusted before/after diff. Do not
-      generalize a SQLite result to PostgreSQL/MySQL.
+      copy or controlled transaction and trusted before/after diff. The local
+      private-copy core now compares complete schema and ordered row state and
+      atomically promotes a match; adversarial unit tests pass. Both frozen
+      real SQLite servers, writer closure, WAL integration, baselines, and raw
+      outcomes remain open. Do not generalize a SQLite result to PostgreSQL/MySQL.
 - [ ] Process-spawn mediation.
 - [ ] Natural-language-to-contract security evaluation.
 - [ ] User study of confirmation prompts.
