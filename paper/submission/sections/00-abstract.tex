@@ -1,0 +1,29 @@
+\begin{abstract}
+Tool-using agents act through servers they do not control. In the Model
+Context Protocol (MCP), a user approves a tool call by reading the server's
+declaration, but the effect of the call comes from the server's implementation,
+and the only evidence the client receives is a response written by that same
+server. A server that is compromised after approval can write different bytes,
+or write them to a different place, and still return exactly the response an
+honest server would. We first show that inspecting responses cannot close this
+gap. If an honest and a malicious server produce the same transcript, any
+monitor that sees only the transcript flags the malicious server exactly as
+often as it wrongly flags the honest one. A measurement over 8,692 public
+registry servers agrees: no auditing configuration we tested reached our
+pre-registered target of 20\% detection at no more than 10\% false positives.
+
+We then present MCPGate, a client-side admission layer. The unmodified server
+runs against a private copy of the state. After every writer has stopped, a
+trusted mediator reads the complete result once, compares it with a contract
+bound to the approved call, and either promotes exactly the bytes it checked or
+discards them. We evaluate MCPGate on seven third-party servers that were
+frozen before any outcome was observed, covering filesystem and SQLite effects
+in both Node and Python, against an adversary that also falsifies its own
+read-backs. MCPGate prevented all 41 applicable attacks and blocked no honest
+workflow. A task-specific static permission policy prevented 20. No defense, a
+plain sandbox, and a response auditor each prevented only the 9 attacks that
+had no effect on these servers to begin with. Per-call cost under MCPGate was
+indistinguishable from running without a defense. MCPGate guarantees what
+enters trusted state; it does not stop effects outside the boundary it
+mediates.
+\end{abstract}

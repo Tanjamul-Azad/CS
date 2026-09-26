@@ -1,0 +1,105 @@
+\section{Introduction}
+\label{sec:intro}
+
+Language-model agents now change the world rather than only describe it. They
+write files, update databases, send messages, and run code, and most of this
+work flows through tool servers written by third parties. The Model Context
+Protocol (MCP) has become a common way to connect an agent to such servers. A
+server advertises each tool with a name, a description, and an input schema; a
+client calls the tool with arguments and receives content in
+return~\cite{mcp2025tools}. The user, or a policy acting for the user, decides
+whether a call is acceptable by reading that declaration and those arguments.
+
+This arrangement has a gap that is easy to overlook. Approval is attached to
+the declaration and the request, but the effect is produced by the server's
+implementation, and the evidence of what happened is a response that the same
+implementation writes. Consider a user who approves
+\texttt{write\_file(path="report.txt", content="Q3 totals")}. A server whose
+package was replaced after it was approved can write attacker bytes to
+\texttt{report.txt}, or write the approved bytes somewhere else, and then
+return \emph{``Successfully wrote to report.txt''}, the same message an honest
+server returns. Schema validation of the response, a language-model judge, and
+a signed receipt from the server all see identical evidence in the honest and
+the malicious case. Authenticating the server tells the client who spoke. It
+does not tell the client what that server did.
+
+This paper asks whether a client can learn and enforce what an untrusted server
+actually did, without trusting its testimony and without modifying the server.
+We answer in two steps.
+
+\paragraph{Responses are not evidence of effects.} We first make the gap
+precise. If an honest implementation and a malicious one induce the same
+distribution of requests and responses, then every monitor whose input is that
+transcript has a detection rate against the malicious server equal to its
+false-positive rate on the honest one (\S\ref{sec:measure}). The argument is a
+standard indistinguishability step, but it has a practical consequence: more
+careful response checking cannot help once the server keeps its story
+consistent. Clients can do more than read one response, so we also built an
+active auditor that issues follow-up reads and checks metamorphic
+relations~\cite{chen2018metamorphic}, and we ran it across a funnel of 8,692
+public registry servers. No configuration we tested reached the pre-registered
+target of 20\% detection at no more than 10\% false positives. Strict settings
+detected at most 0.5\% of attacks; permissive settings detected at most 7.0\%
+while falsely flagging more than 70\% of honest servers.
+
+\paragraph{Admit effects, do not audit testimony.} The negative result changes
+the question. Instead of asking the server to describe its effect, the client
+can decide which effects are allowed to reach state it trusts. MCPGate, the
+system we build, runs the unmodified server against a private copy of the
+relevant state. When the call returns, MCPGate stops every process that could
+still write, reads the complete private result exactly once, compares it with a
+contract derived from the approved call, and then either promotes those same
+bytes into the trusted store or discards them. The server can do anything it
+likes inside its private copy. What it cannot do is make an unapproved effect
+appear in trusted state. Staging and commit are old ideas, and we build on
+isolation systems such as Alcatraz~\cite{liang2009alcatraz} and
+TxOS~\cite{porter2009txos}. Our contribution is to bind that mechanism to the
+authorization object of an agent protocol and to show, on real servers, which
+checks are needed for the binding to hold.
+
+\paragraph{Evaluation.} We evaluate MCPGate against the strongest adversary our
+threat model allows: a server that receives the approved arguments, returns
+the honest response, performs a different effect, and also falsifies its own
+read and listing results so that a response auditor sees a consistent honest
+world. We realize this adversary on seven unmodified third-party servers by
+interposing on the runtime libraries they use for file and database writes, so
+the request and response stay honest and only the effect changes. The servers
+were chosen and frozen before any security outcome was observed. Across
+filesystem and SQLite servers in Node and Python, MCPGate prevented all 41
+applicable attacks and blocked none of the honest workflows. A task-specific
+static permission policy, which limits where a server may write but not what
+it writes, prevented 20. A plain sandbox, the response auditor, and no defense
+each prevented only 9, all of them attacks that happened to have no effect on
+these servers. Per-call latency, CPU, and memory under MCPGate were within noise
+of running without any defense.
+
+\paragraph{Contributions.} This paper makes four contributions.
+\begin{enumerate}
+\item \textbf{An observation boundary with measurement.} We state when a
+      response-only monitor cannot distinguish a diverted effect, and we measure
+      active response auditing over a registry-scale funnel, reporting the
+      selection effects and our own instrument failures
+      (\S\ref{sec:measure}).
+\item \textbf{A contract model for effects.} We separate destination,
+      structure, and exact content, and we treat content that cannot be
+      verified as an explicit UNKNOWN rather than silently granting it. Contracts
+      for multi-file and database workflows are derived from honest runs of the
+      approved version instead of being written by hand (\S\ref{sec:design}).
+\item \textbf{An admission mechanism.} MCPGate combines request-shape binding,
+      an atomic per-call allowance, private execution, writer shutdown, a single
+      complete read, and promotion of the bytes that were checked
+      (\S\ref{sec:design}, \S\ref{sec:impl}).
+\item \textbf{A matched evaluation on frozen real servers.} We compare five
+      conditions under one execution setup, in two effect domains, with
+      server-clustered intervals, ablations, 100-trial race tests, and overhead
+      (\S\ref{sec:method}, \S\ref{sec:results}).
+\end{enumerate}
+
+\paragraph{Scope.} MCPGate protects what enters a trusted store. It does not
+prove that nothing happened elsewhere: a server with network access can still
+send data out before MCPGate refuses its file result, and we observed a diverted
+write land in a container-local path that MCPGate never promoted but also did
+not prevent. MCPGate also assumes that the contract itself reflects what the
+user wanted; it does not defend against a prompt that tricks the agent into
+requesting the wrong thing. We return to these limits in
+\S\ref{sec:limits}.
