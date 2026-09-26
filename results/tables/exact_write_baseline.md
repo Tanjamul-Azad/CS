@@ -16,9 +16,9 @@
 
 | Condition | n | p50 (ms) | p95 (ms) | p99 (ms) |
 |---|---:|---:|---:|---:|
-| trusted direct writer | 100 | 3.7432 | 3.8588 | 4.7782 |
-| MCPGate exact write | 100 | 6.2546 | 6.3653 | 6.5303 |
+| trusted direct writer | 100 | 3.671 | 4.5937 | 5.5485 |
+| MCPGate exact write | 100 | 6.3494 | 6.5848 | 8.4123 |
 
-Development-machine p50 ratio: 1.671x.
+Development-machine p50 ratio: 1.73x.
 
 Decision: For already-known exact bytes and one local write, the trusted writer is the simpler baseline. MCPGate needs a non-trivial independently verifiable server workload to justify invocation.

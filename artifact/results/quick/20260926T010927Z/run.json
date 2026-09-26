@@ -1,0 +1,181 @@
+{
+  "all_commands_passed": true,
+  "commands": [
+    {
+      "command": [
+        "F:\\Python\\python.exe",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "elapsed_seconds": 11.485054,
+      "exit_code": 0,
+      "name": "pytest",
+      "stderr": "pytest.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "pytest.stdout.txt",
+      "stdout_sha256": "0ade785c72d689016574b7f9aeccb92ce11d598c9399e7a206b9fde054531332"
+    },
+    {
+      "command": [
+        "F:\\Python\\python.exe",
+        "experiments/demo_theorem1.py"
+      ],
+      "elapsed_seconds": 0.072728,
+      "exit_code": 0,
+      "name": "theorem1",
+      "stderr": "theorem1.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "theorem1.stdout.txt",
+      "stdout_sha256": "04b2a4549a41c6047891c964ae58d10c2e1653ff9de00a43b416328c68334342"
+    },
+    {
+      "command": [
+        "F:\\Python\\python.exe",
+        "experiments/run_effect_oracle.py"
+      ],
+      "elapsed_seconds": 0.080102,
+      "exit_code": 0,
+      "name": "effect_oracle",
+      "stderr": "effect_oracle.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "effect_oracle.stdout.txt",
+      "stdout_sha256": "b204992fc484c1e1f549aa430ce4c5fe7077525614f3a86b99f28255008bc643"
+    },
+    {
+      "command": [
+        "F:\\Python\\python.exe",
+        "experiments/run_gateway_eval.py"
+      ],
+      "elapsed_seconds": 0.173416,
+      "exit_code": 0,
+      "name": "gateway_eval",
+      "stderr": "gateway_eval.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "gateway_eval.stdout.txt",
+      "stdout_sha256": "41e3215b1a4a408a0bf4f12a10a4ec8bf833ff8f3f9ce81c72372c058b711cb5"
+    },
+    {
+      "command": [
+        "F:\\Python\\python.exe",
+        "experiments/run_mediator_ablations.py"
+      ],
+      "elapsed_seconds": 0.152206,
+      "exit_code": 0,
+      "name": "controlled_ablations",
+      "stderr": "controlled_ablations.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "controlled_ablations.stdout.txt",
+      "stdout_sha256": "5d76f612244d3e874b5c7238dd479360545ddb067bf88abdb42036c0adccf4ec"
+    },
+    {
+      "command": [
+        "F:\\Python\\python.exe",
+        "experiments/run_concurrency_eval.py"
+      ],
+      "elapsed_seconds": 0.476306,
+      "exit_code": 0,
+      "name": "concurrency_eval",
+      "stderr": "concurrency_eval.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "concurrency_eval.stdout.txt",
+      "stdout_sha256": "87934e49fa395238bf51c9f3122dbc5e9e3b7b17834395d17eb12ee3bbee19d3"
+    },
+    {
+      "command": [
+        "F:\\Python\\python.exe",
+        "experiments/run_exact_write_baseline.py",
+        "--repetitions",
+        "100"
+      ],
+      "elapsed_seconds": 1.22891,
+      "exit_code": 0,
+      "name": "exact_write_baseline",
+      "stderr": "exact_write_baseline.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "exact_write_baseline.stdout.txt",
+      "stdout_sha256": "cbecc1396a32ed72b2665d9880ed5285199f39e2ffb374a3f04160bab1e2651c"
+    },
+    {
+      "command": [
+        "F:\\Python\\python.exe",
+        "scripts/summarize_matched.py"
+      ],
+      "elapsed_seconds": 0.071013,
+      "exit_code": 0,
+      "name": "matched_filesystem_table",
+      "stderr": "matched_filesystem_table.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "matched_filesystem_table.stdout.txt",
+      "stdout_sha256": "5a2c907fcab8f75ec507a3c45b30f7453e2dd95a48e0a0dd48f1c1dd3286e55d"
+    },
+    {
+      "command": [
+        "F:\\Python\\python.exe",
+        "scripts/matched_stats.py"
+      ],
+      "elapsed_seconds": 0.258619,
+      "exit_code": 0,
+      "name": "matched_stats",
+      "stderr": "matched_stats.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "matched_stats.stdout.txt",
+      "stdout_sha256": "09e5ffc21ad856664d9fb5eef9f62582dde678ca73296fdf000a188462582716"
+    },
+    {
+      "command": [
+        "F:\\Python\\python.exe",
+        "scripts/make_submission_figures.py"
+      ],
+      "elapsed_seconds": 2.664987,
+      "exit_code": 0,
+      "name": "figures",
+      "stderr": "figures.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "figures.stdout.txt",
+      "stdout_sha256": "9a4c2cb1ec6ab274c087757765a639afbf32f3f9f56ee33a2ee42d0b30773c2f"
+    },
+    {
+      "command": [
+        "F:\\Python\\python.exe",
+        "scripts/prepare_usenix_source.py",
+        "--check"
+      ],
+      "elapsed_seconds": 0.054961,
+      "exit_code": 0,
+      "name": "usenix_source",
+      "stderr": "usenix_source.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "usenix_source.stdout.txt",
+      "stdout_sha256": "4c5f7c6cf81f46702a66f97da4d3474531677d875d663f055b1dbed5648d9eaf"
+    },
+    {
+      "command": [
+        "F:\\Python\\python.exe",
+        "scripts/verify_refs.py"
+      ],
+      "elapsed_seconds": 0.050573,
+      "exit_code": 0,
+      "name": "reference_gate",
+      "stderr": "reference_gate.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "reference_gate.stdout.txt",
+      "stdout_sha256": "617ef42745cc20a5b0a324de53e6463d2e800ec64a456e2cf631d4931244cf96"
+    }
+  ],
+  "created_utc": "2026-09-26T01:09:44.683096+00:00",
+  "git_commit": "335ebe370f74753e20f8fb100132e044070f1092",
+  "git_dirty": true,
+  "machine": "AMD64",
+  "packages": {
+    "httpx": "0.27.2",
+    "mcp": "2.1.1",
+    "pydantic": "2.13.4",
+    "pytest": "9.0.3",
+    "requests": "2.32.4"
+  },
+  "platform": "Windows-10-10.0.19045-SP0",
+  "python": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]",
+  "python_executable": "F:\\Python\\python.exe",
+  "schema_version": 1
+}

@@ -40,19 +40,19 @@
   "performance": {
     "trusted_direct_writer": {
       "n": 100,
-      "mean_ms": 3.7803,
-      "p50_ms": 3.7432,
-      "p95_ms": 3.8588,
-      "p99_ms": 4.7782
+      "mean_ms": 3.7456,
+      "p50_ms": 3.671,
+      "p95_ms": 4.5937,
+      "p99_ms": 5.5485
     },
     "mcpgate_exact_write": {
       "n": 100,
-      "mean_ms": 6.271,
-      "p50_ms": 6.2546,
-      "p95_ms": 6.3653,
-      "p99_ms": 6.5303
+      "mean_ms": 6.4024,
+      "p50_ms": 6.3494,
+      "p95_ms": 6.5848,
+      "p99_ms": 8.4123
     },
-    "p50_ratio_mcpgate_over_direct": 1.671
+    "p50_ratio_mcpgate_over_direct": 1.73
   },
   "decision": "For already-known exact bytes and one local write, the trusted writer is the simpler baseline. MCPGate needs a non-trivial independently verifiable server workload to justify invocation."
 }

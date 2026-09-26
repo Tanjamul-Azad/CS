@@ -53,3 +53,4 @@ data/processed/*.log
 # scale run). Contains whatever those servers happened to write -- never
 # commit this.
 data/scratch/
+.pytest_tmp/

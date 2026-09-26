@@ -1,0 +1,5 @@
+{"child_processes_started": 1, "distinct_child_pids": 1, "ledger_used": 1, "outcomes": ["allowance_refused", "committed"], "passed": true, "scenario": "atomic_final_slot"}
+{"child_intervals": [{"end_ns": 28045061603600, "pid": 26796, "start_ns": 28044912353800}, {"end_ns": 28045061646300, "pid": 20192, "start_ns": 28044912204300}], "committed_files": ["a.txt", "b.txt"], "distinct_staging_roots": true, "overlap_milliseconds": 149.25, "passed": true, "scenario": "two_honest_overlapping_child_processes"}
+concurrency_expectations_met=True
+wrote artifact\results\concurrency_eval.json
+wrote results\tables\concurrency_eval.md

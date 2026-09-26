@@ -5,7 +5,7 @@
 | Scenario | Pass | Observation |
 |---|---:|---|
 | Atomic final slot | YES | outcomes=['allowance_refused', 'committed']; child processes started=1; ledger used=1 |
-| Two honest overlapping calls | YES | overlap=140.775 ms; distinct staging=True; committed=['a.txt', 'b.txt'] |
+| Two honest overlapping calls | YES | overlap=149.25 ms; distinct staging=True; committed=['a.txt', 'b.txt'] |
 
 The first scenario shows that reserve-before-run admits only one child
 process for the final slot. The second demonstrates two genuinely

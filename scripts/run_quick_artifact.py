@@ -38,6 +38,10 @@ COMMANDS = (
         sys.executable, "experiments/run_exact_write_baseline.py",
         "--repetitions", "100",
     )),
+    ("matched_filesystem_table", (
+        sys.executable, "scripts/summarize_matched.py",
+    )),
+    ("matched_stats", (sys.executable, "scripts/matched_stats.py")),
     ("figures", (sys.executable, "scripts/make_submission_figures.py")),
     ("usenix_source", (
         sys.executable, "scripts/prepare_usenix_source.py", "--check",
