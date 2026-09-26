@@ -329,18 +329,27 @@ properties without inventing an experimental result.
       Linux namespace integration, packet oracle, real MCP adapter, bypass
       suite, and matched evaluation remain open. Do not add it to the current
       contribution list before its frozen N3 success criteria pass.
-- [ ] Implement and evaluate SQLite effect mediation using a private database
-      copy or controlled transaction and trusted before/after diff. The local
-      private-copy core now compares complete schema and ordered row state and
-      atomically promotes a match; adversarial unit tests pass. Honest
-      integration now passes on both frozen SQLite servers after a disclosed
-      pre-outcome workflow correction. Writer-closure attacks, WAL attack
-      integration, matched baselines, and security outcomes remain open. Do
-      not generalize a SQLite result to PostgreSQL/MySQL.
-- [ ] Process-spawn mediation.
-- [ ] Natural-language-to-contract security evaluation.
-- [ ] User study of confirmation prompts.
-- [ ] Dashboard or frontend.
+- [x] Implement and evaluate SQLite effect mediation using a private database
+      copy or controlled transaction and trusted before/after diff. The
+      private-copy core compares complete schema and ordered row state and
+      atomically promotes a match. The matched five-condition security
+      evaluation is now complete on both frozen SQLite servers (Python
+      `sqlite3` and Node `node:sqlite`) under SQL interposition: MCPGate
+      prevented 10/10 applicable attacks (value substitution, extra row, extra
+      table, replay, silent no-op) with no false block, a table-level static
+      policy caught only the two extra-table cases, and no defense, plain
+      sandbox, and the response auditor caught none. Raw outcomes in
+      `artifact/results/matched_sql.json`; guard tests in
+      `tests/test_matched_sql.py`. The SQLite result is not generalized to
+      PostgreSQL/MySQL, whose client-server transaction model differs.
+- [ ] Process-spawn mediation. A distinct effect domain (a server that spawns
+      processes); no matched arm built. The allowance/freeze mechanism it would
+      reuse is exercised by the 100-trial concurrency evaluation.
+- [ ] Natural-language-to-contract security evaluation. Separate research
+      direction; not started.
+- [ ] User study of confirmation prompts. Requires human participants; not
+      started.
+- [ ] Dashboard or frontend. Out of scope for the first paper.
 
 ## 7. Manuscript structure
 
