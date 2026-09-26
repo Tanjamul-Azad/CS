@@ -1,141 +1,155 @@
-"""Generate the working manuscript's consolidated SVG/PNG figures."""
+"""Generate the manuscript figures in a publication style.
+
+Figures are vector PDFs sized for the two-column USENIX layout (3.33 in per
+column, 7 in full width). They use a Times-compatible serif font at caption
+size, embed TrueType fonts rather than Type 3, carry no title of their own
+(the LaTeX caption states what each figure shows), and use the Okabe-Ito
+palette so every encoding survives common color-vision deficiencies. Numbers
+are read from checked-in result files.
+"""
 
 from __future__ import annotations
 
 import json
 import csv
+import shutil
 from pathlib import Path
 
-import matplotlib.pyplot as plt
-import numpy as np
-from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np  # noqa: E402
+from matplotlib.patches import FancyArrowPatch, FancyBboxPatch, Rectangle  # noqa: E402
 
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "paper" / "figures"
-BLUE = "#2563EB"
-TEAL = "#0F766E"
-ORANGE = "#EA580C"
-RED = "#B91C1C"
-GRAY = "#475569"
-LIGHT = "#E2E8F0"
+SUBMISSION = ROOT / "paper" / "submission" / "figures"
+# Okabe-Ito palette
+BLUE = "#0072B2"
+TEAL = "#009E73"
+ORANGE = "#E69F00"
+RED = "#D55E00"
+SKY = "#56B4E9"
+GRAY = "#555555"
+LIGHT = "#E5E5E5"
+COLUMN, FULL = 3.33, 7.0
+
+plt.rcParams.update({
+    "font.family": "serif",
+    "font.serif": ["Times New Roman", "Times", "STIXGeneral", "DejaVu Serif"],
+    "mathtext.fontset": "stix",
+    "font.size": 8,
+    "axes.labelsize": 8,
+    "xtick.labelsize": 7,
+    "ytick.labelsize": 7,
+    "legend.fontsize": 7,
+    "axes.linewidth": 0.6,
+    "xtick.major.width": 0.6,
+    "ytick.major.width": 0.6,
+    "pdf.fonttype": 42,
+    "ps.fonttype": 42,
+})
+
+# Figures that appear in the submission source.
+PAPER_FIGURES = ("fig1_mcpgate_architecture", "fig2_study_flow",
+                 "fig6_auditor_operating_points", "fig7_matched_evaluation",
+                 "fig8_matched_summary")
 
 
 def _save(fig: plt.Figure, name: str) -> None:
+    # A caption, not the image, names the figure.
+    for axis in fig.axes:
+        axis.set_title("")
+    if getattr(fig, "_suptitle", None) is not None:
+        fig._suptitle.set_text("")
     OUT.mkdir(parents=True, exist_ok=True)
-    fig.savefig(OUT / f"{name}.svg", bbox_inches="tight", facecolor="white")
-    fig.savefig(OUT / f"{name}.png", dpi=180, bbox_inches="tight", facecolor="white")
-    fig.savefig(OUT / f"{name}.pdf", bbox_inches="tight", facecolor="white")
+    kwargs = {"bbox_inches": "tight", "pad_inches": 0.02, "facecolor": "white"}
+    fig.savefig(OUT / f"{name}.svg", **kwargs)
+    fig.savefig(OUT / f"{name}.png", dpi=220, **kwargs)
+    fig.savefig(OUT / f"{name}.pdf", **kwargs)
     plt.close(fig)
+    if name in PAPER_FIGURES:
+        SUBMISSION.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(OUT / f"{name}.pdf", SUBMISSION / f"{name}.pdf")
 
 
 def architecture() -> None:
-    fig, ax = plt.subplots(figsize=(14.2, 4.5))
+    fig, ax = plt.subplots(figsize=(FULL, 1.95))
     ax.set_xlim(0, 14.2)
-    ax.set_ylim(0, 4.2)
+    ax.set_ylim(0, 4.0)
     ax.axis("off")
     stages = [
-        ("1", "Preflight\nrequest shape", BLUE),
-        ("2", "Atomic\nallowance", BLUE),
-        ("3", "Private staging +\nuntrusted server", ORANGE),
-        ("4", "Close all\nwriters", ORANGE),
-        ("5", "Transport\nshape recheck", BLUE),
-        ("6", "Bounded\nsingle read", TEAL),
-        ("7", "Complete-tree\neffect diff", TEAL),
-        ("8", "Same-read atomic\npromotion", TEAL),
+        ("1", "Check request\nshape", BLUE),
+        ("2", "Reserve\nallowance", BLUE),
+        ("3", "Run server in\nprivate staging", ORANGE),
+        ("4", "Stop every\nwriter", ORANGE),
+        ("5", "Recheck\ndelivered call", BLUE),
+        ("6", "Read staging\nonce", TEAL),
+        ("7", "Diff tree\nwith contract", TEAL),
+        ("8", "Promote the\nsame bytes", TEAL),
     ]
-    width, gap, start = 1.48, 0.24, 0.23
-    y = 1.65
+    width, gap, start = 1.52, 0.2, 0.22
+    y = 1.35
+    # the untrusted part of the pipeline
+    zone_x = start + 2 * (width + gap) - 0.1
+    ax.add_patch(Rectangle((zone_x, y - 0.22), 2 * width + gap + 0.2, 1.62,
+                           facecolor="none", edgecolor=ORANGE, linewidth=0.8,
+                           linestyle=(0, (3, 2))))
+    ax.text(zone_x + (2 * width + gap + 0.2) / 2, y - 0.5,
+            "untrusted server runs here", ha="center", fontsize=6.5,
+            color="#8A5A00", style="italic")
     for index, (number, label, color) in enumerate(stages):
         x = start + index * (width + gap)
-        box = FancyBboxPatch(
+        text_color = "black" if color == ORANGE else "white"
+        ax.add_patch(FancyBboxPatch(
             (x, y), width, 1.18,
-            boxstyle="round,pad=0.04,rounding_size=0.08",
-            facecolor=color, edgecolor="none", alpha=0.95,
-        )
-        ax.add_patch(box)
-        ax.text(x + 0.12, y + 0.92, number, color="white", fontsize=10,
-                fontweight="bold", ha="left")
-        ax.text(x + width / 2, y + 0.50, label, color="white", fontsize=8.2,
-                fontweight="bold", ha="center", va="center")
+            boxstyle="round,pad=0.03,rounding_size=0.08",
+            facecolor=color, edgecolor="none",
+        ))
+        ax.text(x + 0.1, y + 0.95, number, color=text_color, fontsize=7,
+                fontweight="bold", ha="left", va="center")
+        ax.text(x + width / 2, y + 0.47, label, color=text_color, fontsize=6.6,
+                ha="center", va="center", linespacing=1.1)
         if index < len(stages) - 1:
             ax.add_patch(FancyArrowPatch(
-                (x + width + 0.02, y + 0.59),
-                (x + width + gap - 0.02, y + 0.59),
-                arrowstyle="-|>", mutation_scale=10, color=GRAY, linewidth=1.2,
+                (x + width + 0.01, y + 0.59), (x + width + gap - 0.01, y + 0.59),
+                arrowstyle="-|>", mutation_scale=6, color=GRAY, linewidth=0.8,
             ))
-    ax.text(0.25, 3.58, "Approved call", fontsize=12, fontweight="bold", color=GRAY)
-    ax.text(13.95, 3.58, "Trusted store", fontsize=12, fontweight="bold",
-            color=GRAY, ha="right")
-    ax.add_patch(FancyArrowPatch((0.95, 3.48), (13.15, 3.48), arrowstyle="-|>",
-                                 mutation_scale=12, color=LIGHT, linewidth=5))
-    ax.text(
-        7.1, 0.62,
-        "Guarantee: contract-matching snapshot admission to trusted state",
-        ha="center", fontsize=11, fontweight="bold", color=TEAL,
-    )
-    ax.text(
-        7.1, 0.25,
-        "Non-claim: rollback or prevention of effects outside the mediated boundary",
-        ha="center", fontsize=10, color=RED,
-    )
+    ax.text(0.22, 3.4, "Approved call", fontsize=7.5, fontweight="bold",
+            color=GRAY, va="center")
+    ax.text(14.0, 3.4, "Trusted store", fontsize=7.5, fontweight="bold",
+            color=GRAY, ha="right", va="center")
+    ax.add_patch(FancyArrowPatch((2.0, 3.4), (12.1, 3.4), arrowstyle="-|>",
+                                 mutation_scale=8, color="#BBBBBB", linewidth=1.2))
+    ax.text(7.1, 0.28, "Refusal at any step discards staging and marks the "
+            "allowance slot FAILED; nothing reaches the trusted store.",
+            ha="center", fontsize=6.6, color=GRAY)
     _save(fig, "fig1_mcpgate_architecture")
 
 
 def study_flow() -> None:
-    fig, axes = plt.subplots(1, 2, figsize=(11.8, 4.5), gridspec_kw={"width_ratios": [1, 1.4]})
-    ax = axes[0]
-    counts = [8692, 4121, 1242]
-    labels = ["Credential-free\ncandidates", "Answered\ntools/list", "Usable paired\nwrite trials"]
-    widths = [1.0, 0.72, 0.52]
-    colors = [BLUE, TEAL, ORANGE]
-    y_positions = [2.8, 1.65, 0.5]
-    shares = [100.0, 47.4, 14.3]
-    for count, label, width, color, y, share in zip(
-        counts, labels, widths, colors, y_positions, shares
-    ):
-        left = 0.5 - width / 2
-        ax.add_patch(FancyBboxPatch(
-            (left, y), width, 0.72, boxstyle="round,pad=0.02",
-            facecolor=color, edgecolor="none",
-        ))
-        ax.text(0.5, y + 0.36, f"{count:,} ({share:.1f}%)\n{label}", color="white",
-                ha="center", va="center", fontsize=9, fontweight="bold")
-    ax.set_xlim(-0.1, 1.1)
-    ax.set_ylim(0.1, 3.9)
-    ax.set_title("Measurement funnel", fontsize=13, fontweight="bold")
-    ax.axis("off")
-
-    ax = axes[1]
-    nodes = [
-        (0.13, 0.72, "Observation\nboundary", BLUE),
-        (0.40, 0.72, "Response-auditor\nmeasurement", ORANGE),
-        (0.72, 0.72, "Contract\nexpressibility", TEAL),
-        (0.24, 0.25, "Integrated\nadmission", TEAL),
-        (0.56, 0.25, "Adaptive +\nablation", RED),
-        (0.84, 0.25, "Held-out +\nperformance", GRAY),
+    stages = [
+        ("Registry candidates\nrunnable without credentials", 8692),
+        ("Answered tools/list", 4121),
+        ("Usable paired\nwrite trials", 1242),
     ]
-    for x, y, label, color in nodes:
-        ax.add_patch(FancyBboxPatch(
-            (x - 0.11, y - 0.10), 0.22, 0.20,
-            boxstyle="round,pad=0.02", facecolor=color, edgecolor="none",
-        ))
-        ax.text(x, y, label, color="white", ha="center", va="center",
-                fontsize=8.5, fontweight="bold")
-    arrows = [(0.24, 0.72, 0.29, 0.72), (0.51, 0.72, 0.61, 0.72),
-              (0.72, 0.61, 0.30, 0.36), (0.35, 0.25, 0.45, 0.25),
-              (0.67, 0.25, 0.73, 0.25)]
-    for x1, y1, x2, y2 in arrows:
-        ax.add_patch(FancyArrowPatch((x1, y1), (x2, y2), arrowstyle="-|>",
-                                     mutation_scale=10, color=GRAY))
-    ax.text(0.84, 0.06, "OPEN", color=RED, ha="center", fontweight="bold")
-    ax.set_xlim(0, 1)
-    ax.set_ylim(0, 1)
-    ax.set_title("Evidence flow and remaining external-validity gate",
-                 fontsize=13, fontweight="bold")
-    ax.axis("off")
-    fig.suptitle("From ecosystem measurement to effect admission", fontsize=14,
-                 fontweight="bold")
+    fig, ax = plt.subplots(figsize=(COLUMN, 1.45))
+    y = np.arange(len(stages))[::-1]
+    counts = [count for _, count in stages]
+    ax.barh(y, counts, height=0.62, color=[BLUE, SKY, ORANGE], edgecolor="none")
+    for yi, (_, count) in zip(y, stages):
+        share = 100 * count / stages[0][1]
+        ax.text(count + 120, yi, f"{count:,}  ({share:.1f}%)", va="center",
+                fontsize=7)
+    ax.set_yticks(y, [label for label, _ in stages])
+    ax.set_xlim(0, 11500)
+    ax.set_xlabel("Servers")
+    ax.xaxis.set_major_formatter(
+        plt.matplotlib.ticker.FuncFormatter(lambda v, _: f"{int(v):,}"))
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.tick_params(axis="y", length=0)
     _save(fig, "fig2_study_flow")
 
 
@@ -235,31 +249,31 @@ def operating_points() -> None:
                 "tpr": float(row["Detection rate"].rstrip("%")),
                 "fpr": float(row["FPR"].rstrip("%")),
             })
-    fig, ax = plt.subplots(figsize=(7.8, 5.0))
-    for row in rows:
-        is_final = row["Run"] == "R7 calibrated + error flag"
-        color = TEAL if is_final else (BLUE if row["Point"] == "strict" else ORANGE)
-        marker = "*" if is_final else ("o" if row["Point"] == "strict" else "s")
-        size = 170 if is_final else 70
-        ax.scatter(row["fpr"], row["tpr"], color=color, marker=marker, s=size,
-                   edgecolor="white", linewidth=0.8, zorder=3)
-        if is_final:
-            ax.annotate(
-                f"repaired {row['Point']}\n({row['fpr']:.1f}% FPR, {row['tpr']:.1f}% TPR)",
-                (row["fpr"], row["tpr"]), xytext=(8, 5),
-                textcoords="offset points", fontsize=8, color=TEAL,
-            )
-    ax.axvspan(0, 10, color="#DCFCE7", alpha=0.55, label="low-FPR region")
+    fig, ax = plt.subplots(figsize=(COLUMN, 2.2))
+    # pre-registered deployability target: detection >= 20% at FPR <= 10%
+    ax.add_patch(Rectangle((0, 20), 10, 5, facecolor=TEAL, alpha=0.15,
+                           edgecolor=TEAL, linewidth=0.8, zorder=1))
+    ax.text(11, 22.5, "pre-registered target\n(no point reached it)",
+            fontsize=6.5, color=TEAL, va="center")
+    for point, marker, color in (("strict", "o", BLUE), ("permissive", "s", ORANGE)):
+        earlier = [r for r in rows if r["Point"] == point
+                   and r["Run"] != "R7 calibrated + error flag"]
+        final = [r for r in rows if r["Point"] == point
+                 and r["Run"] == "R7 calibrated + error flag"]
+        ax.scatter([r["fpr"] for r in earlier], [r["tpr"] for r in earlier],
+                   marker=marker, s=16, facecolor="none", edgecolor=color,
+                   linewidth=0.8, zorder=3, label=f"{point}, earlier runs")
+        ax.scatter([r["fpr"] for r in final], [r["tpr"] for r in final],
+                   marker=marker, s=26, color=color, zorder=4,
+                   label=f"{point}, final run")
     ax.set_xlim(-2, 84)
-    ax.set_ylim(-0.5, 8.5)
-    ax.set_xlabel("Honest false-positive rate (%)")
-    ax.set_ylabel("Attack detection rate (%)")
-    ax.set_title("No tested response-auditor point combined low FPR with useful detection",
-                 fontsize=12, fontweight="bold")
-    ax.grid(color=LIGHT, linewidth=0.8)
+    ax.set_ylim(-1, 26)
+    ax.set_xlabel("False-positive rate on honest servers (%)")
+    ax.set_ylabel("Attacks detected (%)")
+    ax.grid(color=LIGHT, linewidth=0.5)
     ax.spines[["top", "right"]].set_visible(False)
-    ax.text(0.98, 0.03, "Same 218-candidate comparison; repaired run has 71 landed attacks",
-            transform=ax.transAxes, ha="right", fontsize=8, color=GRAY)
+    ax.legend(frameon=False, loc="center right", handletextpad=0.3,
+              borderaxespad=0.2)
     _save(fig, "fig6_auditor_operating_points")
 
 
@@ -287,24 +301,25 @@ def matched_evaluation() -> None:
             k, n = prevented[(scen, cond)]
             if n:
                 grid[i, j] = k / n
-    fig, ax = plt.subplots(figsize=(10.8, 5.2))
+    labels = ["None", "Sandbox", "Auditor", "Static\nLP", "MCPGate"]
+    fig, ax = plt.subplots(figsize=(COLUMN, 2.35))
     cmap = plt.matplotlib.colors.LinearSegmentedColormap.from_list(
-        "prev", ["#FEE2E2", "#FEF3C7", "#DCFCE7"])
+        "prevented", ["#FFFFFF", "#C6DBEF", BLUE])
     ax.imshow(grid, cmap=cmap, vmin=0, vmax=1, aspect="auto")
     for i, (scen, _) in enumerate(scenarios):
         for j, cond in enumerate(conditions):
             k, n = prevented[(scen, cond)]
             if not n:
                 continue
-            ax.text(j, i, f"{k}/{n}", ha="center", va="center", fontsize=9,
-                    color=TEAL if k == n else (RED if k == 0 else GRAY),
-                    fontweight="bold")
-    ax.set_xticks(range(len(conditions)), labels, fontsize=9)
-    ax.set_yticks(range(len(scenarios)),
-                  [f"{s}  {name}" for s, name in scenarios], fontsize=9)
-    ax.set_title("Attacks prevented per scenario across five conditions "
-                 "(prevented / servers)", fontsize=12.5, fontweight="bold")
-    ax.tick_params(length=0)
+            ax.text(j, i, f"{k}/{n}", ha="center", va="center", fontsize=7,
+                    color="white" if k / n > 0.6 else "black")
+    ax.set_xticks(range(len(conditions)), labels)
+    ax.set_yticks(range(len(scenarios)), [name for _, name in scenarios])
+    ax.set_xticks(np.arange(-0.5, len(conditions)), minor=True)
+    ax.set_yticks(np.arange(-0.5, len(scenarios)), minor=True)
+    ax.grid(which="minor", color="white", linewidth=1.2)
+    ax.tick_params(which="both", length=0)
+    ax.xaxis.tick_top()
     for spine in ax.spines.values():
         spine.set_visible(False)
     _save(fig, "fig7_matched_evaluation")
@@ -327,30 +342,31 @@ def matched_summary() -> None:
                     out[cell["condition"]][0] += 1
         return [out[c][0] / out[c][1] if out[c][1] else 0.0 for c in conditions]
 
+    labels = ["None", "Sandbox", "Auditor", "Static\nLP", "MCPGate"]
     fs = rate("matched_filesystem.json")
     sql = rate("matched_sql.json")
     x = np.arange(len(conditions))
     width = 0.38
-    fig, ax = plt.subplots(figsize=(10.6, 4.8))
+    fig, ax = plt.subplots(figsize=(COLUMN, 1.85))
     b1 = ax.bar(x - width / 2, [v * 100 for v in fs], width,
-                label="Filesystem (5 servers)", color=BLUE)
+                label="Filesystem (5 servers, 31 attacks)", color=BLUE,
+                edgecolor="black", linewidth=0.4)
     b2 = ax.bar(x + width / 2, [v * 100 for v in sql], width,
-                label="SQL (2 servers)", color=TEAL)
+                label="SQL (2 servers, 10 attacks)", color=ORANGE,
+                edgecolor="black", linewidth=0.4, hatch="////")
     for bars in (b1, b2):
         for bar in bars:
-            ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 1.5,
-                    f"{bar.get_height():.0f}%", ha="center", va="bottom",
-                    fontsize=9, fontweight="bold")
-    ax.set_xticks(x, labels, fontsize=9.5)
-    ax.set_ylabel("Attacks prevented", fontsize=10)
-    ax.set_ylim(0, 108)
-    ax.set_yticks([0, 25, 50, 75, 100], ["0%", "25%", "50%", "75%", "100%"])
-    ax.set_title("Effect-integrity admission prevents what coarser policies miss, "
-                 "in two domains", fontsize=12.5, fontweight="bold")
-    ax.legend(frameon=False, fontsize=9.5, loc="upper left")
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    ax.tick_params(length=0)
+            ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 2,
+                    f"{bar.get_height():.0f}", ha="center", va="bottom",
+                    fontsize=6.5)
+    ax.set_xticks(x, labels)
+    ax.set_ylabel("Attacks prevented (%)")
+    ax.set_ylim(0, 125)
+    ax.set_yticks([0, 25, 50, 75, 100])
+    ax.legend(frameon=False, loc="upper left", ncol=1, handlelength=1.4,
+              borderaxespad=0.1)
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.tick_params(axis="x", length=0)
     _save(fig, "fig8_matched_summary")
 
 
