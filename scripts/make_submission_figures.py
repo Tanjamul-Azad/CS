@@ -53,7 +53,7 @@ plt.rcParams.update({
 })
 
 # Figures that appear in the submission source.
-PAPER_FIGURES = ("fig1_mcpgate_architecture", "fig2_study_flow",
+PAPER_FIGURES = ("fig0_two_worlds", "fig1_mcpgate_architecture", "fig2_study_flow",
                  "fig6_auditor_operating_points", "fig7_matched_evaluation",
                  "fig8_matched_summary")
 
@@ -127,6 +127,44 @@ def architecture() -> None:
             "allowance slot FAILED; nothing reaches the trusted store.",
             ha="center", fontsize=6.6, color=GRAY)
     _save(fig, "fig1_mcpgate_architecture")
+
+
+def two_worlds() -> None:
+    """Honest and malicious worlds that a client cannot tell apart."""
+    fig, ax = plt.subplots(figsize=(COLUMN, 1.75))
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 6)
+    ax.axis("off")
+
+    def lane(y, world, effect, effect_color):
+        ax.text(0.05, y + 0.95, world, fontsize=7, fontweight="bold", color=GRAY)
+        for x, w, label, face in ((0.05, 2.1, "Client", "#DDDDDD"),
+                                  (3.7, 2.1, "Server", "#DDDDDD"),
+                                  (7.4, 2.5, effect, effect_color)):
+            ax.add_patch(FancyBboxPatch((x, y), w, 0.75,
+                                        boxstyle="round,pad=0.02,rounding_size=0.1",
+                                        facecolor=face, edgecolor="none"))
+            ax.text(x + w / 2, y + 0.375, label, ha="center", va="center",
+                    fontsize=6.8, color="white" if face != "#DDDDDD" else "black")
+        ax.add_patch(FancyArrowPatch((2.2, y + 0.52), (3.65, y + 0.52),
+                                     arrowstyle="-|>", mutation_scale=6,
+                                     color=GRAY, linewidth=0.7))
+        ax.add_patch(FancyArrowPatch((3.65, y + 0.23), (2.2, y + 0.23),
+                                     arrowstyle="-|>", mutation_scale=6,
+                                     color=GRAY, linewidth=0.7))
+        ax.text(2.93, y + 0.62, "$a$", fontsize=7, ha="center", va="bottom")
+        ax.text(2.93, y + 0.13, "$r$", fontsize=7, ha="center", va="top")
+        ax.add_patch(FancyArrowPatch((5.85, y + 0.375), (7.35, y + 0.375),
+                                     arrowstyle="-|>", mutation_scale=6,
+                                     color=GRAY, linewidth=0.7))
+
+    lane(3.9, "Honest world", "effect $e$", TEAL)
+    lane(1.1, "Malicious world", "effect $e^{*}$", RED)
+    ax.text(2.93, 0.25, "same $(a, r)$ in both worlds",
+            ha="center", fontsize=6.6, style="italic", color=GRAY)
+    ax.text(8.65, 0.25, "different effects",
+            ha="center", fontsize=6.6, style="italic", color=GRAY)
+    _save(fig, "fig0_two_worlds")
 
 
 def study_flow() -> None:
@@ -399,6 +437,7 @@ def contact_sheet() -> None:
 
 
 def main() -> None:
+    two_worlds()
     architecture()
     study_flow()
     baseline_matrix()
