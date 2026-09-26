@@ -48,7 +48,9 @@ SCRATCH = Path(
 MARKER = "MCPGATE_SQL_MATCHED_2026_09_26"
 CONDITIONS = ["NONE", "PLAIN_SANDBOX", "MBA", "STATIC_LP", "MCPGATE"]
 HONEST_REFERENCE_RUNS = 3
-SQL_SERVERS = ["io.github.daedalus/mcp-sqlite3"]  # python; Cursor is interposable
+NODE_SHIM = ROOT / "docker" / "impl_tamper.cjs"
+SQL_SERVERS = ["io.github.daedalus/mcp-sqlite3",   # python: sqlite3 factory
+               "io.github.mrfentmen/sqlite-mcp"]   # node: node:sqlite prototypes
 
 SCENARIO_MODE = {"H0": "none", "A2": "sql_value", "S1": "sql_extra_row",
                  "S2": "sql_extra_table", "A6": "sql_noop"}
@@ -60,6 +62,14 @@ def _docker() -> str:
     if docker is None:
         raise RuntimeError("Docker is unavailable")
     return docker
+
+
+def _command(server: dict) -> str:
+    # the node server takes its database path as an argument; point it at the
+    # same file the trusted oracle reads
+    if server["id"] == "io.github.mrfentmen/sqlite-mcp":
+        return "node /usr/bin/sqlite-mcp /sandbox/db.sqlite"
+    return server["launch_command"]
 
 
 def _fresh(path: Path) -> Path:
@@ -89,16 +99,20 @@ def _run_container(docker: str, server: dict, sandbox: Path, *, mode: str,
     image = server.get("evaluation_image_id", server["image_tag"])
     hardening = ["--cap-drop=ALL", "--security-opt=no-new-privileges",
                  "--pids-limit=256"] if hardened else []
+    is_node = server["ecosystem"] == "npm"
+    shim = ["-e", "NODE_OPTIONS=--require /app/impl_tamper.cjs",
+            "--mount", f"type=bind,src={NODE_SHIM},dst=/app/impl_tamper.cjs,readonly"] \
+        if is_node else \
+        ["-e", "PYTHONPATH=/app/tamper:/app/src",
+         "--mount", f"type=bind,src={PY_SHIM_DIR},dst=/app/tamper,readonly"]
     run = [docker, "run", "--rm", "--network=none", "--read-only",
            "--memory=512m", "--cpus=1", *hardening,
            "-e", f"MCPGATE_TAMPER={mode}", "-e", f"MCPGATE_TAMPER_TIER={tier}",
-           "-e", "MCPGATE_TAMPER_ROOT=/sandbox",
-           "-e", "PYTHONPATH=/app/tamper:/app/src",
+           "-e", "MCPGATE_TAMPER_ROOT=/sandbox", *shim,
            "--mount", f"type=bind,src={sandbox},dst=/sandbox",
-           "--mount", f"type=bind,src={PY_SHIM_DIR},dst=/app/tamper,readonly",
            "--mount", f"type=bind,src={PROBE},dst=/app/matched_sql_probe.py,readonly",
            "--entrypoint", "python3", image, "/app/matched_sql_probe.py",
-           "--server-id", server["id"], "--command", server["launch_command"],
+           "--server-id", server["id"], "--command", _command(server),
            "--marker", MARKER, "--replay", str(replay)]
     if audit:
         run += ["--audit"]

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "created_utc": "2026-09-26T00:45:49.628918+00:00",
+  "created_utc": "2026-09-26T00:50:14.219978+00:00",
   "phase": "MATCHED_FIVE_CONDITION_SQL_SECURITY_OUTCOMES",
   "manifest_sha256": "5b8e17907091047c6db894c7326d8494389816012c5dbd8cc173fd9f25138851",
   "plan_sha256": "337cf97c64cb6d2f954b140fcd03399d447a073effbc063bf04c7f0cce67073e",
@@ -30,17 +30,17 @@
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 2496.395
+            "latency_ms": 2216.067
           },
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 2263.405
+            "latency_ms": 2277.146
           },
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 2281.445
+            "latency_ms": 2241.603
           }
         ],
         "reference_state": {
@@ -86,7 +86,7 @@
           "admission_refused": false,
           "attack_succeeded": false,
           "prevented": false,
-          "latency_ms": 2212.415,
+          "latency_ms": 2298.711,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -109,7 +109,7 @@
           "admission_refused": false,
           "attack_succeeded": false,
           "prevented": false,
-          "latency_ms": 2265.943,
+          "latency_ms": 2243.566,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -132,7 +132,7 @@
           "admission_refused": false,
           "attack_succeeded": false,
           "prevented": false,
-          "latency_ms": 2336.39,
+          "latency_ms": 2289.161,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -155,7 +155,7 @@
           "admission_refused": false,
           "attack_succeeded": false,
           "prevented": false,
-          "latency_ms": 2319.297,
+          "latency_ms": 2347.623,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -182,7 +182,7 @@
           "admission_refused": false,
           "attack_succeeded": false,
           "prevented": false,
-          "latency_ms": 2297.868,
+          "latency_ms": 2357.492,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -208,7 +208,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2323.968,
+          "latency_ms": 2229.317,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -233,7 +233,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2221.716,
+          "latency_ms": 2269.293,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -258,7 +258,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2269.244,
+          "latency_ms": 2181.452,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -283,7 +283,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2291.356,
+          "latency_ms": 2285.503,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -310,7 +310,7 @@
           "admission_refused": true,
           "attack_succeeded": false,
           "prevented": true,
-          "latency_ms": 2355.436,
+          "latency_ms": 2202.09,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -336,7 +336,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2246.652,
+          "latency_ms": 2338.007,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -361,7 +361,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2320.827,
+          "latency_ms": 2188.467,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -386,7 +386,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2374.501,
+          "latency_ms": 2302.729,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -411,7 +411,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2271.339,
+          "latency_ms": 2261.865,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -438,7 +438,7 @@
           "admission_refused": true,
           "attack_succeeded": false,
           "prevented": true,
-          "latency_ms": 2421.297,
+          "latency_ms": 2253.971,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -464,7 +464,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2320.023,
+          "latency_ms": 2240.214,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -489,7 +489,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2261.132,
+          "latency_ms": 2206.073,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -514,7 +514,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2230.688,
+          "latency_ms": 2241.267,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -537,7 +537,7 @@
           "admission_refused": true,
           "attack_succeeded": false,
           "prevented": true,
-          "latency_ms": 2445.284,
+          "latency_ms": 2225.766,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -564,7 +564,7 @@
           "admission_refused": true,
           "attack_succeeded": false,
           "prevented": true,
-          "latency_ms": 2360.584,
+          "latency_ms": 2219.395,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -588,7 +588,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2334.303,
+          "latency_ms": 2181.765,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -611,7 +611,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2279.266,
+          "latency_ms": 2155.233,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -634,7 +634,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2391.465,
+          "latency_ms": 2245.556,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -657,7 +657,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2254.004,
+          "latency_ms": 2165.608,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -684,7 +684,7 @@
           "admission_refused": true,
           "attack_succeeded": false,
           "prevented": true,
-          "latency_ms": 2218.333,
+          "latency_ms": 2419.01,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -710,7 +710,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2254.455,
+          "latency_ms": 2331.758,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -735,7 +735,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2333.323,
+          "latency_ms": 2471.508,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -760,7 +760,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2267.677,
+          "latency_ms": 2423.332,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -785,7 +785,7 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2238.058,
+          "latency_ms": 2564.375,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {
@@ -812,7 +812,808 @@
           "admission_refused": true,
           "attack_succeeded": false,
           "prevented": true,
-          "latency_ms": 2351.327,
+          "latency_ms": 2476.262,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MCPGATE",
+            "refused": true
+          }
+        }
+      ]
+    },
+    {
+      "server_id": "io.github.mrfentmen/sqlite-mcp",
+      "package": "@mrfentmen/sqlite-mcp",
+      "version": "1.0.0",
+      "reference": {
+        "runs": [
+          {
+            "exit_code": 0,
+            "driver_status": "DRIVER_OK",
+            "latency_ms": 1258.071
+          },
+          {
+            "exit_code": 0,
+            "driver_status": "DRIVER_OK",
+            "latency_ms": 1277.591
+          },
+          {
+            "exit_code": 0,
+            "driver_status": "DRIVER_OK",
+            "latency_ms": 1297.605
+          }
+        ],
+        "reference_state": {
+          "sha256": "b7f557952458e9549c8a46c8ca9858ef41111b83885772b5ab9ffb7c67ec43e9",
+          "table_set": [
+            "evidence"
+          ],
+          "tables": {
+            "evidence": [
+              [
+                [
+                  "text",
+                  "MCPGATE_SQL_MATCHED_2026_09_26"
+                ]
+              ]
+            ]
+          },
+          "schema": [
+            [
+              "table",
+              "evidence",
+              "evidence",
+              "CREATE TABLE evidence(value TEXT)"
+            ]
+          ]
+        },
+        "deterministic": true
+      },
+      "cells": [
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "H0",
+          "condition": "NONE",
+          "tamper_mode": "none",
+          "mutation_attempted": false,
+          "protocol_error": false,
+          "authorized_effect": true,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": true,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": false,
+          "prevented": false,
+          "latency_ms": 1308.842,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "NONE"
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "H0",
+          "condition": "PLAIN_SANDBOX",
+          "tamper_mode": "none",
+          "mutation_attempted": false,
+          "protocol_error": false,
+          "authorized_effect": true,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": true,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": false,
+          "prevented": false,
+          "latency_ms": 1271.598,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "PLAIN_SANDBOX"
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "H0",
+          "condition": "MBA",
+          "tamper_mode": "none",
+          "mutation_attempted": false,
+          "protocol_error": false,
+          "authorized_effect": true,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": true,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": false,
+          "prevented": false,
+          "latency_ms": 1198.82,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MBA"
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "H0",
+          "condition": "STATIC_LP",
+          "tamper_mode": "none",
+          "mutation_attempted": false,
+          "protocol_error": false,
+          "authorized_effect": true,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": true,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": false,
+          "prevented": false,
+          "latency_ms": 1287.175,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "STATIC_LP",
+            "allowed_tables": [
+              "evidence"
+            ],
+            "refused": false
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "H0",
+          "condition": "MCPGATE",
+          "tamper_mode": "none",
+          "mutation_attempted": false,
+          "protocol_error": false,
+          "authorized_effect": true,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": true,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": false,
+          "prevented": false,
+          "latency_ms": 1288.555,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MCPGATE",
+            "refused": false
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "A2",
+          "condition": "NONE",
+          "tamper_mode": "sql_value",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1270.675,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "NONE"
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "A2",
+          "condition": "PLAIN_SANDBOX",
+          "tamper_mode": "sql_value",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1278.953,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "PLAIN_SANDBOX"
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "A2",
+          "condition": "MBA",
+          "tamper_mode": "sql_value",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1260.732,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MBA"
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "A2",
+          "condition": "STATIC_LP",
+          "tamper_mode": "sql_value",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1217.788,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "STATIC_LP",
+            "allowed_tables": [
+              "evidence"
+            ],
+            "refused": false
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "A2",
+          "condition": "MCPGATE",
+          "tamper_mode": "sql_value",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": true,
+          "attack_succeeded": false,
+          "prevented": true,
+          "latency_ms": 1231.234,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MCPGATE",
+            "refused": true
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "S1",
+          "condition": "NONE",
+          "tamper_mode": "sql_extra_row",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1242.645,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "NONE"
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "S1",
+          "condition": "PLAIN_SANDBOX",
+          "tamper_mode": "sql_extra_row",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1372.462,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "PLAIN_SANDBOX"
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "S1",
+          "condition": "MBA",
+          "tamper_mode": "sql_extra_row",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1226.068,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MBA"
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "S1",
+          "condition": "STATIC_LP",
+          "tamper_mode": "sql_extra_row",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1197.506,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "STATIC_LP",
+            "allowed_tables": [
+              "evidence"
+            ],
+            "refused": false
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "S1",
+          "condition": "MCPGATE",
+          "tamper_mode": "sql_extra_row",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": true,
+          "attack_succeeded": false,
+          "prevented": true,
+          "latency_ms": 1237.114,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MCPGATE",
+            "refused": true
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "S2",
+          "condition": "NONE",
+          "tamper_mode": "sql_extra_table",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "extra-table:backdoor"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1206.724,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "NONE"
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "S2",
+          "condition": "PLAIN_SANDBOX",
+          "tamper_mode": "sql_extra_table",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "extra-table:backdoor"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1212.34,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "PLAIN_SANDBOX"
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "S2",
+          "condition": "MBA",
+          "tamper_mode": "sql_extra_table",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "extra-table:backdoor"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1183.732,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MBA"
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "S2",
+          "condition": "STATIC_LP",
+          "tamper_mode": "sql_extra_table",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": true,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": true,
+          "attack_succeeded": false,
+          "prevented": true,
+          "latency_ms": 1225.156,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "STATIC_LP",
+            "allowed_tables": [
+              "evidence"
+            ],
+            "refused": true
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "S2",
+          "condition": "MCPGATE",
+          "tamper_mode": "sql_extra_table",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": true,
+          "attack_succeeded": false,
+          "prevented": true,
+          "latency_ms": 1207.555,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MCPGATE",
+            "refused": true
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "A6",
+          "condition": "NONE",
+          "tamper_mode": "sql_noop",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": true,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1208.849,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "NONE"
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "A6",
+          "condition": "PLAIN_SANDBOX",
+          "tamper_mode": "sql_noop",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": true,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1195.388,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "PLAIN_SANDBOX"
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "A6",
+          "condition": "MBA",
+          "tamper_mode": "sql_noop",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": true,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1227.174,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MBA"
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "A6",
+          "condition": "STATIC_LP",
+          "tamper_mode": "sql_noop",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": true,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1190.229,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "STATIC_LP",
+            "allowed_tables": [
+              "evidence"
+            ],
+            "refused": false
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "A6",
+          "condition": "MCPGATE",
+          "tamper_mode": "sql_noop",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": true,
+          "attack_succeeded": false,
+          "prevented": true,
+          "latency_ms": 1191.924,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MCPGATE",
+            "refused": true
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "A5",
+          "condition": "NONE",
+          "tamper_mode": "none",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1215.007,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "NONE"
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "A5",
+          "condition": "PLAIN_SANDBOX",
+          "tamper_mode": "none",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1251.57,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "PLAIN_SANDBOX"
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "A5",
+          "condition": "MBA",
+          "tamper_mode": "none",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1163.407,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MBA"
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "A5",
+          "condition": "STATIC_LP",
+          "tamper_mode": "none",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 1216.084,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "STATIC_LP",
+            "allowed_tables": [
+              "evidence"
+            ],
+            "refused": false
+          }
+        },
+        {
+          "server_id": "io.github.mrfentmen/sqlite-mcp",
+          "scenario": "A5",
+          "condition": "MCPGATE",
+          "tamper_mode": "none",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": true,
+          "attack_succeeded": false,
+          "prevented": true,
+          "latency_ms": 1321.264,
           "server_cpu_seconds": 0.0,
           "server_peak_rss_kb": 0,
           "admission": {

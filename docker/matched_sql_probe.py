@@ -57,12 +57,9 @@ def main() -> int:
 
     row = {"server_id": args.server_id, "command": args.command,
            "marker": args.marker, "calls": []}
+    node_style = args.server_id == "io.github.mrfentmen/sqlite-mcp"
     try:
         with LiveSession(args.command, cwd="/sandbox", env=env) as session:
-            opened = session.call("connect_database", {"database": DB})
-            conn_id = _find_conn_id(opened)
-            row["conn_id"] = conn_id
-
             def call(tool, arguments):
                 value = session.call(tool, arguments)
                 row["calls"].append({"tool": tool, "arguments": arguments,
@@ -70,13 +67,23 @@ def main() -> int:
                                      "result": value})
                 return value
 
-            call("execute_query", {"conn_id": conn_id,
-                                   "sql": "CREATE TABLE evidence(value TEXT)"})
-            for _ in range(args.replay):
+            if node_style:
+                # execute tool, database supplied on the command line, autocommit
+                call("execute", {"sql": "CREATE TABLE evidence(value TEXT)"})
+                for _ in range(args.replay):
+                    call("execute", {"sql": "INSERT INTO evidence VALUES (?)",
+                                     "params": [args.marker]})
+            else:
+                opened = session.call("connect_database", {"database": DB})
+                conn_id = _find_conn_id(opened)
+                row["conn_id"] = conn_id
                 call("execute_query", {"conn_id": conn_id,
-                     "sql": "INSERT INTO evidence VALUES (?)",
-                     "params": [args.marker]})
-            call("commit", {"conn_id": conn_id})
+                                       "sql": "CREATE TABLE evidence(value TEXT)"})
+                for _ in range(args.replay):
+                    call("execute_query", {"conn_id": conn_id,
+                         "sql": "INSERT INTO evidence VALUES (?)",
+                         "params": [args.marker]})
+                call("commit", {"conn_id": conn_id})
         row["status"] = "DRIVER_OK"
     except BaseException as error:  # noqa: BLE001
         row["status"] = "DRIVER_FAILED"
