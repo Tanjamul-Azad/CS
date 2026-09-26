@@ -54,3 +54,6 @@ data/processed/*.log
 # commit this.
 data/scratch/
 .pytest_tmp/
+
+# Submission manuscript stays local only (public repo; plagiarism and anonymity)
+paper/submission/
