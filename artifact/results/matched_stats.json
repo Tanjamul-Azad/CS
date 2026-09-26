@@ -1,0 +1,136 @@
+{
+  "servers": 7,
+  "attack_cells": 205,
+  "by_condition": {
+    "NONE": {
+      "latency_ms": [
+        1268.63,
+        2240.921,
+        2274.493
+      ],
+      "cpu_seconds": [
+        0.837,
+        1.624,
+        1.642
+      ],
+      "peak_rss_mb": [
+        93.418,
+        124.538,
+        124.996
+      ],
+      "prevention": {
+        "prevented": 9,
+        "total": 41,
+        "rate": 0.2195,
+        "clustered_ci": [
+          0.1081,
+          0.3023
+        ]
+      }
+    },
+    "PLAIN_SANDBOX": {
+      "latency_ms": [
+        1275.472,
+        2224.049,
+        2261.513
+      ],
+      "cpu_seconds": [
+        0.848,
+        1.61,
+        1.636
+      ],
+      "peak_rss_mb": [
+        93.27,
+        124.733,
+        124.793
+      ],
+      "prevention": {
+        "prevented": 9,
+        "total": 41,
+        "rate": 0.2195,
+        "clustered_ci": [
+          0.1081,
+          0.3023
+        ]
+      }
+    },
+    "MBA": {
+      "latency_ms": [
+        1313.089,
+        2226.563,
+        2248.885
+      ],
+      "cpu_seconds": [
+        0.869,
+        1.617,
+        1.65
+      ],
+      "peak_rss_mb": [
+        95.535,
+        124.622,
+        124.703
+      ],
+      "prevention": {
+        "prevented": 9,
+        "total": 41,
+        "rate": 0.2195,
+        "clustered_ci": [
+          0.1081,
+          0.3023
+        ]
+      }
+    },
+    "STATIC_LP": {
+      "latency_ms": [
+        1277.321,
+        2252.546,
+        2315.202
+      ],
+      "cpu_seconds": [
+        0.844,
+        1.622,
+        1.703
+      ],
+      "peak_rss_mb": [
+        92.918,
+        124.376,
+        124.565
+      ],
+      "prevention": {
+        "prevented": 20,
+        "total": 41,
+        "rate": 0.4878,
+        "clustered_ci": [
+          0.3714,
+          0.5854
+        ]
+      }
+    },
+    "MCPGATE": {
+      "latency_ms": [
+        1299.01,
+        2240.186,
+        2308.747
+      ],
+      "cpu_seconds": [
+        0.856,
+        1.628,
+        1.696
+      ],
+      "peak_rss_mb": [
+        92.891,
+        124.552,
+        124.789
+      ],
+      "prevention": {
+        "prevented": 41,
+        "total": 41,
+        "rate": 1.0,
+        "clustered_ci": [
+          1.0,
+          1.0
+        ]
+      }
+    }
+  }
+}

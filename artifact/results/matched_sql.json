@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "created_utc": "2026-09-26T00:50:14.219978+00:00",
+  "created_utc": "2026-09-26T00:59:39.121643+00:00",
   "phase": "MATCHED_FIVE_CONDITION_SQL_SECURITY_OUTCOMES",
   "manifest_sha256": "5b8e17907091047c6db894c7326d8494389816012c5dbd8cc173fd9f25138851",
   "plan_sha256": "337cf97c64cb6d2f954b140fcd03399d447a073effbc063bf04c7f0cce67073e",
@@ -30,17 +30,17 @@
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 2216.067
+            "latency_ms": 2176.063
           },
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 2277.146
+            "latency_ms": 2209.656
           },
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 2241.603
+            "latency_ms": 2168.382
           }
         ],
         "reference_state": {
@@ -86,9 +86,9 @@
           "admission_refused": false,
           "attack_succeeded": false,
           "prevented": false,
-          "latency_ms": 2298.711,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2195.193,
+          "container_cpu_seconds": 1.629862,
+          "container_peak_mem_bytes": 130195456,
           "admission": {
             "policy": "NONE"
           }
@@ -109,9 +109,9 @@
           "admission_refused": false,
           "attack_succeeded": false,
           "prevented": false,
-          "latency_ms": 2243.566,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2254.566,
+          "container_cpu_seconds": 1.610932,
+          "container_peak_mem_bytes": 130793472,
           "admission": {
             "policy": "PLAIN_SANDBOX"
           }
@@ -132,9 +132,9 @@
           "admission_refused": false,
           "attack_succeeded": false,
           "prevented": false,
-          "latency_ms": 2289.161,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2222.814,
+          "container_cpu_seconds": 1.616636,
+          "container_peak_mem_bytes": 130289664,
           "admission": {
             "policy": "MBA"
           }
@@ -155,9 +155,9 @@
           "admission_refused": false,
           "attack_succeeded": false,
           "prevented": false,
-          "latency_ms": 2347.623,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2223.881,
+          "container_cpu_seconds": 1.603014,
+          "container_peak_mem_bytes": 130076672,
           "admission": {
             "policy": "STATIC_LP",
             "allowed_tables": [
@@ -182,9 +182,9 @@
           "admission_refused": false,
           "attack_succeeded": false,
           "prevented": false,
-          "latency_ms": 2357.492,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2264.296,
+          "container_cpu_seconds": 1.605058,
+          "container_peak_mem_bytes": 130539520,
           "admission": {
             "policy": "MCPGATE",
             "refused": false
@@ -208,9 +208,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2229.317,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2276.41,
+          "container_cpu_seconds": 1.625145,
+          "container_peak_mem_bytes": 130846720,
           "admission": {
             "policy": "NONE"
           }
@@ -233,9 +233,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2269.293,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2171.441,
+          "container_cpu_seconds": 1.568405,
+          "container_peak_mem_bytes": 130637824,
           "admission": {
             "policy": "PLAIN_SANDBOX"
           }
@@ -258,9 +258,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2181.452,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2206.137,
+          "container_cpu_seconds": 1.617266,
+          "container_peak_mem_bytes": 130764800,
           "admission": {
             "policy": "MBA"
           }
@@ -283,9 +283,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2285.503,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2358.845,
+          "container_cpu_seconds": 1.742184,
+          "container_peak_mem_bytes": 130297856,
           "admission": {
             "policy": "STATIC_LP",
             "allowed_tables": [
@@ -310,9 +310,9 @@
           "admission_refused": true,
           "attack_succeeded": false,
           "prevented": true,
-          "latency_ms": 2202.09,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2348.165,
+          "container_cpu_seconds": 1.741188,
+          "container_peak_mem_bytes": 130596864,
           "admission": {
             "policy": "MCPGATE",
             "refused": true
@@ -336,9 +336,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2338.007,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2272.331,
+          "container_cpu_seconds": 1.621266,
+          "container_peak_mem_bytes": 130588672,
           "admission": {
             "policy": "NONE"
           }
@@ -361,9 +361,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2188.467,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2230.736,
+          "container_cpu_seconds": 1.613637,
+          "container_peak_mem_bytes": 130854912,
           "admission": {
             "policy": "PLAIN_SANDBOX"
           }
@@ -386,9 +386,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2302.729,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2228.582,
+          "container_cpu_seconds": 1.569827,
+          "container_peak_mem_bytes": 130564096,
           "admission": {
             "policy": "MBA"
           }
@@ -411,9 +411,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2261.865,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2258.126,
+          "container_cpu_seconds": 1.613572,
+          "container_peak_mem_bytes": 130072576,
           "admission": {
             "policy": "STATIC_LP",
             "allowed_tables": [
@@ -438,9 +438,9 @@
           "admission_refused": true,
           "attack_succeeded": false,
           "prevented": true,
-          "latency_ms": 2253.971,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2203.172,
+          "container_cpu_seconds": 1.592989,
+          "container_peak_mem_bytes": 130813952,
           "admission": {
             "policy": "MCPGATE",
             "refused": true
@@ -464,9 +464,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2240.214,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2253.353,
+          "container_cpu_seconds": 1.653634,
+          "container_peak_mem_bytes": 130572288,
           "admission": {
             "policy": "NONE"
           }
@@ -489,9 +489,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2206.073,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2197.692,
+          "container_cpu_seconds": 1.564737,
+          "container_peak_mem_bytes": 130789376,
           "admission": {
             "policy": "PLAIN_SANDBOX"
           }
@@ -514,9 +514,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2241.267,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2244.647,
+          "container_cpu_seconds": 1.618015,
+          "container_peak_mem_bytes": 130736128,
           "admission": {
             "policy": "MBA"
           }
@@ -537,9 +537,9 @@
           "admission_refused": true,
           "attack_succeeded": false,
           "prevented": true,
-          "latency_ms": 2225.766,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2265.988,
+          "container_cpu_seconds": 1.658592,
+          "container_peak_mem_bytes": 130605056,
           "admission": {
             "policy": "STATIC_LP",
             "allowed_tables": [
@@ -564,9 +564,9 @@
           "admission_refused": true,
           "attack_succeeded": false,
           "prevented": true,
-          "latency_ms": 2219.395,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2257.832,
+          "container_cpu_seconds": 1.645674,
+          "container_peak_mem_bytes": 130883584,
           "admission": {
             "policy": "MCPGATE",
             "refused": true
@@ -588,9 +588,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2181.765,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2165.792,
+          "container_cpu_seconds": 1.595414,
+          "container_peak_mem_bytes": 130584576,
           "admission": {
             "policy": "NONE"
           }
@@ -611,9 +611,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2155.233,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2211.629,
+          "container_cpu_seconds": 1.608053,
+          "container_peak_mem_bytes": 130854912,
           "admission": {
             "policy": "PLAIN_SANDBOX"
           }
@@ -634,9 +634,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2245.556,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2252.643,
+          "container_cpu_seconds": 1.677924,
+          "container_peak_mem_bytes": 130756608,
           "admission": {
             "policy": "MBA"
           }
@@ -657,9 +657,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2165.608,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2144.319,
+          "container_cpu_seconds": 1.584956,
+          "container_peak_mem_bytes": 130625536,
           "admission": {
             "policy": "STATIC_LP",
             "allowed_tables": [
@@ -684,9 +684,9 @@
           "admission_refused": true,
           "attack_succeeded": false,
           "prevented": true,
-          "latency_ms": 2419.01,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2201.23,
+          "container_cpu_seconds": 1.640224,
+          "container_peak_mem_bytes": 130605056,
           "admission": {
             "policy": "MCPGATE",
             "refused": true
@@ -710,9 +710,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2331.758,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2217.833,
+          "container_cpu_seconds": 1.613822,
+          "container_peak_mem_bytes": 131264512,
           "admission": {
             "policy": "NONE"
           }
@@ -735,9 +735,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2471.508,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2267.673,
+          "container_cpu_seconds": 1.656734,
+          "container_peak_mem_bytes": 130232320,
           "admission": {
             "policy": "PLAIN_SANDBOX"
           }
@@ -760,9 +760,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2423.332,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2180.107,
+          "container_cpu_seconds": 1.564638,
+          "container_peak_mem_bytes": 130441216,
           "admission": {
             "policy": "MBA"
           }
@@ -785,9 +785,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 2564.375,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2242.184,
+          "container_cpu_seconds": 1.627061,
+          "container_peak_mem_bytes": 130482176,
           "admission": {
             "policy": "STATIC_LP",
             "allowed_tables": [
@@ -812,9 +812,9 @@
           "admission_refused": true,
           "attack_succeeded": false,
           "prevented": true,
-          "latency_ms": 2476.262,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 2207.415,
+          "container_cpu_seconds": 1.585548,
+          "container_peak_mem_bytes": 130330624,
           "admission": {
             "policy": "MCPGATE",
             "refused": true
@@ -831,17 +831,17 @@
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 1258.071
+            "latency_ms": 1220.228
           },
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 1277.591
+            "latency_ms": 1206.552
           },
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 1297.605
+            "latency_ms": 1190.812
           }
         ],
         "reference_state": {
@@ -887,9 +887,9 @@
           "admission_refused": false,
           "attack_succeeded": false,
           "prevented": false,
-          "latency_ms": 1308.842,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1192.353,
+          "container_cpu_seconds": 0.72739,
+          "container_peak_mem_bytes": 77012992,
           "admission": {
             "policy": "NONE"
           }
@@ -910,9 +910,9 @@
           "admission_refused": false,
           "attack_succeeded": false,
           "prevented": false,
-          "latency_ms": 1271.598,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1242.772,
+          "container_cpu_seconds": 0.723611,
+          "container_peak_mem_bytes": 76279808,
           "admission": {
             "policy": "PLAIN_SANDBOX"
           }
@@ -933,9 +933,9 @@
           "admission_refused": false,
           "attack_succeeded": false,
           "prevented": false,
-          "latency_ms": 1198.82,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1183.001,
+          "container_cpu_seconds": 0.707191,
+          "container_peak_mem_bytes": 75689984,
           "admission": {
             "policy": "MBA"
           }
@@ -956,9 +956,9 @@
           "admission_refused": false,
           "attack_succeeded": false,
           "prevented": false,
-          "latency_ms": 1287.175,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1235.085,
+          "container_cpu_seconds": 0.759647,
+          "container_peak_mem_bytes": 77008896,
           "admission": {
             "policy": "STATIC_LP",
             "allowed_tables": [
@@ -983,9 +983,9 @@
           "admission_refused": false,
           "attack_succeeded": false,
           "prevented": false,
-          "latency_ms": 1288.555,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1180.306,
+          "container_cpu_seconds": 0.731752,
+          "container_peak_mem_bytes": 77135872,
           "admission": {
             "policy": "MCPGATE",
             "refused": false
@@ -1009,9 +1009,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1270.675,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1181.726,
+          "container_cpu_seconds": 0.746094,
+          "container_peak_mem_bytes": 76226560,
           "admission": {
             "policy": "NONE"
           }
@@ -1034,9 +1034,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1278.953,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1192.218,
+          "container_cpu_seconds": 0.740629,
+          "container_peak_mem_bytes": 76341248,
           "admission": {
             "policy": "PLAIN_SANDBOX"
           }
@@ -1059,9 +1059,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1260.732,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1155.519,
+          "container_cpu_seconds": 0.697236,
+          "container_peak_mem_bytes": 76107776,
           "admission": {
             "policy": "MBA"
           }
@@ -1084,9 +1084,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1217.788,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1156.41,
+          "container_cpu_seconds": 0.710384,
+          "container_peak_mem_bytes": 76943360,
           "admission": {
             "policy": "STATIC_LP",
             "allowed_tables": [
@@ -1111,9 +1111,9 @@
           "admission_refused": true,
           "attack_succeeded": false,
           "prevented": true,
-          "latency_ms": 1231.234,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1198.016,
+          "container_cpu_seconds": 0.73596,
+          "container_peak_mem_bytes": 76775424,
           "admission": {
             "policy": "MCPGATE",
             "refused": true
@@ -1137,9 +1137,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1242.645,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1204.195,
+          "container_cpu_seconds": 0.727765,
+          "container_peak_mem_bytes": 76644352,
           "admission": {
             "policy": "NONE"
           }
@@ -1162,9 +1162,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1372.462,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1195.47,
+          "container_cpu_seconds": 0.711717,
+          "container_peak_mem_bytes": 76800000,
           "admission": {
             "policy": "PLAIN_SANDBOX"
           }
@@ -1187,9 +1187,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1226.068,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1190.24,
+          "container_cpu_seconds": 0.70942,
+          "container_peak_mem_bytes": 77053952,
           "admission": {
             "policy": "MBA"
           }
@@ -1212,9 +1212,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1197.506,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1204.029,
+          "container_cpu_seconds": 0.723315,
+          "container_peak_mem_bytes": 76931072,
           "admission": {
             "policy": "STATIC_LP",
             "allowed_tables": [
@@ -1239,9 +1239,9 @@
           "admission_refused": true,
           "attack_succeeded": false,
           "prevented": true,
-          "latency_ms": 1237.114,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1259.728,
+          "container_cpu_seconds": 0.734512,
+          "container_peak_mem_bytes": 76615680,
           "admission": {
             "policy": "MCPGATE",
             "refused": true
@@ -1265,9 +1265,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1206.724,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1184.714,
+          "container_cpu_seconds": 0.706609,
+          "container_peak_mem_bytes": 76206080,
           "admission": {
             "policy": "NONE"
           }
@@ -1290,9 +1290,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1212.34,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1201.141,
+          "container_cpu_seconds": 0.722309,
+          "container_peak_mem_bytes": 76947456,
           "admission": {
             "policy": "PLAIN_SANDBOX"
           }
@@ -1315,9 +1315,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1183.732,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1195.943,
+          "container_cpu_seconds": 0.70534,
+          "container_peak_mem_bytes": 76746752,
           "admission": {
             "policy": "MBA"
           }
@@ -1338,9 +1338,9 @@
           "admission_refused": true,
           "attack_succeeded": false,
           "prevented": true,
-          "latency_ms": 1225.156,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1201.506,
+          "container_cpu_seconds": 0.734124,
+          "container_peak_mem_bytes": 77209600,
           "admission": {
             "policy": "STATIC_LP",
             "allowed_tables": [
@@ -1365,9 +1365,9 @@
           "admission_refused": true,
           "attack_succeeded": false,
           "prevented": true,
-          "latency_ms": 1207.555,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1186.77,
+          "container_cpu_seconds": 0.715994,
+          "container_peak_mem_bytes": 76976128,
           "admission": {
             "policy": "MCPGATE",
             "refused": true
@@ -1389,9 +1389,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1208.849,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1246.518,
+          "container_cpu_seconds": 0.741055,
+          "container_peak_mem_bytes": 77021184,
           "admission": {
             "policy": "NONE"
           }
@@ -1412,9 +1412,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1195.388,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1228.849,
+          "container_cpu_seconds": 0.728124,
+          "container_peak_mem_bytes": 76939264,
           "admission": {
             "policy": "PLAIN_SANDBOX"
           }
@@ -1435,9 +1435,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1227.174,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1175.152,
+          "container_cpu_seconds": 0.719671,
+          "container_peak_mem_bytes": 76025856,
           "admission": {
             "policy": "MBA"
           }
@@ -1458,9 +1458,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1190.229,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1186.52,
+          "container_cpu_seconds": 0.704263,
+          "container_peak_mem_bytes": 76382208,
           "admission": {
             "policy": "STATIC_LP",
             "allowed_tables": [
@@ -1485,9 +1485,9 @@
           "admission_refused": true,
           "attack_succeeded": false,
           "prevented": true,
-          "latency_ms": 1191.924,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1209.074,
+          "container_cpu_seconds": 0.732269,
+          "container_peak_mem_bytes": 76619776,
           "admission": {
             "policy": "MCPGATE",
             "refused": true
@@ -1511,9 +1511,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1215.007,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1168.812,
+          "container_cpu_seconds": 0.719009,
+          "container_peak_mem_bytes": 76402688,
           "admission": {
             "policy": "NONE"
           }
@@ -1536,9 +1536,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1251.57,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1110.794,
+          "container_cpu_seconds": 0.69056,
+          "container_peak_mem_bytes": 76570624,
           "admission": {
             "policy": "PLAIN_SANDBOX"
           }
@@ -1561,9 +1561,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1163.407,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1139.521,
+          "container_cpu_seconds": 0.693593,
+          "container_peak_mem_bytes": 76111872,
           "admission": {
             "policy": "MBA"
           }
@@ -1586,9 +1586,9 @@
           "admission_refused": false,
           "attack_succeeded": true,
           "prevented": false,
-          "latency_ms": 1216.084,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1182.4,
+          "container_cpu_seconds": 0.707621,
+          "container_peak_mem_bytes": 76341248,
           "admission": {
             "policy": "STATIC_LP",
             "allowed_tables": [
@@ -1613,9 +1613,9 @@
           "admission_refused": true,
           "attack_succeeded": false,
           "prevented": true,
-          "latency_ms": 1321.264,
-          "server_cpu_seconds": 0.0,
-          "server_peak_rss_kb": 0,
+          "latency_ms": 1177.917,
+          "container_cpu_seconds": 0.707483,
+          "container_peak_mem_bytes": 76550144,
           "admission": {
             "policy": "MCPGATE",
             "refused": true

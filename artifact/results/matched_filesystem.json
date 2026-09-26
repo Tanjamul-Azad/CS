@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "created_utc": "2026-09-25T19:43:17.730395+00:00",
+  "created_utc": "2026-09-26T01:01:34.369274+00:00",
   "phase": "MATCHED_FIVE_CONDITION_FILESYSTEM_SECURITY_OUTCOMES",
   "manifest_sha256": "5b8e17907091047c6db894c7326d8494389816012c5dbd8cc173fd9f25138851",
   "plan_sha256": "337cf97c64cb6d2f954b140fcd03399d447a073effbc063bf04c7f0cce67073e",
-  "node_shim_sha256": "fb032bdfb91a877bb2358cb02adcea1de35b35a4de9c55aa5277c329dccbc2b6",
-  "py_shim_sha256": "48224cfff58c3a3f194d94a328a65f6b3991e3d668fd3f3acd4280db4117893e",
+  "node_shim_sha256": "ca587a8a92aec9ad2ef93db08aed37ec7523ae5190fc55bdb2dc560d15fb3a05",
+  "py_shim_sha256": "3bc84fbf0cf7c2aaec7ff55701af988f7446d2a95cbf33c708a7a7b61a3a81dd",
   "docker_server_version": "29.7.2",
   "conditions": [
     "NONE",
@@ -39,17 +39,17 @@
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 1379.554
+            "latency_ms": 1245.031
           },
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 1353.361
+            "latency_ms": 1250.918
           },
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 1365.66
+            "latency_ms": 1295.056
           }
         ],
         "all_honest_paths": [
@@ -89,7 +89,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1367.336,
+          "container_cpu_seconds": 0.776554,
+          "container_peak_mem_bytes": 87789568,
+          "latency_ms": 1255.997,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -120,7 +122,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1322.671,
+          "container_cpu_seconds": 0.761378,
+          "container_peak_mem_bytes": 88567808,
+          "latency_ms": 1271.992,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -162,7 +166,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1375.269,
+          "container_cpu_seconds": 0.814538,
+          "container_peak_mem_bytes": 88936448,
+          "latency_ms": 1307.446,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -193,7 +199,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1390.262,
+          "container_cpu_seconds": 0.769098,
+          "container_peak_mem_bytes": 87527424,
+          "latency_ms": 1247.202,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -226,7 +234,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1344.641,
+          "container_cpu_seconds": 0.753225,
+          "container_peak_mem_bytes": 86732800,
+          "latency_ms": 1198.174,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -260,7 +270,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1373.375,
+          "container_cpu_seconds": 0.795374,
+          "container_peak_mem_bytes": 87822336,
+          "latency_ms": 1259.592,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -293,7 +305,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1391.055,
+          "container_cpu_seconds": 0.75899,
+          "container_peak_mem_bytes": 88358912,
+          "latency_ms": 1224.38,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -326,7 +340,7 @@
           "detected_only": true,
           "auditor_alerts": [
             {
-              "detail": "list_resources gained ['{\"id\": \"/sandbox/exfil_report.txt\", \"type\": \"file\", \"name\": \"exfil_report.txt\", \"path\": \"/sandbox/exfil_report.txt\", \"metadata\": {\"size\": 51, \"modified\": \"2026-09-25T19:43:35.247010Z\"}, \"actions\": [\"read\", \"read_binary\", \"write\", \"write_binary\"]}'] after this write, which reflects none of ['/sandbox/report.txt', 'approved matched content MCPGATE_MATCHED_2026_09_26'] -- the effect landed somewhere other than where the response claimed",
+              "detail": "list_resources gained ['{\"id\": \"/sandbox/exfil_report.txt\", \"type\": \"file\", \"name\": \"exfil_report.txt\", \"path\": \"/sandbox/exfil_report.txt\", \"metadata\": {\"size\": 51, \"modified\": \"2026-09-26T01:01:50.648489Z\"}, \"actions\": [\"read\", \"read_binary\", \"write\", \"write_binary\"]}'] after this write, which reflects none of ['/sandbox/report.txt', 'approved matched content MCPGATE_MATCHED_2026_09_26'] -- the effect landed somewhere other than where the response claimed",
               "relation": "R7",
               "severity": "violation"
             },
@@ -337,7 +351,9 @@
             }
           ],
           "auditor_violations": 1,
-          "latency_ms": 1384.273,
+          "container_cpu_seconds": 0.774927,
+          "container_peak_mem_bytes": 88645632,
+          "latency_ms": 1251.919,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -368,7 +384,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1384.466,
+          "container_cpu_seconds": 0.796253,
+          "container_peak_mem_bytes": 87814144,
+          "latency_ms": 1284.377,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -403,7 +421,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1384.751,
+          "container_cpu_seconds": 0.756949,
+          "container_peak_mem_bytes": 87257088,
+          "latency_ms": 1291.695,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -437,7 +457,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1377.811,
+          "container_cpu_seconds": 0.762189,
+          "container_peak_mem_bytes": 87519232,
+          "latency_ms": 1251.2,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -470,7 +492,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1410.067,
+          "container_cpu_seconds": 0.779972,
+          "container_peak_mem_bytes": 87588864,
+          "latency_ms": 1300.817,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -514,7 +538,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1369.978,
+          "container_cpu_seconds": 0.794996,
+          "container_peak_mem_bytes": 89481216,
+          "latency_ms": 1312.658,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -547,7 +573,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1354.913,
+          "container_cpu_seconds": 0.753545,
+          "container_peak_mem_bytes": 87293952,
+          "latency_ms": 1216.955,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -580,7 +608,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1373.708,
+          "container_cpu_seconds": 0.778579,
+          "container_peak_mem_bytes": 87801856,
+          "latency_ms": 1275.987,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -614,7 +644,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1371.154,
+          "container_cpu_seconds": 0.770418,
+          "container_peak_mem_bytes": 87584768,
+          "latency_ms": 1268.005,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -647,7 +679,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1348.421,
+          "container_cpu_seconds": 0.767419,
+          "container_peak_mem_bytes": 87777280,
+          "latency_ms": 1235.812,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -691,7 +725,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1420.516,
+          "container_cpu_seconds": 0.815115,
+          "container_peak_mem_bytes": 89264128,
+          "latency_ms": 1300.584,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -722,7 +758,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1348.31,
+          "container_cpu_seconds": 0.785633,
+          "container_peak_mem_bytes": 87453696,
+          "latency_ms": 1354.844,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -757,7 +795,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1381.164,
+          "container_cpu_seconds": 0.760291,
+          "container_peak_mem_bytes": 87318528,
+          "latency_ms": 1259.963,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -789,7 +829,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1442.684,
+          "container_cpu_seconds": 0.793796,
+          "container_peak_mem_bytes": 87539712,
+          "latency_ms": 1299.464,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -820,7 +862,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1369.462,
+          "container_cpu_seconds": 0.779054,
+          "container_peak_mem_bytes": 87261184,
+          "latency_ms": 1267.042,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -862,7 +906,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1387.024,
+          "container_cpu_seconds": 0.799626,
+          "container_peak_mem_bytes": 89202688,
+          "latency_ms": 1328.978,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -893,7 +939,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1362.293,
+          "container_cpu_seconds": 0.825945,
+          "container_peak_mem_bytes": 87560192,
+          "latency_ms": 1344.477,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -926,7 +974,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1359.839,
+          "container_cpu_seconds": 0.760347,
+          "container_peak_mem_bytes": 87506944,
+          "latency_ms": 1245.855,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -960,7 +1010,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1383.697,
+          "container_cpu_seconds": 0.744922,
+          "container_peak_mem_bytes": 87777280,
+          "latency_ms": 1202.611,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -993,7 +1045,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1341.024,
+          "container_cpu_seconds": 0.739532,
+          "container_peak_mem_bytes": 87556096,
+          "latency_ms": 1214.076,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1037,7 +1091,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1403.791,
+          "container_cpu_seconds": 0.763754,
+          "container_peak_mem_bytes": 88879104,
+          "latency_ms": 1234.97,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1070,7 +1126,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1380.817,
+          "container_cpu_seconds": 0.749444,
+          "container_peak_mem_bytes": 87244800,
+          "latency_ms": 1203.831,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1103,7 +1161,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1333.948,
+          "container_cpu_seconds": 0.744658,
+          "container_peak_mem_bytes": 87859200,
+          "latency_ms": 1197.098,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1135,7 +1195,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1391.127,
+          "container_cpu_seconds": 0.744551,
+          "container_peak_mem_bytes": 87695360,
+          "latency_ms": 1196.144,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1166,7 +1228,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1457.764,
+          "container_cpu_seconds": 0.748113,
+          "container_peak_mem_bytes": 88043520,
+          "latency_ms": 1178.506,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1208,7 +1272,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1438.512,
+          "container_cpu_seconds": 0.774218,
+          "container_peak_mem_bytes": 88297472,
+          "latency_ms": 1254.263,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1239,7 +1305,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1414.266,
+          "container_cpu_seconds": 0.745692,
+          "container_peak_mem_bytes": 87961600,
+          "latency_ms": 1182.387,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1272,7 +1340,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1386.821,
+          "container_cpu_seconds": 0.740883,
+          "container_peak_mem_bytes": 87695360,
+          "latency_ms": 1192.352,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1304,7 +1374,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1366.705,
+          "container_cpu_seconds": 0.748209,
+          "container_peak_mem_bytes": 87302144,
+          "latency_ms": 1195.207,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1335,7 +1407,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1361.265,
+          "container_cpu_seconds": 0.743827,
+          "container_peak_mem_bytes": 87801856,
+          "latency_ms": 1182.509,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1377,7 +1451,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1455.653,
+          "container_cpu_seconds": 0.787152,
+          "container_peak_mem_bytes": 88834048,
+          "latency_ms": 1255.613,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1408,7 +1484,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1444.649,
+          "container_cpu_seconds": 0.745688,
+          "container_peak_mem_bytes": 87580672,
+          "latency_ms": 1221.198,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1441,7 +1519,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1409.741,
+          "container_cpu_seconds": 0.755231,
+          "container_peak_mem_bytes": 87252992,
+          "latency_ms": 1222.987,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1463,17 +1543,17 @@
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 1233.96
+            "latency_ms": 1070.003
           },
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 1233.157
+            "latency_ms": 1066.298
           },
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 1268.562
+            "latency_ms": 1087.224
           }
         ],
         "all_honest_paths": [
@@ -1513,7 +1593,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1193.254,
+          "container_cpu_seconds": 0.64577,
+          "container_peak_mem_bytes": 73883648,
+          "latency_ms": 1084.544,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1544,7 +1626,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1203.784,
+          "container_cpu_seconds": 0.654387,
+          "container_peak_mem_bytes": 74395648,
+          "latency_ms": 1084.559,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1581,7 +1665,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1199.837,
+          "container_cpu_seconds": 0.662137,
+          "container_peak_mem_bytes": 75739136,
+          "latency_ms": 1058.938,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1612,7 +1698,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1196.178,
+          "container_cpu_seconds": 0.655098,
+          "container_peak_mem_bytes": 74391552,
+          "latency_ms": 1068.471,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1645,7 +1733,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1181.404,
+          "container_cpu_seconds": 0.655112,
+          "container_peak_mem_bytes": 73613312,
+          "latency_ms": 1084.307,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1679,7 +1769,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1215.884,
+          "container_cpu_seconds": 0.646621,
+          "container_peak_mem_bytes": 74158080,
+          "latency_ms": 1065.767,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1712,7 +1804,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1222.566,
+          "container_cpu_seconds": 0.652027,
+          "container_peak_mem_bytes": 73912320,
+          "latency_ms": 1063.212,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1751,7 +1845,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1226.75,
+          "container_cpu_seconds": 0.678698,
+          "container_peak_mem_bytes": 76009472,
+          "latency_ms": 1076.905,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1782,7 +1878,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1232.718,
+          "container_cpu_seconds": 0.654858,
+          "container_peak_mem_bytes": 74215424,
+          "latency_ms": 1093.617,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1817,7 +1915,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1217.492,
+          "container_cpu_seconds": 0.656776,
+          "container_peak_mem_bytes": 75460608,
+          "latency_ms": 1061.755,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1851,7 +1951,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1220.415,
+          "container_cpu_seconds": 0.653599,
+          "container_peak_mem_bytes": 74178560,
+          "latency_ms": 1042.352,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1884,7 +1986,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1206.925,
+          "container_cpu_seconds": 0.66737,
+          "container_peak_mem_bytes": 74276864,
+          "latency_ms": 1066.648,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1923,7 +2027,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1249.596,
+          "container_cpu_seconds": 0.670729,
+          "container_peak_mem_bytes": 75255808,
+          "latency_ms": 1075.509,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1956,7 +2062,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1236.71,
+          "container_cpu_seconds": 0.665915,
+          "container_peak_mem_bytes": 73904128,
+          "latency_ms": 1085.287,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -1989,7 +2097,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1212.257,
+          "container_cpu_seconds": 0.653422,
+          "container_peak_mem_bytes": 74121216,
+          "latency_ms": 1100.508,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2023,7 +2133,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1200.222,
+          "container_cpu_seconds": 0.654735,
+          "container_peak_mem_bytes": 74665984,
+          "latency_ms": 1066.518,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2056,7 +2168,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1196.814,
+          "container_cpu_seconds": 0.651418,
+          "container_peak_mem_bytes": 75214848,
+          "latency_ms": 1063.556,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2095,7 +2209,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1233.614,
+          "container_cpu_seconds": 0.669309,
+          "container_peak_mem_bytes": 76558336,
+          "latency_ms": 1061.618,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2126,7 +2242,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1212.164,
+          "container_cpu_seconds": 0.651621,
+          "container_peak_mem_bytes": 74166272,
+          "latency_ms": 1086.816,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2161,7 +2279,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1211.702,
+          "container_cpu_seconds": 0.651017,
+          "container_peak_mem_bytes": 73629696,
+          "latency_ms": 1062.317,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2193,7 +2313,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1182.857,
+          "container_cpu_seconds": 0.654267,
+          "container_peak_mem_bytes": 74141696,
+          "latency_ms": 1063.684,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2224,7 +2346,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1233.47,
+          "container_cpu_seconds": 0.666001,
+          "container_peak_mem_bytes": 74145792,
+          "latency_ms": 1080.682,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2261,7 +2385,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1240.418,
+          "container_cpu_seconds": 0.683044,
+          "container_peak_mem_bytes": 76828672,
+          "latency_ms": 1122.369,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2292,7 +2418,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1232.515,
+          "container_cpu_seconds": 0.668517,
+          "container_peak_mem_bytes": 73641984,
+          "latency_ms": 1067.064,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2325,7 +2453,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1219.219,
+          "container_cpu_seconds": 0.666067,
+          "container_peak_mem_bytes": 73879552,
+          "latency_ms": 1104.186,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2359,7 +2489,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1192.627,
+          "container_cpu_seconds": 0.661625,
+          "container_peak_mem_bytes": 74510336,
+          "latency_ms": 1082.356,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2392,7 +2524,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1194.96,
+          "container_cpu_seconds": 0.662987,
+          "container_peak_mem_bytes": 74153984,
+          "latency_ms": 1086.3,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2431,7 +2565,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1195.833,
+          "container_cpu_seconds": 0.686793,
+          "container_peak_mem_bytes": 77557760,
+          "latency_ms": 1140.282,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2464,7 +2600,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1216.62,
+          "container_cpu_seconds": 0.667247,
+          "container_peak_mem_bytes": 74203136,
+          "latency_ms": 1093.211,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2497,7 +2635,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1199.03,
+          "container_cpu_seconds": 0.665303,
+          "container_peak_mem_bytes": 74129408,
+          "latency_ms": 1102.761,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2529,7 +2669,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1196.462,
+          "container_cpu_seconds": 0.675592,
+          "container_peak_mem_bytes": 73822208,
+          "latency_ms": 1114.412,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2560,7 +2702,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1210.131,
+          "container_cpu_seconds": 0.746754,
+          "container_peak_mem_bytes": 74080256,
+          "latency_ms": 1176.269,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2597,7 +2741,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1257.32,
+          "container_cpu_seconds": 0.683674,
+          "container_peak_mem_bytes": 76242944,
+          "latency_ms": 1119.535,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2628,7 +2774,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1223.081,
+          "container_cpu_seconds": 0.740905,
+          "container_peak_mem_bytes": 74207232,
+          "latency_ms": 1213.847,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2661,7 +2809,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1202.348,
+          "container_cpu_seconds": 0.713302,
+          "container_peak_mem_bytes": 73814016,
+          "latency_ms": 1218.857,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2693,7 +2843,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1209.926,
+          "container_cpu_seconds": 0.719123,
+          "container_peak_mem_bytes": 74973184,
+          "latency_ms": 1171.557,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2724,7 +2876,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1201.435,
+          "container_cpu_seconds": 0.728678,
+          "container_peak_mem_bytes": 74379264,
+          "latency_ms": 1182.827,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2761,7 +2915,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1247.757,
+          "container_cpu_seconds": 0.778035,
+          "container_peak_mem_bytes": 77037568,
+          "latency_ms": 1255.725,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2792,7 +2948,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1216.844,
+          "container_cpu_seconds": 0.747317,
+          "container_peak_mem_bytes": 73871360,
+          "latency_ms": 1257.337,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2825,7 +2983,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1178.594,
+          "container_cpu_seconds": 0.795573,
+          "container_peak_mem_bytes": 74166272,
+          "latency_ms": 1257.416,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2847,17 +3007,17 @@
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 1850.798
+            "latency_ms": 1786.747
           },
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 1813.185
+            "latency_ms": 1739.208
           },
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 1903.557
+            "latency_ms": 1801.93
           }
         ],
         "all_honest_paths": [
@@ -2889,7 +3049,7 @@
         "stable_files": {
           ".ori": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
           "inbox/.gitkeep": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
-          "notes/approved-matched-content-mcpgatematched20260926.md": "4dca01f10a79d5025bce40aebe1ef2b3c6718be5a6c7cb90848bc2567d8133d0",
+          "notes/approved-matched-content-mcpgatematched20260926.md": "87b66f70d3130dc9aa7539971b66332a455f3183a281ff4b585a24d289573308",
           "notes/index.md": "f0eb4792cef633238885657323aebe6da8a66aaeed8cbb6083b8d5de47312ad4",
           "ops/daily.md": "955b484b7954082d18bb65f1600c83abf65728f69f7b0cd43e9c82a59e7e2790",
           "ops/observations/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -2936,7 +3096,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1846.76,
+          "container_cpu_seconds": 1.26262,
+          "container_peak_mem_bytes": 98062336,
+          "latency_ms": 1797.311,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -2967,7 +3129,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1873.148,
+          "container_cpu_seconds": 1.273453,
+          "container_peak_mem_bytes": 97501184,
+          "latency_ms": 1863.48,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3004,7 +3168,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1897.394,
+          "container_cpu_seconds": 1.437943,
+          "container_peak_mem_bytes": 104632320,
+          "latency_ms": 1987.458,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3035,7 +3201,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1828.772,
+          "container_cpu_seconds": 1.253272,
+          "container_peak_mem_bytes": 101785600,
+          "latency_ms": 1771.637,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3091,7 +3259,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1839.745,
+          "container_cpu_seconds": 1.27292,
+          "container_peak_mem_bytes": 104194048,
+          "latency_ms": 1767.693,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3125,7 +3295,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1852.146,
+          "container_cpu_seconds": 1.187566,
+          "container_peak_mem_bytes": 100974592,
+          "latency_ms": 1676.168,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3158,7 +3330,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1804.486,
+          "container_cpu_seconds": 1.193343,
+          "container_peak_mem_bytes": 100507648,
+          "latency_ms": 1659.765,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3197,7 +3371,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1869.511,
+          "container_cpu_seconds": 1.212021,
+          "container_peak_mem_bytes": 101384192,
+          "latency_ms": 1693.72,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3230,7 +3406,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1863.538,
+          "container_cpu_seconds": 1.181531,
+          "container_peak_mem_bytes": 105316352,
+          "latency_ms": 1638.534,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3286,7 +3464,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1911.471,
+          "container_cpu_seconds": 1.201132,
+          "container_peak_mem_bytes": 103989248,
+          "latency_ms": 1661.398,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3321,7 +3501,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1834.206,
+          "container_cpu_seconds": 1.18385,
+          "container_peak_mem_bytes": 99909632,
+          "latency_ms": 1648.985,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3355,7 +3537,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1915.974,
+          "container_cpu_seconds": 1.188867,
+          "container_peak_mem_bytes": 103690240,
+          "latency_ms": 1670.064,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3395,7 +3579,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1845.93,
+          "container_cpu_seconds": 1.191207,
+          "container_peak_mem_bytes": 97824768,
+          "latency_ms": 1663.211,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3426,7 +3612,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1874.853,
+          "container_cpu_seconds": 1.200841,
+          "container_peak_mem_bytes": 100515840,
+          "latency_ms": 1705.111,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3485,7 +3673,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1818.851,
+          "container_cpu_seconds": 1.174153,
+          "container_peak_mem_bytes": 99409920,
+          "latency_ms": 1626.473,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3517,7 +3707,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1816.015,
+          "container_cpu_seconds": 1.207403,
+          "container_peak_mem_bytes": 100474880,
+          "latency_ms": 1659.654,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3548,7 +3740,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1820.198,
+          "container_cpu_seconds": 1.187613,
+          "container_peak_mem_bytes": 98856960,
+          "latency_ms": 1630.277,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3585,7 +3779,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1842.501,
+          "container_cpu_seconds": 1.201012,
+          "container_peak_mem_bytes": 102666240,
+          "latency_ms": 1677.092,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3616,7 +3812,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1833.862,
+          "container_cpu_seconds": 1.170774,
+          "container_peak_mem_bytes": 101715968,
+          "latency_ms": 1613.437,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3672,7 +3870,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1835.736,
+          "container_cpu_seconds": 1.176832,
+          "container_peak_mem_bytes": 99414016,
+          "latency_ms": 1668.488,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3704,7 +3904,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1866.381,
+          "container_cpu_seconds": 1.187194,
+          "container_peak_mem_bytes": 99864576,
+          "latency_ms": 1673.498,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3735,7 +3937,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1841.559,
+          "container_cpu_seconds": 1.197369,
+          "container_peak_mem_bytes": 105312256,
+          "latency_ms": 1650.565,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3772,7 +3976,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1901.46,
+          "container_cpu_seconds": 1.191466,
+          "container_peak_mem_bytes": 103997440,
+          "latency_ms": 1654.075,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3803,7 +4009,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1872.06,
+          "container_cpu_seconds": 1.20322,
+          "container_peak_mem_bytes": 101167104,
+          "latency_ms": 1725.264,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3859,7 +4067,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1852.826,
+          "container_cpu_seconds": 1.192362,
+          "container_peak_mem_bytes": 102604800,
+          "latency_ms": 1666.371,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3893,7 +4103,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1855.464,
+          "container_cpu_seconds": 1.222674,
+          "container_peak_mem_bytes": 105304064,
+          "latency_ms": 1684.135,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3926,7 +4138,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1889.786,
+          "container_cpu_seconds": 1.208422,
+          "container_peak_mem_bytes": 100102144,
+          "latency_ms": 1725.743,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -3970,7 +4184,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1951.49,
+          "container_cpu_seconds": 1.239738,
+          "container_peak_mem_bytes": 102940672,
+          "latency_ms": 1736.577,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4001,7 +4217,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1838.138,
+          "container_cpu_seconds": 1.214643,
+          "container_peak_mem_bytes": 96206848,
+          "latency_ms": 1707.336,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4059,7 +4277,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1914.611,
+          "container_cpu_seconds": 1.229156,
+          "container_peak_mem_bytes": 96505856,
+          "latency_ms": 1719.588,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4070,7 +4290,7 @@
           "stderr_tail": ""
         }
       ],
-      "contract_id": "59924beb90c740e7e0f66ef194bb4c260f14acb86e30fd8d14834d03cf57019b"
+      "contract_id": "4679c78d564137ef08ca9d6e2ae64153f4c6d9ebeea6b9430c61d3f27e3c5e64"
     },
     {
       "server_id": "ai.smartmemory/compose-mcp",
@@ -4081,17 +4301,17 @@
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 1391.714
+            "latency_ms": 1270.772
           },
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 1426.398
+            "latency_ms": 1269.616
           },
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 1433.252
+            "latency_ms": 1303.411
           }
         ],
         "all_honest_paths": [
@@ -4105,8 +4325,8 @@
           "docs/features/MCPGATE-M1/feature.json"
         ],
         "stable_files": {
-          "ROADMAP.md": "45e088ce2077fbe92c9f78cd3233657bc743c8b0a755b3f636b2eb996f58f13c",
-          "docs/features/MCPGATE-M1/feature.json": "d49b2d74c7ed792689f7178c69d14712e1ea20cfec36f54b60fba2a2f17c2101"
+          "ROADMAP.md": "93776e42b007ed111680794e17e71fa73a8d9bb04f43f04ecc51f36fb8ddb2b8",
+          "docs/features/MCPGATE-M1/feature.json": "af52d6f59db56cb3524034a8b1cf02a8af6440f36e1db5c4cc6a274d7908849f"
         },
         "volatile_files": [],
         "unconstrained_files": [
@@ -4142,7 +4362,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1478.236,
+          "container_cpu_seconds": 0.836108,
+          "container_peak_mem_bytes": 98091008,
+          "latency_ms": 1293.546,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4173,7 +4395,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1500.03,
+          "container_cpu_seconds": 0.84717,
+          "container_peak_mem_bytes": 97583104,
+          "latency_ms": 1290.807,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4210,7 +4434,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1474.887,
+          "container_cpu_seconds": 0.87644,
+          "container_peak_mem_bytes": 100683776,
+          "latency_ms": 1335.836,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4241,7 +4467,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1435.065,
+          "container_cpu_seconds": 0.831275,
+          "container_peak_mem_bytes": 98275328,
+          "latency_ms": 1286.682,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4281,7 +4509,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1427.308,
+          "container_cpu_seconds": 0.863193,
+          "container_peak_mem_bytes": 98324480,
+          "latency_ms": 1329.737,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4316,7 +4546,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1427.552,
+          "container_cpu_seconds": 0.837141,
+          "container_peak_mem_bytes": 98279424,
+          "latency_ms": 1273.799,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4350,7 +4582,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1494.305,
+          "container_cpu_seconds": 0.860975,
+          "container_peak_mem_bytes": 98017280,
+          "latency_ms": 1308.133,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4390,7 +4624,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1470.863,
+          "container_cpu_seconds": 0.876194,
+          "container_peak_mem_bytes": 99987456,
+          "latency_ms": 1329.843,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4424,7 +4660,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1425.388,
+          "container_cpu_seconds": 0.857431,
+          "container_peak_mem_bytes": 99381248,
+          "latency_ms": 1276.462,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4464,7 +4702,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1449.053,
+          "container_cpu_seconds": 0.869826,
+          "container_peak_mem_bytes": 97759232,
+          "latency_ms": 1334.411,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4500,7 +4740,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1403.492,
+          "container_cpu_seconds": 0.843098,
+          "container_peak_mem_bytes": 97849344,
+          "latency_ms": 1289.299,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4535,7 +4777,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1437.362,
+          "container_cpu_seconds": 0.849099,
+          "container_peak_mem_bytes": 98426880,
+          "latency_ms": 1305.024,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4576,7 +4820,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1455.067,
+          "container_cpu_seconds": 0.877927,
+          "container_peak_mem_bytes": 100691968,
+          "latency_ms": 1361.921,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4607,7 +4853,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1445.755,
+          "container_cpu_seconds": 0.847528,
+          "container_peak_mem_bytes": 98906112,
+          "latency_ms": 1283.595,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4651,7 +4899,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1467.927,
+          "container_cpu_seconds": 0.869954,
+          "container_peak_mem_bytes": 98271232,
+          "latency_ms": 1350.575,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4683,7 +4933,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1404.566,
+          "container_cpu_seconds": 0.828064,
+          "container_peak_mem_bytes": 96923648,
+          "latency_ms": 1266.665,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4714,7 +4966,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1404.003,
+          "container_cpu_seconds": 0.835785,
+          "container_peak_mem_bytes": 98230272,
+          "latency_ms": 1293.24,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4751,7 +5005,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1465.922,
+          "container_cpu_seconds": 0.886765,
+          "container_peak_mem_bytes": 100487168,
+          "latency_ms": 1327.638,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4782,7 +5038,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1411.846,
+          "container_cpu_seconds": 0.851776,
+          "container_peak_mem_bytes": 96985088,
+          "latency_ms": 1273.62,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4822,7 +5080,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1480.377,
+          "container_cpu_seconds": 0.845194,
+          "container_peak_mem_bytes": 97050624,
+          "latency_ms": 1301.867,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4854,7 +5114,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1465.114,
+          "container_cpu_seconds": 0.845317,
+          "container_peak_mem_bytes": 100102144,
+          "latency_ms": 1290.93,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4885,7 +5147,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1394.388,
+          "container_cpu_seconds": 0.858331,
+          "container_peak_mem_bytes": 100065280,
+          "latency_ms": 1296.872,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4922,7 +5186,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1477.63,
+          "container_cpu_seconds": 0.872045,
+          "container_peak_mem_bytes": 100364288,
+          "latency_ms": 1332.818,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4953,7 +5219,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1458.25,
+          "container_cpu_seconds": 0.84573,
+          "container_peak_mem_bytes": 97878016,
+          "latency_ms": 1273.757,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -4993,7 +5261,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1431.792,
+          "container_cpu_seconds": 0.856388,
+          "container_peak_mem_bytes": 97755136,
+          "latency_ms": 1320.775,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5025,7 +5295,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1461.483,
+          "container_cpu_seconds": 0.84318,
+          "container_peak_mem_bytes": 98934784,
+          "latency_ms": 1296.238,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5056,7 +5328,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1446.814,
+          "container_cpu_seconds": 0.86472,
+          "container_peak_mem_bytes": 98537472,
+          "latency_ms": 1333.549,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5093,7 +5367,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1464.089,
+          "container_cpu_seconds": 0.864914,
+          "container_peak_mem_bytes": 101363712,
+          "latency_ms": 1322.909,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5124,7 +5400,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1464.535,
+          "container_cpu_seconds": 0.841946,
+          "container_peak_mem_bytes": 98172928,
+          "latency_ms": 1293.087,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5164,7 +5442,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1474.041,
+          "container_cpu_seconds": 0.868344,
+          "container_peak_mem_bytes": 98455552,
+          "latency_ms": 1311.284,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5175,7 +5455,7 @@
           "stderr_tail": ""
         }
       ],
-      "contract_id": "642c9469c310aa9e8dbdc19c1120fad6551246cc60f5673bfb7b47ab7f851b43"
+      "contract_id": "7d5f7c4e532f71d3045f751e0e5b3caaa6b69000df4fdf891a13df40eb1f1377"
     },
     {
       "server_id": "io.github.DanielGuru/repomemory",
@@ -5186,17 +5466,17 @@
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 1411.419
+            "latency_ms": 1305.463
           },
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 1437.582
+            "latency_ms": 1317.255
           },
           {
             "exit_code": 0,
             "driver_status": "DRIVER_OK",
-            "latency_ms": 1448.535
+            "latency_ms": 1320.229
           }
         ],
         "all_honest_paths": [
@@ -5245,7 +5525,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1439.863,
+          "container_cpu_seconds": 0.855902,
+          "container_peak_mem_bytes": 106876928,
+          "latency_ms": 1260.143,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5276,7 +5558,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1424.182,
+          "container_cpu_seconds": 0.879804,
+          "container_peak_mem_bytes": 108101632,
+          "latency_ms": 1327.247,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5313,7 +5597,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1448.394,
+          "container_cpu_seconds": 0.878773,
+          "container_peak_mem_bytes": 104468480,
+          "latency_ms": 1306.98,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5344,7 +5630,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1418.053,
+          "container_cpu_seconds": 0.863584,
+          "container_peak_mem_bytes": 106889216,
+          "latency_ms": 1295.583,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5385,7 +5673,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1468.422,
+          "container_cpu_seconds": 0.883201,
+          "container_peak_mem_bytes": 105512960,
+          "latency_ms": 1325.346,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5420,7 +5710,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1454.928,
+          "container_cpu_seconds": 0.845207,
+          "container_peak_mem_bytes": 104386560,
+          "latency_ms": 1245.625,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5454,7 +5746,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1417.45,
+          "container_cpu_seconds": 0.857976,
+          "container_peak_mem_bytes": 111165440,
+          "latency_ms": 1273.409,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5494,7 +5788,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1417.711,
+          "container_cpu_seconds": 0.866417,
+          "container_peak_mem_bytes": 109752320,
+          "latency_ms": 1322.307,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5525,7 +5821,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1476.714,
+          "container_cpu_seconds": 0.861797,
+          "container_peak_mem_bytes": 104345600,
+          "latency_ms": 1300.09,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5569,7 +5867,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1426.159,
+          "container_cpu_seconds": 0.868119,
+          "container_peak_mem_bytes": 104468480,
+          "latency_ms": 1302.453,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5604,7 +5904,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1418.473,
+          "container_cpu_seconds": 0.85694,
+          "container_peak_mem_bytes": 115138560,
+          "latency_ms": 1269.255,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5638,7 +5940,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1433.881,
+          "container_cpu_seconds": 0.874957,
+          "container_peak_mem_bytes": 106151936,
+          "latency_ms": 1300.859,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5678,7 +5982,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1472.971,
+          "container_cpu_seconds": 0.874575,
+          "container_peak_mem_bytes": 113356800,
+          "latency_ms": 1292.109,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5712,7 +6018,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1455.129,
+          "container_cpu_seconds": 0.864547,
+          "container_peak_mem_bytes": 113647616,
+          "latency_ms": 1278.179,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5753,7 +6061,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1411.573,
+          "container_cpu_seconds": 0.87738,
+          "container_peak_mem_bytes": 108466176,
+          "latency_ms": 1332.783,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5788,7 +6098,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1422.178,
+          "container_cpu_seconds": 0.855074,
+          "container_peak_mem_bytes": 115412992,
+          "latency_ms": 1311.308,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5822,7 +6134,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1420.93,
+          "container_cpu_seconds": 0.848098,
+          "container_peak_mem_bytes": 107474944,
+          "latency_ms": 1277.534,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5862,7 +6176,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1440.833,
+          "container_cpu_seconds": 0.873935,
+          "container_peak_mem_bytes": 104722432,
+          "latency_ms": 1322.27,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5893,7 +6209,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1418.641,
+          "container_cpu_seconds": 0.86122,
+          "container_peak_mem_bytes": 104038400,
+          "latency_ms": 1273.53,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5937,7 +6255,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1477.291,
+          "container_cpu_seconds": 0.894631,
+          "container_peak_mem_bytes": 106061824,
+          "latency_ms": 1332.872,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -5969,7 +6289,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1425.855,
+          "container_cpu_seconds": 0.860123,
+          "container_peak_mem_bytes": 114634752,
+          "latency_ms": 1292.339,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6000,7 +6322,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1466.465,
+          "container_cpu_seconds": 0.876126,
+          "container_peak_mem_bytes": 113684480,
+          "latency_ms": 1302.093,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6037,7 +6361,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1422.832,
+          "container_cpu_seconds": 0.880494,
+          "container_peak_mem_bytes": 114470912,
+          "latency_ms": 1307.868,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6068,7 +6394,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1414.969,
+          "container_cpu_seconds": 0.892324,
+          "container_peak_mem_bytes": 115167232,
+          "latency_ms": 1329.463,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6109,7 +6437,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1407.438,
+          "container_cpu_seconds": 0.856164,
+          "container_peak_mem_bytes": 105279488,
+          "latency_ms": 1301.422,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6144,7 +6474,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1479.502,
+          "container_cpu_seconds": 0.86679,
+          "container_peak_mem_bytes": 104570880,
+          "latency_ms": 1310.936,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6178,7 +6510,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1428.2,
+          "container_cpu_seconds": 0.850741,
+          "container_peak_mem_bytes": 114384896,
+          "latency_ms": 1264.005,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6218,7 +6552,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1450.854,
+          "container_cpu_seconds": 0.895403,
+          "container_peak_mem_bytes": 104284160,
+          "latency_ms": 1313.52,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6252,7 +6588,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1431.578,
+          "container_cpu_seconds": 0.858079,
+          "container_peak_mem_bytes": 111357952,
+          "latency_ms": 1273.609,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6293,7 +6631,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1433.195,
+          "container_cpu_seconds": 0.861426,
+          "container_peak_mem_bytes": 106233856,
+          "latency_ms": 1296.597,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6325,7 +6665,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1439.956,
+          "container_cpu_seconds": 0.860669,
+          "container_peak_mem_bytes": 104267776,
+          "latency_ms": 1301.759,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6356,7 +6698,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1439.043,
+          "container_cpu_seconds": 0.854185,
+          "container_peak_mem_bytes": 108412928,
+          "latency_ms": 1266.843,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6393,7 +6737,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1451.75,
+          "container_cpu_seconds": 0.874112,
+          "container_peak_mem_bytes": 113778688,
+          "latency_ms": 1317.78,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6424,7 +6770,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1439.283,
+          "container_cpu_seconds": 0.854251,
+          "container_peak_mem_bytes": 105185280,
+          "latency_ms": 1292.98,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6465,7 +6813,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1402.927,
+          "container_cpu_seconds": 0.863735,
+          "container_peak_mem_bytes": 115077120,
+          "latency_ms": 1317.397,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6497,7 +6847,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1433.57,
+          "container_cpu_seconds": 0.870015,
+          "container_peak_mem_bytes": 106000384,
+          "latency_ms": 1307.897,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6528,7 +6880,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1436.536,
+          "container_cpu_seconds": 0.860382,
+          "container_peak_mem_bytes": 103264256,
+          "latency_ms": 1282.772,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6570,7 +6924,9 @@
             }
           ],
           "auditor_violations": 0,
-          "latency_ms": 1417.636,
+          "container_cpu_seconds": 0.896894,
+          "container_peak_mem_bytes": 108556288,
+          "latency_ms": 1344.522,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6601,7 +6957,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1461.446,
+          "container_cpu_seconds": 0.854988,
+          "container_peak_mem_bytes": 114167808,
+          "latency_ms": 1295.807,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {
@@ -6642,7 +7000,9 @@
           "detected_only": false,
           "auditor_alerts": [],
           "auditor_violations": 0,
-          "latency_ms": 1448.008,
+          "container_cpu_seconds": 0.858651,
+          "container_peak_mem_bytes": 108068864,
+          "latency_ms": 1281.755,
           "exit_code": 0,
           "driver_status": "DRIVER_OK",
           "admission": {

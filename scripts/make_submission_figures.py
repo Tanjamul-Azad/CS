@@ -310,6 +310,50 @@ def matched_evaluation() -> None:
     _save(fig, "fig7_matched_evaluation")
 
 
+def matched_summary() -> None:
+    conditions = ["NONE", "PLAIN_SANDBOX", "MBA", "STATIC_LP", "MCPGATE"]
+    labels = ["No\ndefense", "Plain\nsandbox", "Response\nauditor",
+              "Static least\nprivilege", "MCPGate"]
+
+    def rate(path):
+        data = json.loads((ROOT / "artifact" / "results" / path).read_text(encoding="utf-8"))
+        out = {c: [0, 0] for c in conditions}
+        for server in data["servers"]:
+            for cell in server.get("cells", []):
+                if cell["scenario"] == "H0":
+                    continue
+                out[cell["condition"]][1] += 1
+                if cell["prevented"]:
+                    out[cell["condition"]][0] += 1
+        return [out[c][0] / out[c][1] if out[c][1] else 0.0 for c in conditions]
+
+    fs = rate("matched_filesystem.json")
+    sql = rate("matched_sql.json")
+    x = np.arange(len(conditions))
+    width = 0.38
+    fig, ax = plt.subplots(figsize=(10.6, 4.8))
+    b1 = ax.bar(x - width / 2, [v * 100 for v in fs], width,
+                label="Filesystem (5 servers)", color=BLUE)
+    b2 = ax.bar(x + width / 2, [v * 100 for v in sql], width,
+                label="SQL (2 servers)", color=TEAL)
+    for bars in (b1, b2):
+        for bar in bars:
+            ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 1.5,
+                    f"{bar.get_height():.0f}%", ha="center", va="bottom",
+                    fontsize=9, fontweight="bold")
+    ax.set_xticks(x, labels, fontsize=9.5)
+    ax.set_ylabel("Attacks prevented", fontsize=10)
+    ax.set_ylim(0, 108)
+    ax.set_yticks([0, 25, 50, 75, 100], ["0%", "25%", "50%", "75%", "100%"])
+    ax.set_title("Effect-integrity admission prevents what coarser policies miss, "
+                 "in two domains", fontsize=12.5, fontweight="bold")
+    ax.legend(frameon=False, fontsize=9.5, loc="upper left")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.tick_params(length=0)
+    _save(fig, "fig8_matched_summary")
+
+
 def contact_sheet() -> None:
     from PIL import Image, ImageOps, ImageDraw
 
@@ -317,7 +361,7 @@ def contact_sheet() -> None:
         "fig1_mcpgate_architecture", "fig2_study_flow",
         "fig3_controlled_baselines", "fig4_controlled_ablations",
         "fig5_exact_write_latency", "fig6_auditor_operating_points",
-        "fig7_matched_evaluation",
+        "fig7_matched_evaluation", "fig8_matched_summary",
     ]
     images = [Image.open(OUT / f"{name}.png").convert("RGB") for name in names]
     thumb_width = 900
@@ -346,8 +390,9 @@ def main() -> None:
     latency_baseline()
     operating_points()
     matched_evaluation()
+    matched_summary()
     contact_sheet()
-    print("generated 7 submission figures and contact sheet")
+    print("generated 8 submission figures and contact sheet")
 
 
 if __name__ == "__main__":

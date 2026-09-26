@@ -230,8 +230,8 @@ def run_cell(docker, server, reference, scenario, condition, base) -> dict:
         "false_success": false_success, "admission_refused": admission_refused,
         "attack_succeeded": attack_succeeded, "prevented": prevented,
         "latency_ms": record["latency_ms"],
-        "server_cpu_seconds": driver.get("server_cpu_seconds"),
-        "server_peak_rss_kb": driver.get("server_peak_rss_kb"),
+        "container_cpu_seconds": driver.get("container_cpu_seconds"),
+        "container_peak_mem_bytes": driver.get("container_peak_mem_bytes"),
         "admission": admission,
     }
 

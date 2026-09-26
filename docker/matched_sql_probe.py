@@ -91,10 +91,16 @@ def main() -> int:
         row["traceback_tail"] = traceback.format_exc()[-2000:]
 
     try:
-        import resource
-        usage = resource.getrusage(resource.RUSAGE_CHILDREN)
-        row["server_cpu_seconds"] = round(usage.ru_utime + usage.ru_stime, 6)
-        row["server_peak_rss_kb"] = int(usage.ru_maxrss)
+        with open("/sys/fs/cgroup/memory.peak") as handle:
+            row["container_peak_mem_bytes"] = int(handle.read().strip())
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        with open("/sys/fs/cgroup/cpu.stat") as handle:
+            for line in handle:
+                if line.startswith("usage_usec"):
+                    row["container_cpu_seconds"] = int(line.split()[1]) / 1e6
+                    break
     except Exception:  # noqa: BLE001
         pass
     print(json.dumps(row, ensure_ascii=False, sort_keys=True))

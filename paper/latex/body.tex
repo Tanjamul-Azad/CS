@@ -5,7 +5,7 @@ Model Context Protocol (MCP) clients authorize tools from declarations but deleg
 
 Motivated by this negative result, we present MCPGate, a client-controlled filesystem admission layer for locally executed, untrusted MCP servers. A per-invocation contract binds the approved path, bytes, request shape, and allowance. The server writes only into invocation-private staging; after all writers are revoked, a trusted mediator takes one materialized snapshot, checks the complete staged tree, and either atomically promotes those same bytes or discards the result. Controlled adversarial evaluation confined all 10 attacks that landed without defense, reported one of 14 scenarios as UNKNOWN, and preserved honest completion. Adaptive evaluation exposed and repaired a two-read time-of-check/time-of-use flaw and a replay flaw, while demonstrating that filesystem admission neither prevents unmediated network effects nor proves arbitrary world-effect rollback. Our result is deliberately narrow: MCPGate protects what enters a trusted filesystem store; it does not establish that no effect occurred outside that store.
 
-We then evaluate the same integrated path against five unmodified third-party servers frozen before any outcome was seen, under an adversary that also masks the server's own reads and directory listings so a response auditor observes a simulated honest world. Across 180 attack cells full MCPGate prevents every applicable attack (31 of 31; Wilson 95 percent interval 89.0 to 100.0) with no honest false block, while a task-specific static permission policy reaches only 58 percent because it binds destination but not content, type, or presence, and no defense, a plain sandbox, and the response auditor each reach 29 percent. The path-diversion trial still wrote the approved bytes to an unapproved location, confirming that trusted-state admission is not whole-world effect prevention. Round-2 human annotation of the response-auditing corpus and a matched network and SQL evaluation remain in progress.
+We then evaluate the same integrated path against five unmodified third-party servers frozen before any outcome was seen, under an adversary that also masks the server's own reads and directory listings so a response auditor observes a simulated honest world. Across 180 attack cells full MCPGate prevents every applicable attack (31 of 31; Wilson 95 percent interval 89.0 to 100.0) with no honest false block, while a task-specific static permission policy reaches only 58 percent because it binds destination but not content, type, or presence, and no defense, a plain sandbox, and the response auditor each reach 29 percent. The same design applied to two frozen SQLite servers under SQL interposition prevents 10 of 10 attacks under MCPGate and at most 2 under any other condition, showing the mechanism is not filesystem-specific. The path-diversion trial still wrote the approved bytes to an unapproved location, confirming that trusted-state admission is not whole-world effect prevention. Round-2 human annotation of the response-auditing corpus and a matched network evaluation remain in progress.
 
 \end{abstract}
 \section{Introduction}
@@ -280,7 +280,7 @@ After the mechanism existed, four mechanism-aware evaluations targeted its assum
 
 \subsection{Real servers and static least privilege}
 
-Historical experiments cover seven unmodified third-party servers across filesystem, SQL-shaped, notes, and git-like workflows. Two SQL implementations independently reproduced the negative result that an opaque command argument does not expose a declaration-derived content boundary. Separately, before any security outcome was observed, we froze 10 exact-version third-party implementations after isolated schema and benign-effect/oracle eligibility (EXACT 4, CONSTRAINED 4, UNDERSPECIFIED 2). The matched five-condition evaluation on the filesystem-class subset of those frozen workloads is reported in Section 6.5; the network and SQL arms remain in progress.
+Historical experiments cover seven unmodified third-party servers across filesystem, SQL-shaped, notes, and git-like workflows. Two SQL implementations independently reproduced the negative result that an opaque command argument does not expose a declaration-derived content boundary. Separately, before any security outcome was observed, we froze 10 exact-version third-party implementations after isolated schema and benign-effect/oracle eligibility (EXACT 4, CONSTRAINED 4, UNDERSPECIFIED 2). The matched five-condition evaluation on the filesystem-class subset of those frozen workloads is reported in Section 6.5, and the SQL arm in the same section; the network arm remains in progress.
 
 On two independent real servers, a task-specific static filesystem-permission baseline was blind to content substitution at an already-approved writable file, because permissions constrain who may write where rather than which bytes may be written. Path-diversion behavior differed between the two servers: the baseline blocked a relative sibling creation in a non-writable directory but did not provide a general content contract. MCPGate rejected both tested content substitutions and both path mismatches from trusted admission.
 
@@ -318,6 +318,47 @@ Link alias & 0/3 & 0/3 & 0/3 & 0/3 & 3/3 \\
 Table 1: Attacks prevented per scenario, summed over servers, under the consistent-liar adversary. Cells are prevented over applicable. Raw per-cell outcomes are in \texttt{\detokenize{artifact/results/matched_filesystem.json}}.
 
 Two stochastic scenarios are mechanism properties of the allowance ledger and the freeze step rather than of any server's content, and were run for 100 trials each against the mediator with real child processes. When eight invocations contended for one final allowance slot, exactly one committed and the other seven were refused in all 100 trials, each admitted invocation using a distinct private staging tree. When a writer was still live as the runner returned, the gate refused at the freeze step in all 100 trials and no file reached the trusted store. Raw counts are in \texttt{\detokenize{artifact/results/concurrency_100.json}}.
+
+We then repeated the matched design in a second effect domain to show that the mechanism is not filesystem-specific. Two frozen SQLite servers, one Python and one Node, were driven through the same honest workflow and five SQL attacks, realized this time by interposing on the database library so the server runs the approved statement but commits a different state. The trusted oracle is a canonical schema-and-row snapshot of the database file after the container exits, and MCPGate admits only a state equal to the honest one. Table 2 gives the result. Across both servers full MCPGate prevented all ten applicable attacks with no false block. The static permission policy here is table-level, which is why it prevents the two extra-table cases but admits value substitution, an extra row, replay, and a silent no-op; no defense, the plain sandbox, and the response auditor prevent none. This is the same shape as the filesystem arm: a coarser policy binds the resource but not the exact effect, while admission of a verified state binds the effect itself. We do not generalize this to PostgreSQL or MySQL, whose client-server transaction model differs from a local database file.
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}XXXXXX@{}}
+\toprule
+\textbf{Scenario} & \textbf{None} & \textbf{Sandbox} & \textbf{Auditor} & \textbf{Static LP} & \textbf{MCPGate} \\
+\midrule
+Value substitution & 0/2 & 0/2 & 0/2 & 0/2 & 2/2 \\
+Extra row & 0/2 & 0/2 & 0/2 & 0/2 & 2/2 \\
+Extra table & 0/2 & 0/2 & 0/2 & 2/2 & 2/2 \\
+Replay & 0/2 & 0/2 & 0/2 & 0/2 & 2/2 \\
+Silent false success & 0/2 & 0/2 & 0/2 & 0/2 & 2/2 \\
+\textbf{Prevented / applicable} & \textbf{0/10} & \textbf{0/10} & \textbf{0/10} & \textbf{2/10} & \textbf{10/10} \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+Table 2: SQL attacks prevented per scenario, summed over the two frozen SQLite servers. Raw per-cell outcomes are in \texttt{\detokenize{artifact/results/matched_sql.json}}.
+
+Table 3 reports overhead and a server-clustered interval over all seven servers in both domains. Per-call cost is essentially the same under every condition: median latency is about 1.3 seconds, median container CPU about 0.85 seconds, and median peak memory about 93 MB, with MCPGate within noise of no defense on all three. This is because the cost is dominated by starting a fresh hardened container for each invocation, which every condition shares; the admission steps MCPGate adds are not measurable against it. The steady-state cost of the mediation itself, isolated from container lifecycle, is the millisecond-scale exact-write microbenchmark of Section 6.8. Prevention rates are given with a 95 percent interval from a bootstrap that resamples whole servers rather than individual cells, because tools nested in one server are not independent. MCPGate prevented every attack on every server, so its clustered interval is a point at 100 percent; static least privilege is 48.8 percent with interval 37.1 to 58.5, and no defense, the plain sandbox, and the response auditor are 21.9 percent with interval 10.8 to 30.2.
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}XXXX@{}}
+\toprule
+\textbf{Condition} & \textbf{Latency p50/p95/p99 (ms)} & \textbf{CPU p50/p95/p99 (s)} & \textbf{Peak RSS p50/p95/p99 (MB)} \\
+\midrule
+No defense & 1269 / 2241 / 2274 & 0.84 / 1.62 / 1.64 & 93 / 125 / 125 \\
+Plain sandbox & 1275 / 2224 / 2262 & 0.85 / 1.61 / 1.64 & 93 / 125 / 125 \\
+Response auditor & 1313 / 2227 / 2249 & 0.87 / 1.62 / 1.65 & 96 / 125 / 125 \\
+Static least privilege & 1277 / 2253 / 2315 & 0.84 / 1.62 / 1.70 & 93 / 124 / 125 \\
+MCPGate & 1299 / 2240 / 2309 & 0.86 / 1.63 / 1.70 & 93 / 125 / 125 \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+Table 3: Per-call overhead across all seven servers and both domains. Latency is container-lifecycle dominated and shared by every condition. Raw distributions are in \texttt{\detokenize{artifact/results/matched_stats.json}}.
 
 \subsection{Controlled baseline comparison}
 \begin{figure*}[t]
@@ -357,13 +398,11 @@ Local evaluations replace simulated scheduling with real child writers. In a dem
 
 \subsection{Results still required for submission}
 
-The filesystem arm of the matched evaluation is complete: the five-condition comparison on frozen third-party servers (Section 6.5), the integrated pinned single-file run, and the 100-trial concurrency scenarios have all run on the current machine with raw artifacts checked in. The following remain before submission:
+The filesystem and SQL arms of the matched evaluation are complete: the five-condition comparison on seven frozen third-party servers in two effect domains (Section 6.5), the integrated pinned single-file run, the 100-trial concurrency scenarios, and the per-call latency, CPU, and peak-memory distributions with server-clustered intervals have all run on the current machine with raw artifacts checked in. The following remain before submission:
 
 \begin{enumerate}
 \item label Round 2 independently and either pass the kappa gate or retire the prevalence result;
-\item run the matched network and SQL arms against their frozen servers, so the effect-integrity claim is not filesystem-only;
-\item report p50/p95/p99 latency, CPU, and peak memory for the matched conditions;
-\item calculate server-clustered intervals rather than treating nested tools as independent samples; and
+\item run the matched network arm against a frozen network MCP server, so the effect-integrity claim covers outbound requests as well as local state; and
 \item rebuild the anonymous artifact bundle from a clean clone and confirm every table regenerates.
 \end{enumerate}
 

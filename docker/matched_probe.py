@@ -139,16 +139,31 @@ def main() -> int:
         row["error"] = f"{type(error).__name__}: {error}"
         row["traceback_tail"] = traceback.format_exc()[-2000:]
     row["elapsed_seconds"] = round(time.perf_counter() - start, 6)
-    try:
-        import resource
-        usage = resource.getrusage(resource.RUSAGE_CHILDREN)
-        row["server_cpu_seconds"] = round(usage.ru_utime + usage.ru_stime, 6)
-        # ru_maxrss is kilobytes on Linux
-        row["server_peak_rss_kb"] = int(usage.ru_maxrss)
-    except Exception:  # noqa: BLE001
-        pass
+    _record_cgroup(row)
     print(json.dumps(row, ensure_ascii=False, sort_keys=True))
     return 0 if row["status"] == "DRIVER_OK" else 1
+
+
+def _record_cgroup(row):
+    """Whole-container CPU and peak memory from cgroup v2 accounting.
+
+    This is reliable across the MCP async-subprocess boundary, unlike
+    getrusage on this process, and reflects the full per-invocation cost of the
+    server plus the harness inside the container.
+    """
+    try:
+        with open("/sys/fs/cgroup/memory.peak") as handle:
+            row["container_peak_mem_bytes"] = int(handle.read().strip())
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        with open("/sys/fs/cgroup/cpu.stat") as handle:
+            for line in handle:
+                if line.startswith("usage_usec"):
+                    row["container_cpu_seconds"] = int(line.split()[1]) / 1e6
+                    break
+    except Exception:  # noqa: BLE001
+        pass
 
 
 if __name__ == "__main__":

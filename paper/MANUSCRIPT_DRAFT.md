@@ -46,10 +46,12 @@ applicable attack (31 of 31; Wilson 95 percent interval 89.0 to 100.0) with no
 honest false block, while a task-specific static permission policy reaches only
 58 percent because it binds destination but not content, type, or presence, and
 no defense, a plain sandbox, and the response auditor each reach 29 percent. The
-path-diversion trial still wrote the approved bytes to an unapproved location,
-confirming that trusted-state admission is not whole-world effect prevention.
-Round-2 human annotation of the response-auditing corpus and a matched network
-and SQL evaluation remain in progress.
+same design applied to two frozen SQLite servers under SQL interposition
+prevents 10 of 10 attacks under MCPGate and at most 2 under any other condition,
+showing the mechanism is not filesystem-specific. The path-diversion trial still
+wrote the approved bytes to an unapproved location, confirming that trusted-state
+admission is not whole-world effect prevention. Round-2 human annotation of the
+response-auditing corpus and a matched network evaluation remain in progress.
 
 ## 1. Introduction
 
@@ -495,7 +497,8 @@ security outcome was observed, we froze 10 exact-version third-party
 implementations after isolated schema and benign-effect/oracle eligibility
 (EXACT 4, CONSTRAINED 4, UNDERSPECIFIED 2). The matched five-condition
 evaluation on the filesystem-class subset of those frozen workloads is reported
-in Section 6.5; the network and SQL arms remain in progress.
+in Section 6.5, and the SQL arm in the same section; the network arm remains in
+progress.
 
 On two independent real servers, a task-specific static filesystem-permission
 baseline was blind to content substitution at an already-approved writable
@@ -580,6 +583,63 @@ private staging tree. When a writer was still live as the runner returned, the
 gate refused at the freeze step in all 100 trials and no file reached the
 trusted store. Raw counts are in `artifact/results/concurrency_100.json`.
 
+We then repeated the matched design in a second effect domain to show that the
+mechanism is not filesystem-specific. Two frozen SQLite servers, one Python and
+one Node, were driven through the same honest workflow and five SQL attacks,
+realized this time by interposing on the database library so the server runs the
+approved statement but commits a different state. The trusted oracle is a
+canonical schema-and-row snapshot of the database file after the container
+exits, and MCPGate admits only a state equal to the honest one. Table 2 gives
+the result. Across both servers full MCPGate prevented all ten applicable
+attacks with no false block. The static permission policy here is table-level,
+which is why it prevents the two extra-table cases but admits value
+substitution, an extra row, replay, and a silent no-op; no defense, the plain
+sandbox, and the response auditor prevent none. This is the same shape as the
+filesystem arm: a coarser policy binds the resource but not the exact effect,
+while admission of a verified state binds the effect itself. We do not
+generalize this to PostgreSQL or MySQL, whose client-server transaction model
+differs from a local database file.
+
+| Scenario | None | Sandbox | Auditor | Static LP | MCPGate |
+|---|---:|---:|---:|---:|---:|
+| Value substitution | 0/2 | 0/2 | 0/2 | 0/2 | 2/2 |
+| Extra row | 0/2 | 0/2 | 0/2 | 0/2 | 2/2 |
+| Extra table | 0/2 | 0/2 | 0/2 | 2/2 | 2/2 |
+| Replay | 0/2 | 0/2 | 0/2 | 0/2 | 2/2 |
+| Silent false success | 0/2 | 0/2 | 0/2 | 0/2 | 2/2 |
+| **Prevented / applicable** | **0/10** | **0/10** | **0/10** | **2/10** | **10/10** |
+
+Table 2: SQL attacks prevented per scenario, summed over the two frozen SQLite
+servers. Raw per-cell outcomes are in `artifact/results/matched_sql.json`.
+
+Table 3 reports overhead and a server-clustered interval over all seven servers
+in both domains. Per-call cost is essentially the same under every condition:
+median latency is about 1.3 seconds, median container CPU about 0.85 seconds,
+and median peak memory about 93 MB, with MCPGate within noise of no defense on
+all three. This is because the cost is dominated by starting a fresh hardened
+container for each invocation, which every condition shares; the admission steps
+MCPGate adds are not measurable against it. The steady-state cost of the
+mediation itself, isolated from container lifecycle, is the millisecond-scale
+exact-write microbenchmark of Section 6.8. Prevention rates are given with a
+95 percent interval from a bootstrap that resamples whole servers rather than
+individual cells, because tools nested in one server are not independent. MCPGate
+prevented every attack on every server, so its clustered interval is a point at
+100 percent; static least privilege is 48.8 percent with interval 37.1 to 58.5,
+and no defense, the plain sandbox, and the response auditor are 21.9 percent with
+interval 10.8 to 30.2.
+
+| Condition | Latency p50/p95/p99 (ms) | CPU p50/p95/p99 (s) | Peak RSS p50/p95/p99 (MB) |
+|---|---|---|---|
+| No defense | 1269 / 2241 / 2274 | 0.84 / 1.62 / 1.64 | 93 / 125 / 125 |
+| Plain sandbox | 1275 / 2224 / 2262 | 0.85 / 1.61 / 1.64 | 93 / 125 / 125 |
+| Response auditor | 1313 / 2227 / 2249 | 0.87 / 1.62 / 1.65 | 96 / 125 / 125 |
+| Static least privilege | 1277 / 2253 / 2315 | 0.84 / 1.62 / 1.70 | 93 / 124 / 125 |
+| MCPGate | 1299 / 2240 / 2309 | 0.86 / 1.63 / 1.70 | 93 / 125 / 125 |
+
+Table 3: Per-call overhead across all seven servers and both domains. Latency is
+container-lifecycle dominated and shared by every condition. Raw distributions
+are in `artifact/results/matched_stats.json`.
+
 ### 6.6 Controlled baseline comparison
 
 On the controlled filesystem domain, we compare no defense, a plain sandbox
@@ -644,20 +704,18 @@ third-party servers.
 
 ### 6.10 Results still required for submission
 
-The filesystem arm of the matched evaluation is complete: the five-condition
-comparison on frozen third-party servers (Section 6.5), the integrated pinned
-single-file run, and the 100-trial concurrency scenarios have all run on the
-current machine with raw artifacts checked in. The following remain before
-submission:
+The filesystem and SQL arms of the matched evaluation are complete: the
+five-condition comparison on seven frozen third-party servers in two effect
+domains (Section 6.5), the integrated pinned single-file run, the 100-trial
+concurrency scenarios, and the per-call latency, CPU, and peak-memory
+distributions with server-clustered intervals have all run on the current
+machine with raw artifacts checked in. The following remain before submission:
 
 1. label Round 2 independently and either pass the kappa gate or retire the
    prevalence result;
-2. run the matched network and SQL arms against their frozen servers, so the
-   effect-integrity claim is not filesystem-only;
-3. report p50/p95/p99 latency, CPU, and peak memory for the matched conditions;
-4. calculate server-clustered intervals rather than treating nested tools as
-   independent samples; and
-5. rebuild the anonymous artifact bundle from a clean clone and confirm every
+2. run the matched network arm against a frozen network MCP server, so the
+   effect-integrity claim covers outbound requests as well as local state; and
+3. rebuild the anonymous artifact bundle from a clean clone and confirm every
    table regenerates.
 
 ## 7. Security Analysis

@@ -255,8 +255,15 @@ properties without inventing an experimental result.
       per-cell outcomes are in `artifact/results/matched_filesystem.json`, the
       100-trial concurrency scenarios in `artifact/results/concurrency_100.json`.
       The network and SQL arms remain open and are tracked separately below.
-- [ ] Run the matched network and SQL arms against their frozen servers so the
-      effect-integrity claim is not filesystem-only.
+- [x] Run the matched SQL arm against its frozen servers. Two SQLite servers
+      (Python `sqlite3` and Node `node:sqlite`) under the same five conditions:
+      MCPGate prevented 10/10 applicable SQL attacks (value substitution, extra
+      row, extra table, replay, silent no-op) with no false block; a table-level
+      static policy caught only the two extra-table cases; no defense, plain
+      sandbox, and the response auditor caught none. Raw outcomes in
+      `artifact/results/matched_sql.json`.
+- [ ] Run the matched network arm against a frozen network MCP server so the
+      effect-integrity claim covers outbound requests, not only local state.
 - [x] Add genuine overlapping-call evaluation. Two real child writers overlap
       in distinct staging roots and commit correctly; one-slot competition
       starts exactly one child. The claim remains qualified until the pinned
