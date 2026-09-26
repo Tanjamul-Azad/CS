@@ -139,6 +139,14 @@ def main() -> int:
         row["error"] = f"{type(error).__name__}: {error}"
         row["traceback_tail"] = traceback.format_exc()[-2000:]
     row["elapsed_seconds"] = round(time.perf_counter() - start, 6)
+    try:
+        import resource
+        usage = resource.getrusage(resource.RUSAGE_CHILDREN)
+        row["server_cpu_seconds"] = round(usage.ru_utime + usage.ru_stime, 6)
+        # ru_maxrss is kilobytes on Linux
+        row["server_peak_rss_kb"] = int(usage.ru_maxrss)
+    except Exception:  # noqa: BLE001
+        pass
     print(json.dumps(row, ensure_ascii=False, sort_keys=True))
     return 0 if row["status"] == "DRIVER_OK" else 1
 

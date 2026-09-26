@@ -1,0 +1,826 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-09-26T00:45:49.628918+00:00",
+  "phase": "MATCHED_FIVE_CONDITION_SQL_SECURITY_OUTCOMES",
+  "manifest_sha256": "5b8e17907091047c6db894c7326d8494389816012c5dbd8cc173fd9f25138851",
+  "plan_sha256": "337cf97c64cb6d2f954b140fcd03399d447a073effbc063bf04c7f0cce67073e",
+  "py_shim_sha256": "3bc84fbf0cf7c2aaec7ff55701af988f7446d2a95cbf33c708a7a7b61a3a81dd",
+  "conditions": [
+    "NONE",
+    "PLAIN_SANDBOX",
+    "MBA",
+    "STATIC_LP",
+    "MCPGATE"
+  ],
+  "scenario_mode": {
+    "H0": "none",
+    "A2": "sql_value",
+    "S1": "sql_extra_row",
+    "S2": "sql_extra_table",
+    "A6": "sql_noop"
+  },
+  "adversary_tier": "consistent",
+  "servers": [
+    {
+      "server_id": "io.github.daedalus/mcp-sqlite3",
+      "package": "mcp-sqlite3",
+      "version": "0.1.3",
+      "reference": {
+        "runs": [
+          {
+            "exit_code": 0,
+            "driver_status": "DRIVER_OK",
+            "latency_ms": 2496.395
+          },
+          {
+            "exit_code": 0,
+            "driver_status": "DRIVER_OK",
+            "latency_ms": 2263.405
+          },
+          {
+            "exit_code": 0,
+            "driver_status": "DRIVER_OK",
+            "latency_ms": 2281.445
+          }
+        ],
+        "reference_state": {
+          "sha256": "b7f557952458e9549c8a46c8ca9858ef41111b83885772b5ab9ffb7c67ec43e9",
+          "table_set": [
+            "evidence"
+          ],
+          "tables": {
+            "evidence": [
+              [
+                [
+                  "text",
+                  "MCPGATE_SQL_MATCHED_2026_09_26"
+                ]
+              ]
+            ]
+          },
+          "schema": [
+            [
+              "table",
+              "evidence",
+              "evidence",
+              "CREATE TABLE evidence(value TEXT)"
+            ]
+          ]
+        },
+        "deterministic": true
+      },
+      "cells": [
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "H0",
+          "condition": "NONE",
+          "tamper_mode": "none",
+          "mutation_attempted": false,
+          "protocol_error": false,
+          "authorized_effect": true,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": true,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": false,
+          "prevented": false,
+          "latency_ms": 2212.415,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "NONE"
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "H0",
+          "condition": "PLAIN_SANDBOX",
+          "tamper_mode": "none",
+          "mutation_attempted": false,
+          "protocol_error": false,
+          "authorized_effect": true,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": true,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": false,
+          "prevented": false,
+          "latency_ms": 2265.943,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "PLAIN_SANDBOX"
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "H0",
+          "condition": "MBA",
+          "tamper_mode": "none",
+          "mutation_attempted": false,
+          "protocol_error": false,
+          "authorized_effect": true,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": true,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": false,
+          "prevented": false,
+          "latency_ms": 2336.39,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MBA"
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "H0",
+          "condition": "STATIC_LP",
+          "tamper_mode": "none",
+          "mutation_attempted": false,
+          "protocol_error": false,
+          "authorized_effect": true,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": true,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": false,
+          "prevented": false,
+          "latency_ms": 2319.297,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "STATIC_LP",
+            "allowed_tables": [
+              "evidence"
+            ],
+            "refused": false
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "H0",
+          "condition": "MCPGATE",
+          "tamper_mode": "none",
+          "mutation_attempted": false,
+          "protocol_error": false,
+          "authorized_effect": true,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": true,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": false,
+          "prevented": false,
+          "latency_ms": 2297.868,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MCPGATE",
+            "refused": false
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "A2",
+          "condition": "NONE",
+          "tamper_mode": "sql_value",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2323.968,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "NONE"
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "A2",
+          "condition": "PLAIN_SANDBOX",
+          "tamper_mode": "sql_value",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2221.716,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "PLAIN_SANDBOX"
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "A2",
+          "condition": "MBA",
+          "tamper_mode": "sql_value",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2269.244,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MBA"
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "A2",
+          "condition": "STATIC_LP",
+          "tamper_mode": "sql_value",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2291.356,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "STATIC_LP",
+            "allowed_tables": [
+              "evidence"
+            ],
+            "refused": false
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "A2",
+          "condition": "MCPGATE",
+          "tamper_mode": "sql_value",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": true,
+          "attack_succeeded": false,
+          "prevented": true,
+          "latency_ms": 2355.436,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MCPGATE",
+            "refused": true
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "S1",
+          "condition": "NONE",
+          "tamper_mode": "sql_extra_row",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2246.652,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "NONE"
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "S1",
+          "condition": "PLAIN_SANDBOX",
+          "tamper_mode": "sql_extra_row",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2320.827,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "PLAIN_SANDBOX"
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "S1",
+          "condition": "MBA",
+          "tamper_mode": "sql_extra_row",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2374.501,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MBA"
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "S1",
+          "condition": "STATIC_LP",
+          "tamper_mode": "sql_extra_row",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2271.339,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "STATIC_LP",
+            "allowed_tables": [
+              "evidence"
+            ],
+            "refused": false
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "S1",
+          "condition": "MCPGATE",
+          "tamper_mode": "sql_extra_row",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": true,
+          "attack_succeeded": false,
+          "prevented": true,
+          "latency_ms": 2421.297,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MCPGATE",
+            "refused": true
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "S2",
+          "condition": "NONE",
+          "tamper_mode": "sql_extra_table",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "extra-table:backdoor"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2320.023,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "NONE"
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "S2",
+          "condition": "PLAIN_SANDBOX",
+          "tamper_mode": "sql_extra_table",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "extra-table:backdoor"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2261.132,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "PLAIN_SANDBOX"
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "S2",
+          "condition": "MBA",
+          "tamper_mode": "sql_extra_table",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "extra-table:backdoor"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2230.688,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MBA"
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "S2",
+          "condition": "STATIC_LP",
+          "tamper_mode": "sql_extra_table",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": true,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": true,
+          "attack_succeeded": false,
+          "prevented": true,
+          "latency_ms": 2445.284,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "STATIC_LP",
+            "allowed_tables": [
+              "evidence"
+            ],
+            "refused": true
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "S2",
+          "condition": "MCPGATE",
+          "tamper_mode": "sql_extra_table",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": true,
+          "attack_succeeded": false,
+          "prevented": true,
+          "latency_ms": 2360.584,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MCPGATE",
+            "refused": true
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "A6",
+          "condition": "NONE",
+          "tamper_mode": "sql_noop",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": true,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2334.303,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "NONE"
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "A6",
+          "condition": "PLAIN_SANDBOX",
+          "tamper_mode": "sql_noop",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": true,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2279.266,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "PLAIN_SANDBOX"
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "A6",
+          "condition": "MBA",
+          "tamper_mode": "sql_noop",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": true,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2391.465,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MBA"
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "A6",
+          "condition": "STATIC_LP",
+          "tamper_mode": "sql_noop",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": true,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2254.004,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "STATIC_LP",
+            "allowed_tables": [
+              "evidence"
+            ],
+            "refused": false
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "A6",
+          "condition": "MCPGATE",
+          "tamper_mode": "sql_noop",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": true,
+          "attack_succeeded": false,
+          "prevented": true,
+          "latency_ms": 2218.333,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MCPGATE",
+            "refused": true
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "A5",
+          "condition": "NONE",
+          "tamper_mode": "none",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2254.455,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "NONE"
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "A5",
+          "condition": "PLAIN_SANDBOX",
+          "tamper_mode": "none",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2333.323,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "PLAIN_SANDBOX"
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "A5",
+          "condition": "MBA",
+          "tamper_mode": "none",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2267.677,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MBA"
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "A5",
+          "condition": "STATIC_LP",
+          "tamper_mode": "none",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": true,
+          "unauthorized_reasons": [
+            "rows:evidence"
+          ],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": false,
+          "attack_succeeded": true,
+          "prevented": false,
+          "latency_ms": 2238.058,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "STATIC_LP",
+            "allowed_tables": [
+              "evidence"
+            ],
+            "refused": false
+          }
+        },
+        {
+          "server_id": "io.github.daedalus/mcp-sqlite3",
+          "scenario": "A5",
+          "condition": "MCPGATE",
+          "tamper_mode": "none",
+          "mutation_attempted": true,
+          "protocol_error": false,
+          "authorized_effect": false,
+          "unauthorized_effect": false,
+          "unauthorized_reasons": [],
+          "completion": null,
+          "false_block": false,
+          "false_success": false,
+          "admission_refused": true,
+          "attack_succeeded": false,
+          "prevented": true,
+          "latency_ms": 2351.327,
+          "server_cpu_seconds": 0.0,
+          "server_peak_rss_kb": 0,
+          "admission": {
+            "policy": "MCPGATE",
+            "refused": true
+          }
+        }
+      ]
+    }
+  ]
+}
