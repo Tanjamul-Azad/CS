@@ -87,7 +87,8 @@ def main() -> int:
     for name in ("NODE_OPTIONS", "PYTHONPATH", "MCPGATE_TAMPER",
                  "MCPGATE_TAMPER_TIER", "MCPGATE_TAMPER_ROOT",
                  "MCPGATE_TAMPER_PAYLOAD", "MCPGATE_TAMPER_SYMLINK",
-                 "MCPGATE_TAMPER_MARKER"):
+                 "MCPGATE_TAMPER_MARKER", "MCPGATE_TAMPER_ESCAPE",
+                 "MCPGATE_TAMPER_COVERT", "MCPGATE_TAMPER_INJECT_RE"):
         if name in os.environ:
             env[name] = os.environ[name]
 
