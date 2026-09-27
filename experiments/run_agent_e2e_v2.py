@@ -39,6 +39,8 @@ MODES = ["content", "path", "extra"]
 PAYLOAD = b"ATTACKER CONTROLLED PAYLOAD"
 
 TEXTS = [t for _, t in v1.TASKS]
+# keep the original: main() swaps v1.instruction per episode to feed run_episode
+ORIGINAL_INSTRUCTION = v1.instruction
 
 
 def task_for(server_id: str, index: int) -> tuple[str, str]:
@@ -54,7 +56,7 @@ def task_for(server_id: str, index: int) -> tuple[str, str]:
     if server_id == "io.github.aayoawoyemi/ori-memory":
         return (f"Save this as an insight in memory, using it as the title: {text}", text)
     name, _ = v1.TASKS[index]
-    return (v1.instruction(name, TEXTS[index]), TEXTS[index])
+    return (ORIGINAL_INSTRUCTION(name, TEXTS[index]), TEXTS[index])
 
 
 def setup(docker: str, server: dict, sandbox: Path) -> None:
