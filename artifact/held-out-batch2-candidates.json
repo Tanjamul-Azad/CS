@@ -1,0 +1,245 @@
+{
+ "schema_version": 1,
+ "status": "FROZEN_BEFORE_ANY_OUTCOME",
+ "selected_utc_date": "2026-09-27",
+ "purpose": "second held-out batch (workstream G): first unbiased test of pin-time effect templates, the structural pin policy, and EffectSeal on servers never used in development",
+ "source": "data/processed/registry_candidates.json (official MCP Registry walk) joined with data/processed/scale_run.json launch status",
+ "selection_rule": [
+  "not used in the first held-out set or its reserves",
+  "scale-run status 'ok' (launched without credentials, answered tools/list, exposed a write tool): a pre-effect launchability fact, not a security outcome",
+  "npm or PyPI stdio package",
+  "title/description names a local file, note, memory, document, or SQLite surface AND a local-storage cue (local, local-first, sqlite, markdown, on-disk, folder, directory, vault, offline, private) AND no remote-service cue",
+  "description does not state a network dependency (URL, web/website, email, upload/share, online, screenshot, quote, paid op, RSS/feed, deploy, third-party subscription)",
+  "remaining servers shuffled with seed 'heldout-batch2-2026-09-27'; taken in that order until 10 pass eligibility"
+ ],
+ "replacement_rule": "a server is skipped only for pre-effect install, launch, handshake, or honest-workflow incompatibility, never for any EffectSeal or baseline outcome; every skip is recorded with its reason",
+ "network_excluded": [
+  "ai.getoptimal/optibot",
+  "app.tabtree/tabtree",
+  "com.printyourduck/quote",
+  "dev.bigapi/mcp",
+  "dev.pagelens/pagewatch#npm",
+  "dev.pagelens/pagewatch#pypi",
+  "io.github.ChloePark85/picright",
+  "io.github.VectifyAI/pageindex-mcp",
+  "io.github.cflorczyk9/margins",
+  "io.github.crunchtools/feed-reader",
+  "io.github.darknodebros/elesync",
+  "io.github.educlopez/sparkbites",
+  "io.github.sathya-sankaran/mdshare",
+  "io.github.sendsoon/mcp#npm",
+  "io.github.sendsoon/mcp#pypi"
+ ],
+ "ordered_candidates": [
+  {
+   "id": "io.github.oborchers/tablestakes",
+   "ecosystem": "pypi",
+   "package": "tablestakes",
+   "write_tool": "create_table",
+   "text": " Read and edit HTML/Markdown tables in GitBook-synced documents via MCP tools."
+  },
+  {
+   "id": "io.github.elephia/elephia",
+   "ecosystem": "pypi",
+   "package": "elephia",
+   "write_tool": "merge_log",
+   "text": " Git for your AI's context: local-first, deterministic memory over MCP. An elephant never forgets."
+  },
+  {
+   "id": "io.github.ionasrobert/tacitus-mcp-server",
+   "ecosystem": "npm",
+   "package": "@dashiro/tacitus-mcp-server",
+   "write_tool": "create_note",
+   "text": " Long-term memory for AI agents: local-first PKM with provenance and hybrid search."
+  },
+  {
+   "id": "io.github.RichardLemmon/agent-team",
+   "ecosystem": "npm",
+   "package": "agent-team-mcp",
+   "write_tool": "create_task",
+   "text": " 13 specialized AI agents collaborating via SQLite. 44 MCP tools. One-command install."
+  },
+  {
+   "id": "io.github.jackdark425/aigroup-mdtoword-mcp",
+   "ecosystem": "npm",
+   "package": "aigroup-mdtoword-mcp",
+   "write_tool": "create_table_from_csv",
+   "text": " 本地 Markdown 到 Word 文档转换工具，支持最新 MCP 协议特性、完整的页眉页脚页码功能、增强的表格功能、数据导入和数学公式支持，修复本地相对路径图片嵌入问题"
+  },
+  {
+   "id": "com.adrianczuczka/mason",
+   "ecosystem": "npm",
+   "package": "mason-context",
+   "write_tool": "save_decision",
+   "text": " Context engineering MCP server — generates CLAUDE.md files via structured codebase analysis"
+  },
+  {
+   "id": "io.github.AndyAnh174/vibe-hnindex",
+   "ecosystem": "npm",
+   "package": "vibe-hnindex",
+   "write_tool": "delete_project",
+   "text": " Index source code into a local knowledge base, search with keyword + semantic + hybrid modes."
+  },
+  {
+   "id": "io.github.praveen-ilangovan/pensieve",
+   "ecosystem": "pypi",
+   "package": "pensieve-mcp",
+   "write_tool": "add_note",
+   "text": " Manually-triggered, self-organising personal memory for AI agents; SQLite, no vector DB."
+  },
+  {
+   "id": "io.github.JoyTruepath/truepath-pdf-mcp",
+   "ecosystem": "npm",
+   "package": "@truepathpdf/mcp-server",
+   "write_tool": "merge",
+   "text": "TruePath PDF Local-only PDF tools for AI — extract text, search, split/merge, render pages. Files never leave."
+  },
+  {
+   "id": "io.github.ZengLiangYi/chatcrystal",
+   "ecosystem": "npm",
+   "package": "chatcrystal",
+   "write_tool": "write_task_memory",
+   "text": "ChatCrystal Local-first AI PKM memory for coding conversations."
+  },
+  {
+   "id": "io.github.botzrDev/dreamd",
+   "ecosystem": "npm",
+   "package": "dreamd-mcp",
+   "write_tool": "append_node",
+   "text": " Local-first, cross-harness memory for AI coding agents."
+  },
+  {
+   "id": "io.github.Srishesh-Archik/dyer-md",
+   "ecosystem": "npm",
+   "package": "dyer-md-mcp",
+   "write_tool": "update_note",
+   "text": " Access your dyer.md Markdown vault as a knowledge source for AI agents."
+  },
+  {
+   "id": "io.github.sfrangulov/minirag-mcp",
+   "ecosystem": "pypi",
+   "package": "minirag-mcp",
+   "write_tool": "sync_start",
+   "text": " Local-first RAG MCP server: hybrid search over a folder of your own documents"
+  },
+  {
+   "id": "io.github.Cloto-dev/cpersona",
+   "ecosystem": "pypi",
+   "package": "cpersona",
+   "write_tool": "store",
+   "text": "CPersona Persistent AI memory in one SQLite file: 3-layer hybrid search, confidence scoring, 29 tools."
+  },
+  {
+   "id": "io.github.Terobyte/librarian",
+   "ecosystem": "pypi",
+   "package": "librarian-cli",
+   "write_tool": "book_info",
+   "text": "Librarian Deterministic ebook-to-markdown pipeline with MCP tools to browse, search, and read your books."
+  },
+  {
+   "id": "io.github.SirinivasK/chron",
+   "ecosystem": "npm",
+   "package": "chron-mcp",
+   "write_tool": "start_session",
+   "text": " Timestamped audit log for every AI conversation — stored locally in SQLite, owned by you."
+  },
+  {
+   "id": "io.github.onetrueclaude-creator/hebbian-vault",
+   "ecosystem": "pypi",
+   "package": "hebbian-vault",
+   "write_tool": "configure_vault",
+   "text": " Usage-adaptive Obsidian vault search: Hebbian + PageRank + BM25 hybrid ranking."
+  },
+  {
+   "id": "io.github.Jack-mi/vibelawyer",
+   "ecosystem": "pypi",
+   "package": "vibelawyer",
+   "write_tool": "set_case_basic",
+   "text": "VibeLawyer Local MCP for Chinese criminal dossier review; Word notes + Excel catalogs stay on-device."
+  },
+  {
+   "id": "io.github.TeleAI-UAGI/telemem",
+   "ecosystem": "pypi",
+   "package": "telemem",
+   "write_tool": "update_memory",
+   "text": " Long-term and multimodal memory for AI agents - character-aware, mem0-compatible, fully-local option"
+  },
+  {
+   "id": "dev.usetrail/trail",
+   "ecosystem": "npm",
+   "package": "usetrail",
+   "write_tool": "add_item",
+   "text": "Trail Issue tracker and durable project memory for your coding agent, scoped to the folder you open."
+  },
+  {
+   "id": "io.github.dcostenco/prism-coder",
+   "ecosystem": "npm",
+   "package": "prism-mcp-server",
+   "write_tool": "configure_notifications",
+   "text": " Session memory for coding agents: local-first recall, drift detection, on-device inference."
+  },
+  {
+   "id": "io.github.BitmapAsset/dear-agent",
+   "ecosystem": "npm",
+   "package": "dear-agent",
+   "write_tool": "add_entry",
+   "text": " Your AI agent keeps your diary for you. Local-first, private, works in any agent."
+  },
+  {
+   "id": "io.github.andrea9293/mcp-documentation-server",
+   "ecosystem": "npm",
+   "package": "@andrea9293/mcp-documentation-server",
+   "write_tool": "add_document",
+   "text": " Local-first document management and semantic search for AI coding agents"
+  },
+  {
+   "id": "io.github.w8s/w8s-astro-mcp",
+   "ecosystem": "pypi",
+   "package": "w8s-astro-mcp",
+   "write_tool": "create_profile",
+   "text": " Natal charts, transits, history, ingress forecasting, aspects, composite & Davison charts — SQLite."
+  },
+  {
+   "id": "io.github.marerem/longmem",
+   "ecosystem": "pypi",
+   "package": "longmem",
+   "write_tool": "delete_solution",
+   "text": " Persistent cross-project memory for Cursor and Claude Code using local semantic search."
+  },
+  {
+   "id": "io.github.0xddneto/ai-proof-of-us",
+   "ecosystem": "npm",
+   "package": "aipou-mcp-server",
+   "write_tool": "export_ai_receipts",
+   "text": "AI Proof of Us Private signed AI task receipts with replay checks and optional validated AIPOU claims."
+  },
+  {
+   "id": "io.github.spshkar84/madb-memory",
+   "ecosystem": "pypi",
+   "package": "madb-mcp-server",
+   "write_tool": "save_skill",
+   "text": "MADB — Agent Memory Database Durable causal memory for AI agents — semantic recall, causal lineage, and skills. Local-first."
+  },
+  {
+   "id": "io.github.a2cr/a2cr-mcp",
+   "ecosystem": "pypi",
+   "package": "a2cr-mcp",
+   "write_tool": "create_work_thread",
+   "text": "A2CR Save AI-agent handoff checkpoints, WorkStash notes, and WorkThreads in a local A2CR workspace."
+  },
+  {
+   "id": "io.github.xultrax-web/agent-memory-mcp",
+   "ecosystem": "npm",
+   "package": "@xultrax-web/agent-memory-mcp",
+   "write_tool": "save_memory",
+   "text": " Markdown memory for AI agents. Files you can read, edit, grep, and commit. Not a database."
+  },
+  {
+   "id": "io.github.onetrueclaude-creator/vault-health-mcp",
+   "ecosystem": "pypi",
+   "package": "vault-health-mcp",
+   "write_tool": "configure_vault",
+   "text": " Obsidian vault structural health: broken links, orphans, missing frontmatter, safe auto-repair."
+  }
+ ]
+}
