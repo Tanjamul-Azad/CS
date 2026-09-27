@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_BEFORE_ANY_SECURITY_OUTCOME",
+  "frozen_utc": "2026-09-27",
+  "source": [
+    "artifact/held-out-batch2-candidates.json",
+    "artifact/held-out-batch2-pinned.json",
+    "artifact/results/batch2_eligibility.json",
+    "artifact/results/batch2_workflow.json"
+  ],
+  "servers": [
+    {
+      "id": "io.github.oborchers/tablestakes",
+      "ecosystem": "pypi",
+      "package": "tablestakes",
+      "version": "1.1.0",
+      "integrity": "sha256:07fd22612c413920bc6b41553eaee2dae2c8fe9bd1b2174d1a2d59d48cb43b13",
+      "image_tag": "mcpgate-heldout:bad1c8e2bc1f235d",
+      "evaluation_image_id": "sha256:28a32e2e2bc7177fb3a6eaeb90f0b001b80147455ce03b188d8507808b20e32f",
+      "launch_command": "tablestakes",
+      "effect_domain": "fs"
+    },
+    {
+      "id": "io.github.ionasrobert/tacitus-mcp-server",
+      "ecosystem": "npm",
+      "package": "@dashiro/tacitus-mcp-server",
+      "version": "0.1.2",
+      "integrity": "sha512-ZoeoJdL1W1dZoyfA3CZHYefIFK1HD07Sd4ojWfloy64/o/pQJC/W893Z38LKM8vBt2E4o+ktJM4ryludn9w6SQ==",
+      "image_tag": "mcpgate-heldout:bfb8858dad150805",
+      "evaluation_image_id": "sha256:6be97127215c0f254bdf66e92925e579a0b2b12e06132422f27e6d8308bf45d9",
+      "launch_command": "tacitus-mcp",
+      "effect_domain": "fs"
+    },
+    {
+      "id": "io.github.jackdark425/aigroup-mdtoword-mcp",
+      "ecosystem": "npm",
+      "package": "aigroup-mdtoword-mcp",
+      "version": "4.0.4",
+      "integrity": "sha512-U/iV8xqqEDrFlHMsnyPGM4oPZqtKDex9zDL7LOoByoiTRPwHKzal2zm21JWoOkXUNIHPfVuB//bR99f61fIUQg==",
+      "image_tag": "mcpgate-heldout:7f701a1ba1df3065",
+      "evaluation_image_id": "sha256:0d806ddd28550add38025e9fc1ae8b563aeb9b7bef5fc776bfd398d2e876a34e",
+      "launch_command": "aigroup-mdtoword-mcp",
+      "effect_domain": "fs"
+    },
+    {
+      "id": "io.github.Cloto-dev/cpersona",
+      "ecosystem": "pypi",
+      "package": "cpersona",
+      "version": "2.5.12",
+      "integrity": "sha256:839127192344c01fabbfb6ed99710c3ca7e73c71e10597968d77ddf791c78423",
+      "image_tag": "mcpgate-heldout:e2d1ea04ee95caad",
+      "evaluation_image_id": "sha256:2f9e60983eb2e91ca4ee21d666bf99cbe090ccd0e613c239511ead82ad68f212",
+      "launch_command": "cpersona",
+      "effect_domain": "sql"
+    }
+  ],
+  "excluded": {
+    "io.github.Srishesh-Archik/dyer-md": "honest create_note requires DYER_VAULT_KEY (a remote vault credential not declared in the registry)",
+    "io.github.sfrangulov/minirag-mcp": "honest ingest_data panics offline: needs an ONNX embedding runtime/model; no model is downloaded on this machine",
+    "io.github.praveen-ilangovan/pensieve": "state is a SQLite database under $HOME with WAL; same exclusion reason as aide-memory in the first held-out set",
+    "io.github.JoyTruepath/truepath-pdf-mcp": "deferred: every write tool transforms an input PDF and needs a PDF fixture",
+    "candidates 18-30": "not evaluated: the host system drive filled during their builds and no new packages are installed on this machine"
+  },
+  "note": "four servers is small; the batch is reported as such, not pooled silently with the development set"
+}

@@ -315,3 +315,33 @@ def test_recorded_development_run_meets_its_frozen_rule():
     assert summary["false_block_rate"] <= 0.05  # frozen rule: pooled <= 5%
     assert summary["prevented"]["EFFECTSEAL_TEMPLATE"] == summary["attacks_landed"]
     assert summary["prevented"]["PATH_TEMPLATE"] < summary["attacks_landed"]
+
+
+def test_canonical_views_make_container_formats_checkable(tmp_path):
+    import io
+    import sqlite3
+    import time
+    import zipfile
+    from mcpgate.canonical import canonical_view
+
+    def docx(text):
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w") as z:
+            info = zipfile.ZipInfo("word/document.xml",
+                                   date_time=time.localtime(time.time() + random.random() * 1e6)[:6])
+            z.writestr(info, f"<w:t>{text}</w:t>")
+        return buf.getvalue()
+    a, b = docx("same text"), docx("same text")
+    assert a != b  # zip timestamps differ
+    assert canonical_view("r.docx", a) == canonical_view("r.docx", b)
+    assert b"same text" in canonical_view("r.docx", a)
+
+    db = tmp_path / "x.db"
+    con = sqlite3.connect(db)
+    con.execute("CREATE TABLE t(v TEXT)")
+    con.execute("INSERT INTO t VALUES ('hello value')")
+    con.commit()
+    con.close()
+    view = canonical_view("x.db", db.read_bytes())
+    assert view.startswith(b"sqlite-state") and b"hello value" in view
+    assert canonical_view("plain.txt", b"abc") == b"abc"

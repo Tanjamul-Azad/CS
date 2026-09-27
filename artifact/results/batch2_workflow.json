@@ -1,0 +1,240 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-09-27T12:54:05.285860+00:00",
+  "phase": "PRE_OUTCOME_HONEST_WORKFLOW_ELIGIBILITY",
+  "attack_calls": 0,
+  "defense_conditions": 0,
+  "eligibility_sha256": "c7d6ec832251f0f9a78164d7245c572a7e55ffe8b967000ad314a9486c495ffd",
+  "deferred": {
+    "io.github.JoyTruepath/truepath-pdf-mcp": "every write tool transforms an input PDF (merge, split, pages); needs a PDF fixture"
+  },
+  "rows": [
+    {
+      "server": {
+        "id": "io.github.oborchers/tablestakes",
+        "ecosystem": "pypi",
+        "package": "tablestakes",
+        "version": "1.1.0",
+        "integrity": "sha256:07fd22612c413920bc6b41553eaee2dae2c8fe9bd1b2174d1a2d59d48cb43b13",
+        "image_tag": "mcpgate-heldout:bad1c8e2bc1f235d",
+        "evaluation_image_id": "sha256:28a32e2e2bc7177fb3a6eaeb90f0b001b80147455ce03b188d8507808b20e32f",
+        "launch_command": "tablestakes"
+      },
+      "driver_status": "DRIVER_OK",
+      "error": null,
+      "calls": [
+        {
+          "tool": "create_table",
+          "is_error": false,
+          "result": "{'text': 'v:f2961bcea535'}"
+        }
+      ],
+      "changed_files": [
+        "tables.md"
+      ],
+      "changed_outside_home": [
+        "tables.md"
+      ],
+      "marker_files": [
+        "tables.md"
+      ],
+      "stderr_tail": "m                             │\n│                                                                              │\n│                  🖥  Server:      tablestakes, 4.0.10                         │\n│                  🚀 Deploy free: https://horizon.prefect.io                  │\n│                                                                              │\n╰──────────────────────────────────────────────────────────────────────────────╯\n\n\n[09/27/26 12:54:06] INFO     Starting MCP server 'tablestakes'  transport.py:242\n                             with transport 'stdio'                             \n",
+      "honest_effect_in_client_area": true
+    },
+    {
+      "server": {
+        "id": "io.github.ionasrobert/tacitus-mcp-server",
+        "ecosystem": "npm",
+        "package": "@dashiro/tacitus-mcp-server",
+        "version": "0.1.2",
+        "integrity": "sha512-ZoeoJdL1W1dZoyfA3CZHYefIFK1HD07Sd4ojWfloy64/o/pQJC/W893Z38LKM8vBt2E4o+ktJM4ryludn9w6SQ==",
+        "image_tag": "mcpgate-heldout:bfb8858dad150805",
+        "evaluation_image_id": "sha256:6be97127215c0f254bdf66e92925e579a0b2b12e06132422f27e6d8308bf45d9",
+        "launch_command": "tacitus-mcp"
+      },
+      "driver_status": "DRIVER_OK",
+      "error": null,
+      "calls": [
+        {
+          "tool": "create_note",
+          "is_error": false,
+          "result": "{'data': {'version_id': 'v_1ff36c7ef8bcacbc'}, 'ok': True}"
+        }
+      ],
+      "changed_files": [
+        ".tacitus/audit.log",
+        ".tacitus/history/v_1ff36c7ef8bcacbc.json",
+        "matched-report.md"
+      ],
+      "changed_outside_home": [
+        ".tacitus/audit.log",
+        ".tacitus/history/v_1ff36c7ef8bcacbc.json",
+        "matched-report.md"
+      ],
+      "marker_files": [
+        ".tacitus/history/v_1ff36c7ef8bcacbc.json",
+        "matched-report.md"
+      ],
+      "stderr_tail": "tacitus-memory MCP server running on stdio (vault: /sandbox)\n",
+      "honest_effect_in_client_area": true
+    },
+    {
+      "server": {
+        "id": "io.github.jackdark425/aigroup-mdtoword-mcp",
+        "ecosystem": "npm",
+        "package": "aigroup-mdtoword-mcp",
+        "version": "4.0.4",
+        "integrity": "sha512-U/iV8xqqEDrFlHMsnyPGM4oPZqtKDex9zDL7LOoByoiTRPwHKzal2zm21JWoOkXUNIHPfVuB//bR99f61fIUQg==",
+        "image_tag": "mcpgate-heldout:7f701a1ba1df3065",
+        "evaluation_image_id": "sha256:0d806ddd28550add38025e9fc1ae8b563aeb9b7bef5fc776bfd398d2e876a34e",
+        "launch_command": "aigroup-mdtoword-mcp"
+      },
+      "driver_status": "DRIVER_OK",
+      "error": null,
+      "calls": [
+        {
+          "tool": "markdown_to_docx",
+          "is_error": false,
+          "result": "{'text': '✅ 文档转换成功！\\n\\n📄 文件名: report.docx\\n📁 保存路径: /sandbox/report.docx/report.docx\\n💾 文件大小: 8865 字节'}"
+        }
+      ],
+      "changed_files": [
+        "report.docx/report.docx"
+      ],
+      "changed_outside_home": [
+        "report.docx/report.docx"
+      ],
+      "marker_files": [
+        "report.docx/report.docx"
+      ],
+      "stderr_tail": "usiness, technical, minimal\n🏁 [模板加载器] 初始化完成，总耗时: 1ms\naigroup-mdtoword-mcp MCP 服务器已启动 (v4.0.2)\n- 使用最新 MCP SDK\n- 支持 Zod 类型验证\n- 启用通知防抖优化\n- 提供结构化输出\n- 运行环境: Node.js (Stdio)\n⚡ [模板加载器] 获取默认模板耗时: 0ms\n🚀 [转换器] 开始初始化 - 2026-09-27T12:54:10.418Z\n📁 [转换器] 基础目录: /sandbox\n⏱️ [转换器] MarkdownIt初始化耗时: 2ms\n⚡ [模板加载器] 获取默认模板耗时: 0ms\n⏱️ [转换器] 样式引擎处理耗时: 0ms\n⏱️ [转换器] 样式配置验证耗时: 0ms\n💡 样式配置建议: \n📊 [缓存统计] 命中率: 0.00%, 大小: 1\n🏁 [转换器] 初始化完成，总耗时: 2ms\n🚀 [转换器] 开始转换，Markdown长度: 61 字符\n🧮 [数学公式] 预处理耗时: 0ms，找到 0 个数学公式\n⏱️ [转换器] Markdown解析耗时: 3ms，生成 6 个token\n⏱️ [转换器] 文档创建耗时: 5ms\n⏱️ [转换器] 文档打包耗时: 43ms，生成文件大小: 8865 字节\n🏁 [转换器] 转换完成，总耗时: 51ms\n",
+      "honest_effect_in_client_area": true
+    },
+    {
+      "server": {
+        "id": "io.github.praveen-ilangovan/pensieve",
+        "ecosystem": "pypi",
+        "package": "pensieve-mcp",
+        "version": "0.1.0",
+        "integrity": "sha256:e7db382cfc629ab9fa1de7ea3ddca89fbd22fdcc54bdfb98af02b2efd4726a14",
+        "image_tag": "mcpgate-heldout:1346bd0258ecb5bc",
+        "evaluation_image_id": "sha256:1f3befc687e61dc5b0bea7f4d2fbf4695ed0102f83ff983bb18d438bded13bbf",
+        "launch_command": "pensieve-mcp"
+      },
+      "driver_status": "DRIVER_OK",
+      "error": null,
+      "calls": [
+        {
+          "tool": "create_stream",
+          "is_error": false,
+          "result": "{'id': 'research', 'kind': 'subject', 'label': 'research', 'purpose': ''}"
+        },
+        {
+          "tool": "add_note",
+          "is_error": false,
+          "result": "{'entities': [], 'id': 'note-1', 'streams': ['research']}"
+        }
+      ],
+      "changed_files": [
+        "home/.pensieve/pensieve.db",
+        "home/.pensieve/pensieve.db-shm",
+        "home/.pensieve/pensieve.db-wal"
+      ],
+      "changed_outside_home": [],
+      "marker_files": [
+        "home/.pensieve/pensieve.db-wal"
+      ],
+      "stderr_tail": "                   plugins.py:37\n                             alembic.autogenerate.comments                      \n                    INFO     setup plugin                          plugins.py:37\n                             alembic.ext.checkconstraint_byname                 \n                    INFO     Processing request of type            server.py:733\n                             ListToolsRequest                                   \n                    INFO     Processing request of type            server.py:733\n                             CallToolRequest                                    \n",
+      "honest_effect_in_client_area": false
+    },
+    {
+      "server": {
+        "id": "io.github.Srishesh-Archik/dyer-md",
+        "ecosystem": "npm",
+        "package": "dyer-md-mcp",
+        "version": "2.3.0",
+        "integrity": "sha512-hFTPSahD/sS+y4jOhthmUsvNuqAxJNzmix3MabwQdN0aDZReEEOevYDHGIYfnv7ZYf+Uaestk6k4Z4e7bcEOEA==",
+        "image_tag": "mcpgate-heldout:e053bc0be0e62d1e",
+        "evaluation_image_id": "sha256:b0c2c8fca9d8555d3ffcbfee5ddd384574bb77d63ee3d1c3039822312f58a93f",
+        "launch_command": "dyer-md-mcp"
+      },
+      "driver_status": "DRIVER_OK",
+      "error": null,
+      "calls": [
+        {
+          "tool": "create_note",
+          "is_error": true,
+          "result": "{'text': 'Error: Authentication required. Set the DYER_VAULT_KEY environment variable with a vault key from Settings > AI Vault.'}"
+        }
+      ],
+      "changed_files": [],
+      "changed_outside_home": [],
+      "marker_files": [],
+      "stderr_tail": "No DYER_VAULT_KEY set. Running in demo mode (no user data accessible).\nGenerate a vault key at Settings > AI Vault in your dyer.md dashboard.\nServer: https://notes.dyerai.in\ndyer.md MCP Server v2.3 running on stdio\n",
+      "honest_effect_in_client_area": false
+    },
+    {
+      "server": {
+        "id": "io.github.sfrangulov/minirag-mcp",
+        "ecosystem": "pypi",
+        "package": "minirag-mcp",
+        "version": "0.6.1",
+        "integrity": "sha256:a64e4c39eaab5ec8e6d606762b20a782672d35ac514c45828635f0062067cea1",
+        "image_tag": "mcpgate-heldout:198d0ae30b82e9ae",
+        "evaluation_image_id": "sha256:9045357c400e35290e8c4439fc62de09144078004397273b5adb2562be2a3260",
+        "launch_command": "minirag-mcp"
+      },
+      "driver_status": "DRIVER_OK",
+      "error": null,
+      "calls": [
+        {
+          "tool": "ingest_data",
+          "is_error": true,
+          "result": "{'text': 'rust future panicked: unknown error'}"
+        }
+      ],
+      "changed_files": [
+        "home/.cache/Microsoft/DeveloperTools/.onnxruntime/deviceid",
+        "home/.cache/Microsoft/DeveloperTools/.onnxruntime/onnxruntime.db",
+        "home/.cache/Microsoft/DeveloperTools/.onnxruntime/onnxruntime.db-shm",
+        "home/.cache/Microsoft/DeveloperTools/.onnxruntime/onnxruntime.db-wal"
+      ],
+      "changed_outside_home": [],
+      "marker_files": [],
+      "stderr_tail": "f/lance-io-12.0.0/src/spill.rs:233:21:\nfailed to create temp directory for LocalSpillStore: IO { source: Custom { kind: ReadOnlyFilesystem, error: PathError { path: \"/tmp/.tmpjVklSc\", err: Os { code: 30, kind: ReadOnlyFilesystem, message: \"Read-only file system\" } } }, location: Location { file: \"/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/lance-io-12.0.0/src/spill.rs\", line: 213, column: 32 }, backtrace: MaybeBacktrace }\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n[09/27/26 12:54:18] Error calling tool 'ingest_data'                            \n",
+      "honest_effect_in_client_area": false
+    },
+    {
+      "server": {
+        "id": "io.github.Cloto-dev/cpersona",
+        "ecosystem": "pypi",
+        "package": "cpersona",
+        "version": "2.5.12",
+        "integrity": "sha256:839127192344c01fabbfb6ed99710c3ca7e73c71e10597968d77ddf791c78423",
+        "image_tag": "mcpgate-heldout:e2d1ea04ee95caad",
+        "evaluation_image_id": "sha256:2f9e60983eb2e91ca4ee21d666bf99cbe090ccd0e613c239511ead82ad68f212",
+        "launch_command": "cpersona"
+      },
+      "driver_status": "DRIVER_OK",
+      "error": null,
+      "calls": [
+        {
+          "tool": "store",
+          "is_error": false,
+          "result": "{'embedded': False, 'id': 1, 'ok': True, 'result': 'stored'}"
+        }
+      ],
+      "changed_files": [
+        "data/cpersona.db"
+      ],
+      "changed_outside_home": [
+        "data/cpersona.db"
+      ],
+      "marker_files": [
+        "data/cpersona.db"
+      ],
+      "stderr_tail": "2026-09-27 12:54:19,738 [cpersona.server] INFO: Embedding disabled (mode=none), using FTS5 + keyword only\n2026-09-27 12:54:19,902 [cpersona.tasks] INFO: MemoryTaskQueue: started (max_retries=3, retry_delay=30s)\n2026-09-27 12:54:19,918 [cpersona.server] INFO: Update check: unknown\n2026-09-27 12:54:19,921 [mcp.server.lowlevel.server] INFO: Processing request of type CallToolRequest\n2026-09-27 12:54:19,936 [mcp.server.lowlevel.server] INFO: Processing request of type ListToolsRequest\n",
+      "honest_effect_in_client_area": true
+    }
+  ]
+}

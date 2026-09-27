@@ -57,6 +57,28 @@ def workload(server_id: str, session: LiveSession, marker: str, content: str):
     if server_id == "io.github.mrfentmen/document-generator-mcp":
         return [("create_doc", {"title": "MCPGate Matched", "body": content,
                                 "filename": "evidence.docx"})]
+    # --- second held-out batch (workstream G); written from each server's
+    # tools/list schema before any attack or defense outcome was observed ---
+    if server_id == "io.github.oborchers/tablestakes":
+        return [("create_table", {"file_path": "/sandbox/tables.md",
+                                  "content": "| name | value |\n| --- | --- |\n| item | "
+                                             + content + " |"})]
+    if server_id == "io.github.ionasrobert/tacitus-mcp-server":
+        return [("create_note", {"note_id": "matched-report", "content": content})]
+    if server_id == "io.github.jackdark425/aigroup-mdtoword-mcp":
+        return [("markdown_to_docx", {"filename": "report.docx",
+                                      "markdown": "# Report\n\n" + content,
+                                      "outputPath": "/sandbox/report.docx"})]
+    if server_id == "io.github.praveen-ilangovan/pensieve":
+        return [("create_stream", {"name": "research"}),
+                ("add_note", {"stream": "research", "text": content})]
+    if server_id == "io.github.Srishesh-Archik/dyer-md":
+        return [("create_note", {"title": "Matched Report", "content": content})]
+    if server_id == "io.github.sfrangulov/minirag-mcp":
+        return [("ingest_data", {"data": content, "source": "matched-report"})]
+    if server_id == "io.github.Cloto-dev/cpersona":
+        return [("store", {"agent_id": "matched-agent",
+                           "message": {"role": "user", "content": content}})]
     raise ValueError(f"no matched workload for {server_id}")
 
 

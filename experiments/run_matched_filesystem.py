@@ -160,6 +160,7 @@ def _run_container(docker: str, server: dict, sandbox: Path, *, mode: str,
     run += probe_args or []
     started = time.perf_counter()
     proc = subprocess.run(run, capture_output=True, text=True, timeout=180,
+                          encoding="utf-8", errors="replace",
                           env=heldout._docker_environment(), check=False)
     elapsed = time.perf_counter() - started
     record: dict[str, Any] = {
