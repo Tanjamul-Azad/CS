@@ -91,8 +91,10 @@ def evaluate_server(docker: str, server: dict, plan: dict, base: Path) -> dict:
     counter = [0]
     rng = random.Random(plan["training"]["seed"])
     observations, runs = [], []
-    for _ in range(plan["training"]["runs"]):
-        args = perturb_arguments(EXEMPLAR, rng)
+    training_args = [dict(EXEMPLAR)] + [
+        perturb_arguments(EXEMPLAR, rng, natural=bool(i % 2))
+        for i in range(plan["training"]["runs"])]
+    for args in training_args:
         record, sandbox = run(docker, server, base, counter, args["value"], tag="train")
         runs.append({"tag": "train", "args": args, "error": _call_error(record)})
         if _call_error(record):
@@ -109,7 +111,8 @@ def evaluate_server(docker: str, server: dict, plan: dict, base: Path) -> dict:
     honest_rows, honest_state = [], []
     for index in range(n):
         s = scale if index >= n - shifted else 1.0
-        args = perturb_arguments(EXEMPLAR, rng, scale=s)
+        natural = n - shifted - plan["held_out_honest"].get("natural_calls", 0) <= index < n - shifted
+        args = perturb_arguments(EXEMPLAR, rng, scale=s, natural=natural)
         record, sandbox = run(docker, server, base, counter, args["value"], tag="honest")
         entries = _state_entries(sandbox)
         try:

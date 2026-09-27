@@ -25,7 +25,9 @@
       "calls": 4,
       "text_scale": 3.0
     },
-    "admission_clock": "contracts are instantiated with now = wall clock at admission"
+    "admission_clock": "contracts are instantiated with now = wall clock at admission",
+    "natural_calls": 4,
+    "natural_note": "added by development change 4: of the 8 unscaled held-out calls, the last 4 use natural-word free text; the scaled calls stay random"
   },
   "attacks": {
     "modes": [
@@ -74,6 +76,11 @@
       "after_run": "adaptive run1 (artifact/results/adaptive_templates_run1.json, kept unchanged)",
       "failure": "ori-memory: the pinned template refused the honest exemplar call. Training values were letters and spaces, for which the slug transforms coincide; inference kept slug_dash, but the server slugs by dropping '_' and the exemplar title contains underscores. Workstream A's held-out values had no punctuation either, so A did not expose it.",
       "change": "placeholders keep every transform consistent with all training runs (a version space, rendered as an alternation; ambiguity costs log2 of the number of distinct renderings in slack); free-text perturbations now include '_' and '-' so transforms separate; a strict slug variant was added to the transform library. Regression test test_transforms_the_training_cannot_separate_stay_in_a_version_space. Workstream A is re-run (run3) to check for regressions."
+    },
+    {
+      "after_run": "adaptive run2 (artifact/results/adaptive_templates.json at commit time, kept as adaptive_templates_run2.json)",
+      "failure": "ori-memory: the honest exemplar call was still refused. Its promote.log line depends on a classifier over the title: random-letter titles are logged as 'type=insight (low) | type classified as insight (low confidence)', a real English title as 'type=insight (high)'. Training and held-out values were all random letters, so only the low branch was ever observed and workstream A's 0/12 false blocks on ori-memory were optimistic.",
+      "change": "training now includes the approved exemplar call itself plus perturbations alternating between random and natural-word free text; four held-out calls use natural-word text. Workstream A is re-run (run4)."
     }
   ],
   "success_rule": {

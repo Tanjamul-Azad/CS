@@ -727,8 +727,26 @@ def _rand_token(rng: random.Random, length: int, alphabet: str) -> str:
     return "".join(rng.choice(alphabet) for _ in range(length))
 
 
-def perturb_value(value: str, rng: random.Random, *, scale: float = 1.0) -> str:
-    """A fresh value of the same shape: path, free text, or identifier."""
+# Ordinary English words for natural-text perturbations. Servers may classify
+# or summarize free text (ori-memory rates a title's confidence), so random
+# letters alone exercise only one branch of such behavior.
+_NATURAL = (
+    "report quarterly budget meeting notes project update customer review design "
+    "decision summary plan release security incident analysis team schedule goal "
+    "research paper draft feedback issue fix feature request data model result "
+    "test deploy server client network storage policy risk cost revenue sales "
+    "market product user account payment invoice order shipment support ticket "
+    "important urgent weekly monthly annual final initial revised approved pending "
+    "review the and for with about from into after before during our their new "
+    "first second last next improve reduce increase check verify prepare send"
+).split()
+
+
+def perturb_value(value: str, rng: random.Random, *, scale: float = 1.0,
+                  natural: bool = False) -> str:
+    """A fresh value of the same shape: path, free text, or identifier.
+
+    With ``natural``, free text is built from ordinary English words."""
     if "/" in value or re.fullmatch(r"[\w.-]+\.[A-Za-z0-9]{1,5}", value):
         directory, base = posixpath.split(value)
         stem, ext = posixpath.splitext(base)
@@ -736,7 +754,10 @@ def perturb_value(value: str, rng: random.Random, *, scale: float = 1.0) -> str:
         return posixpath.join(directory, new + ext) if directory else new + ext
     if " " in value or len(value) >= 20:
         words = max(2, round(len(value.split()) * scale))
-        body = [_rand_token(rng, rng.randint(3, 9), _WORD) for _ in range(words - 1)]
+        if natural:
+            body = [rng.choice(_NATURAL) for _ in range(words - 1)]
+        else:
+            body = [_rand_token(rng, rng.randint(3, 9), _WORD) for _ in range(words - 1)]
         body.append(_rand_token(rng, 6, _WORD + string.digits))  # unique anchor
         # punctuation separates otherwise-identical transforms (slug variants)
         body.append(_rand_token(rng, 3, _WORD) + "_" + _rand_token(rng, 3, _WORD)
@@ -757,7 +778,8 @@ def perturb_value(value: str, rng: random.Random, *, scale: float = 1.0) -> str:
 
 
 def perturb_arguments(exemplar: Mapping[str, Any], rng: random.Random, *,
-                      fixed: Iterable[str] = (), scale: float = 1.0) -> dict[str, Any]:
+                      fixed: Iterable[str] = (), scale: float = 1.0,
+                      natural: bool = False) -> dict[str, Any]:
     """Perturb every top-level string argument not held fixed."""
     frozen = set(fixed)
     out: dict[str, Any] = {}
@@ -765,7 +787,7 @@ def perturb_arguments(exemplar: Mapping[str, Any], rng: random.Random, *,
         if name in frozen or not isinstance(value, str):
             out[name] = value
         else:
-            out[name] = perturb_value(value, rng, scale=scale)
+            out[name] = perturb_value(value, rng, scale=scale, natural=natural)
     return out
 
 

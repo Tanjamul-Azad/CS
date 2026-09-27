@@ -1,0 +1,914 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-09-27T01:50:55.355937+00:00",
+  "phase": "TEMPLATE_GENERALIZATION_DEVELOPMENT_SQL",
+  "plan_sha256": "6e7d957c9558e3850bf8c4b0b9f480e5ee5ba482183144421ad8a4f3dc78276a",
+  "inference_sha256": "8bb0e6d48c7afb154b9ee4c667bd1b62ad91e8e5e818d9bea4b6086233eb796a",
+  "servers": [
+    {
+      "server_id": "io.github.daedalus/mcp-sqlite3",
+      "package": "mcp-sqlite3",
+      "version": "0.1.3",
+      "template": {
+        "tool": "insert_value",
+        "root": "/sandbox",
+        "fixed": {},
+        "training_runs": 4,
+        "objects": [
+          {
+            "name": "file:db.state",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "db.state"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "schema table evidence evidence CREATE TABLE evidence(value TEXT)\ncolumns evidence [\"value\"]\nrow evidence [[\"text\", \""
+              ],
+              [
+                "A",
+                "value",
+                "identity"
+              ],
+              [
+                "L",
+                "\"]]\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          }
+        ]
+      },
+      "honest": [
+        {
+          "index": 0,
+          "scale": 1.0,
+          "args": {
+            "value": "stirfl zhhowr gpig 2hvypo"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 1,
+          "scale": 1.0,
+          "args": {
+            "value": "ksrxyh qgxp dpuj x5wo3o"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 2,
+          "scale": 1.0,
+          "args": {
+            "value": "cnkwxey dlh ich mrxkwz"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 3,
+          "scale": 1.0,
+          "args": {
+            "value": "tnejuy vnpb crq t836qx"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 4,
+          "scale": 1.0,
+          "args": {
+            "value": "qtsexriqt cugax rezfdisuf 114vw9"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 5,
+          "scale": 1.0,
+          "args": {
+            "value": "ktmpznjzx ibtqipokm aqa 7k990q"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 6,
+          "scale": 1.0,
+          "args": {
+            "value": "hgtpce ulvmgddap komcjya 2eive8"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 7,
+          "scale": 1.0,
+          "args": {
+            "value": "pwasdqk ewpcv ozcp i5orra"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 8,
+          "scale": 3.0,
+          "args": {
+            "value": "abvzp uvuxlkqh wzz zgi iys wjl azeoxjpj mutgatyt pvyc eechkmo jkntaiglr hj1z57"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 9,
+          "scale": 3.0,
+          "args": {
+            "value": "gnasgjpi yngvrf kvppqoj auy ctzy fead fwjxt bch gvyuoi xdlgz brc qll13q"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 10,
+          "scale": 3.0,
+          "args": {
+            "value": "nsql mid ypm seap zgjic obqps klgrgywk rrzefdxhy jkpetjwc syyirynrv eap t5rjbk"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 11,
+          "scale": 3.0,
+          "args": {
+            "value": "dcticbm lda djnwaxybo cgfvnd vydpjjb skj edbtbox gjcpmfis vuyxrhmm ztwcl ltlheackk 4bal04"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        }
+      ],
+      "attacks": [
+        {
+          "mode": "sql_value",
+          "args": {
+            "value": "stirfl zhhowr gpig 2hvypo"
+          },
+          "call_error": false,
+          "landed": false,
+          "differs": true,
+          "evidence": false,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": false
+          }
+        },
+        {
+          "mode": "sql_value",
+          "args": {
+            "value": "ksrxyh qgxp dpuj x5wo3o"
+          },
+          "call_error": false,
+          "landed": false,
+          "differs": true,
+          "evidence": false,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": false
+          }
+        },
+        {
+          "mode": "sql_value",
+          "args": {
+            "value": "cnkwxey dlh ich mrxkwz"
+          },
+          "call_error": false,
+          "landed": false,
+          "differs": true,
+          "evidence": false,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": false
+          }
+        },
+        {
+          "mode": "sql_extra_row",
+          "args": {
+            "value": "stirfl zhhowr gpig 2hvypo"
+          },
+          "call_error": false,
+          "landed": true,
+          "differs": true,
+          "evidence": true,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": true
+          }
+        },
+        {
+          "mode": "sql_extra_row",
+          "args": {
+            "value": "ksrxyh qgxp dpuj x5wo3o"
+          },
+          "call_error": false,
+          "landed": true,
+          "differs": true,
+          "evidence": true,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": true
+          }
+        },
+        {
+          "mode": "sql_extra_row",
+          "args": {
+            "value": "cnkwxey dlh ich mrxkwz"
+          },
+          "call_error": false,
+          "landed": true,
+          "differs": true,
+          "evidence": true,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": true
+          }
+        },
+        {
+          "mode": "sql_extra_table",
+          "args": {
+            "value": "stirfl zhhowr gpig 2hvypo"
+          },
+          "call_error": false,
+          "landed": true,
+          "differs": true,
+          "evidence": true,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": true
+          }
+        },
+        {
+          "mode": "sql_extra_table",
+          "args": {
+            "value": "ksrxyh qgxp dpuj x5wo3o"
+          },
+          "call_error": false,
+          "landed": true,
+          "differs": true,
+          "evidence": true,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": true
+          }
+        },
+        {
+          "mode": "sql_extra_table",
+          "args": {
+            "value": "cnkwxey dlh ich mrxkwz"
+          },
+          "call_error": false,
+          "landed": true,
+          "differs": true,
+          "evidence": true,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": true
+          }
+        },
+        {
+          "mode": "sql_noop",
+          "args": {
+            "value": "stirfl zhhowr gpig 2hvypo"
+          },
+          "call_error": false,
+          "landed": true,
+          "differs": true,
+          "evidence": true,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": true
+          }
+        },
+        {
+          "mode": "sql_noop",
+          "args": {
+            "value": "ksrxyh qgxp dpuj x5wo3o"
+          },
+          "call_error": false,
+          "landed": true,
+          "differs": true,
+          "evidence": true,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": true
+          }
+        },
+        {
+          "mode": "sql_noop",
+          "args": {
+            "value": "cnkwxey dlh ich mrxkwz"
+          },
+          "call_error": false,
+          "landed": true,
+          "differs": true,
+          "evidence": true,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": true
+          }
+        }
+      ],
+      "training_runs": [
+        {
+          "tag": "train",
+          "args": {
+            "value": "akeygaia usssr kms vhb372"
+          },
+          "error": false
+        },
+        {
+          "tag": "train",
+          "args": {
+            "value": "oafxfi wkncfzfx pzkfttf ymvbgf"
+          },
+          "error": false
+        },
+        {
+          "tag": "train",
+          "args": {
+            "value": "vgx johfmek pkincr 5uilwa"
+          },
+          "error": false
+        },
+        {
+          "tag": "train",
+          "args": {
+            "value": "tlhj ymppugcm rihjtascx j85wie"
+          },
+          "error": false
+        }
+      ]
+    },
+    {
+      "server_id": "io.github.mrfentmen/sqlite-mcp",
+      "package": "@mrfentmen/sqlite-mcp",
+      "version": "1.0.0",
+      "template": {
+        "tool": "insert_value",
+        "root": "/sandbox",
+        "fixed": {},
+        "training_runs": 4,
+        "objects": [
+          {
+            "name": "file:db.state",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "db.state"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "schema table evidence evidence CREATE TABLE evidence(value TEXT)\ncolumns evidence [\"value\"]\nrow evidence [[\"text\", \""
+              ],
+              [
+                "A",
+                "value",
+                "identity"
+              ],
+              [
+                "L",
+                "\"]]\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          }
+        ]
+      },
+      "honest": [
+        {
+          "index": 0,
+          "scale": 1.0,
+          "args": {
+            "value": "stirfl zhhowr gpig 2hvypo"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 1,
+          "scale": 1.0,
+          "args": {
+            "value": "ksrxyh qgxp dpuj x5wo3o"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 2,
+          "scale": 1.0,
+          "args": {
+            "value": "cnkwxey dlh ich mrxkwz"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 3,
+          "scale": 1.0,
+          "args": {
+            "value": "tnejuy vnpb crq t836qx"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 4,
+          "scale": 1.0,
+          "args": {
+            "value": "qtsexriqt cugax rezfdisuf 114vw9"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 5,
+          "scale": 1.0,
+          "args": {
+            "value": "ktmpznjzx ibtqipokm aqa 7k990q"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 6,
+          "scale": 1.0,
+          "args": {
+            "value": "hgtpce ulvmgddap komcjya 2eive8"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 7,
+          "scale": 1.0,
+          "args": {
+            "value": "pwasdqk ewpcv ozcp i5orra"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 8,
+          "scale": 3.0,
+          "args": {
+            "value": "abvzp uvuxlkqh wzz zgi iys wjl azeoxjpj mutgatyt pvyc eechkmo jkntaiglr hj1z57"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 9,
+          "scale": 3.0,
+          "args": {
+            "value": "gnasgjpi yngvrf kvppqoj auy ctzy fead fwjxt bch gvyuoi xdlgz brc qll13q"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 10,
+          "scale": 3.0,
+          "args": {
+            "value": "nsql mid ypm seap zgjic obqps klgrgywk rrzefdxhy jkpetjwc syyirynrv eap t5rjbk"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        },
+        {
+          "index": 11,
+          "scale": 3.0,
+          "args": {
+            "value": "dcticbm lda djnwaxybo cgfvnd vydpjjb skj edbtbox gjcpmfis vuyxrhmm ztwcl ltlheackk 4bal04"
+          },
+          "call_error": false,
+          "allowed": true,
+          "reason": "effect matches every tree rule",
+          "false_block": false,
+          "slack_bits": 0.0,
+          "slack_level": "L3"
+        }
+      ],
+      "attacks": [
+        {
+          "mode": "sql_value",
+          "args": {
+            "value": "stirfl zhhowr gpig 2hvypo"
+          },
+          "call_error": false,
+          "landed": false,
+          "differs": true,
+          "evidence": false,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": false
+          }
+        },
+        {
+          "mode": "sql_value",
+          "args": {
+            "value": "ksrxyh qgxp dpuj x5wo3o"
+          },
+          "call_error": false,
+          "landed": false,
+          "differs": true,
+          "evidence": false,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": false
+          }
+        },
+        {
+          "mode": "sql_value",
+          "args": {
+            "value": "cnkwxey dlh ich mrxkwz"
+          },
+          "call_error": false,
+          "landed": false,
+          "differs": true,
+          "evidence": false,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": false
+          }
+        },
+        {
+          "mode": "sql_extra_row",
+          "args": {
+            "value": "stirfl zhhowr gpig 2hvypo"
+          },
+          "call_error": false,
+          "landed": true,
+          "differs": true,
+          "evidence": true,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": true
+          }
+        },
+        {
+          "mode": "sql_extra_row",
+          "args": {
+            "value": "ksrxyh qgxp dpuj x5wo3o"
+          },
+          "call_error": false,
+          "landed": true,
+          "differs": true,
+          "evidence": true,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": true
+          }
+        },
+        {
+          "mode": "sql_extra_row",
+          "args": {
+            "value": "cnkwxey dlh ich mrxkwz"
+          },
+          "call_error": false,
+          "landed": true,
+          "differs": true,
+          "evidence": true,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": true
+          }
+        },
+        {
+          "mode": "sql_extra_table",
+          "args": {
+            "value": "stirfl zhhowr gpig 2hvypo"
+          },
+          "call_error": false,
+          "landed": true,
+          "differs": true,
+          "evidence": true,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": true
+          }
+        },
+        {
+          "mode": "sql_extra_table",
+          "args": {
+            "value": "ksrxyh qgxp dpuj x5wo3o"
+          },
+          "call_error": false,
+          "landed": true,
+          "differs": true,
+          "evidence": true,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": true
+          }
+        },
+        {
+          "mode": "sql_extra_table",
+          "args": {
+            "value": "cnkwxey dlh ich mrxkwz"
+          },
+          "call_error": false,
+          "landed": true,
+          "differs": true,
+          "evidence": true,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": true
+          }
+        },
+        {
+          "mode": "sql_noop",
+          "args": {
+            "value": "stirfl zhhowr gpig 2hvypo"
+          },
+          "call_error": true,
+          "landed": false,
+          "differs": true,
+          "evidence": false,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": false
+          }
+        },
+        {
+          "mode": "sql_noop",
+          "args": {
+            "value": "ksrxyh qgxp dpuj x5wo3o"
+          },
+          "call_error": true,
+          "landed": false,
+          "differs": true,
+          "evidence": false,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": false
+          }
+        },
+        {
+          "mode": "sql_noop",
+          "args": {
+            "value": "cnkwxey dlh ich mrxkwz"
+          },
+          "call_error": true,
+          "landed": false,
+          "differs": true,
+          "evidence": false,
+          "effectseal_template": {
+            "allowed": false,
+            "reason": "db.state: content failed file:db.state: content fullmatches the instantiated template"
+          },
+          "prevented": {
+            "NONE": false,
+            "EFFECTSEAL_TEMPLATE": false
+          }
+        }
+      ],
+      "training_runs": [
+        {
+          "tag": "train",
+          "args": {
+            "value": "akeygaia usssr kms vhb372"
+          },
+          "error": false
+        },
+        {
+          "tag": "train",
+          "args": {
+            "value": "oafxfi wkncfzfx pzkfttf ymvbgf"
+          },
+          "error": false
+        },
+        {
+          "tag": "train",
+          "args": {
+            "value": "vgx johfmek pkincr 5uilwa"
+          },
+          "error": false
+        },
+        {
+          "tag": "train",
+          "args": {
+            "value": "tlhj ymppugcm rihjtascx j85wie"
+          },
+          "error": false
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "honest_calls": 24,
+    "false_blocks": 0,
+    "attacks_attempted": 24,
+    "attacks_landed": 15,
+    "prevented_effectseal_template": 15
+  }
+}

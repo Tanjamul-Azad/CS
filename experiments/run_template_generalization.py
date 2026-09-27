@@ -114,8 +114,12 @@ def pin(pinner: Pinner, plan: dict) -> dict:
         if _last_call_error(record):
             fixed.add(name)
     observations = []
-    for _ in range(plan["training"]["runs"]):
-        args = perturb_arguments(exemplar, rng, fixed=fixed)
+    # the approved exemplar itself is a natural observation; perturbations
+    # alternate between random and natural-word free text (development change 4)
+    training_args = [dict(exemplar)] + [
+        perturb_arguments(exemplar, rng, fixed=fixed, natural=bool(i % 2))
+        for i in range(plan["training"]["runs"])]
+    for args in training_args:
         record, sandbox = pinner.run(args, tag="train")
         if _last_call_error(record):
             raise RuntimeError(f"honest training call failed: {record['driver']}")
@@ -202,7 +206,9 @@ def evaluate_server(docker: str, server: dict, applicable: set[str], plan: dict,
     honest_state: list[tuple[dict, dict]] = []
     for index in range(n):
         s = scale if index >= n - shifted else 1.0
-        args = perturb_arguments(pinned["exemplar"], rng, fixed=pinned["fixed"], scale=s)
+        natural = plan["held_out_honest"].get("natural_calls", 0) > 0 and             n - shifted - plan["held_out_honest"]["natural_calls"] <= index < n - shifted
+        args = perturb_arguments(pinned["exemplar"], rng, fixed=pinned["fixed"], scale=s,
+                                 natural=natural)
         record, sandbox = pinner.run(args, tag="honest")
         now = datetime.now(timezone.utc)
         try:
@@ -212,7 +218,7 @@ def evaluate_server(docker: str, server: dict, applicable: set[str], plan: dict,
             contract, slack = None, None
             print(f"    template error: {error}", flush=True)
         verdict = admit(contract, sandbox, unsafe_check=True)
-        row = {"index": index, "scale": s, "args": args,
+        row = {"index": index, "scale": s, "natural": natural, "args": args,
                "call_error": _last_call_error(record),
                "allowed": verdict["allowed"], "reason": verdict["reason"],
                "false_block": (not _last_call_error(record)) and not verdict["allowed"],
