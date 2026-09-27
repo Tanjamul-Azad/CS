@@ -91,10 +91,12 @@ evaluated unbiasedly only on the held-out batch (workstream G).
 
 `EffectSeal.tla` models the ledger (reserve/commit/fail/crash), the untrusted
 writer (may write any value while alive, and may survive quiescing), the single
-read, and promotion. `check_model.py` is an explicit-state mirror of the same
-actions and invariants (TLC itself is not installed on this machine; the
-`.cfg` files are ready for it). Bounds: 3 requests, allowance 2, at most 2
-executions per request.
+read, and promotion. It is checked with **TLC** (tla2tools.jar v1.7.4, official
+GitHub release, SHA-256 936a2620...0e88; logs in `formal/tlc/`) and with
+`check_model.py`, an independent explicit-state mirror of the same actions and
+invariants. **The two agree exactly**, including the distinct-state counts of
+the two passing configurations (1,387 and 1,027). Bounds: 3 requests,
+allowance 2, at most 2 executions per request (`StateConstraint`).
 
 | Configuration | States | Result |
 |---|---:|---|
