@@ -312,6 +312,6 @@ def test_recorded_development_run_meets_its_frozen_rule():
     if not result.is_file():
         pytest.skip("template run not recorded")
     summary = json.loads(result.read_text(encoding="utf-8"))["summary"]
-    assert summary["false_block_rate"] <= 0.05
+    assert summary["false_block_rate"] <= 0.05  # frozen rule: pooled <= 5%
     assert summary["prevented"]["EFFECTSEAL_TEMPLATE"] == summary["attacks_landed"]
     assert summary["prevented"]["PATH_TEMPLATE"] < summary["attacks_landed"]

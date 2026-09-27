@@ -1,0 +1,2552 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-09-27T02:27:14.064632+00:00",
+  "phase": "WORKSTREAM_D_ADAPTIVE_TEMPLATES",
+  "plan_sha256": "c72bedf6b9aaf36e5d2c09590ceab1f3fe0a5d3c8154d2b64957a25b72a063d4",
+  "inference_sha256": "a2d2bc519bd52c24268e8f0d7570b69a9455a8a1d3078a0760dfb04c4900baf6",
+  "servers": [
+    {
+      "server_id": "io.github.aayoawoyemi/ori-memory",
+      "template": {
+        "tool": "ori_add",
+        "root": "/sandbox",
+        "fixed": {},
+        "training_runs": 5,
+        "objects": [
+          {
+            "name": "file:.ori",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                ".ori"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:inbox",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "inbox"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:inbox/.gitkeep",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "inbox/.gitkeep"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:notes",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "notes"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:notes/{title|slug_drop}.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "notes/"
+              ],
+              [
+                "A",
+                "title",
+                "slug_drop"
+              ],
+              [
+                "L",
+                ".md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "---\ndescription: \"\"\ntype: "
+              ],
+              [
+                "H",
+                "(?:[0-9a-z]){7,7}",
+                36.189,
+                "insight|insight|insight|insight|insight"
+              ],
+              [
+                "L",
+                "\nproject: []\nstatus: active\ncreated: "
+              ],
+              [
+                "H",
+                "clock:d",
+                26.575
+              ],
+              [
+                "L",
+                "\nlast_accessed: "
+              ],
+              [
+                "H",
+                "clock:d",
+                26.575
+              ],
+              [
+                "L",
+                "\naccess_count: 1\n---\n# "
+              ],
+              [
+                "A",
+                "title",
+                "identity+stem"
+              ],
+              [
+                "L",
+                "\n\n{Content - your reasoning, evidence, context. Transform the material, don't just summarize.}\n\n---\n\nRelevant Notes:\n- [[related note]]\n\nAreas:\n- [[relevant map]]\n- [[index]]\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:notes/index.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "notes/index.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "f0eb4792cef633238885657323aebe6da8a66aaeed8cbb6083b8d5de47312ad4",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:ops",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "ops"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:ops/daily.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ops/daily.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "955b484b7954082d18bb65f1600c83abf65728f69f7b0cd43e9c82a59e7e2790",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:ops/observations",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "ops/observations"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:ops/observations/.gitkeep",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ops/observations/.gitkeep"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "unconstrained": false
+          },
+          {
+            "name": "file:ops/promote.log",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ops/promote.log"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "H",
+                "clock:dTtZ",
+                77.404
+              ],
+              [
+                "L",
+                " | "
+              ],
+              [
+                "A",
+                "title",
+                "slug_drop"
+              ],
+              [
+                "L",
+                ".md | type="
+              ],
+              [
+                "H",
+                "(?:[0-9a-z]){7,7}",
+                36.189,
+                "insight|insight|insight|insight|insight"
+              ],
+              [
+                "L",
+                " ("
+              ],
+              [
+                "H",
+                "(?:[0-9a-z]){3,8}",
+                41.4,
+                "high|low|low|low|low"
+              ],
+              [
+                "L",
+                ") |"
+              ],
+              [
+                "H",
+                "(?:[^\\n]){0,90}",
+                591.302,
+                "| type classified as insight (low confidence);| type classified as insight (low confidence);| type classified as insight (low confidence);| type classified as insight (low confidence);"
+              ],
+              [
+                "L",
+                " assigned to area(s): index; status: inbox \u2192 active\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:ops/reminders.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ops/reminders.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "545f1680cc13aa946a5e8439fe14ae9fc0f4c98e42a50eaa4b04246bc6cb60e3",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:ops/sessions",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "ops/sessions"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:ops/sessions/.gitkeep",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ops/sessions/.gitkeep"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "unconstrained": false
+          },
+          {
+            "name": "file:ori.config.yaml",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ori.config.yaml"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "# ori.config.yaml - vault configuration for Ori Mnemos\r\n\r\nvault:\r\n  version: \"0.1\"\r\n\r\ntemplates:\r\n  default: templates/note.md\r\n  by_type:\r\n    map: templates/map.md\r\n    moc: templates/map.md\r\n\r\nvitality:\r\n  model: \"actr\"\r\n  actr_decay: 0.5\r\n  decay:\r\n    idea: 90\r\n    decision: 30\r\n    learning: 30\r\n    "
+              ],
+              [
+                "H",
+                "(?:[0-9a-z]){7,7}",
+                36.189,
+                "insight|insight|insight|insight|insight"
+              ],
+              [
+                "L",
+                ": 30\r\n    blocker: 14\r\n    opportunity: 30\r\n  base: 1.0\r\n  metabolic_rates:\r\n    self: 0.1\r\n    notes: 1.0\r\n    ops: 3.0\r\n  structural_boost_per_link: 0.1\r\n  structural_boost_cap: 10\r\n  revival_decay_rate: 0.2\r\n  revival_window_days: 14\r\n  access_saturation_k: 10\r\n\r\npromote:\r\n  auto: true               # ori add auto-promotes to notes/\r\n  require_llm: false       # true = only auto-promote when LLM available\r\n  min_confidence: 0.6      # below this, skip auto-promotion and warn\r\n  project_keywords: {}     # project_name: [keyword, keyword, ...]\r\n  project_map_routing: {}  # project_name: map_note_title\r\n  default_area: \"index\"    # fallback area when no project match\r\n\r\nllm:\r\n  provider: null           # \"anthropic\" | \"openai\" (OpenAI-compatible)\r\n  model: null              # e.g. \"claude-sonnet-4-20250514\", \"gpt-4o\", \"qwen2.5\"\r\n  api_key_env: null        # env var name containing API key\r\n  base_url: null           # API base URL (null = provider default)\r\n  # Examples:\r\n  #   Anthropic:  provider: \"anthropic\", model: \"claude-sonnet-4-20250514\", api_key_env: \"ANTHROPIC_API_KEY\"\r\n  #   OpenAI:     provider: \"openai\", model: \"gpt-4o\", api_key_env: \"OPENAI_API_KEY\"\r\n  #   Ollama:     provider: \"openai\", model: \"llama3\", base_url: \"http://localhost:11434/v1\"\r\n  #   LM Studio:  provider: \"openai\", model: \"local-model\", base_url: \"http://localhost:1234/v1\"\r\n  #   Kimi K2:    provider: \"openai\", model: \"kimi-k2\", api_key_env: \"MOONSHOT_API_KEY\", base_url: \"https://api.moonshot.cn/v1\"\r\n\r\ngraph:\r\n  pagerank_alpha: 0.85\r\n  bridge_vitality_floor: 0.5\r\n  hub_degree_multiplier: 2.0\r\n\r\nengine:\r\n  embedding_model: \"Xenova/all-MiniLM-L6-v2\"\r\n  embedding_dims: 384\r\n  piecewise_bins: 8\r\n  community_dims: 16\r\n  db_path: \".ori/embeddings.db\"\r\n\r\nretrieval:\r\n  default_limit: 10\r\n  candidate_multiplier: 5\r\n  rrf_k: 60\r\n  signal_weights:\r\n    composite: 2.0\r\n    keyword: 1.0\r\n    graph: 1.5\r\n  exploration_budget: 0.10\r\n\r\nbm25:\r\n  k1: 1.2\r\n  b: 0.75\r\n  title_boost: 3.0\r\n  description_boost: 2.0\r\n\r\nips:\r\n  enabled: true\r\n  epsilon: 0.01\r\n  log_path: \"ops/access.jsonl\"\r\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:self",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "self"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:self/goals.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "self/goals.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "4de90e7d0fac0013585bc1e5bd34c569f6c93926f341d604441f1bdb606064e6",
+            "unconstrained": false
+          },
+          {
+            "name": "file:self/identity.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "self/identity.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "2b7852a978bd6c315345e7acef00062e37135460fb5c27d0b9fab8bf8eb5269d",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:self/memory",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "self/memory"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:self/memory/.gitkeep",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "self/memory/.gitkeep"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "unconstrained": false
+          },
+          {
+            "name": "file:self/methodology.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "self/methodology.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "bd8aa4feed31f55e054302671c025f77d52ae4955c4ba2ce39d9c8af1d0a1ad2",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:templates",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "templates"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:templates/map.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "templates/map.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "74ced54b16e0bfcc001329c48b93c76ac6b4a793feaf258f9811de1a59920e22",
+            "unconstrained": false
+          },
+          {
+            "name": "file:templates/note.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "templates/note.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "---\r\n_schema:\r\n  entity_type: \"note\"\r\n  applies_to: \"notes/*.md\"\r\n  required:\r\n    - description\r\n    - type\r\n    - project\r\n    - status\r\n    - created\r\n  optional:\r\n    - confidence\r\n    - alternatives\r\n    - rationale\r\n    - superseded_by\r\n    - next_step\r\n    - source\r\n  enums:\r\n    type:\r\n      - idea\r\n      - decision\r\n      - learning\r\n      - "
+              ],
+              [
+                "H",
+                "(?:[0-9a-z]){7,7}",
+                36.189,
+                "insight|insight|insight|insight|insight"
+              ],
+              [
+                "L",
+                "\r\n      - blocker\r\n      - opportunity\r\n    status:\r\n      - inbox\r\n      - active\r\n      - completed\r\n      - superseded\r\n      - archived\r\n    confidence:\r\n      - speculative\r\n      - promising\r\n      - validated\r\n  constraints:\r\n    description:\r\n      max_length: 200\r\n      format: \"One sentence adding context beyond the title\"\r\n    project:\r\n      format: \"Array of project tags\"\r\n\r\n# Template fields\r\ndescription: \"\"\r\ntype: \"\"\r\nproject: []\r\nstatus: active\r\ncreated: YYYY-MM-DD\r\n---\r\n\r\n# {prose-as-title: a complete thought that works as a statement}\r\n\r\n{Content - your reasoning, evidence, context. Transform the material, don't just summarize.}\r\n\r\n---\r\n\r\nRelevant Notes:\r\n- [[related note]] -- why this connection matters\r\n\r\nAreas:\r\n- [[relevant map]]\r\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          }
+        ]
+      },
+      "predicted_slack_bits": 841.042,
+      "predicted_slack_per_rule": {
+        "file:.ori": 0.0,
+        "directory:inbox": 1.0,
+        "file:inbox/.gitkeep": 0.0,
+        "directory:notes": 1.0,
+        "file:notes/{title|slug_drop}.md": 39.359,
+        "file:notes/index.md": 0.0,
+        "directory:ops": 1.0,
+        "file:ops/daily.md": 0.0,
+        "directory:ops/observations": 1.0,
+        "file:ops/observations/.gitkeep": 0.0,
+        "file:ops/promote.log": 721.3050000000001,
+        "file:ops/reminders.md": 0.0,
+        "directory:ops/sessions": 1.0,
+        "file:ops/sessions/.gitkeep": 0.0,
+        "file:ori.config.yaml": 36.189,
+        "directory:self": 1.0,
+        "file:self/goals.md": 0.0,
+        "file:self/identity.md": 0.0,
+        "directory:self/memory": 1.0,
+        "file:self/memory/.gitkeep": 0.0,
+        "file:self/methodology.md": 0.0,
+        "directory:templates": 1.0,
+        "file:templates/map.md": 0.0,
+        "file:templates/note.md": 36.189
+      },
+      "honest_template_passes_budget": false,
+      "honest_template_passes_structural": false,
+      "poisoned_template_passes_structural": false,
+      "honest_control": {
+        "template": {
+          "allowed": true,
+          "reason": "effect matches every tree rule"
+        },
+        "fixed": {
+          "allowed": true,
+          "reason": "effect matches every tree rule"
+        }
+      },
+      "poisoned_template": {
+        "tool": "ori_add",
+        "root": "/sandbox",
+        "fixed": {},
+        "training_runs": 4,
+        "objects": [
+          {
+            "name": "file:.ori",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                ".ori"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:inbox",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "inbox"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:inbox/.gitkeep",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "inbox/.gitkeep"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:notes",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "notes"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:notes/{title|slug_drop}.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "notes/"
+              ],
+              [
+                "A",
+                "title",
+                "slug_drop"
+              ],
+              [
+                "L",
+                ".md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "---\ndescription: \"\"\ntype: insight\nproject: []\nstatus: active\ncreated: "
+              ],
+              [
+                "H",
+                "clock:d",
+                26.575
+              ],
+              [
+                "L",
+                "\nlast_accessed: "
+              ],
+              [
+                "H",
+                "clock:d",
+                26.575
+              ],
+              [
+                "L",
+                "\naccess_count: 1\n---\n# "
+              ],
+              [
+                "A",
+                "title",
+                "identity+stem+lower"
+              ],
+              [
+                "L",
+                "\n\n{Content - your reasoning, evidence, context. Transform the material, don't just summarize.}\n\n---\n\nRelevant Notes:\n- [[related note]]\n\nAreas:\n- [[relevant map]]\n- [[index]]\n\n"
+              ],
+              [
+                "H",
+                "(?:[0-9a-z]){8,8}",
+                41.359,
+                "26fedyap|rxnhk5id|3biohx1d|l3vwwyuj"
+              ],
+              [
+                "L",
+                "\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:notes/index.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "notes/index.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "f0eb4792cef633238885657323aebe6da8a66aaeed8cbb6083b8d5de47312ad4",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:ops",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "ops"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:ops/daily.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ops/daily.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "955b484b7954082d18bb65f1600c83abf65728f69f7b0cd43e9c82a59e7e2790",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:ops/observations",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "ops/observations"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:ops/observations/.gitkeep",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ops/observations/.gitkeep"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "unconstrained": false
+          },
+          {
+            "name": "file:ops/promote.log",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ops/promote.log"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "H",
+                "clock:dTtZ",
+                77.404
+              ],
+              [
+                "L",
+                " | "
+              ],
+              [
+                "A",
+                "title",
+                "slug_drop"
+              ],
+              [
+                "L",
+                ".md | type=insight (low) | type classified as insight (low confidence); assigned to area(s): index; status: inbox \u2192 active\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:ops/reminders.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ops/reminders.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "545f1680cc13aa946a5e8439fe14ae9fc0f4c98e42a50eaa4b04246bc6cb60e3",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:ops/sessions",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "ops/sessions"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:ops/sessions/.gitkeep",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ops/sessions/.gitkeep"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "unconstrained": false
+          },
+          {
+            "name": "file:ori.config.yaml",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ori.config.yaml"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "8657f4fcfe77f9a0e428bd663e9931aad70b7c3aab72130ade713139ac368915",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:self",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "self"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:self/goals.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "self/goals.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "4de90e7d0fac0013585bc1e5bd34c569f6c93926f341d604441f1bdb606064e6",
+            "unconstrained": false
+          },
+          {
+            "name": "file:self/identity.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "self/identity.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "2b7852a978bd6c315345e7acef00062e37135460fb5c27d0b9fab8bf8eb5269d",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:self/memory",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "self/memory"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:self/memory/.gitkeep",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "self/memory/.gitkeep"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "unconstrained": false
+          },
+          {
+            "name": "file:self/methodology.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "self/methodology.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "bd8aa4feed31f55e054302671c025f77d52ae4955c4ba2ce39d9c8af1d0a1ad2",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:templates",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "templates"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:templates/map.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "templates/map.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "74ced54b16e0bfcc001329c48b93c76ac6b4a793feaf258f9811de1a59920e22",
+            "unconstrained": false
+          },
+          {
+            "name": "file:templates/note.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "templates/note.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "ee3818fa1ee2a15705557e4dbf9a0c89cdab3815938e9aa3a3247a5fbe8251f3",
+            "unconstrained": false
+          },
+          {
+            "name": "file:~inbox/*.txt",
+            "kind": "file",
+            "path": null,
+            "path_regex": "inbox/[^/]+\\.txt",
+            "min_count": 2,
+            "max_count": 2,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": true
+          }
+        ]
+      },
+      "poisoned_slack_bits": Infinity,
+      "poisoned_slack_per_rule": {
+        "file:.ori": 0.0,
+        "directory:inbox": 1.0,
+        "file:inbox/.gitkeep": 0.0,
+        "directory:notes": 1.0,
+        "file:notes/{title|slug_drop}.md": 45.529,
+        "file:notes/index.md": 0.0,
+        "directory:ops": 1.0,
+        "file:ops/daily.md": 0.0,
+        "directory:ops/observations": 1.0,
+        "file:ops/observations/.gitkeep": 0.0,
+        "file:ops/promote.log": 52.414,
+        "file:ops/reminders.md": 0.0,
+        "directory:ops/sessions": 1.0,
+        "file:ops/sessions/.gitkeep": 0.0,
+        "file:ori.config.yaml": 0.0,
+        "directory:self": 1.0,
+        "file:self/goals.md": 0.0,
+        "file:self/identity.md": 0.0,
+        "directory:self/memory": 1.0,
+        "file:self/memory/.gitkeep": 0.0,
+        "file:self/methodology.md": 0.0,
+        "directory:templates": 1.0,
+        "file:templates/map.md": 0.0,
+        "file:templates/note.md": 0.0,
+        "file:~inbox/*.txt": Infinity
+      },
+      "poisoned_template_passes_budget": false,
+      "fixed_contract_unconstrained_files": [
+        "ops/promote.log"
+      ],
+      "attacks": [
+        {
+          "attack": "covert",
+          "rep": 0,
+          "landed": true,
+          "hits": 1,
+          "call_error": false,
+          "template_admits": true,
+          "template_reason": "effect matches every tree rule",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule",
+          "achieved_bits": 49.829
+        },
+        {
+          "attack": "covert",
+          "rep": 1,
+          "landed": true,
+          "hits": 1,
+          "call_error": false,
+          "template_admits": true,
+          "template_reason": "effect matches every tree rule",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule",
+          "achieved_bits": 49.829
+        },
+        {
+          "attack": "covert",
+          "rep": 2,
+          "landed": true,
+          "hits": 1,
+          "call_error": false,
+          "template_admits": true,
+          "template_reason": "effect matches every tree rule",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule",
+          "achieved_bits": 49.829
+        },
+        {
+          "attack": "overslack",
+          "rep": 0,
+          "landed": true,
+          "hits": 1,
+          "call_error": false,
+          "template_admits": false,
+          "template_reason": "ops/promote.log: content failed file:ops/promote.log: content fullmatches the instantiated template",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule"
+        },
+        {
+          "attack": "overslack",
+          "rep": 1,
+          "landed": true,
+          "hits": 1,
+          "call_error": false,
+          "template_admits": false,
+          "template_reason": "ops/promote.log: content failed file:ops/promote.log: content fullmatches the instantiated template",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule"
+        },
+        {
+          "attack": "overslack",
+          "rep": 2,
+          "landed": true,
+          "hits": 1,
+          "call_error": false,
+          "template_admits": false,
+          "template_reason": "ops/promote.log: content failed file:ops/promote.log: content fullmatches the instantiated template",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule"
+        },
+        {
+          "attack": "inject",
+          "rep": 0,
+          "landed": true,
+          "hits": 1,
+          "call_error": false,
+          "template_admits": false,
+          "template_reason": "ops/promote.log: content failed file:ops/promote.log: content fullmatches the instantiated template",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule"
+        },
+        {
+          "attack": "inject",
+          "rep": 1,
+          "landed": true,
+          "hits": 1,
+          "call_error": false,
+          "template_admits": false,
+          "template_reason": "ops/promote.log: content failed file:ops/promote.log: content fullmatches the instantiated template",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule"
+        },
+        {
+          "attack": "inject",
+          "rep": 2,
+          "landed": true,
+          "hits": 1,
+          "call_error": false,
+          "template_admits": false,
+          "template_reason": "ops/promote.log: content failed file:ops/promote.log: content fullmatches the instantiated template",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule"
+        }
+      ],
+      "runs": [
+        {
+          "tag": "schema",
+          "mode": "none",
+          "args": {
+            "title": "approved matched content MCPGATE_MATCHED_2026_09_26",
+            "type": "insight"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1615.361
+        },
+        {
+          "tag": "discover",
+          "mode": "none",
+          "args": {
+            "title": "akeygaia usssr kms vhb372 ooa_fxf-45",
+            "type": "insight"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1603.139
+        },
+        {
+          "tag": "discover",
+          "mode": "none",
+          "args": {
+            "title": "approved matched content MCPGATE_MATCHED_2026_09_26",
+            "type": "ncfzfxs"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1604.182
+        },
+        {
+          "tag": "train",
+          "mode": "none",
+          "args": {
+            "title": "approved matched content MCPGATE_MATCHED_2026_09_26",
+            "type": "insight"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1578.642
+        },
+        {
+          "tag": "train",
+          "mode": "none",
+          "args": {
+            "title": "zkfttf vszygk zdc hms2pk mek_opk-46",
+            "type": "crpwkue"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1620.292
+        },
+        {
+          "tag": "train",
+          "mode": "none",
+          "args": {
+            "title": "draft user report nxosz5 pug_cmz-84",
+            "type": "hjtascx"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1624.488
+        },
+        {
+          "tag": "train",
+          "mode": "none",
+          "args": {
+            "title": "rple sax smlg y01kvq tuu_wmw-29",
+            "type": "vnifgis"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1609.014
+        },
+        {
+          "tag": "train",
+          "mode": "none",
+          "args": {
+            "title": "important data weekly e29w8e bvg_xdu-82",
+            "type": "pudhqik"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1597.288
+        }
+      ]
+    },
+    {
+      "server_id": "ai.smartmemory/compose-mcp",
+      "template": {
+        "tool": "add_roadmap_entry",
+        "root": "/sandbox",
+        "fixed": {
+          "complexity": null,
+          "impact": null,
+          "status": null
+        },
+        "training_runs": 5,
+        "objects": [
+          {
+            "name": "directory:.compose",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                ".compose"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:.compose/data",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                ".compose/data"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:.compose/data/feature-events.jsonl",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                ".compose/data/feature-events.jsonl"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "{\"ts\":\""
+              ],
+              [
+                "H",
+                "clock:dTtZ",
+                77.404
+              ],
+              [
+                "L",
+                "\",\"actor\":\"mcp:agent\",\"build_id\":null,\"tool\":\"add_roadmap_entry\",\"code\":\""
+              ],
+              [
+                "A",
+                "code",
+                "identity+stem+upper"
+              ],
+              [
+                "L",
+                "\",\"to\":\"PLANNED\",\"phase\":\""
+              ],
+              [
+                "A",
+                "phase",
+                "identity+stem"
+              ],
+              [
+                "L",
+                "\"}\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:ROADMAP.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ROADMAP.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "# Project Roadmap\n\n<!-- Generated from feature.json \u2014 do not edit manually -->\n<!-- Run: compose roadmap generate -->\n\n**Last updated:** "
+              ],
+              [
+                "H",
+                "clock:d",
+                26.575
+              ],
+              [
+                "L",
+                "\n\n---\n\n## Roadmap Conventions\n\n- **Status:** `PLANNED` | `IN_PROGRESS` | `PARTIAL` | `COMPLETE` | `SUPERSEDED` | `PARKED`\n- Items are numbered sequentially. Never reuse a number.\n- Cross-reference stable IDs (e.g. `FEAT-1`) not section headings.\n\n---\n\n## "
+              ],
+              [
+                "A",
+                "phase",
+                "identity+stem"
+              ],
+              [
+                "L",
+                " \u2014 PLANNED\n\n| # | Feature | Description | Status |\n|---|---------|-------------|--------|\n| 1 | "
+              ],
+              [
+                "A",
+                "code",
+                "identity+stem+upper"
+              ],
+              [
+                "L",
+                " | "
+              ],
+              [
+                "A",
+                "description",
+                "identity+stem"
+              ],
+              [
+                "L",
+                " | PLANNED |\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:docs",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "docs"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:docs/features",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "docs/features"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:docs/features/{code|identity/stem/upper}",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "docs/features/"
+              ],
+              [
+                "A",
+                "code",
+                "identity+stem+upper"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:docs/features/{code|identity/stem/upper}/feature.json",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "docs/features/"
+              ],
+              [
+                "A",
+                "code",
+                "identity+stem+upper"
+              ],
+              [
+                "L",
+                "/feature.json"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "{\n  \"code\": \""
+              ],
+              [
+                "A",
+                "code",
+                "identity+stem+upper"
+              ],
+              [
+                "L",
+                "\",\n  \"description\": \""
+              ],
+              [
+                "A",
+                "description",
+                "identity+stem"
+              ],
+              [
+                "L",
+                "\",\n  \"status\": \"PLANNED\",\n  \"phase\": \""
+              ],
+              [
+                "A",
+                "phase",
+                "identity+stem"
+              ],
+              [
+                "L",
+                "\",\n  \"created\": \""
+              ],
+              [
+                "H",
+                "clock:d",
+                26.575
+              ],
+              [
+                "L",
+                "\",\n  \"updated\": \""
+              ],
+              [
+                "H",
+                "clock:d",
+                26.575
+              ],
+              [
+                "L",
+                "\",\n  \"position\": 1\n}\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          }
+        ]
+      },
+      "predicted_slack_bits": 62.169000000000004,
+      "predicted_slack_per_rule": {
+        "directory:.compose": 1.0,
+        "directory:.compose/data": 1.0,
+        "file:.compose/data/feature-events.jsonl": 52.414,
+        "file:ROADMAP.md": 1.585,
+        "directory:docs": 1.0,
+        "directory:docs/features": 1.0,
+        "directory:docs/features/{code|identity/stem/upper}": 1.0,
+        "file:docs/features/{code|identity/stem/upper}/feature.json": 3.17
+      },
+      "honest_template_passes_budget": true,
+      "honest_template_passes_structural": true,
+      "poisoned_template_passes_structural": false,
+      "honest_control": {
+        "template": {
+          "allowed": true,
+          "reason": "effect matches every tree rule"
+        },
+        "fixed": {
+          "allowed": true,
+          "reason": "effect matches every tree rule"
+        }
+      },
+      "poisoned_template": {
+        "tool": "add_roadmap_entry",
+        "root": "/sandbox",
+        "fixed": {
+          "complexity": null,
+          "impact": null,
+          "status": null
+        },
+        "training_runs": 4,
+        "objects": [
+          {
+            "name": "directory:.compose",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                ".compose"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:.compose/data",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                ".compose/data"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:.compose/data/feature-events.jsonl",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                ".compose/data/feature-events.jsonl"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "{\"ts\":\""
+              ],
+              [
+                "H",
+                "clock:dTtZ",
+                77.404
+              ],
+              [
+                "L",
+                "\",\"actor\":\"mcp:agent\",\"build_id\":null,\"tool\":\"add_roadmap_entry\",\"code\":\""
+              ],
+              [
+                "A",
+                "code",
+                "identity+stem+upper"
+              ],
+              [
+                "L",
+                "\",\"to\":\"PLANNED\",\"phase\":\""
+              ],
+              [
+                "A",
+                "phase",
+                "identity+stem"
+              ],
+              [
+                "L",
+                "\"}\n\n"
+              ],
+              [
+                "H",
+                "(?:[0-9a-z]){8,8}",
+                41.359,
+                "djvoqgp6|gg34hrr0|vktgowfn|2u3pt6ab"
+              ],
+              [
+                "L",
+                "\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:.compose/data/noise_{*}.txt",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                ".compose/data/noise_"
+              ],
+              [
+                "H",
+                "(?:[0-9a-z]){8,8}",
+                41.359,
+                "bfwj4fyv|0uht7z9b|v0q7ccso|u9fzer8s"
+              ],
+              [
+                "L",
+                ".txt"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "H",
+                "(?:[0-9a-z]){8,8}",
+                41.359,
+                "pbbiltid|cb3uj4f1|sbn91c14|50124nxf"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:ROADMAP.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ROADMAP.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "# Project Roadmap\n\n<!-- Generated from feature.json \u2014 do not edit manually -->\n<!-- Run: compose roadmap generate -->\n\n**Last updated:** "
+              ],
+              [
+                "H",
+                "clock:d",
+                26.575
+              ],
+              [
+                "L",
+                "\n\n---\n\n## Roadmap Conventions\n\n- **Status:** `PLANNED` | `IN_PROGRESS` | `PARTIAL` | `COMPLETE` | `SUPERSEDED` | `PARKED`\n- Items are numbered sequentially. Never reuse a number.\n- Cross-reference stable IDs (e.g. `FEAT-1`) not section headings.\n\n"
+              ],
+              [
+                "H",
+                "(?:[0-9a-z]){8,8}",
+                41.359,
+                "49jzpry6|lflozvo2|f6p7gv7k|xeh1nmr2"
+              ],
+              [
+                "L",
+                "\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:docs",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "docs"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:docs/features",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "docs/features"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:docs/features/{code|identity/stem/upper}",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "docs/features/"
+              ],
+              [
+                "A",
+                "code",
+                "identity+stem+upper"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:docs/features/{code|identity/stem/upper}/feature.json",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "docs/features/"
+              ],
+              [
+                "A",
+                "code",
+                "identity+stem+upper"
+              ],
+              [
+                "L",
+                "/feature.json"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "{\n  \"code\": \""
+              ],
+              [
+                "A",
+                "code",
+                "identity+stem+upper"
+              ],
+              [
+                "L",
+                "\",\n  \"description\": \""
+              ],
+              [
+                "A",
+                "description",
+                "identity+stem+lower"
+              ],
+              [
+                "L",
+                "\",\n  \"status\": \"PLANNED\",\n  \"phase\": \""
+              ],
+              [
+                "A",
+                "phase",
+                "identity+stem"
+              ],
+              [
+                "L",
+                "\",\n  \"created\": \""
+              ],
+              [
+                "H",
+                "clock:d",
+                26.575
+              ],
+              [
+                "L",
+                "\",\n  \"updated\": \""
+              ],
+              [
+                "H",
+                "clock:d",
+                26.575
+              ],
+              [
+                "L",
+                "\",\n  \"position\": 1\n}\n\n"
+              ],
+              [
+                "H",
+                "(?:[0-9a-z]){8,8}",
+                41.359,
+                "d1i9bitl|b0iow1rp|bqbnsz0n|1jbc6q3v"
+              ],
+              [
+                "L",
+                "\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:docs/features/{code|identity/stem/upper}/noise_{*}.txt",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "docs/features/"
+              ],
+              [
+                "A",
+                "code",
+                "identity+stem+upper"
+              ],
+              [
+                "L",
+                "/noise_"
+              ],
+              [
+                "H",
+                "(?:[0-9a-z]){8,8}",
+                41.359,
+                "q5p2jeok|hx6giofu|aje2tzqo|6v3z5k4k"
+              ],
+              [
+                "L",
+                ".txt"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "H",
+                "(?:[0-9a-z]){8,8}",
+                41.359,
+                "wqfz6c7f|h8zqdqez|l2zjcc90|15i1pas0"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:noise_{*}.txt",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "noise_"
+              ],
+              [
+                "H",
+                "(?:[0-9a-z]){8,8}",
+                41.359,
+                "law3v3x5|50vhqobe|y7g4uplh|pn6wx6fw"
+              ],
+              [
+                "L",
+                ".txt"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "H",
+                "(?:[0-9a-z]){8,8}",
+                41.359,
+                "3ehsytfs|abqdd0om|t7nh3j2j|g40buj4t"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          }
+        ]
+      },
+      "poisoned_slack_bits": 435.40000000000003,
+      "poisoned_slack_per_rule": {
+        "directory:.compose": 1.0,
+        "directory:.compose/data": 1.0,
+        "file:.compose/data/feature-events.jsonl": 93.773,
+        "file:.compose/data/noise_{*}.txt": 82.718,
+        "file:ROADMAP.md": 42.944,
+        "directory:docs": 1.0,
+        "directory:docs/features": 1.0,
+        "directory:docs/features/{code|identity/stem/upper}": 1.0,
+        "file:docs/features/{code|identity/stem/upper}/feature.json": 45.529,
+        "file:docs/features/{code|identity/stem/upper}/noise_{*}.txt": 82.718,
+        "file:noise_{*}.txt": 82.718
+      },
+      "poisoned_template_passes_budget": false,
+      "fixed_contract_unconstrained_files": [
+        ".compose/data/feature-events.jsonl"
+      ],
+      "attacks": [
+        {
+          "attack": "covert",
+          "rep": 0,
+          "landed": true,
+          "hits": 1,
+          "call_error": false,
+          "template_admits": true,
+          "template_reason": "effect matches every tree rule",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule",
+          "achieved_bits": 49.829
+        },
+        {
+          "attack": "covert",
+          "rep": 1,
+          "landed": true,
+          "hits": 1,
+          "call_error": false,
+          "template_admits": true,
+          "template_reason": "effect matches every tree rule",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule",
+          "achieved_bits": 49.829
+        },
+        {
+          "attack": "covert",
+          "rep": 2,
+          "landed": true,
+          "hits": 1,
+          "call_error": false,
+          "template_admits": true,
+          "template_reason": "effect matches every tree rule",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule",
+          "achieved_bits": 49.829
+        },
+        {
+          "attack": "overslack",
+          "rep": 0,
+          "landed": true,
+          "hits": 1,
+          "call_error": false,
+          "template_admits": false,
+          "template_reason": ".compose/data/feature-events.jsonl: content failed file:.compose/data/feature-events.jsonl: content fullmatches the instantiated template",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule"
+        },
+        {
+          "attack": "overslack",
+          "rep": 1,
+          "landed": true,
+          "hits": 1,
+          "call_error": false,
+          "template_admits": false,
+          "template_reason": ".compose/data/feature-events.jsonl: content failed file:.compose/data/feature-events.jsonl: content fullmatches the instantiated template",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule"
+        },
+        {
+          "attack": "overslack",
+          "rep": 2,
+          "landed": true,
+          "hits": 1,
+          "call_error": false,
+          "template_admits": false,
+          "template_reason": ".compose/data/feature-events.jsonl: content failed file:.compose/data/feature-events.jsonl: content fullmatches the instantiated template",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule"
+        },
+        {
+          "attack": "inject",
+          "rep": 0,
+          "landed": true,
+          "hits": 1,
+          "call_error": false,
+          "template_admits": false,
+          "template_reason": ".compose/data/feature-events.jsonl: content failed file:.compose/data/feature-events.jsonl: content fullmatches the instantiated template",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule"
+        },
+        {
+          "attack": "inject",
+          "rep": 1,
+          "landed": true,
+          "hits": 1,
+          "call_error": false,
+          "template_admits": false,
+          "template_reason": ".compose/data/feature-events.jsonl: content failed file:.compose/data/feature-events.jsonl: content fullmatches the instantiated template",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule"
+        },
+        {
+          "attack": "inject",
+          "rep": 2,
+          "landed": true,
+          "hits": 1,
+          "call_error": false,
+          "template_admits": false,
+          "template_reason": ".compose/data/feature-events.jsonl: content failed file:.compose/data/feature-events.jsonl: content fullmatches the instantiated template",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule"
+        }
+      ],
+      "runs": [
+        {
+          "tag": "schema",
+          "mode": "none",
+          "args": {
+            "code": "MCPGATE-M1",
+            "description": "approved matched content MCPGATE_MATCHED_2026_09_26",
+            "phase": "Matched"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1214.327
+        },
+        {
+          "tag": "discover",
+          "mode": "none",
+          "args": {
+            "code": "VAKEYGA-I0",
+            "description": "approved matched content MCPGATE_MATCHED_2026_09_26",
+            "phase": "Matched"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1233.189
+        },
+        {
+          "tag": "discover",
+          "mode": "none",
+          "args": {
+            "code": "MCPGATE-M1",
+            "description": "usssr kms vdxas 37232b fxf_iuw-56",
+            "phase": "Matched"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1258.61
+        },
+        {
+          "tag": "discover",
+          "mode": "none",
+          "args": {
+            "code": "MCPGATE-M1",
+            "description": "approved matched content MCPGATE_MATCHED_2026_09_26",
+            "phase": "fkYkULE"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1327.467
+        },
+        {
+          "tag": "train",
+          "mode": "none",
+          "args": {
+            "code": "MCPGATE-M1",
+            "description": "approved matched content MCPGATE_MATCHED_2026_09_26",
+            "phase": "Matched"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1350.306
+        },
+        {
+          "tag": "train",
+          "mode": "none",
+          "args": {
+            "code": "ZKFTTFM-V9",
+            "description": "ygkazdcdv xtjo hfmekopki 1f85ui xfw_wla-39",
+            "phase": "xosRWzF"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1272.902
+        },
+        {
+          "tag": "train",
+          "mode": "none",
+          "args": {
+            "code": "PUGCMZR-I3",
+            "description": "cost second quarterly ej85wi csa_xes-65",
+            "phase": "nyABkvq"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1284.818
+        },
+        {
+          "tag": "train",
+          "mode": "none",
+          "args": {
+            "code": "TUUWMWE-T6",
+            "description": "fgisn ncor trcbv mg7j4g hqi_khp-88",
+            "phase": "ZcXFpnG"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1314.122
+        },
+        {
+          "tag": "train",
+          "mode": "none",
+          "args": {
+            "code": "CUKZSVC-W5",
+            "description": "team annual their 7xc11l kqh_lea-33",
+            "phase": "URTInGm"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1237.794
+        }
+      ]
+    },
+    {
+      "server_id": "io.github.Oncorporation/filesystem-server",
+      "template": {
+        "tool": "write_file",
+        "root": "/sandbox",
+        "fixed": {},
+        "training_runs": 5,
+        "objects": [
+          {
+            "name": "file:{file_path|relpath/basename}",
+            "kind": "file",
+            "path": [
+              [
+                "A",
+                "file_path",
+                "relpath+basename"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "A",
+                "content",
+                "identity+stem"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          }
+        ]
+      },
+      "predicted_slack_bits": 0.0,
+      "predicted_slack_per_rule": {
+        "file:{file_path|relpath/basename}": 0.0
+      },
+      "honest_template_passes_budget": true,
+      "honest_template_passes_structural": true,
+      "poisoned_template_passes_structural": false,
+      "honest_control": {
+        "template": {
+          "allowed": true,
+          "reason": "effect matches every tree rule"
+        },
+        "fixed": {
+          "allowed": true,
+          "reason": "effect matches every tree rule"
+        }
+      },
+      "poisoned_template": {
+        "tool": "write_file",
+        "root": "/sandbox",
+        "fixed": {},
+        "training_runs": 4,
+        "objects": [
+          {
+            "name": "file:{file_path|relpath/basename}",
+            "kind": "file",
+            "path": [
+              [
+                "A",
+                "file_path",
+                "relpath+basename"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "A",
+                "content",
+                "identity+stem+lower"
+              ],
+              [
+                "L",
+                "\n"
+              ],
+              [
+                "H",
+                "(?:[0-9a-f]){8,8}",
+                32.0,
+                "2f1470e3|97f25c02|f204497e|5cd12516"
+              ],
+              [
+                "L",
+                "\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:noise_{*}.txt",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "noise_"
+              ],
+              [
+                "H",
+                "(?:[0-9a-f]){8,8}",
+                32.0,
+                "cab69436|0ec2c73b|77747322|26817e5c"
+              ],
+              [
+                "L",
+                ".txt"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "H",
+                "(?:[0-9a-f]){8,8}",
+                32.0,
+                "73c7d9cf|371ba7e7|f0cfed68|f0a7e2b2"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          }
+        ]
+      },
+      "poisoned_slack_bits": 97.0,
+      "poisoned_slack_per_rule": {
+        "file:{file_path|relpath/basename}": 33.0,
+        "file:noise_{*}.txt": 64.0
+      },
+      "poisoned_template_passes_budget": true,
+      "fixed_contract_unconstrained_files": [],
+      "attacks": [
+        {
+          "attack": "covert",
+          "rep": 0,
+          "landed": false,
+          "hits": 0,
+          "call_error": false,
+          "template_admits": true,
+          "template_reason": "effect matches every tree rule",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule",
+          "achieved_bits": 0.0
+        },
+        {
+          "attack": "covert",
+          "rep": 1,
+          "landed": false,
+          "hits": 0,
+          "call_error": false,
+          "template_admits": true,
+          "template_reason": "effect matches every tree rule",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule",
+          "achieved_bits": 0.0
+        },
+        {
+          "attack": "covert",
+          "rep": 2,
+          "landed": false,
+          "hits": 0,
+          "call_error": false,
+          "template_admits": true,
+          "template_reason": "effect matches every tree rule",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule",
+          "achieved_bits": 0.0
+        },
+        {
+          "attack": "overslack",
+          "rep": 0,
+          "landed": false,
+          "hits": 0,
+          "call_error": false,
+          "template_admits": true,
+          "template_reason": "effect matches every tree rule",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule"
+        },
+        {
+          "attack": "overslack",
+          "rep": 1,
+          "landed": false,
+          "hits": 0,
+          "call_error": false,
+          "template_admits": true,
+          "template_reason": "effect matches every tree rule",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule"
+        },
+        {
+          "attack": "overslack",
+          "rep": 2,
+          "landed": false,
+          "hits": 0,
+          "call_error": false,
+          "template_admits": true,
+          "template_reason": "effect matches every tree rule",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule"
+        },
+        {
+          "attack": "inject",
+          "rep": 0,
+          "landed": false,
+          "hits": 0,
+          "call_error": false,
+          "template_admits": true,
+          "template_reason": "effect matches every tree rule",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule"
+        },
+        {
+          "attack": "inject",
+          "rep": 1,
+          "landed": false,
+          "hits": 0,
+          "call_error": false,
+          "template_admits": true,
+          "template_reason": "effect matches every tree rule",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule"
+        },
+        {
+          "attack": "inject",
+          "rep": 2,
+          "landed": false,
+          "hits": 0,
+          "call_error": false,
+          "template_admits": true,
+          "template_reason": "effect matches every tree rule",
+          "fixed_admits": true,
+          "fixed_reason": "effect matches every tree rule"
+        }
+      ],
+      "runs": [
+        {
+          "tag": "schema",
+          "mode": "none",
+          "args": {
+            "file_path": "/sandbox/report.txt",
+            "content": "approved matched content MCPGATE_MATCHED_2026_09_26"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1176.136
+        },
+        {
+          "tag": "discover",
+          "mode": "none",
+          "args": {
+            "file_path": "/sandbox/aujnaq.txt",
+            "content": "approved matched content MCPGATE_MATCHED_2026_09_26"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1196.108
+        },
+        {
+          "tag": "discover",
+          "mode": "none",
+          "args": {
+            "file_path": "/sandbox/report.txt",
+            "content": "jus srakmsk dxasoyqo 32bklr uwk_ncf-29"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1153.175
+        },
+        {
+          "tag": "train",
+          "mode": "none",
+          "args": {
+            "file_path": "/sandbox/report.txt",
+            "content": "approved matched content MCPGATE_MATCHED_2026_09_26"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1179.82
+        },
+        {
+          "tag": "train",
+          "mode": "none",
+          "args": {
+            "file_path": "/sandbox/4ukkym.txt",
+            "content": "azdcd vgxtjohfm kopk r1f85u uex_fww-50"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1189.849
+        },
+        {
+          "tag": "train",
+          "mode": "none",
+          "args": {
+            "file_path": "/sandbox/nxosz5.txt",
+            "content": "pending improve feature fy9rpt tas_cxe-87"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1196.584
+        },
+        {
+          "tag": "train",
+          "mode": "none",
+          "args": {
+            "file_path": "/sandbox/wieaiy.txt",
+            "content": "gmnnf ituuw wetvni knr0o1 cor_ltr-10"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1185.426
+        },
+        {
+          "tag": "train",
+          "mode": "none",
+          "args": {
+            "file_path": "/sandbox/mg7j4g.txt",
+            "content": "result and client up578c yph_gqc-59"
+          },
+          "exit_code": 0,
+          "driver_status": "DRIVER_OK",
+          "call_error": false,
+          "latency_ms": 1168.955
+        }
+      ]
+    }
+  ]
+}
