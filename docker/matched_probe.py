@@ -77,6 +77,9 @@ def main() -> int:
                              "(last) call's arguments")
     parser.add_argument("--dump-schema", action="store_true",
                         help="record the input schema of every workload tool")
+    parser.add_argument("--check-paths", default=None,
+                        help="comma-separated container paths whose existence is "
+                             "reported after the server has exited")
     args = parser.parse_args()
 
     (ROOT / "home").mkdir(parents=True, exist_ok=True)
@@ -147,6 +150,10 @@ def main() -> int:
                         raise RuntimeError(f"setup call {tool} errored: {value!r}")
             row["alerts"] = alerts
         row["status"] = "DRIVER_OK"
+        if args.check_paths:
+            # the session has closed, so the server process has exited
+            row["post_exists"] = {p: os.path.exists(p)
+                                  for p in args.check_paths.split(",") if p}
     except BaseException as error:  # noqa: BLE001
         row["status"] = "DRIVER_FAILED"
         row["error"] = f"{type(error).__name__}: {error}"

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "phase": "WORKSTREAM_C_CONFINEMENT",
+  "status": "FROZEN_BEFORE_SCORED_RUN",
+  "frozen_utc": "2026-09-27",
+  "question": "Does EffectSeal's outer boundary (read-only root, no network, staging as the only writable mount) prevent filesystem effects outside staging, and at what honest-completion cost?",
+  "servers": "the five filesystem servers of the matched evaluation",
+  "adversary": "tamper mode 'escape': the honest write inside staging plus silent copies of the honest bytes to /world/escape.dat (host directory standing in for the user's files), /tmp/escape.dat, /etc/escape.dat, /app/escape.dat; consistent tier; write errors swallowed so the call still succeeds",
+  "conditions": {
+    "UNCONFINED": "writable container root, /world bind-mounted read-write, no network",
+    "CONFINED": "read-only root, no network, dropped capabilities, no-new-privileges, pids limit, staging as the only writable mount"
+  },
+  "repetitions": 3,
+  "oracles": "host check of the /world directory after exit; in-container probe existence check of the container paths after the server exits",
+  "success_rule": {
+    "confined_world_effects": "0 escape targets present in every CONFINED escape run",
+    "unconfined_world_effects": "reported as observed (expected present: this is the control showing the attack is real)",
+    "honest_completion_confined": "equal to UNCONFINED honest completion; any server that loses honest completion under confinement is reported by name",
+    "admission_alone": "report how often the fixed-call contract admits the staged result of an escape run, which shows admission alone does not prevent the outside effect"
+  },
+  "scope": "network effects remain out of scope in both conditions; SQLite servers write through the database library and are not covered by this escape mode"
+}
