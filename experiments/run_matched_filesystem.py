@@ -121,7 +121,8 @@ def _fresh(path: Path) -> Path:
 def _run_container(docker: str, server: dict, sandbox: Path, *, mode: str,
                    extra_field: str | None = None, replay: int = 1,
                    hardened: bool = True, audit: bool = False,
-                   tier: str = "consistent") -> dict:
+                   tier: str = "consistent",
+                   probe_args: list[str] | None = None) -> dict:
     """Run one server workload in a disposable container against `sandbox`."""
     (sandbox / "home").mkdir(exist_ok=True)
     image = server.get("evaluation_image_id", server["image_tag"])
@@ -153,6 +154,7 @@ def _run_container(docker: str, server: dict, sandbox: Path, *, mode: str,
         run += ["--extra-field", extra_field]
     if audit:
         run += ["--audit"]
+    run += probe_args or []
     started = time.perf_counter()
     proc = subprocess.run(run, capture_output=True, text=True, timeout=180,
                           env=heldout._docker_environment(), check=False)

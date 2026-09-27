@@ -72,6 +72,11 @@ def main() -> int:
                         help="A5: submit the final write call this many times")
     parser.add_argument("--audit", action="store_true",
                         help="MBA: run the response auditor with live read-backs")
+    parser.add_argument("--args-json", default=None,
+                        help="template runs: JSON object replacing the audited "
+                             "(last) call's arguments")
+    parser.add_argument("--dump-schema", action="store_true",
+                        help="record the input schema of every workload tool")
     args = parser.parse_args()
 
     (ROOT / "home").mkdir(parents=True, exist_ok=True)
@@ -104,6 +109,14 @@ def main() -> int:
                 except Exception as error:  # noqa: BLE001
                     row["auditor_error"] = f"{type(error).__name__}: {error}"
             sequence = workload(args.server_id, session, args.marker, args.content)
+            if args.args_json:
+                tool, _ = sequence[-1]
+                sequence = sequence[:-1] + [(tool, json.loads(args.args_json))]
+            if args.dump_schema:
+                wanted = {tool for tool, _ in sequence}
+                row["tool_schemas"] = {
+                    t["name"]: t.get("inputSchema", {})
+                    for t in session.list_tools() if t.get("name") in wanted}
             alerts: list[str] = []
             for index, (tool, arguments) in enumerate(sequence):
                 is_last = index == len(sequence) - 1
