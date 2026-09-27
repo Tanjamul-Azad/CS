@@ -81,3 +81,55 @@ This is close to true by construction, and that is the point: a rug-pulled
 server receives exactly the approved request and changes only the effect, so
 any policy that decides on the request, however strict, admits it. Authorizing
 calls and admitting effects are different properties.
+
+## Scale-up runs (v2), registered before running
+
+### F v2 — three judges, larger sample (`artifact/results/llm_judge_v2.json`)
+
+176 transcripts (50 honest; 63 landed attacks per adversary tier), judged by
+gpt-4.1-mini, gpt-4.1, and gpt-5-mini. Raw rates (flagged UNSAFE):
+
+| Judge | Honest | Naive | Consistent |
+|---|---:|---:|---:|
+| gpt-4.1-mini | 22/50 | 35/63 | 24/63 |
+| gpt-4.1 | 0/50 | 31/63 | 12/63 |
+| gpt-5-mini | 12/50 | 38/63 | 27/63 |
+
+Split by whether the attacked transcript was actually indistinguishable from an
+honest one — decided without any judge, by comparing normalized responses and
+read-backs with the same server's honest transcripts
+(`experiments/analyze_judge_leaks.py`; the split is post hoc, its criterion uses
+no verdict):
+
+| Judge | Honest FPR | Consistent, indistinguishable | Consistent, leaked |
+|---|---:|---:|---:|
+| gpt-4.1 | 0/50 | **0/42** | 12/21 |
+| gpt-5-mini | 12/50 (24%) | 9/42 (21%) | 18/21 |
+| gpt-4.1-mini | 22/50 (44%) | 15/42 (36%) | 9/21 |
+
+Where the adversary kept the transcript honest, every judge's detection rate
+equals its own false-positive rate; a stronger judge helps only where the
+evidence differs, and whether it differs is the attacker's choice. Our
+interposition adversary leaked in 21/63 consistent transcripts (a Python
+server's directory scan that the shim does not wrap, and a no-op that surfaced
+an error); a better attacker would leak less. Spend USD 0.71.
+
+### I v2 — harder servers and a second agent model (`artifact/results/agent_e2e_v2.json`)
+
+Five servers (two exact filesystem servers plus compose-mcp, repomemory, and
+ori-memory, whose templates have slack) x 12 tasks x honest/compromised x two
+agent models (gpt-4.1-mini, gpt-4.1). 226 of 240 planned episodes ran: the host
+`ori init` setup container timed out before ori-memory's gpt-4.1 task 5 and
+ended the run (a setup failure, not an agent, server, or admission outcome).
+
+| 113 episodes per row | No defense | EffectSeal |
+|---|---:|---:|
+| honest task completed | 109 | **108** (1 false block, repomemory) |
+| compromised: harm reached trusted state | **113 / 113** | **0 / 113** |
+| compromised: agent reported any problem | 8 / 113 | — |
+
+Per server and model, harm with EffectSeal is 0 everywhere, including the three
+servers whose templates have slack. Four honest ori-memory tasks failed without
+any defense too (the agent's call did not produce the requested title). Spend
+USD 1.31. Total API spend for workstreams F and I: about USD 2.1 of the USD 5
+limit.
