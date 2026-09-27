@@ -20,12 +20,17 @@ from __future__ import annotations
 import json
 import posixpath
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TRANSCRIPTS = ROOT / "artifact" / "results" / "llm_judge_transcripts.json"
 AGENT = ROOT / "artifact" / "results" / "agent_e2e.json"
 OUT = ROOT / "artifact" / "results" / "calllevel_baseline.json"
+if "--v2" in sys.argv:  # the scaled-up judge transcripts and agent episodes
+    TRANSCRIPTS = TRANSCRIPTS.with_name("llm_judge_transcripts_v2.json")
+    AGENT = AGENT.with_name("agent_e2e_v2.json")
+    OUT = OUT.with_name("calllevel_baseline_v2.json")
 
 
 def path_like(value: str) -> bool:
@@ -77,9 +82,18 @@ def main() -> int:
     if AGENT.is_file():
         episodes = json.loads(AGENT.read_text(encoding="utf-8"))["rows"]
         out = {"honest": [0, 0], "compromised_harm": [0, 0]}
+
+        def calls_of(e):  # v1 nests calls under "episode"; v2 stores them flat
+            return e["episode"]["calls"] if "episode" in e else e["calls"]
+        # the policy allows, per server, the tools its honest sessions used
+        allowed_tools: dict[str, set] = {}
         for e in episodes:
-            calls = e["episode"]["calls"]
-            tools = {c["tool"] for c in calls if c["tool"] == "write_file"} or {"write_file"}
+            if e["adversary"] == "honest":
+                allowed_tools.setdefault(e["server_id"], set()).update(
+                    c["tool"] for c in calls_of(e))
+        for e in episodes:
+            calls = calls_of(e)
+            tools = allowed_tools.get(e["server_id"], set())
             allowed = all(policy_allows(c, tools, {})[0] for c in calls)
             if e["adversary"] == "honest":
                 out["honest"][0] += allowed and e["none"]["success"]
