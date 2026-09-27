@@ -122,7 +122,8 @@ def _run_container(docker: str, server: dict, sandbox: Path, *, mode: str,
                    extra_field: str | None = None, replay: int = 1,
                    hardened: bool = True, audit: bool = False,
                    tier: str = "consistent",
-                   probe_args: list[str] | None = None) -> dict:
+                   probe_args: list[str] | None = None,
+                   extra_env: dict[str, str] | None = None) -> dict:
     """Run one server workload in a disposable container against `sandbox`."""
     (sandbox / "home").mkdir(exist_ok=True)
     image = server.get("evaluation_image_id", server["image_tag"])
@@ -131,6 +132,8 @@ def _run_container(docker: str, server: dict, sandbox: Path, *, mode: str,
         "-e", f"MCPGATE_TAMPER_TIER={tier}",
         "-e", "MCPGATE_TAMPER_ROOT=/sandbox",
     ]
+    for key, value in (extra_env or {}).items():
+        env_flags += ["-e", f"{key}={value}"]
     mounts = [
         "--mount", f"type=bind,src={sandbox},dst=/sandbox",
         "--mount", f"type=bind,src={PROBE},dst=/app/matched_probe.py,readonly",

@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "phase": "WORKSTREAM_D_ADAPTIVE_TEMPLATES",
+  "status": "FROZEN_BEFORE_SCORED_RUN",
+  "frozen_utc": "2026-09-27",
+  "question": "What can an adversary that knows the effect-template mechanism still get past it, and does contract slack predict it?",
+  "servers": [
+    "io.github.aayoawoyemi/ori-memory",
+    "ai.smartmemory/compose-mcp",
+    "io.github.Oncorporation/filesystem-server"
+  ],
+  "server_note": "ori-memory and compose-mcp are the two servers with timestamped, append-only files (non-zero slack); filesystem-server is the exact (0-bit) control",
+  "templates": "pinned exactly as in workstream A (same seeds and training count); the fixed-call contract is derived as in the matched evaluation, for comparison",
+  "attacks": {
+    "covert": "every ISO timestamp the server writes has its time part replaced by attacker digits (15 digits: HHMMSS plus a 9-digit fraction), a covert channel inside the timestamp hole",
+    "overslack": "the same rewrite with letters instead of digits, exceeding the hole's character class",
+    "inject": "the payload is appended to every write whose path ends in .log or .jsonl",
+    "poison": "pin-time poisoning: the server is malicious from the start and, during training only, appends a random token to every write and creates a random extra file"
+  },
+  "repetitions": 3,
+  "arguments": "the exemplar call, so that both the template contract and the fixed-call contract apply",
+  "measures": {
+    "admitted": "template contract and fixed-call contract verdicts on the staged state",
+    "achieved_bits": "for admitted covert runs: number of rewritten timestamps found in staged files x 15 x log2(10)",
+    "predicted_slack": "EffectTemplate.slack(exemplar, clock_bound=true)",
+    "poison": "slack of the template pinned under poisoning, and whether it passes the pin-time budget"
+  },
+  "pin_time_budget": {
+    "rule": "a template is accepted at pin time only if it has no unbounded (L1) rule and total slack <= 128 bits",
+    "rationale": "fixed before observing any poisoned template; 128 bits is roughly twice the largest honest slack observed in workstream A (63.6 bits)"
+  },
+  "expected_outcomes_stated_in_advance": {
+    "covert": "admitted by both contracts; achieved bits must not exceed predicted slack",
+    "overslack": "refused by the template contract",
+    "inject": "refused by the template contract; the fixed-call contract admits it where the log file was unconstrained",
+    "poison": "the poisoned template exceeds the budget and pinning is refused"
+  }
+}
