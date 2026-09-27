@@ -153,7 +153,13 @@ def main() -> int:
                 for _ in range(repeats):
                     if auditor is not None and is_last:
                         def call_fn(name, arguments, _s=session):
-                            return _s.call(name, arguments, _record_error=False)
+                            value = _s.call(name, arguments, _record_error=False)
+                            # record the auditor's own read-backs: a response-level
+                            # judge (workstream F) sees exactly this evidence
+                            row.setdefault("auditor_calls", []).append(
+                                {"tool": name, "arguments": arguments,
+                                 "result": str(value)[:2000]})
+                            return value
                         try:
                             auditor.before_call(tool, call_args, call_fn)
                             value = session.call(tool, call_args)
