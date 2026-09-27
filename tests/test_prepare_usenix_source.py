@@ -38,7 +38,7 @@ Body [@key].
     rendered = convert(source, manuscript=True)
     assert r"\begin{abstract}" in rendered
     assert r"\section{Introduction}" in rendered
-    assert "fig1_mcpgate_architecture.pdf" in rendered
+    assert "fig1_effectseal_architecture.pdf" in rendered
     assert r"\cite{key}" in rendered
     assert "Working manuscript" not in rendered
     assert "Submission blocker" not in rendered

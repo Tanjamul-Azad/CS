@@ -18,6 +18,21 @@
         124.538,
         124.996
       ],
+      "prevention_landed": {
+        "prevented": 0,
+        "total": 32,
+        "rate": 0.0,
+        "clustered_ci": [
+          0.0,
+          0.0
+        ],
+        "servers": 7,
+        "servers_fully_prevented": 0,
+        "server_wilson_ci": [
+          0.0,
+          0.3543
+        ]
+      },
       "prevention": {
         "prevented": 9,
         "total": 41,
@@ -25,6 +40,12 @@
         "clustered_ci": [
           0.1081,
           0.3023
+        ],
+        "servers": 7,
+        "servers_fully_prevented": 0,
+        "server_wilson_ci": [
+          0.0,
+          0.3543
         ]
       }
     },
@@ -44,6 +65,21 @@
         124.733,
         124.793
       ],
+      "prevention_landed": {
+        "prevented": 0,
+        "total": 32,
+        "rate": 0.0,
+        "clustered_ci": [
+          0.0,
+          0.0
+        ],
+        "servers": 7,
+        "servers_fully_prevented": 0,
+        "server_wilson_ci": [
+          0.0,
+          0.3543
+        ]
+      },
       "prevention": {
         "prevented": 9,
         "total": 41,
@@ -51,6 +87,12 @@
         "clustered_ci": [
           0.1081,
           0.3023
+        ],
+        "servers": 7,
+        "servers_fully_prevented": 0,
+        "server_wilson_ci": [
+          0.0,
+          0.3543
         ]
       }
     },
@@ -70,6 +112,21 @@
         124.622,
         124.703
       ],
+      "prevention_landed": {
+        "prevented": 0,
+        "total": 32,
+        "rate": 0.0,
+        "clustered_ci": [
+          0.0,
+          0.0
+        ],
+        "servers": 7,
+        "servers_fully_prevented": 0,
+        "server_wilson_ci": [
+          0.0,
+          0.3543
+        ]
+      },
       "prevention": {
         "prevented": 9,
         "total": 41,
@@ -77,6 +134,12 @@
         "clustered_ci": [
           0.1081,
           0.3023
+        ],
+        "servers": 7,
+        "servers_fully_prevented": 0,
+        "server_wilson_ci": [
+          0.0,
+          0.3543
         ]
       }
     },
@@ -96,6 +159,21 @@
         124.376,
         124.565
       ],
+      "prevention_landed": {
+        "prevented": 11,
+        "total": 32,
+        "rate": 0.3438,
+        "clustered_ci": [
+          0.2647,
+          0.4194
+        ],
+        "servers": 7,
+        "servers_fully_prevented": 0,
+        "server_wilson_ci": [
+          0.0,
+          0.3543
+        ]
+      },
       "prevention": {
         "prevented": 20,
         "total": 41,
@@ -103,6 +181,12 @@
         "clustered_ci": [
           0.3714,
           0.5854
+        ],
+        "servers": 7,
+        "servers_fully_prevented": 0,
+        "server_wilson_ci": [
+          0.0,
+          0.3543
         ]
       }
     },
@@ -122,6 +206,21 @@
         124.552,
         124.789
       ],
+      "prevention_landed": {
+        "prevented": 32,
+        "total": 32,
+        "rate": 1.0,
+        "clustered_ci": [
+          1.0,
+          1.0
+        ],
+        "servers": 7,
+        "servers_fully_prevented": 7,
+        "server_wilson_ci": [
+          0.6457,
+          1.0
+        ]
+      },
       "prevention": {
         "prevented": 41,
         "total": 41,
@@ -129,8 +228,16 @@
         "clustered_ci": [
           1.0,
           1.0
+        ],
+        "servers": 7,
+        "servers_fully_prevented": 7,
+        "server_wilson_ci": [
+          0.6457,
+          1.0
         ]
       }
     }
-  }
+  },
+  "landed_attacks": 32,
+  "inert_attacks": 9
 }

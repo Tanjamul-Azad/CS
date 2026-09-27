@@ -12,12 +12,22 @@ Servers: 7 (filesystem + SQL). Bootstrap resamples: 10000, clustered by server.
 | STATIC_LP | [1277.321, 2252.546, 2315.202] | [0.844, 1.622, 1.703] | [92.918, 124.376, 124.565] |
 | MCPGATE | [1299.01, 2240.186, 2308.747] | [0.856, 1.628, 1.696] | [92.891, 124.552, 124.789] |
 
-## Attack prevention with server-clustered 95% interval
+## Attack prevention, landed attacks only (primary)
 
-| Condition | Prevented | Rate | Clustered 95% CI |
-|---|---:|---:|---|
-| NONE | 9/41 | 21.9% | [10.8%, 30.2%] |
-| PLAIN_SANDBOX | 9/41 | 21.9% | [10.8%, 30.2%] |
-| MBA | 9/41 | 21.9% | [10.8%, 30.2%] |
-| STATIC_LP | 20/41 | 48.8% | [37.1%, 58.5%] |
-| MCPGATE | 41/41 | 100.0% | [100.0%, 100.0%] |
+| Condition | Prevented | Rate | Clustered 95% CI | Servers fully prevented (Wilson 95%) |
+|---|---:|---:|---|---|
+| NONE | 0/32 | 0.0% | [0.0%, 0.0%] | 0/7 [0.0%, 35.4%] |
+| PLAIN_SANDBOX | 0/32 | 0.0% | [0.0%, 0.0%] | 0/7 [0.0%, 35.4%] |
+| MBA | 0/32 | 0.0% | [0.0%, 0.0%] | 0/7 [0.0%, 35.4%] |
+| STATIC_LP | 11/32 | 34.4% | [26.5%, 41.9%] | 0/7 [0.0%, 35.4%] |
+| MCPGATE | 32/32 | 100.0% | [100.0%, 100.0%] | 7/7 [64.6%, 100.0%] |
+
+## Attack prevention, all attempted attacks, including inert ones
+
+| Condition | Prevented | Rate | Clustered 95% CI | Servers fully prevented (Wilson 95%) |
+|---|---:|---:|---|---|
+| NONE | 9/41 | 21.9% | [10.8%, 30.2%] | 0/7 [0.0%, 35.4%] |
+| PLAIN_SANDBOX | 9/41 | 21.9% | [10.8%, 30.2%] | 0/7 [0.0%, 35.4%] |
+| MBA | 9/41 | 21.9% | [10.8%, 30.2%] | 0/7 [0.0%, 35.4%] |
+| STATIC_LP | 20/41 | 48.8% | [37.1%, 58.5%] | 0/7 [0.0%, 35.4%] |
+| MCPGATE | 41/41 | 100.0% | [100.0%, 100.0%] | 7/7 [64.6%, 100.0%] |

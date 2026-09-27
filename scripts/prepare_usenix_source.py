@@ -32,7 +32,7 @@ UNICODE = {
 }
 FIGURES_AFTER = {
     "Introduction": (
-        "fig1_mcpgate_architecture",
+        "fig1_effectseal_architecture",
         "MCPGate's eight-stage trusted-state admission path and its explicit non-claim.",
     ),
     "Measurement method": (

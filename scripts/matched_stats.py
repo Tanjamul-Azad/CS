@@ -5,6 +5,12 @@ per-call latency, server CPU, and peak RSS at p50/p95/p99, and the attack
 prevention rate with a server-clustered bootstrap 95 percent interval. Clustering
 by server implementation is the correct unit here because tools nested in one
 server are not independent samples. Pure reader.
+
+The primary prevention denominator is the set of attacks that LAND: an attack
+cell counts only when the paired no-defense run for the same server and
+scenario shows an unauthorized effect. Attacks that are inert on a server are
+excluded, since no condition can be credited with preventing them. The
+all-attempted rate is kept alongside for transparency.
 """
 
 from __future__ import annotations
@@ -67,6 +73,43 @@ def _clustered_ci(per_server):
     return (round(point, 4), round(lo, 4), round(hi, 4))
 
 
+def _wilson(k, n, z=1.959964):
+    """Wilson score interval; used at the server level when every cluster is
+    fully prevented and the bootstrap degenerates to a single point."""
+    if n == 0:
+        return (None, None)
+    p = k / n
+    denom = 1 + z * z / n
+    centre = (p + z * z / (2 * n)) / denom
+    half = z * ((p * (1 - p) / n + z * z / (4 * n * n)) ** 0.5) / denom
+    return (round(max(0.0, centre - half), 4), round(min(1.0, centre + half), 4))
+
+
+def _landed_keys(cells):
+    """(domain, server, scenario) triples whose no-defense attack landed."""
+    return {(c["_domain"], c["server_id"], c["scenario"]) for c in cells
+            if c["condition"] == "NONE" and c["mutation_attempted"]
+            and c["attack_succeeded"]}
+
+
+def _prevention(cells, cond, keep):
+    per_server: dict[str, list[int]] = {}
+    for c in cells:
+        if c["condition"] != cond or not c["mutation_attempted"] or not keep(c):
+            continue
+        entry = per_server.setdefault(c["server_id"], [0, 0])
+        entry[1] += 1
+        if c["prevented"]:
+            entry[0] += 1
+    point, lo, hi = _clustered_ci(per_server)
+    k = sum(v[0] for v in per_server.values())
+    n = sum(v[1] for v in per_server.values())
+    full = sum(1 for v in per_server.values() if v[1] and v[0] == v[1])
+    return {"prevented": k, "total": n, "rate": point, "clustered_ci": [lo, hi],
+            "servers": len(per_server), "servers_fully_prevented": full,
+            "server_wilson_ci": list(_wilson(full, len(per_server)))}
+
+
 def main() -> int:
     cells = _cells()
     servers = sorted({c["server_id"] for c in cells})
@@ -94,27 +137,31 @@ def main() -> int:
             f"| {cond} | {row['latency_ms']} | {row['cpu_seconds']} | "
             f"{row['peak_rss_mb']} |")
 
-    lines += ["", "## Attack prevention with server-clustered 95% interval", "",
-              "| Condition | Prevented | Rate | Clustered 95% CI |",
-              "|---|---:|---:|---|"]
-    for cond in CONDITIONS:
-        per_server: dict[str, list[int]] = {}
-        for c in cells:
-            if c["condition"] != cond or not c["mutation_attempted"]:
-                continue
-            entry = per_server.setdefault(c["server_id"], [0, 0])
-            entry[1] += 1
-            if c["prevented"]:
-                entry[0] += 1
-        point, lo, hi = _clustered_ci(per_server)
-        k = sum(v[0] for v in per_server.values())
-        n = sum(v[1] for v in per_server.values())
-        result["by_condition"][cond]["prevention"] = {
-            "prevented": k, "total": n, "rate": point,
-            "clustered_ci": [lo, hi]}
-        ci = f"[{lo:.1%}, {hi:.1%}]" if lo is not None else "-"
-        lines.append(f"| {cond} | {k}/{n} | "
-                     f"{(point or 0):.1%} | {ci} |")
+    landed = _landed_keys(cells)
+    result["landed_attacks"] = len(landed)
+    result["inert_attacks"] = sum(
+        1 for c in cells if c["condition"] == "NONE" and c["mutation_attempted"]
+        and not c["attack_succeeded"])
+    for title, key, keep in (
+            ("landed attacks only (primary)", "prevention_landed",
+             lambda c: (c["_domain"], c["server_id"], c["scenario"]) in landed),
+            ("all attempted attacks, including inert ones", "prevention",
+             lambda c: True)):
+        lines += ["", f"## Attack prevention, {title}", "",
+                  "| Condition | Prevented | Rate | Clustered 95% CI | "
+                  "Servers fully prevented (Wilson 95%) |",
+                  "|---|---:|---:|---|---|"]
+        for cond in CONDITIONS:
+            row = _prevention(cells, cond, keep)
+            result["by_condition"][cond][key] = row
+            lo, hi = row["clustered_ci"]
+            ci = f"[{lo:.1%}, {hi:.1%}]" if lo is not None else "-"
+            wl, wh = row["server_wilson_ci"]
+            lines.append(
+                f"| {cond} | {row['prevented']}/{row['total']} | "
+                f"{(row['rate'] or 0):.1%} | {ci} | "
+                f"{row['servers_fully_prevented']}/{row['servers']} "
+                f"[{wl:.1%}, {wh:.1%}] |")
 
     OUT_MD.parent.mkdir(parents=True, exist_ok=True)
     OUT_MD.write_text("\n".join(lines) + "\n", encoding="utf-8")

@@ -8,7 +8,7 @@ python scripts/make_submission_figures.py
 
 | Figure | Source |
 |---|---|
-| `fig1_mcpgate_architecture.svg` | authoritative sequence in `src/mcpgate/mediator.py` and `docs/43` |
+| `fig1_effectseal_architecture.svg` | authoritative sequence in `src/mcpgate/mediator.py` and `docs/43` |
 | `fig2_study_flow.svg` | `results/tables/funnel.md` and the claim/evidence roadmap |
 | `fig3_controlled_baselines.svg` | `artifact/results/controlled_baselines.json` |
 | `fig4_controlled_ablations.svg` | `artifact/results/controlled_ablations.json` |

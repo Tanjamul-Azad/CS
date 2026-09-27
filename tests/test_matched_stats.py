@@ -40,3 +40,14 @@ def test_overhead_is_recorded_for_every_condition():
         assert stats["latency_ms"][0] is not None, cond
         assert stats["cpu_seconds"][0] is not None, cond
         assert stats["peak_rss_mb"][0] is not None, cond
+
+
+def test_landed_denominator_excludes_inert_attacks():
+    data = _data()
+    by = data["by_condition"]
+    assert data["landed_attacks"] + data["inert_attacks"] == data["attack_cells"] // 5
+    for cond in ("NONE", "PLAIN_SANDBOX", "MBA"):
+        assert by[cond]["prevention_landed"]["prevented"] == 0, cond
+    effectseal = by["MCPGATE"]["prevention_landed"]
+    assert effectseal["prevented"] == effectseal["total"] == data["landed_attacks"]
+    assert effectseal["servers_fully_prevented"] == effectseal["servers"]
