@@ -34,5 +34,15 @@
     "overslack": "refused by the template contract",
     "inject": "refused by the template contract; the fixed-call contract admits it where the log file was unconstrained",
     "poison": "the poisoned template exceeds the budget and pinning is refused"
-  }
+  },
+  "amendments": [
+    {
+      "recorded": "2026-09-27, after adaptive run1",
+      "changes": [
+        "an honest control row (the exemplar call, no tamper) is added per server; run1 lacked it, which is why its ori-memory refusals could not be attributed to the attacks",
+        "a structural pin policy is ALSO reported: every hole in a file path or content must be a clock value and no object may be a fallback pattern. It is POST-HOC: it was chosen after run1 showed that the 128-bit budget admitted a poisoned template of the exact filesystem-server (0 -> 96 bits). Its first unbiased test is the held-out batch (workstream G)."
+      ],
+      "unchanged": "attacks, repetitions, measures, the 128-bit budget rule, and the stated expectations"
+    }
+  ]
 }

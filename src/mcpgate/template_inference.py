@@ -77,6 +77,11 @@ def _slug_drop(value: str) -> str:
     return re.sub(r" +", "-", kept)
 
 
+def _slug_strict(value: str) -> str:
+    kept = re.sub(r"[^a-z0-9 ]+", "", value.lower()).strip()
+    return re.sub(r" +", "-", kept)
+
+
 def _make_transforms(root: str) -> dict[str, Callable[[str], str]]:
     prefix = root.rstrip("/") + "/"
 
@@ -92,6 +97,7 @@ def _make_transforms(root: str) -> dict[str, Callable[[str], str]]:
         "upper": str.upper,
         "slug_dash": _slug_dash,
         "slug_drop": _slug_drop,
+        "slug_strict": _slug_strict,
     }
 
 
@@ -114,19 +120,24 @@ def flatten_arguments(arguments: Mapping[str, Any], prefix: str = "") -> dict[st
 
 
 def _sources(arguments: Mapping[str, Any], root: str) -> list[tuple[str, str, str]]:
-    """(text, argument name, transform) triples, longest text first."""
+    """(text, argument name, transform set) triples, longest text first.
+
+    When several transforms of one value produce the same text, the run cannot
+    tell them apart, so all of them are kept as a "+"-joined set; alignment
+    across runs intersects the sets (a version space over transforms)."""
     transforms = _make_transforms(root)
-    seen: set[str] = set()
-    out: list[tuple[str, str, str]] = []
+    by_text: dict[str, tuple[str, list[str]]] = {}
     for name, value in sorted(flatten_arguments(arguments).items()):
         if not isinstance(value, str):
             continue
         for tname, fn in transforms.items():
             text = fn(value)
-            if len(text) < MIN_SOURCE_LEN or text in seen:
+            if len(text) < MIN_SOURCE_LEN:
                 continue
-            seen.add(text)
-            out.append((text, name, tname))
+            owner = by_text.setdefault(text, (name, []))
+            if owner[0] == name:
+                owner[1].append(tname)
+    out = [(text, name, "+".join(tset)) for text, (name, tset) in by_text.items()]
     out.sort(key=lambda item: -len(item[0]))
     return out
 
@@ -134,7 +145,8 @@ def _sources(arguments: Mapping[str, Any], root: str) -> list[tuple[str, str, st
 # --------------------------------------------------------------------------
 # Tokens. A token is a tuple:
 #   ("L", text)                         literal
-#   ("A", name, transform, observed)    argument placeholder
+#   ("A", name, transforms, observed)   argument placeholder; transforms is a
+#                                       "+"-joined set consistent so far
 #   ("H", regex, bits, observed)        hole (volatile span)
 # The alignment key drops the observed text so that two runs agree on a
 # placeholder even though its value differs.
@@ -158,7 +170,7 @@ def _key(token: tuple) -> tuple:
     if token[0] == "L":
         return token
     if token[0] == "A":
-        return token[:3]
+        return token[:2]
     return token[:2]
 
 
@@ -340,18 +352,39 @@ def anti_unify(runs: Sequence[Sequence[tuple]], *, path: bool = False) -> list[t
             hi = mapping[nxt] if nxt < len(base) else len(run)
             gaps.append(list(run[lo:hi]))
         if all([_key(t) for t in g] == [_key(t) for t in gaps[0]] for g in gaps):
-            template.extend(_strip(t) for t in gaps[0])
-            return
+            merged = [_meet([g[i] for g in gaps]) for i in range(len(gaps[0]))]
+            if all(m is not None for m in merged):
+                template.extend(merged)
+                return
         texts = ["".join(_observed(t) for t in g) for g in gaps]
         template.append(_gap_hole(texts, path=path))
 
     previous = -1
     for index in anchors:
         emit_gap(previous, index)
-        template.append(_strip(base[index]))
+        column = [base[index]] + [run[m[index]] for run, m in zip(runs[1:], maps)]
+        merged = _meet(column)
+        if merged is None:  # no transform explains every run: generalize
+            template.append(_gap_hole([_observed(t) for t in column], path=path))
+        else:
+            template.append(merged)
         previous = index
     emit_gap(previous, len(base))
     return _merge_literals(template)
+
+
+def _meet(column: Sequence[tuple]) -> tuple | None:
+    """Merge aligned tokens: placeholders keep the transforms every run allows."""
+    first = column[0]
+    if first[0] != "A":
+        return _strip(first)
+    common = set(first[2].split("+"))
+    for token in column[1:]:
+        common &= set(token[2].split("+"))
+    if not common:
+        return None
+    order = [t for t in first[2].split("+") if t in common]
+    return ("A", first[1], "+".join(order))
 
 
 def _strip(token: tuple) -> tuple:
@@ -444,19 +477,34 @@ class EffectTemplate:
             if token[0] == "L":
                 parts.append(re.escape(token[1]))
             elif token[0] == "A":
-                name, tname = token[1], token[2]
+                name = token[1]
                 if name not in values or not isinstance(values[name], str):
                     raise TemplateError(f"call lacks string argument {name!r}")
-                rendered = transforms[tname](values[name])
-                if not rendered:
+                forms = _renderings(token, values[name], transforms)
+                if not forms:
                     raise TemplateError(
-                        f"argument {name!r} has no {tname} form for this call")
-                parts.append(re.escape(rendered))
+                        f"argument {name!r} has no {token[2]} form for this call")
+                if len(forms) == 1:
+                    parts.append(re.escape(forms[0]))
+                else:
+                    parts.append("(?:" + "|".join(re.escape(f) for f in forms) + ")")
             elif token[1].startswith("clock:"):
                 parts.append(_clock_regex(token[1], now))
             else:
                 parts.append(token[1])
         return "".join(parts)
+
+    def _ambiguity_bits(self, tokens: Sequence[tuple], values) -> float:
+        transforms = _make_transforms(self.root)
+        bits = 0.0
+        for t in tokens:
+            if t[0] == "A" and "+" in t[2]:
+                if values is not None and isinstance(values.get(t[1]), str):
+                    n = len(_renderings(t, values[t[1]], transforms))
+                else:
+                    n = len(t[2].split("+"))
+                bits += math.log2(max(n, 1))
+        return bits
 
     def _check_fixed(self, values: Mapping[str, Any]) -> None:
         for name, expected in self.fixed.items():
@@ -511,20 +559,22 @@ class EffectTemplate:
             return sum(_clock_bits(t[1], clock_bound) if t[1].startswith("clock:")
                        else t[2] for t in tokens if t[0] == "H")
 
+        values = flatten_arguments(arguments) if arguments is not None else None
         per_rule: dict[str, float] = {}
         for obj in self.objects:
             bits = 0.0
             if obj.path is None:
                 bits = math.inf  # fallback path pattern: names are free
             else:
-                bits += hole_bits(obj.path)
+                bits += hole_bits(obj.path) + self._ambiguity_bits(obj.path, values)
             if obj.max_count > obj.min_count:
                 bits += math.log2(obj.max_count - obj.min_count + 1)
             if obj.kind == "file":
                 if obj.unconstrained or (obj.content is None and obj.content_sha256 is None):
                     bits = math.inf
                 elif obj.content is not None:
-                    bits += hole_bits(obj.content)
+                    bits += (hole_bits(obj.content)
+                             + self._ambiguity_bits(obj.content, values))
             per_rule[obj.name] = bits
         total = sum(per_rule.values()) if per_rule else 0.0
         return SlackReport(total_bits=total, per_rule=per_rule)
@@ -535,6 +585,16 @@ class EffectTemplate:
                 "objects": [o.to_json() for o in self.objects]}
 
 
+def _renderings(token: tuple, value: str, transforms) -> list[str]:
+    """Distinct non-empty renderings of a placeholder for one value."""
+    out: list[str] = []
+    for tname in token[2].split("+"):
+        rendered = transforms[tname](value)
+        if rendered and rendered not in out:
+            out.append(rendered)
+    return out
+
+
 def describe(tokens: Sequence[tuple]) -> str:
     """Human-readable template form, e.g. docs/features/{code}/feature.json."""
     out = []
@@ -542,7 +602,7 @@ def describe(tokens: Sequence[tuple]) -> str:
         if token[0] == "L":
             out.append(token[1])
         elif token[0] == "A":
-            suffix = "" if token[2] == "identity" else "|" + token[2]
+            suffix = "" if token[2] == "identity" else "|" + token[2].replace("+", "/")
             out.append("{" + token[1] + suffix + "}")
         else:
             out.append("{clock}" if token[1].startswith("clock:") else "{*}")
@@ -678,6 +738,9 @@ def perturb_value(value: str, rng: random.Random, *, scale: float = 1.0) -> str:
         words = max(2, round(len(value.split()) * scale))
         body = [_rand_token(rng, rng.randint(3, 9), _WORD) for _ in range(words - 1)]
         body.append(_rand_token(rng, 6, _WORD + string.digits))  # unique anchor
+        # punctuation separates otherwise-identical transforms (slug variants)
+        body.append(_rand_token(rng, 3, _WORD) + "_" + _rand_token(rng, 3, _WORD)
+                    + "-" + _rand_token(rng, 2, string.digits))
         return " ".join(body)
 
     def swap(match: re.Match) -> str:

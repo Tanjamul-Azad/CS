@@ -183,6 +183,25 @@ def _ori(args):
                                 .encode())}
 
 
+def test_transforms_the_training_cannot_separate_stay_in_a_version_space():
+    # found in workstream D: with letter-and-space training values the slug
+    # variants coincide, inference picked slug_dash, and the honest exemplar
+    # title "..._2026_09_26" (which the server slugs by DROPPING "_") failed.
+    import re as _re
+
+    def server(args):
+        slug = _re.sub(r" +", "-", _re.sub(r"[^a-z0-9 -]+", "", args["title"].lower()).strip())
+        return {f"notes/{slug}.md": ("file", f"# {args['title']}\n".encode())}
+    titles = ["alpha bravo charlie", "delta echo foxtrot", "golf hotel india"]
+    observations = [Observation({"title": t}, server({"title": t})) for t in titles]
+    template = infer_template("add", observations)
+    call = {"title": "approved content MARKER_2026_09_26"}
+    assert template.instantiate(call).evaluate(_snap(server(call))).allowed
+    wrong = {"notes/approved-content-marker-2026-09-26.md": ("file", b"# x\n")}
+    assert not template.instantiate(call).evaluate(_snap(wrong)).allowed
+    assert 0 < template.slack(call).total_bits <= 2  # at most 3 renderings
+
+
 def test_slugged_filename_is_bound_to_the_title():
     exemplar = {"title": "approved matched content here", "type": "insight"}
     template = infer_template("ori_add", _train(_ori, exemplar, fixed={"type"}),

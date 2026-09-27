@@ -21,11 +21,20 @@
   "held_out_honest": {
     "calls": 12,
     "seed": "test-2026-09-27",
-    "scale_shift": {"calls": 4, "text_scale": 3.0},
+    "scale_shift": {
+      "calls": 4,
+      "text_scale": 3.0
+    },
     "admission_clock": "contracts are instantiated with now = wall clock at admission"
   },
   "attacks": {
-    "modes": ["path", "content", "extra", "noop", "symlink"],
+    "modes": [
+      "path",
+      "content",
+      "extra",
+      "noop",
+      "symlink"
+    ],
     "applicability": "per server, from artifact/held-out-evaluation-plan.json (A1 path, A2 content, A4 extra, A6 noop, A7 symlink)",
     "argument_sets_per_mode": 3,
     "argument_source": "the first three unscaled held-out honest calls",
@@ -60,6 +69,11 @@
       "after_run": "run1",
       "failure": "compose-mcp: harness KeyError before any outcome. The schema declares an optional enum field ('complexity') the exemplar call does not use.",
       "change": "fixed fields take the exemplar's value or absence; a call that sets an untrained optional enum field is refused (fail closed). Harness-only change."
+    },
+    {
+      "after_run": "adaptive run1 (artifact/results/adaptive_templates_run1.json, kept unchanged)",
+      "failure": "ori-memory: the pinned template refused the honest exemplar call. Training values were letters and spaces, for which the slug transforms coincide; inference kept slug_dash, but the server slugs by dropping '_' and the exemplar title contains underscores. Workstream A's held-out values had no punctuation either, so A did not expose it.",
+      "change": "placeholders keep every transform consistent with all training runs (a version space, rendered as an alternation; ambiguity costs log2 of the number of distinct renderings in slack); free-text perturbations now include '_' and '-' so transforms separate; a strict slug variant was added to the transform library. Regression test test_transforms_the_training_cannot_separate_stay_in_a_version_space. Workstream A is re-run (run3) to check for regressions."
     }
   ],
   "success_rule": {

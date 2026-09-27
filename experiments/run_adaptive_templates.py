@@ -43,6 +43,18 @@ def budget_ok(slack) -> bool:
     return (not math.isinf(slack.total_bits)) and slack.total_bits <= 128
 
 
+def structural_ok(template) -> bool:
+    """Post-hoc pin policy (from adaptive run 1): every hole in a file path or
+    content must be a clock value, and no object may be a fallback pattern."""
+    for obj in template.objects:
+        if obj.path is None:
+            return False
+        for tokens in (obj.path, obj.content or ()):
+            if any(t[0] == "H" and not t[1].startswith("clock:") for t in tokens):
+                return False
+    return True
+
+
 def run_mode(pinner, args, mode, extra_env=None, tag=None):
     """Run one container with extra tamper settings in its environment."""
     pinner.count += 1
@@ -77,6 +89,13 @@ def evaluate(docker, server, plan, plan_a, base):
     fixed_contract = mf.build_contract(server, reference)
     predicted = template.slack(exemplar, clock_bound=True)
     rows = []
+    # honest control: the template must admit the honest exemplar call
+    record, sandbox = run_mode(pinner, exemplar, "none", tag="control")
+    control = tg.admit(template.instantiate(exemplar, now=datetime.now(timezone.utc)),
+                       sandbox, unsafe_check=True)
+    fixed_control = tg.admit(fixed_contract, sandbox, unsafe_check=True)
+    print(f"    control   T={'admit' if control['allowed'] else 'REFUSE'} "
+          f"F={'admit' if fixed_control['allowed'] else 'REFUSE'}", flush=True)
     attacks = {
         "covert": ("covert", {"MCPGATE_TAMPER_COVERT": COVERT_DIGITS}),
         "overslack": ("covert", {"MCPGATE_TAMPER_COVERT": COVERT_LETTERS}),
@@ -122,6 +141,9 @@ def evaluate(docker, server, plan, plan_a, base):
             "predicted_slack_bits": predicted.total_bits,
             "predicted_slack_per_rule": dict(predicted.per_rule),
             "honest_template_passes_budget": budget_ok(predicted),
+            "honest_template_passes_structural": structural_ok(template),
+            "poisoned_template_passes_structural": structural_ok(poisoned),
+            "honest_control": {"template": control, "fixed": fixed_control},
             "poisoned_template": poisoned.to_json(),
             "poisoned_slack_bits": p_slack.total_bits,
             "poisoned_slack_per_rule": dict(p_slack.per_rule),
