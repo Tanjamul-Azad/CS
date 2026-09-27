@@ -32,8 +32,13 @@ from .tree_mediator import (ContentPredicate, PathRule, TreeChange,
                             TreeMediationRefused, TreeMediationResult,
                             TreeMediator, TreeSnapshot, TreeVerdict, diff_trees,
                             snapshot_tree)
+from .template_inference import (EffectTemplate, Observation, SlackReport,
+                                 TemplateError, infer_template,
+                                 perturb_arguments)
 
-__all__ = ["AllowanceError", "AllowanceLedger", "SQLiteAllowanceLedger", "SlotState",
+__all__ = ["EffectTemplate", "Observation", "SlackReport", "TemplateError",
+           "infer_template", "perturb_arguments",
+"AllowanceError", "AllowanceLedger", "SQLiteAllowanceLedger", "SlotState",
            "EffectContract", "EffectProposal", "Verdict", "contract_from_call",
            "FilesystemExecutor", "FILESYSTEM_BINDING_FIELDS",
            "EffectGateway", "ExecutionRecord", "Executor",

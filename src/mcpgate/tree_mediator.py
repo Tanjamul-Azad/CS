@@ -198,6 +198,15 @@ class ContentPredicate:
             except (zipfile.BadZipFile, KeyError, UnicodeDecodeError) as error:
                 return False, f"content is not a valid readable DOCX archive: {error}"
             return self.value in text, "required marker in DOCX XML"
+        if self.mode == "utf8_fullmatch":
+            # value is a regular expression instantiated from an effect
+            # template; the whole decoded file must match it
+            try:
+                text = content.decode("utf-8")
+            except UnicodeDecodeError as error:
+                return False, f"content is not UTF-8: {error}"
+            matched = re.fullmatch(self.value or "", text, flags=re.DOTALL)
+            return matched is not None, "content fullmatches the instantiated template"
         return False, f"unknown content predicate mode: {self.mode}"
 
 
