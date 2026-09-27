@@ -1,5 +1,11 @@
 # 45 — Workstream A: pin-time effect templates (development result)
 
+> **Superseded numbers.** This page describes runs 1–2. Adaptive testing then
+> exposed two further development-set failures (transform ambiguity and a
+> classifier-dependent log on ori-memory). The current result is run 4 in
+> `docs/46-confinement-adaptive-formal.md`: 1/84 honest false blocks, 75/75
+> landed attacks refused, ori-memory slack 841 bits.
+
 Plan: `docs/44-strengthening-plan.md`, frozen protocol
 `artifact/template-generalization-plan.json`. Code:
 `src/mcpgate/template_inference.py`, runners
