@@ -73,7 +73,7 @@ transcripts and I's agent episodes (no new runs, no API calls).
 | | Call-level policy | EffectSeal |
 |---|---:|---:|
 | honest transcripts blocked | 0 / 15 | 0 |
-| landed attacks prevented (transcripts) | **0 / 42** | all |
+| landed attacks prevented (transcripts) | **0 / 42** | 22 / 22 on the same servers and scenarios (matched evaluation) |
 | agent: honest tasks completed | 24 / 24 | 24 / 24 |
 | agent: compromised harm reaching trusted state | **24 / 24** | **0 / 24** |
 
