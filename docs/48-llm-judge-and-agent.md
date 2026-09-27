@@ -60,3 +60,24 @@ Result: `artifact/results/agent_e2e.json`.
   undone (fail closed), which is correct but is a lost task.
 
 Estimated spend: USD 0.041 (F and I together about USD 0.06 of the USD 5 limit).
+
+## F (second baseline) — call-level authorization in the style of Progent
+
+`experiments/run_calllevel_baseline.py`, result `artifact/results/calllevel_baseline.json`.
+The strictest reasonable pre-execution policy per workflow: only the approved
+tool, no argument outside the schema, every path argument directly under
+`/sandbox` with the approved extension. Implemented from Progent's published
+semantics, not with its code. Applied to the recorded requests of F's
+transcripts and I's agent episodes (no new runs, no API calls).
+
+| | Call-level policy | EffectSeal |
+|---|---:|---:|
+| honest transcripts blocked | 0 / 15 | 0 |
+| landed attacks prevented (transcripts) | **0 / 42** | all |
+| agent: honest tasks completed | 24 / 24 | 24 / 24 |
+| agent: compromised harm reaching trusted state | **24 / 24** | **0 / 24** |
+
+This is close to true by construction, and that is the point: a rug-pulled
+server receives exactly the approved request and changes only the effect, so
+any policy that decides on the request, however strict, admits it. Authorizing
+calls and admitting effects are different properties.
