@@ -145,6 +145,32 @@ def test_clock_holes_bind_to_the_admission_date():
             < template.slack(call, clock_bound=False).total_bits)
 
 
+def test_a_constant_sentinel_date_is_not_a_clock_value():
+    # found on ori-memory: ops/daily.md carries "date: 1970-01-01", a constant
+    # epoch sentinel. Treating it as a clock hole bound to the admission date
+    # refused every honest call. A date far from the run's own clock is text.
+    import datetime as dt
+    ran = dt.datetime(2026, 9, 27, 10, 0, tzinfo=dt.timezone.utc)
+
+    def server(args):
+        return {"ops/daily.md": ("file", b"---\ndate: 1970-01-01\n---\n"),
+                "log.txt": ("file", f"2026-09-27T10:00:0{len(args['t']) % 9}Z {args['t']}"
+                            .encode())}
+    rng = random.Random(2)
+    observations = []
+    for _ in range(3):
+        args = perturb_arguments({"t": "some logged text"}, rng)
+        observations.append(Observation(args, server(args), observed_at=ran))
+    template = infer_template("log", observations)
+    call = {"t": "held out logged text"}
+    later = dt.datetime(2027, 3, 1, 8, 0, tzinfo=dt.timezone.utc)
+    effect = {"ops/daily.md": ("file", b"---\ndate: 1970-01-01\n---\n"),
+              "log.txt": ("file", f"2027-03-01T08:00:00Z {call['t']}".encode())}
+    assert template.instantiate(call, now=later).evaluate(_snap(effect)).allowed
+    daily = [o for o in template.objects if o.name == "file:ops/daily.md"][0]
+    assert daily.content_sha256 is not None  # a constant, bound exactly
+
+
 # -- an ori-style server: slugged filename --------------------------------
 
 def _ori(args):
@@ -187,6 +213,42 @@ def test_uuid_named_output_becomes_a_bounded_path_hole():
     assert not template.instantiate(call).evaluate(
         _snap(server(call, "../../etc/passwd"))).allowed
     assert 0 < template.slack(call).total_bits < 64
+
+
+# -- a SQLite database as one canonical text object -------------------------
+
+def test_sqlite_state_template_binds_the_inserted_value(tmp_path):
+    import sqlite3
+    from mcpgate.sqlite_mediator import snapshot_sqlite, sqlite_state_text
+
+    def run(value, *, extra_row=None, extra_table=False, noop=False):
+        db = tmp_path / f"db-{random.random()}.sqlite"
+        con = sqlite3.connect(db)
+        con.execute("CREATE TABLE evidence(value TEXT)")
+        if not noop:
+            con.execute("INSERT INTO evidence VALUES (?)", (value,))
+        if extra_row:
+            con.execute("INSERT INTO evidence VALUES (?)", (extra_row,))
+        if extra_table:
+            con.execute("CREATE TABLE exfil(x TEXT)")
+        con.commit()
+        con.close()
+        text = sqlite_state_text(snapshot_sqlite(db)).encode()
+        return {"db.state": ("file", text)}
+
+    rng = random.Random(11)
+    observations = []
+    for _ in range(3):
+        args = perturb_arguments({"value": "approved sql marker value"}, rng)
+        observations.append(Observation(args, run(args["value"])))
+    template = infer_template("insert", observations)
+    call = {"value": "held out sql value here"}
+    contract = template.instantiate(call)
+    assert contract.evaluate(_snap(run(call["value"]))).allowed
+    assert template.slack(call).level == "L3"
+    for attack in (run("ATTACKER VALUE"), run(call["value"], extra_row="x1"),
+                   run(call["value"], extra_table=True), run(call["value"], noop=True)):
+        assert not contract.evaluate(_snap(attack)).allowed
 
 
 # -- building blocks --------------------------------------------------------

@@ -94,7 +94,7 @@ def _state(db: Path) -> dict[str, Any] | None:
 
 def _run_container(docker: str, server: dict, sandbox: Path, *, mode: str,
                    replay: int = 1, audit: bool = False, hardened: bool = True,
-                   tier: str = "consistent") -> dict:
+                   tier: str = "consistent", marker: str = MARKER) -> dict:
     (sandbox / "home").mkdir(exist_ok=True)
     image = server.get("evaluation_image_id", server["image_tag"])
     hardening = ["--cap-drop=ALL", "--security-opt=no-new-privileges",
@@ -113,7 +113,7 @@ def _run_container(docker: str, server: dict, sandbox: Path, *, mode: str,
            "--mount", f"type=bind,src={PROBE},dst=/app/matched_sql_probe.py,readonly",
            "--entrypoint", "python3", image, "/app/matched_sql_probe.py",
            "--server-id", server["id"], "--command", _command(server),
-           "--marker", MARKER, "--replay", str(replay)]
+           "--marker", marker, "--replay", str(replay)]
     if audit:
         run += ["--audit"]
     started = time.perf_counter()

@@ -127,6 +127,24 @@ def snapshot_sqlite(path: Path) -> SQLiteState:
         connection.close()
 
 
+def sqlite_state_text(state: SQLiteState) -> str:
+    """Line-oriented canonical text of a database, for effect templates.
+
+    One line per schema object and one per row, in canonical order, so an extra
+    table or row is an extra line and a substituted value is a changed token.
+    Effect-template inference then treats the database like one text file.
+    """
+    lines = [f"schema {kind} {name} {table} {sql}"
+             for kind, name, table, sql in state.schema]
+    for name in sorted(state.tables):
+        columns = list(state.columns.get(name, ()))
+        lines.append(f"columns {name} {json.dumps(columns, ensure_ascii=False)}")
+        for row in state.tables[name]:
+            lines.append(f"row {name} "
+                         f"{json.dumps([list(cell) for cell in row], ensure_ascii=False)}")
+    return "\n".join(lines) + "\n"
+
+
 @dataclass(frozen=True)
 class SQLiteEffectContract:
     """Exact request and exact semantic before and after database states."""

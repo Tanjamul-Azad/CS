@@ -119,9 +119,10 @@ def pin(pinner: Pinner, plan: dict) -> dict:
         record, sandbox = pinner.run(args, tag="train")
         if _last_call_error(record):
             raise RuntimeError(f"honest training call failed: {record['driver']}")
-        observations.append(Observation(args, _staged(sandbox)))
+        observations.append(Observation(args, _staged(sandbox),
+                                        observed_at=datetime.now(timezone.utc)))
     template = infer_template(tool, observations,
-                              fixed={k: exemplar[k] for k in sorted(fixed)})
+                              fixed={k: exemplar.get(k) for k in sorted(fixed)})
     return {"tool": tool, "exemplar": exemplar, "fixed": sorted(fixed),
             "schema_enums": sorted(enum_fields(schema)), "template": template}
 

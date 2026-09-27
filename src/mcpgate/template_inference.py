@@ -207,10 +207,26 @@ def _clock_bits(spec: str, bound: bool) -> float:
     return round(bits, 3)
 
 
-def _literal_tokens(text: str) -> list[tuple]:
+def _near_clock(match: re.Match, clock_at) -> bool:
+    """A dated value is clock-derived only if it falls within a day of the
+    training run's own wall clock; a constant such as an epoch sentinel or a
+    fixed release date is ordinary text."""
+    if clock_at is None or not match.group("date"):
+        return True
+    try:
+        seen = _dt.date.fromisoformat(match.group("date"))
+    except ValueError:
+        return False
+    day = clock_at.astimezone(_dt.timezone.utc).date()
+    return abs((seen - day).days) <= 1
+
+
+def _literal_tokens(text: str, clock_at=None) -> list[tuple]:
     tokens: list[tuple] = []
     position = 0
     for match in _CLOCK.finditer(text):
+        if not _near_clock(match, clock_at):
+            continue
         tokens.extend(("L", t) for t in _LITERAL_TOKEN.findall(text[position:match.start()]))
         spec = _clock_spec(match)
         tokens.append(("H", spec, _clock_bits(spec, False), match.group(0)))
@@ -219,8 +235,12 @@ def _literal_tokens(text: str) -> list[tuple]:
     return tokens
 
 
-def abstract(text: str, sources: Sequence[tuple[str, str, str]]) -> list[tuple]:
-    """Rewrite argument occurrences as placeholders, clock values as holes."""
+def abstract(text: str, sources: Sequence[tuple[str, str, str]],
+             clock_at=None) -> list[tuple]:
+    """Rewrite argument occurrences as placeholders, clock values as holes.
+
+    ``clock_at`` is the wall-clock time of the run that produced ``text``; when
+    given, only dates within a day of it are treated as clock values."""
     taken: list[tuple[int, int, str, str]] = []
     for src, name, tname in sources:  # longest first
         start = text.find(src)
@@ -233,10 +253,10 @@ def abstract(text: str, sources: Sequence[tuple[str, str, str]]) -> list[tuple]:
     tokens: list[tuple] = []
     position = 0
     for start, end, name, tname in taken:
-        tokens.extend(_literal_tokens(text[position:start]))
+        tokens.extend(_literal_tokens(text[position:start], clock_at))
         tokens.append(("A", name, tname, text[start:end]))
         position = end
-    tokens.extend(_literal_tokens(text[position:]))
+    tokens.extend(_literal_tokens(text[position:], clock_at))
     return tokens
 
 
@@ -367,6 +387,7 @@ class Observation:
 
     arguments: Mapping[str, Any]
     entries: Mapping[str, tuple[str, bytes | None]]
+    observed_at: Any = None  # aware datetime of the run, if known
 
 
 @dataclass(frozen=True)
@@ -549,7 +570,7 @@ def _infer_content(members: Sequence[tuple[Observation, bytes]], root: str) -> d
         if len(set(blobs)) == 1:
             return {"content_sha256": hashlib.sha256(blobs[0]).hexdigest()}
         return {"unconstrained": True}
-    runs = [abstract(text, _sources(obs.arguments, root))
+    runs = [abstract(text, _sources(obs.arguments, root), obs.observed_at)
             for (obs, _), text in zip(members, texts)]
     template = anti_unify(runs, path=False)
     if all(t[0] == "L" for t in template) and len(set(blobs)) == 1:
@@ -569,7 +590,7 @@ def infer_template(tool: str, observations: Sequence[Observation], *,
     for index, obs in enumerate(observations):
         sources = _sources(obs.arguments, root)
         for path, (kind, content) in obs.entries.items():
-            tokens = abstract(path, sources)
+            tokens = abstract(path, sources, obs.observed_at)
             key = (kind, tuple(_key(t) for t in tokens))
             groups.setdefault(key, [[] for _ in range(k)])
             groups[key][index].append((path, tuple(tokens), kind, content))
