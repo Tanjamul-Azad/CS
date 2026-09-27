@@ -55,5 +55,10 @@ data/processed/*.log
 data/scratch/
 .pytest_tmp/
 
-# Submission manuscript stays local only (public repo; plagiarism and anonymity)
+# Submission manuscript stays local only (public repo; plagiarism and anonymity).
+# Keep both source and compiled review PDFs out of GitHub.  The wildcard also
+# protects timestamped/renamed submission PDFs from accidental staging.
 paper/submission/
+paper/latex/
+paper/*submission*.pdf
+paper/submission-source-backup*

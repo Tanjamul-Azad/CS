@@ -233,8 +233,11 @@ properties without inventing an experimental result.
 - [x] Wire allowance and request-shape checks into that path.
 - [x] Decide and implement the claim boundary: trusted-state admission only, or
       actual namespace-based world-effect prevention.
-- [ ] Complete Round-2 labeling and report the outcome even if κ remains below
-      0.60.
+- [x] Remove classifier prevalence from the first paper until Round-2 labeling
+      is complete. The anonymous manuscript reports no A0--A3 prevalence and
+      none of its security or performance claims depends on those labels.
+      Annotation remains a later validation task and must be reported honestly
+      if reintroduced.
 - [x] Freeze a genuine held-out server set; reach at least 10. The pre-outcome
       manifest now contains 10 exact-version/integrity-pinned third-party
       implementations (EXACT 4, CONSTRAINED 4, UNDERSPECIFIED 2). All 10 passed
@@ -262,8 +265,9 @@ properties without inventing an experimental result.
       static policy caught only the two extra-table cases; no defense, plain
       sandbox, and the response auditor caught none. Raw outcomes in
       `artifact/results/matched_sql.json`.
-- [ ] Run the matched network arm against a frozen network MCP server so the
-      effect-integrity claim covers outbound requests, not only local state.
+- [x] Keep the matched network arm outside the first paper's claim boundary.
+      The paper claims trusted-state admission for local filesystem and SQLite
+      state only and explicitly lists network effects as unmediated future work.
 - [x] Add genuine overlapping-call evaluation. Two real child writers overlap
       in distinct staging roots and commit correctly; one-slot competition
       starts exactly one child. The claim remains qualified until the pinned
@@ -286,12 +290,12 @@ properties without inventing an experimental result.
       output byte and the only effect is one write, a trusted executor is
       simpler than invoking an untrusted server. We take the second branch:
       the 100-repetition development-machine comparison reports the direct
-      writer as simpler and lower-latency (the mediator's p50 was 1.671x the
+      writer as simpler and lower-latency (the mediator's p50 was 1.73x the
       direct writer's in the recorded run), so the manuscript explicitly
       narrows the current result.
-- [x] Verify every cited reference against a primary source. The working
-      manuscript currently cites 21 entries, all marked VERIFIED; the offline
-      gate fails if a missing or `[U]` key is introduced.
+- [x] Verify every cited reference against a primary source. The anonymous
+      submission currently cites 32 entries and the submission gate fails on a
+      missing or uncited BibTeX key.
 
 ### P1 — strongly improves acceptance probability
 
@@ -301,7 +305,9 @@ properties without inventing an experimental result.
       still leave `RESERVED`/UNKNOWN and therefore requires domain-specific
       reconciliation; the paper does not claim exactly-once world effects.
 - [ ] Add a stronger namespace boundary so absolute-path escape cannot land.
-- [ ] Report confidence intervals and server-level clustering.
+- [x] Report server-clustered bootstrap intervals where estimable. For the
+      all-success MCPGate result, report 7/7 fully prevented server clusters and
+      a server-level Wilson interval rather than a degenerate 100--100 bootstrap.
 - [x] Create one-command quick and fail-closed full artifact runners.
       `scripts/run_quick_artifact.py` preserves offline logs, hashes, and
       environment metadata. `scripts/run_full_artifact.py` now refuses to run

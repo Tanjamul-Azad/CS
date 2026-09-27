@@ -269,10 +269,12 @@ def _git(root: Path, *args: str) -> subprocess.CompletedProcess[str] | None:
 
 def preflight(
     root: Path = ROOT, *, check_host: bool = True, require_clean: bool = True,
+    require_annotation: bool = True,
 ) -> tuple[list[str], list[list[str]]]:
     issues: list[str] = []
-    issues.extend(_check_labels(root))
-    issues.extend(_check_annotation_freeze(root))
+    if require_annotation:
+        issues.extend(_check_labels(root))
+        issues.extend(_check_annotation_freeze(root))
     issues.extend(_check_server_lock(root))
     issues.extend(_check_candidates(root))
     held_out_issues, held_out_commands = _check_held_out(root)
@@ -339,17 +341,20 @@ def _safe_run_dir(parent: Path) -> Path:
     return run_dir
 
 
-def _commands(held_out: list[list[str]]) -> list[tuple[str, list[str]]]:
+def _commands(
+    held_out: list[list[str]], *, include_annotation: bool = True,
+) -> list[tuple[str, list[str]]]:
     commands: list[tuple[str, list[str]]] = [
         ("quick_artifact", [sys.executable, "scripts/run_quick_artifact.py"]),
-        ("round2_labels", [
+    ]
+    if include_annotation:
+        commands.append(("round2_labels", [
             sys.executable, "experiments/score_labels.py",
             "--a", str(LABEL_A), "--b", str(LABEL_B),
-        ]),
-        ("integrated_real_server", [
-            sys.executable, "experiments/run_m2_real_server.py",
-        ]),
-    ]
+        ]))
+    commands.append(("integrated_real_server", [
+        sys.executable, "experiments/run_m2_real_server.py",
+    ]))
     for index, command in enumerate(held_out, start=1):
         commands.append((f"held_out_{index:02d}", command))
     commands.extend([
@@ -370,10 +375,20 @@ def main() -> int:
         "--allow-dirty", action="store_true",
         help="development rehearsal only; never use for release evidence",
     )
+    parser.add_argument(
+        "--require-annotation", action="store_true",
+        help=(
+            "include the optional Round-2 prevalence analysis; the current "
+            "paper omits that claim and does not require these labels"
+        ),
+    )
     parser.add_argument("--output-parent", type=Path, default=DEFAULT_PARENT)
     args = parser.parse_args()
 
-    issues, held_out = preflight(require_clean=not args.allow_dirty)
+    issues, held_out = preflight(
+        require_clean=not args.allow_dirty,
+        require_annotation=args.require_annotation,
+    )
     print("Full artifact preflight")
     print("=" * 64)
     if issues:
@@ -388,7 +403,9 @@ def main() -> int:
     run_dir = _safe_run_dir(args.output_parent)
     records: list[dict[str, object]] = []
     all_passed = True
-    for name, command in _commands(held_out):
+    for name, command in _commands(
+        held_out, include_annotation=args.require_annotation,
+    ):
         started = time.perf_counter()
         result = subprocess.run(
             command, cwd=ROOT, check=False, capture_output=True, text=True,

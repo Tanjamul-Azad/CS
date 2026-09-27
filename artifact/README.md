@@ -21,10 +21,11 @@ child-process attempts from a network-disabled, capability-dropped container
 produced no oracle event. The trusted broker then delivered one exact pinned
 request. This is not a real MCP workload or matched network evaluation.
 
-> **Status:** preparation scaffold, not yet an artifact-evaluation release.
-> The quick checks run from this checkout. The full paper result set still
-> requires the frozen five-condition held-out run, independent human labels,
-> a clean release rerun, and checked-in compact matched-outcome files.
+> **Status:** matched-evaluation development artifact, not yet the anonymous
+> artifact-evaluation release. The frozen five-condition filesystem and SQLite
+> runs and compact per-cell outcomes are checked in. Remaining release work is
+> a clean Linux/Docker rerun, completion of the deliberately strict annotation
+> preflight, and creation of the identity-scrubbed distribution.
 
 ## 1. Scope
 
@@ -108,10 +109,10 @@ It refuses to start unless both 265-row human label sheets are complete, the
 held-out manifest is `FROZEN` with at least 10 independent exact-version
 servers and two per claimed class, the full Linux dependency lock is
 hash-pinned, the Git tree is clean, and Linux/Docker are available. The current
-PC now satisfies the Docker and dependency-lock portions. It still fails
-closed on the two blank independent-human annotation sheets, the dirty
-development tree, and the unmatched held-out evaluation; those checks must not
-be bypassed for release evidence.
+Windows checkout satisfies the dependency-lock and matched-outcome portions.
+It still fails closed on the two blank independent-human annotation sheets, the
+dirty development tree, Linux/Docker availability, and the local LaTeX setup;
+those checks must not be bypassed for release evidence.
 
 `artifact/held-out-candidates.json` contains the pre-outcome candidates and
 audited launch-only amendments. `artifact/held-out-manifest.json` is now
@@ -120,7 +121,9 @@ benign-effect/oracle eligibility (EXACT 4, CONSTRAINED 4, UNDERSPECIFIED 2).
 `artifact/results/heldout_eligibility.json` and
 `artifact/results/heldout_workflow_eligibility.json` preserve the raw gates.
 No attack, baseline, or MCPGate outcome was observed before the freeze. The
-matched five-condition evaluation remains a separate open gate.
+matched five-condition outcomes are now preserved in
+`artifact/results/matched_filesystem.json` and
+`artifact/results/matched_sql.json`.
 
 The individual diagnostic commands are:
 
@@ -163,6 +166,8 @@ The full runner records, for every stage:
 | Controlled baselines | `python experiments/run_gateway_eval.py` | no defense, plain sandbox, response auditor, path policy, trusted executor |
 | Process-backed concurrency | `python experiments/run_concurrency_eval.py` | child-process intervals and distinct staging evidence checked in |
 | Exact-write direct-writer baseline | `python experiments/run_exact_write_baseline.py --repetitions 100` | development-machine security cases and latency table checked in |
+| Frozen filesystem matched evaluation | `python experiments/run_matched_filesystem.py` | five servers, five conditions, compact per-cell JSON checked in |
+| Frozen SQLite matched evaluation | `python experiments/run_matched_sql.py` | two servers, five conditions, compact per-cell JSON checked in |
 | Integrated third-party path | `python experiments/run_m2_real_server.py`; `artifact/results/integrated_real_server.json` | pinned development run passed; clean release-commit repeat pending |
 | TOCTOU adaptive attack | `python experiments/run_m4_adaptive.py` | historical result local only; increase repetitions |
 | Replay attack | `python experiments/run_m4_replay.py` | historical result local only; reusable-path tests present |

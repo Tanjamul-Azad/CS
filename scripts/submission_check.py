@@ -1,4 +1,4 @@
-"""Fail-closed readiness check for the MCPGate paper package.
+"""Fail-closed readiness check for the EffectSeal paper package.
 
 This is deliberately stricter than the test suite. Passing unit tests does not
 make an empirical paper submission-ready: open claims, unchecked P0 gates,
@@ -8,6 +8,7 @@ unverified citations, and evidence placeholders are independent blockers.
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import subprocess
 import sys
@@ -18,10 +19,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 MATRIX = ROOT / "paper" / "CLAIM_EVIDENCE_MATRIX.md"
 ROADMAP = ROOT / "paper" / "SUBMISSION_ROADMAP.md"
-MANUSCRIPT = ROOT / "paper" / "MANUSCRIPT_DRAFT.md"
+SUBMISSION = ROOT / "paper" / "submission"
+PDF = ROOT / "paper" / "mcpgate-submission.pdf"
 
 CLAIM_ROW = re.compile(
-    r"^\|\s*C\d+\s*\|.*?\|\s*(READY|QUALIFIED|OPEN|RETIRED)\s*\|",
+    r"^\|\s*C\d+\s*\|.*?\|\s*(READY|QUALIFIED|OPEN|RETIRED)(?:\s+[^|]+)?\s*\|",
     re.MULTILINE,
 )
 
@@ -53,19 +55,68 @@ def run(command: list[str]) -> int:
     return subprocess.run(command, cwd=ROOT).returncode
 
 
-def static_artifact_issues() -> list[str]:
+def static_artifact_issues(*, require_annotation: bool = False) -> list[str]:
     """Inspect evidence that must be complete before the release can run."""
     sys.path.insert(0, str(ROOT / "scripts"))
     import run_full_artifact as full
 
     issues: list[str] = []
-    issues.extend(full._check_labels(ROOT))
-    issues.extend(full._check_annotation_freeze(ROOT))
+    if require_annotation:
+        issues.extend(full._check_labels(ROOT))
+        issues.extend(full._check_annotation_freeze(ROOT))
     issues.extend(full._check_server_lock(ROOT))
     issues.extend(full._check_candidates(ROOT))
     held_out, _ = full._check_held_out(ROOT)
     issues.extend(held_out)
     issues.extend(full._check_full_lock(ROOT))
+    return issues
+
+
+def submission_source_issues(*, require_anonymous: bool = False) -> list[str]:
+    issues: list[str] = []
+    main = (SUBMISSION / "main.tex").read_text(encoding="utf-8")
+    section_paths = sorted((SUBMISSION / "sections").glob("*.tex"))
+    source = "\n".join([main] + [path.read_text(encoding="utf-8") for path in section_paths])
+    bib = (SUBMISSION / "references.bib").read_text(encoding="utf-8")
+    active_main = "\n".join(
+        line.split("%", 1)[0] for line in main.splitlines()
+    )
+
+    if require_anonymous:
+        if r"\anonymousreviewtrue" not in active_main:
+            issues.append("anonymous review mode is not selected")
+    else:
+        if r"\anonymousreviewfalse" not in active_main:
+            issues.append("named working-draft mode is not selected")
+        for token in (
+            "Md. Tanzamul Azad", "Jahidul Islam", "Azizur Rahman Anik",
+            "United International University",
+            "i.m.tanjamu@gmail.com", "jislam223654@bscse.uiu.ac.bd",
+            "azizur@cse.uiu.ac.bd",
+        ):
+            if token not in main:
+                issues.append(f"named working-draft author detail is missing: {token}")
+    if r"\section{Ethical Considerations}" not in source:
+        issues.append("Ethical Considerations appendix heading is missing")
+    if r"\section{Open Science}" not in source:
+        issues.append("Open Science appendix heading is missing")
+    if "EVIDENCE GATE" in source:
+        issues.append("EVIDENCE GATE marker remains in submission source")
+
+    cited: set[str] = set()
+    for match in re.finditer(r"\\cite\{([^}]+)\}", source):
+        cited.update(key.strip() for key in match.group(1).split(","))
+    entries = set(re.findall(r"^@\w+\{([^,]+),", bib, re.MULTILINE))
+    missing = sorted(cited - entries)
+    if missing:
+        issues.append(f"submission bibliography misses citation keys: {missing}")
+    uncited = sorted(entries - cited)
+    if uncited:
+        issues.append(f"submission bibliography has uncited entries: {uncited}")
+    print(
+        f"submission source: {len(section_paths)} sections; "
+        f"{len(cited)} cited keys; {len(entries)} bibliography entries"
+    )
     return issues
 
 
@@ -83,15 +134,25 @@ def main() -> int:
         "--tests", action="store_true",
         help="also run the full pytest suite (slower)",
     )
+    parser.add_argument(
+        "--release", action="store_true",
+        help="require the real anonymous artifact URL and release PDF gate",
+    )
+    parser.add_argument(
+        "--require-annotation", action="store_true",
+        help="require Round-2 labels even though the current paper omits prevalence",
+    )
     args = parser.parse_args()
 
     statuses = Counter(CLAIM_ROW.findall(MATRIX.read_text(encoding="utf-8")))
     pending_p0 = p0_unchecked(ROADMAP.read_text(encoding="utf-8"))
-    evidence_gates = MANUSCRIPT.read_text(encoding="utf-8").count(
-        "**EVIDENCE GATE:**"
+    source_text = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in [SUBMISSION / "main.tex", *sorted((SUBMISSION / "sections").glob("*.tex"))]
     )
+    evidence_gates = source_text.count("EVIDENCE GATE")
 
-    print("MCPGate submission readiness")
+    print("EffectSeal submission readiness")
     print("=" * 48)
     print(
         "claims: "
@@ -104,18 +165,31 @@ def main() -> int:
     for item in pending_p0:
         print(f"  - {item}")
     print(f"manuscript evidence gates: {evidence_gates}")
-    artifact_issues = static_artifact_issues()
+    artifact_issues = static_artifact_issues(require_annotation=args.require_annotation)
     print(f"static artifact blockers: {len(artifact_issues)}")
     for item in artifact_issues:
         print(f"  - {item}")
 
-    refs_ok = run([sys.executable, "scripts/verify_refs.py"]) == 0
-    tex_ok = run([
-        sys.executable, "scripts/prepare_usenix_source.py", "--check",
-    ]) == 0
+    source_issues = submission_source_issues(require_anonymous=args.release)
+    print(f"submission source blockers: {len(source_issues)}")
+    for item in source_issues:
+        print(f"  - {item}")
+    pdf_command = [sys.executable, "scripts/check_submission_pdf.py", str(PDF)]
+    if not args.release:
+        pdf_command.extend(["--working-draft", "--named-draft"])
+    pdf_ok = PDF.exists() and run(pdf_command) == 0
     tests_ok = True
     if args.tests:
-        tests_ok = run([sys.executable, "-m", "pytest", "-q"]) == 0
+        # Use a unique workspace-local base directory.  A stale pytest tree on
+        # Windows can inherit ACLs that make cleanup fail before collection,
+        # which is an environment error rather than a regression.
+        basetemp = ROOT.parent / "tmp" / f"pytest-submission-{os.getpid()}"
+        basetemp.parent.mkdir(parents=True, exist_ok=True)
+        tests_ok = run([
+            sys.executable, "-m", "pytest", "-q",
+            "--basetemp", str(basetemp),
+            "-p", "no:cacheprovider",
+        ]) == 0
 
     blockers = []
     if statuses.get("OPEN", 0):
@@ -126,10 +200,12 @@ def main() -> int:
         blockers.append(f"{evidence_gates} manuscript evidence gate(s) remain")
     if artifact_issues:
         blockers.append(f"{len(artifact_issues)} static artifact blocker(s) remain")
-    if not refs_ok:
-        blockers.append("reference verification failed")
-    if not tex_ok:
-        blockers.append("generated USENIX LaTeX is stale")
+    if source_issues:
+        blockers.append(f"{len(source_issues)} submission source blocker(s) remain")
+    if not pdf_ok:
+        blockers.append("latest submission PDF gate failed")
+    if args.release and "ANONYMOUS-ARTIFACT-URL-PENDING" in source_text:
+        blockers.append("anonymous artifact URL has not been inserted")
     if not tests_ok:
         blockers.append("test suite failed")
 

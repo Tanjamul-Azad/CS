@@ -5,12 +5,12 @@ Target assumptions: USENIX Security 2027 Cycle 2 primary; IEEE S&P 2027 Cycle
 
 ## Paper identity
 
-- [ ] Remove author names, affiliations, acknowledgments, grant numbers, and
+- [x] Remove author names, affiliations, acknowledgments, grant numbers, and
       institution-specific infrastructure names.
 - [ ] Cite the authors' prior work in third person; blind a reference only when
       third-person citation is genuinely infeasible.
-- [ ] Remove PDF author/creator metadata and inspect embedded file names.
-- [ ] Search source, generated PDF text, figures, and appendices for real names,
+- [x] Remove PDF author metadata and inspect embedded file names.
+- [x] Search source, generated PDF text, figures, and appendices for real names,
       usernames, email addresses, institution names, and local absolute paths.
 - [ ] Ensure title, author list, abstract, ORCIDs, topics, and conflicts are
       final before the venue's registration deadline.
@@ -56,8 +56,8 @@ Target assumptions: USENIX Security 2027 Cycle 2 primary; IEEE S&P 2027 Cycle
 - [ ] Mandatory registration: 2027-01-19.
 - [ ] Paper submission: 2027-01-26.
 - [ ] Submission artifact: 2027-01-29.
-- [ ] Open Science appendix is included in the submitted paper.
-- [ ] Ethics appendix is included unless a documented final decision removes
+- [x] Open Science appendix is included in the submitted paper.
+- [x] Ethics appendix is included unless a documented final decision removes
       it.
 
 Official CFP: <https://www.usenix.org/conference/usenixsecurity27/call-for-papers>
