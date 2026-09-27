@@ -24,5 +24,13 @@
   },
   "prediction_stated_in_advance": "against the consistent tier, detection is not distinguishable from the false-positive rate (the observation boundary); against the naive tier the judge may detect some attacks through read-backs that expose the diverted effect",
   "budget": "stop before estimated spend exceeds USD 4 (user limit USD 5); token usage is recorded per call",
-  "key_handling": "OPENAI_API_KEY read from the environment only; never logged or committed; never passed into any container"
+  "key_handling": "OPENAI_API_KEY read from the environment only; never logged or committed; never passed into any container",
+  "amendments": [
+    {
+      "recorded": "2026-09-27, after v1, before any v2 transcript or verdict",
+      "change": "scale-up run v2: 10 honest repetitions per server and 3 repetitions per attack per tier; judges gpt-4.1-mini-2025-04-14, gpt-4.1-2025-04-14, and gpt-5-mini-2025-08-07 (default temperature for the reasoning model)",
+      "why": "v1 intervals were wide (n=15 honest) and a single small judge invites the objection that a stronger model would detect; the user authorised additional spend within the USD 5 limit",
+      "unchanged": "judge prompt, inputs, ground truth, metrics, and the stated prediction; v1 results are kept as they are"
+    }
+  ]
 }
