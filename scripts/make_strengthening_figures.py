@@ -213,11 +213,169 @@ def architecture() -> None:
     save(fig, "fig1_effectseal_architecture")
 
 
+def load_committed(name: str) -> dict:
+    """A result file exactly as committed to git (HEAD), not the working copy.
+
+    Used for the matched evaluation: the paper's numbers come from the
+    committed run, and a later local overwrite must not change a figure."""
+    import subprocess
+    out = subprocess.run(["git", "show", f"HEAD:artifact/results/{name}"], cwd=ROOT,
+                         capture_output=True, text=True, encoding="utf-8", check=True)
+    return json.loads(out.stdout)
+
+
+def wilson(k: int, n: int, z: float = 1.959964) -> tuple[float, float]:
+    if n == 0:
+        return (0.0, 0.0)
+    p = k / n
+    d = 1 + z * z / n
+    c = (p + z * z / (2 * n)) / d
+    h = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / d
+    return (max(0.0, c - h), min(1.0, c + h))
+
+
+def landed_table(data: dict, scenarios: list[str]) -> dict:
+    """(scenario, condition) -> [prevented, landed], counting landed attacks only."""
+    cells = [c for s in data["servers"] for c in s.get("cells", []) if c["mutation_attempted"]]
+    landed = {(c["server_id"], c["scenario"]) for c in cells
+              if c["condition"] == "NONE" and c["attack_succeeded"]}
+    out: dict = {}
+    for c in cells:
+        if c["scenario"] in scenarios and (c["server_id"], c["scenario"]) in landed:
+            cell = out.setdefault((c["scenario"], c["condition"]), [0, 0])
+            cell[1] += 1
+            cell[0] += bool(c["prevented"])
+    return out
+
+
+def matched_heatmap() -> None:
+    """Landed attacks prevented, scenario by defense, files and SQL together."""
+    fs = load_committed("matched_filesystem.json")
+    sql = load_committed("matched_sql.json")
+    assert len(fs["servers"]) == 5, "committed filesystem result must have five servers"
+    fs_rows = [("A1", "File: destination"), ("A2", "File: content"),
+               ("A4", "File: extra object"), ("A5", "File: replay"),
+               ("A6", "File: silent no-op"), ("A7", "File: link alias")]
+    sql_rows = [("A2", "SQL: value"), ("S1", "SQL: extra row"), ("S2", "SQL: extra table"),
+                ("A5", "SQL: replay"), ("A6", "SQL: silent no-op")]
+    conds = [("NONE", "None"), ("PLAIN_SANDBOX", "Sandbox"), ("MBA", "Auditor"),
+             ("STATIC_LP", "Static\nLP"), ("MCPGATE", "EffectSeal")]
+    fs_t = landed_table(fs, [s for s, _ in fs_rows])
+    sql_t = landed_table(sql, [s for s, _ in sql_rows])
+    rows = [(lab, fs_t, s) for s, lab in fs_rows] + [(lab, sql_t, s) for s, lab in sql_rows]
+    totals = {c: [0, 0] for c, _ in conds}
+    grid = []
+    for label, table, scen in rows:
+        line = []
+        for c, _ in conds:
+            k, n = table.get((scen, c), [0, 0])
+            totals[c][0] += k
+            totals[c][1] += n
+            line.append((k, n))
+        grid.append(line)
+    assert totals["MCPGATE"] == [32, 32] and totals["STATIC_LP"] == [11, 32], totals
+    rows.append(("Total", None, None))
+    grid.append([tuple(totals[c]) for c, _ in conds])
+    cmap = matplotlib.colors.LinearSegmentedColormap.from_list("prev", ["#FFFFFF", "#C6DBEF", BLUE])
+    fig, ax = plt.subplots(figsize=(COLUMN, 3.05))
+    import numpy as np
+    values = np.array([[k / n if n else np.nan for k, n in line] for line in grid])
+    ax.imshow(values, cmap=cmap, vmin=0, vmax=1, aspect="auto")
+    for i, line in enumerate(grid):
+        for j, (k, n) in enumerate(line):
+            bold = i == len(grid) - 1
+            ax.text(j, i, f"{k}/{n}", ha="center", va="center", fontsize=6.4,
+                    fontweight="bold" if bold else "normal",
+                    color="white" if n and k / n > 0.6 else "black")
+    ax.set_xticks(range(len(conds)), [lab for _, lab in conds], fontsize=6.6)
+    ax.set_yticks(range(len(rows)), [r[0] for r in rows], fontsize=6.6)
+    ax.xaxis.tick_top()
+    ax.set_xticks([x - 0.5 for x in range(len(conds) + 1)], minor=True)
+    ax.set_yticks([y - 0.5 for y in range(len(rows) + 1)], minor=True)
+    ax.grid(which="minor", color="white", linewidth=1.4)
+    ax.tick_params(which="both", length=0)
+    ax.axhline(len(fs_rows) - 0.5, color=GRAY, linewidth=0.8)
+    ax.axhline(len(rows) - 1.5, color=GRAY, linewidth=0.8)
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+    save(fig, "fig14_matched_heatmap")
+
+
+def template_bars() -> None:
+    """Honest admission and attack refusal, development versus held-out."""
+    dev = load("template_generalization.json")["summary"]
+    sql = load("template_generalization_sql.json")["summary"]
+    held = load("batch2_templates.json")["summary"]
+    groups = [
+        ("Development\n(7 servers)",
+         [(dev["honest_calls"] - dev["false_blocks"] + sql["honest_calls"] - sql["false_blocks"],
+           dev["honest_calls"] + sql["honest_calls"]),
+          (dev["prevented"]["EFFECTSEAL_TEMPLATE"] + sql["prevented_effectseal_template"],
+           dev["attacks_landed"] + sql["attacks_landed"]),
+          (dev["prevented"]["PATH_TEMPLATE"], dev["attacks_landed"])]),
+        ("Held-out\n(4 servers)",
+         [(held["honest_calls"] - held["false_blocks"], held["honest_calls"]),
+          (held["prevented"]["EFFECTSEAL_TEMPLATE"], held["attacks_landed"]),
+          (held["prevented"]["PATH_TEMPLATE"], held["attacks_landed"])]),
+    ]
+    series = [("Honest calls admitted", BLUE), ("Landed attacks refused", TEAL),
+              ("Refused if content is ignored", ORANGE)]
+    fig, ax = plt.subplots(figsize=(COLUMN, 1.95))
+    width = 0.26
+    for g, (glabel, vals) in enumerate(groups):
+        for s, ((k, n), (slabel, color)) in enumerate(zip(vals, series)):
+            x = g + (s - 1) * width
+            lo, hi = wilson(k, n)
+            ax.bar(x, 100 * k / n, width * 0.92, color=color, edgecolor="none",
+                   label=slabel if g == 0 else None)
+            ax.errorbar(x, 100 * k / n, yerr=[[100 * (k / n - lo)], [100 * (hi - k / n)]],
+                        fmt="none", ecolor=GRAY, elinewidth=0.7, capsize=1.5)
+            ax.text(x, 100 * hi + 3, f"{k}/{n}", ha="center", fontsize=5.6)
+    ax.set_xticks(range(len(groups)), [g[0] for g in groups], fontsize=6.6)
+    ax.set_ylabel("Percent (95% Wilson)")
+    ax.set_ylim(0, 128)
+    ax.set_yticks([0, 25, 50, 75, 100])
+    ax.legend(frameon=False, fontsize=5.9, loc="upper center", ncol=3,
+              bbox_to_anchor=(0.5, 1.17), handlelength=1.0, columnspacing=0.8)
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.tick_params(axis="x", length=0)
+    save(fig, "fig15_template_generalization")
+
+
+def confinement_bars() -> None:
+    """A silent escape outside staging, with and without the boundary."""
+    s = load("confinement.json")["summary"]
+    groups = [("No boundary", s["escape_world_effect_unconfined"], s["honest_completion_unconfined"]),
+              ("EffectSeal boundary", s["escape_world_effect_confined"], s["honest_completion_confined"])]
+    fig, ax = plt.subplots(figsize=(COLUMN, 1.6))
+    width = 0.34
+    for g, (label, esc, hon) in enumerate(groups):
+        for s_i, ((k, n), color, name) in enumerate(
+                [((esc["k"], esc["n"]), RED, "Escape reached outside staging"),
+                 ((hon["k"], hon["n"]), BLUE, "Honest workflow completed")]):
+            x = g + (s_i - 0.5) * width
+            ax.bar(x, max(100 * k / n, 0.8), width * 0.92, color=color, edgecolor="none",
+                   label=name if g == 0 else None)
+            ax.text(x, 100 * k / n + 4, f"{k}/{n}", ha="center", fontsize=5.8)
+    ax.set_xticks(range(2), [g[0] for g in groups], fontsize=6.6)
+    ax.set_ylabel("Runs (%)")
+    ax.set_ylim(0, 128)
+    ax.set_yticks([0, 50, 100])
+    ax.legend(frameon=False, fontsize=5.9, loc="upper center", ncol=2,
+              bbox_to_anchor=(0.5, 1.2), handlelength=1.0)
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.tick_params(axis="x", length=0)
+    save(fig, "fig16_confinement")
+
+
 def main() -> None:
     judge_boundary()
     slack_ladder()
     agent_harm()
     architecture()
+    matched_heatmap()
+    template_bars()
+    confinement_bars()
     print("generated strengthening figures")
 
 
