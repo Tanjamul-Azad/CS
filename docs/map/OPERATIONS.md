@@ -51,8 +51,10 @@ pdflatex main
 
 On Overleaf: upload the whole `paper/submission/` folder (main.tex,
 usenix.sty, references.bib, sections/, figures/), set `main.tex` as the main
-document and pdfLaTeX as the compiler. Fonts: Times text with newtxmath, T1
-encoding, `glyphtounicode` on, so text extracts cleanly.
+document and pdfLaTeX as the compiler. Fonts: Times text (from usenix.sty),
+`glyphtounicode` on, no `amssymb` symbols, and no line breaks at explicit
+hyphens, so every character extracts cleanly for text-based checkers. Do not
+add `newtxmath`: its math letters extract as invalid bytes.
 
 Before submission: set `\anonymousreviewtrue` and replace `\artifacturl`.
 Backups go to `../private_submission_backups/` as dated zips.
