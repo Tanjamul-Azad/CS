@@ -56,5 +56,8 @@ document and pdfLaTeX as the compiler. Fonts: Times text (from usenix.sty),
 hyphens, so every character extracts cleanly for text-based checkers. Do not
 add `newtxmath`: its math letters extract as invalid bytes.
 
+To upload: `python scripts/make_overleaf_zip.py` writes `../EffectSeal_Overleaf.zip`
+(outside the repo) with only the files the paper needs.
+
 Before submission: set `\anonymousreviewtrue` and replace `\artifacturl`.
 Backups go to `../private_submission_backups/` as dated zips.
