@@ -160,3 +160,9 @@ include mocks, so reviewers need no API keys.
    without seeing their behavior first. A server qualifies when one such call
    returns without error and sends at least one POST/PUT/PATCH to exactly one
    host. Screening stops at 12 qualifiers or 200 candidates.
+
+**2026-10-09.** 6. *Harness fix, selection restarted.* The first selection run
+(`network_selection_20261009-*`, first five candidates) built invalid Docker
+tags for scoped npm packages (`@scope/name`), which wrongly excluded them as
+install failures. The tag is now sanitized, and selection restarts from rank 0
+in a new result directory; the aborted run's log is kept unchanged.

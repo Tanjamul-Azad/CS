@@ -130,7 +130,9 @@ def build_image(c: dict, work: Path) -> str:
                  "&& chmod -R a+rX /opt/tools /opt/bin\n")
     (ctx / "Dockerfile").write_text(
         "FROM effectseal-netbase:1\n" + steps + "USER node\nENTRYPOINT [\"/entry\"]\n", encoding="utf-8")
-    tag = f"effectseal-net:{re.sub(r'[^a-z0-9]+', '-', ident.lower())[:60]}-{re.sub(r'[^a-z0-9.]+', '-', version.lower())}"
+    slug = re.sub(r'[^a-z0-9]+', '-', ident.lower()).strip('-')[:60]
+    ver = re.sub(r'[^a-z0-9.]+', '-', version.lower()).strip('-.')
+    tag = f"effectseal-net:{slug}-{ver}"  # a tag must not start with '-' or '.'
     P.sh("docker", "build", "-q", "-t", tag, str(ctx), timeout=900)
     shutil.rmtree(ctx, ignore_errors=True)
     return tag
