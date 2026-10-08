@@ -164,7 +164,8 @@ class GenericBroker(P.Broker):
                 "SSL_CERT_FILE": "/ca/ca.pem", "REQUESTS_CA_BUNDLE": "/ca/ca.pem",
                 "HOME": "/tmp", "NO_UPDATE_NOTIFIER": "1", "npm_config_update_notifier": "false"}
         base.update(env)
-        parts = ["docker", "run", "-i", "--rm", "--network", f"container:{self.name}",
+        parts = ["docker", "run", "-i", "--rm", "--name", self.new_server_name(),
+                 "--network", f"container:{self.name}",
                  "--read-only", "--tmpfs", "/tmp:rw,size=256m", "--cap-drop", "ALL",
                  "--security-opt", "no-new-privileges", "--memory", "768m", "--pids-limit", "256",
                  "-v", f"{self.ca / 'ca.pem'}:/ca/ca.pem:ro"]
@@ -258,6 +259,13 @@ def screen(broker: GenericBroker, c: dict, image: str) -> dict:
     record: dict = {"tools_tried": []}
     call_id = uuid.uuid4().hex[:10]
     broker.write_state({"mode": "record", "call_id": f"{call_id}/startup"})
+    try:
+        return _screen_session(broker, image, env, record, call_id)
+    finally:
+        broker.remove_server()
+
+
+def _screen_session(broker, image, env, record, call_id) -> dict:
     with LiveSession(broker.command_for(image, env)) as session:
         tools = session.list_tools()
         record["tool_count"] = len(tools)

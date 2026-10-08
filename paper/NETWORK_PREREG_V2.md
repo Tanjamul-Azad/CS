@@ -166,3 +166,13 @@ include mocks, so reviewers need no API keys.
 tags for scoped npm packages (`@scope/name`), which wrongly excluded them as
 install failures. The tag is now sanitized, and selection restarts from rank 0
 in a new result directory; the aborted run's log is kept unchanged.
+
+**2026-10-09.** 7. *Container cleanup, selection restarted again.* Closing an
+MCP session's stdin did not stop every server container, so containers from
+earlier sessions kept running (idle) in the broker's namespace. They sent no
+requests after their session (every attack request happens inside its own
+call), so the Postmark pilot and AgentBound decisions are unaffected, but the
+leak consumed memory during screening. Server containers are now named and
+removed after each session, and only `ca.pem` is mounted into them. The second
+selection run (stopped at rank 19, three qualifiers) is kept; selection
+restarts from rank 0 in a new result directory.

@@ -128,7 +128,8 @@ class FarSide:
         env = {"ALLOWED_EGRESS": ALLOWED, "NODE_EXTRA_CA_CERTS": "/ca/ca.pem",
                "POSTMARK_SERVER_TOKEN": P.REAL, "DEFAULT_SENDER_EMAIL": P.SENDER,
                "DEFAULT_MESSAGE_STREAM": "outbound"}
-        parts = ["docker", "run", "-i", "--rm", "--network", self.network,
+        self.last_server = f"{self.network}-srv-{uuid.uuid4().hex[:6]}"
+        parts = ["docker", "run", "-i", "--rm", "--name", self.last_server, "--network", self.network,
                  "--cap-add", "NET_ADMIN", "--memory", "512m", "--pids-limit", "256",
                  "-v", f"{self.ca.cert_path}:/ca/ca.pem:ro"]
         for key, value in env.items():
@@ -149,6 +150,7 @@ def run_call(far: FarSide, image: str, args: dict) -> dict:
     except Exception as error:
         trial["response"] = f"session error: {type(error).__name__}: {error}"
         trial["response_is_error"] = True
+    P.sh("docker", "rm", "-f", far.last_server, check=False)
     time.sleep(0.5)
     far.set_call("")
     trial["far_side"] = [r for r in far.lines() if r["call_id"].startswith(call_id)]

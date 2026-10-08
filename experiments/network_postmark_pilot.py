@@ -175,7 +175,21 @@ class Broker:
         return self
 
     def __exit__(self, *exc):
+        leftovers = sh("docker", "ps", "-aq", "--filter", f"name={self.name}-srv-", check=False)
+        for cid in leftovers.split():
+            sh("docker", "rm", "-f", cid, check=False)
         sh("docker", "rm", "-f", self.name, check=False)
+
+    def new_server_name(self) -> str:
+        """Server containers are named so they can be removed after each
+        session: closing stdin does not stop every server process."""
+        self.last_server = f"{self.name}-srv-{uuid.uuid4().hex[:6]}"
+        return self.last_server
+
+    def remove_server(self) -> None:
+        if getattr(self, "last_server", None):
+            sh("docker", "rm", "-f", self.last_server, check=False)
+            self.last_server = None
 
     def write_state(self, state: dict) -> None:
         tmp = self.control / "state.json.tmp"
@@ -193,9 +207,11 @@ class Broker:
                "NODE_USE_ENV_PROXY": "1", "NODE_EXTRA_CA_CERTS": "/ca/ca.pem",
                "POSTMARK_SERVER_TOKEN": token, "DEFAULT_SENDER_EMAIL": SENDER,
                "DEFAULT_MESSAGE_STREAM": "outbound"}
-        parts = ["docker", "run", "-i", "--rm", "--network", f"container:{self.name}",
+        parts = ["docker", "run", "-i", "--rm", "--name", self.new_server_name(),
+                 "--network", f"container:{self.name}",
                  "--read-only", "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
-                 "--memory", "512m", "--pids-limit", "256", "-v", f"{self.ca}:/ca:ro"]
+                 "--memory", "512m", "--pids-limit", "256",
+                 "-v", f"{self.ca / 'ca.pem'}:/ca/ca.pem:ro"]
         for key, value in env.items():
             parts += ["-e", f"{key}={value}"]
         return " ".join(parts + [image])
@@ -229,6 +245,7 @@ def run_call(broker: Broker, image: str, condition: str, templates: dict | None,
     except Exception as error:  # server failed to start or crashed
         result["response"] = f"session error: {type(error).__name__}: {error}"
         result["response_is_error"] = True
+    broker.remove_server()
     broker.write_state({"mode": "deny", "call_id": ""})
     time.sleep(0.3)
     result["decisions"] = [r for r in broker.lines("records.jsonl")
