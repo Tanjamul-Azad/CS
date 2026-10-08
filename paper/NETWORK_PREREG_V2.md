@@ -182,3 +182,18 @@ restarts from rank 0 in a new result directory.
 watchdog: a candidate whose session does not finish in time is recorded as not
 qualified. Run 3 resumes in the same directory from rank 21; ranks 0–20 are
 kept as logged (the rule and the order are unchanged).
+
+**2026-10-09.** 9. *Matched evaluation method.* `experiments/network_matched_eval.py`
+pins each selected server (exemplar plus perturbations; fields whose
+perturbation errors are held fixed), runs K honest test calls with unseen
+arguments behind the EffectSeal-N gate, and measures the attack side as a
+transformation of each captured honest request rather than by modifying any
+server. The eight transformations realize Table N-A1..N-A8 (add field, change
+value, append text, extra same-host request, extra other-host request,
+credential-header channel, duplicate send, silent no-op). Each defense is then
+asked whether it admits the variant: EffectSeal-N by its instantiated request
+template; the destination policy (what ToolHive, AgentBound, and a domain
+allow-list all decide on, as the Postmark matched pilot confirmed) by whether
+the request host is the approved one. This measures what each check admits
+without running per-server malicious code, so it is fully reproducible from the
+captured traffic and the inferred templates.
