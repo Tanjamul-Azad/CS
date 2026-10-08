@@ -1,0 +1,20 @@
+{
+  "development": [
+    "io.github.mysplitifi/splitifi-mcp",
+    "io.github.TeleAI-UAGI/telemem",
+    "io.github.codespar/mcp-circle",
+    "io.github.cogdepot/cogdepot",
+    "io.github.chemic/indiebob",
+    "dev.clusteragent/cluster-mcp"
+  ],
+  "held_out": [
+    "io.github.setluca/luca-mcp",
+    "tools.engram/engram",
+    "io.github.codespar/mcp-asaas",
+    "com.boostedchat/travel",
+    "io.opentweet/mcp",
+    "com.dustforge/demipass"
+  ],
+  "screened": 69,
+  "finished": "2026-10-08T17:42:41.609263+00:00"
+}

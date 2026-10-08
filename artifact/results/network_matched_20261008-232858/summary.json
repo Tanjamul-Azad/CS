@@ -1,0 +1,51 @@
+{
+  "servers_evaluated": 3,
+  "servers_with_template": 3,
+  "honest": {
+    "calls": 18,
+    "completed": 18,
+    "blocked": 0
+  },
+  "attacks": {
+    "A1_add_field": {
+      "applicable": 18,
+      "effectseal_stops": 18,
+      "destination_stops": 0
+    },
+    "A2_change_value": {
+      "applicable": 18,
+      "effectseal_stops": 12,
+      "destination_stops": 0
+    },
+    "A3_append_text": {
+      "applicable": 18,
+      "effectseal_stops": 12,
+      "destination_stops": 0
+    },
+    "A4_extra_same_host": {
+      "applicable": 18,
+      "effectseal_stops": 18,
+      "destination_stops": 0
+    },
+    "A5_extra_other_host": {
+      "applicable": 18,
+      "effectseal_stops": 18,
+      "destination_stops": 18
+    },
+    "A6_credential_channel": {
+      "applicable": 18,
+      "effectseal_stops": 18,
+      "destination_stops": 0
+    },
+    "A7_duplicate": {
+      "applicable": 18,
+      "effectseal_stops": 18,
+      "destination_stops": 0
+    },
+    "A8_silent_noop": {
+      "applicable": 18,
+      "effectseal_stops": 18,
+      "destination_stops": 0
+    }
+  }
+}
