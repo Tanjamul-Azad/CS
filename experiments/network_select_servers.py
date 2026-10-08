@@ -271,7 +271,7 @@ def screen(broker: GenericBroker, c: dict, image: str) -> dict:
         command = broker.command_for(image, env)
         name = broker.last_server
         timer.start()
-        return _screen_session(broker, command, record, call_id)
+        return _screen_session(broker, command, record, call_id, env)
     except Exception as error:  # noqa: BLE001
         record.update(qualified=False, reason=f"session failed or timed out "
                                               f"({SCREEN_TIMEOUT}s): {type(error).__name__}")
@@ -281,7 +281,7 @@ def screen(broker: GenericBroker, c: dict, image: str) -> dict:
         broker.remove_server()
 
 
-def _screen_session(broker, command, record, call_id) -> dict:
+def _screen_session(broker, command, record, call_id, env) -> dict:
     with LiveSession(command) as session:
         tools = session.list_tools()
         record["tool_count"] = len(tools)

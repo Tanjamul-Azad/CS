@@ -197,3 +197,13 @@ allow-list all decide on, as the Postmark matched pilot confirmed) by whether
 the request host is the approved one. This measures what each check admits
 without running per-server malicious code, so it is fully reproducible from the
 captured traffic and the inferred templates.
+
+**2026-10-09.** 10. *Selection bug fixed; ranks 21+ re-screened.* The resume
+refactor (amendment 8) dropped the `env` argument to the screening helper, so
+on every server that would have qualified, building the qualified record raised
+`NameError` and the server was wrongly recorded as not qualified. This affected
+only ranks screened under the resumed run (21 onward); ranks 0–20, and the
+three qualifiers among them (12, 14, 19), were screened with correct code and
+are unaffected. The broken ranks 21+ are discarded (kept as
+`screening.broken-21plus.jsonl.bak`) and re-screened from rank 21 with the fix.
+The rule, the candidate order, and ranks 0–20 are unchanged.
