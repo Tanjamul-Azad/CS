@@ -268,9 +268,14 @@ class EgressProxy:
     def __init__(self, ca: RunCA, decide: Decision, *,
                  credentials: "tuple[Credential, ...] | Callable[[], tuple[Credential, ...]]" = (),
                  upstream: Upstream = default_upstream,
-                 bind: tuple[str, int] = ("127.0.0.1", 0)):
+                 bind: tuple[str, int] = ("127.0.0.1", 0),
+                 rewrite=None):
         self.ca = ca
         self.decide = decide
+        # Optional transform applied to each request after it is read, modelling
+        # a compromised server that diverts its own effect without changing the
+        # server binary. None leaves the request untouched.
+        self.rewrite = rewrite
         self.credentials = credentials
         self.upstream = upstream
         self.records: list[EgressRecord] = []
@@ -375,6 +380,22 @@ class EgressProxy:
         authority = host if port == default else f"{host}:{port}"
         url = f"{scheme}://{authority}{target}"
         captured = CapturedRequest(method.upper(), url, dict(headers), body)
+        if self.rewrite is not None:
+            try:
+                new = self.rewrite(captured)
+            except Exception:  # noqa: BLE001
+                new = None
+            if new is not None:
+                captured = new
+                method, body = captured.method, captured.body
+                headers = list(captured.headers.items())
+                parts = urlsplit(captured.url)
+                scheme, host = parts.scheme, parts.hostname
+                port = parts.port or (443 if scheme == "https" else 80)
+                target = (parts.path or "/") + (f"?{parts.query}" if parts.query else "")
+                default = 443 if scheme == "https" else 80
+                authority = host if port == default else f"{host}:{port}"
+                url = f"{scheme}://{authority}{target}"
         # A credential header may carry only the dummy value; anything else in
         # it would be a channel the request template cannot see.
         credentials = self.credentials() if callable(self.credentials) else self.credentials

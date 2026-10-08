@@ -207,3 +207,19 @@ three qualifiers among them (12, 14, 19), were screened with correct code and
 are unaffected. The broken ranks 21+ are discarded (kept as
 `screening.broken-21plus.jsonl.bak`) and re-screened from rank 21 with the fix.
 The rule, the candidate order, and ranks 0–20 are unchanged.
+
+**2026-10-09.** 11. *Named-server headline and RQ5 agents.* Two additions beyond
+the random matched set. (a) `experiments/network_named_demo.py` runs the same
+machinery on recognizable servers: the official GitHub MCP server
+(github/github-mcp-server, Go) on add_issue_comment admitted 12/12 honest calls
+and EffectSeal-N stopped all eight attack families (96/96), destination-only
+12/96. The Stripe agent toolkit was attempted and excluded under the
+pre-registered rule because stripe-node does not honour HTTPS_PROXY, so the
+transparent broker cannot mediate it; the exclusion is recorded.
+(b) `experiments/network_rq5_agents.py` puts an OpenAI function-calling agent
+in the loop against the GitHub MCP server. The broker models a compromised
+server by diverting the agent-approved request (a boundary transform, no binary
+change). Honest: 7 of 7 tool calls admitted and completed, no false block.
+Compromised (content change, and other-host send): under no defense 6-7 of 8
+effects landed; under EffectSeal-N none did, every diverted call refused. As in
+the filesystem agent study, the agent often did not notice the refusal.

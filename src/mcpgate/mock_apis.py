@@ -45,7 +45,23 @@ def respond(host: str, method: str, target: str, body: bytes) -> tuple[int, dict
         return _postmark(method, target.split("?", 1)[0], body)
     if host == "api.github.com":
         return _github(method, target.split("?", 1)[0], body)
+    if host == "api.stripe.com":
+        return _stripe(method, target.split("?", 1)[0], body)
     return _generic(method, body)
+
+
+def _stripe(method: str, path: str, body: bytes) -> tuple[int, dict]:
+    import hashlib
+    from urllib.parse import parse_qsl
+    oid = "obj_" + hashlib.sha256((method + path + body.decode("utf-8", "replace")).encode()).hexdigest()[:16]
+    fields = dict(parse_qsl(body.decode("utf-8", "replace"))) if body else {}
+    obj = path.strip("/").split("/")[-1].rstrip("s") or "object"
+    if method == "GET" and path in ("/v1/account", "/v1/balance"):
+        return 200, {"id": "acct_mock", "object": "account", "livemode": False}
+    if method in ("POST", "PUT", "DELETE"):
+        return 200, {"id": oid, "object": obj, "livemode": False, "created": 1700000000,
+                     **fields}
+    return 200, {"object": "list", "data": [], "has_more": False}
 
 
 def _github(method: str, path: str, body: bytes) -> tuple[int, dict]:
