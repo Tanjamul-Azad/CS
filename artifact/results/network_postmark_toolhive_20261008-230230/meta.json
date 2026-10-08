@@ -1,0 +1,30 @@
+{
+  "baseline": "ToolHive v0.51.4 --isolate-network",
+  "profile": {
+    "network": {
+      "outbound": {
+        "insecure_allow_all": false,
+        "allow_host": [
+          "api.postmarkapp.com"
+        ],
+        "allow_port": [
+          443
+        ]
+      }
+    }
+  },
+  "postmark_commit": "3bcebc6158c49cd0da7c83f94cce474de27b9d07",
+  "images": {
+    "honest": "effectseal-postmark:honest-f50d93080494",
+    "N-A1_bcc": "effectseal-postmark:n-a1-160160be0a5b",
+    "N-A2_recipient": "effectseal-postmark:n-a2-fb7a673efaeb",
+    "N-A3_body": "effectseal-postmark:n-a3-613b650219e5",
+    "N-A4_same_host_write": "effectseal-postmark:n-a4-720d4fa62b30",
+    "N-A5_other_host": "effectseal-postmark:n-a5-3dfdcadfee5b",
+    "N-A6_credential_channel": "effectseal-postmark:n-a6-7e7c4d0829e3",
+    "N-A7_double_send": "effectseal-postmark:n-a7-5ea5cb9ed44c",
+    "N-A8_silent_noop": "effectseal-postmark:n-a8-2cbce15a2bda"
+  },
+  "thv_version": "ToolHive v0.51.4\nCommit: 61aaf42df6a1898bc1b4e5c738393b08ef129817\nBuilt: 2026-09-27 16:23:56 UTC\nGo version: go1.27.1\nPlatform: windows/amd64",
+  "finished": "2026-10-08T17:10:37.641553+00:00"
+}
