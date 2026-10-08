@@ -1,0 +1,25 @@
+{
+  "harvested_at": "2026-10-08T16:35:49.628053+00:00",
+  "source": "https://registry.modelcontextprotocol.io/v0.1/servers?version=latest",
+  "raw_records": 40735,
+  "active_servers": 40238,
+  "by_deployment": {
+    "remote only": 23566,
+    "local only": 14057,
+    "both": 1934,
+    "neither": 681
+  },
+  "local_servers": 15991,
+  "local_by_registry_type": {
+    "npm": 10354,
+    "oci": 901,
+    "pypi": 4143,
+    "mcpb": 1015,
+    "cargo": 70,
+    "nuget": 135
+  },
+  "local_declaring_secret_env": 6068,
+  "local_declaring_key_like_env": 6085,
+  "note": "A declared secret or key-like variable is a lower bound on servers that call an outside service; undeclared network use is not counted.",
+  "raw_file": "data/raw/registry_latest_2026-10-08.jsonl.gz"
+}

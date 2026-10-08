@@ -62,3 +62,6 @@ paper/submission/
 paper/latex/
 paper/*submission*.pdf
 paper/submission-source-backup*
+
+# Upstream sources cloned for experiments (pinned by commit in the run records)
+third_party/

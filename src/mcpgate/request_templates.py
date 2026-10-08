@@ -236,3 +236,14 @@ def infer_request_template(tool: str, observations: Sequence[RequestObservation]
     return RequestTemplate(tool=tool, rules=tuple(rules), fixed=dict(fixed or {}),
                            credential_headers=frozenset(credential_headers),
                            training_runs=len(observations))
+
+
+def request_template_from_json(data: Mapping[str, Any]) -> RequestTemplate:
+    """Inverse of ``RequestTemplate.to_json``."""
+    return RequestTemplate(
+        tool=data["tool"],
+        rules=tuple(RequestRule(index=r["index"], tokens=tuple(tuple(t) for t in r["tokens"]))
+                    for r in data["rules"]),
+        fixed=dict(data.get("fixed", {})),
+        credential_headers=frozenset(data.get("credential_headers", ())),
+        training_runs=int(data.get("training_runs", 0)))

@@ -55,9 +55,17 @@ class RunCA:
     (``NODE_EXTRA_CA_CERTS``, ``SSL_CERT_FILE``, ``REQUESTS_CA_BUNDLE``); its key
     never leaves the trusted side."""
 
-    def __init__(self, directory: Path | None = None):
+    def __init__(self, directory: Path | None = None, *, _key=None, _cert=None):
         self.dir = Path(directory or tempfile.mkdtemp(prefix="effectseal-ca-"))
         self.dir.mkdir(parents=True, exist_ok=True)
+        self.private = self.dir / "private"
+        self.private.mkdir(exist_ok=True)
+        self._contexts: dict[str, ssl.SSLContext] = {}
+        self._lock = threading.Lock()
+        self.cert_path = self.dir / "ca.pem"
+        if _key is not None:
+            self._key, self.cert = _key, _cert
+            return
         self._key = ec.generate_private_key(ec.SECP256R1())
         name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "EffectSeal run CA")])
         now = _dt.datetime.now(_dt.timezone.utc)
@@ -75,10 +83,27 @@ class RunCA:
             .add_extension(x509.SubjectKeyIdentifier.from_public_key(self._key.public_key()),
                            critical=False)
             .sign(self._key, hashes.SHA256()))
-        self.cert_path = self.dir / "ca.pem"
         self.cert_path.write_bytes(self.cert.public_bytes(serialization.Encoding.PEM))
-        self._contexts: dict[str, ssl.SSLContext] = {}
-        self._lock = threading.Lock()
+
+    def save_key(self) -> None:
+        """Persist the CA key in ``private/`` so trusted helper processes
+        (mock far-side servers) can share this CA. Never mount ``private/``
+        into a server container; mount only ``ca.pem``."""
+        (self.private / "ca.key").write_bytes(self._key.private_bytes(
+            serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8,
+            serialization.NoEncryption()))
+
+    @classmethod
+    def load_or_create(cls, directory: Path) -> "RunCA":
+        directory = Path(directory)
+        key_file = directory / "private" / "ca.key"
+        if key_file.exists() and (directory / "ca.pem").exists():
+            key = serialization.load_pem_private_key(key_file.read_bytes(), password=None)
+            cert = x509.load_pem_x509_certificate((directory / "ca.pem").read_bytes())
+            return cls(directory, _key=key, _cert=cert)
+        ca = cls(directory)
+        ca.save_key()
+        return ca
 
     def server_context(self, host: str) -> ssl.SSLContext:
         with self._lock:
@@ -108,8 +133,8 @@ class RunCA:
                                critical=False)
                 .sign(self._key, hashes.SHA256()))
             safe = host.replace(":", "_")
-            cert_file = self.dir / f"{safe}.pem"
-            key_file = self.dir / f"{safe}.key"
+            cert_file = self.private / f"{safe}.pem"
+            key_file = self.private / f"{safe}.key"
             cert_file.write_bytes(cert.public_bytes(serialization.Encoding.PEM))
             key_file.write_bytes(key.private_bytes(
                 serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8,
@@ -241,7 +266,7 @@ class EgressProxy:
     """Threaded forward proxy. Use as a context manager; ``url`` is the proxy URL."""
 
     def __init__(self, ca: RunCA, decide: Decision, *,
-                 credentials: tuple[Credential, ...] = (),
+                 credentials: "tuple[Credential, ...] | Callable[[], tuple[Credential, ...]]" = (),
                  upstream: Upstream = default_upstream,
                  bind: tuple[str, int] = ("127.0.0.1", 0)):
         self.ca = ca
@@ -352,8 +377,9 @@ class EgressProxy:
         captured = CapturedRequest(method.upper(), url, dict(headers), body)
         # A credential header may carry only the dummy value; anything else in
         # it would be a channel the request template cannot see.
+        credentials = self.credentials() if callable(self.credentials) else self.credentials
         bad_credential = next(
-            (c.header for c in self.credentials if c.host == host
+            (c.header for c in credentials if c.host == host
              for k, v in headers if k.lower() == c.header.lower() and v != c.dummy), None)
         if bad_credential is not None:
             admitted, reason = False, f"credential header {bad_credential!r} altered"
@@ -370,7 +396,7 @@ class EgressProxy:
         out_headers = {k: v for k, v in headers
                        if k.lower() not in ("proxy-connection", "proxy-authorization",
                                             "connection", "keep-alive")}
-        for cred in self.credentials:
+        for cred in credentials:
             if cred.host == host:
                 for name in list(out_headers):
                     if name.lower() == cred.header.lower() and out_headers[name] == cred.dummy:

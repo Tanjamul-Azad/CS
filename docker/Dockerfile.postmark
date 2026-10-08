@@ -1,0 +1,11 @@
+# Official Postmark MCP server (ActiveCampaign/postmark-mcp), unmodified or with
+# one attack diff applied by the harness before the build. Node 24 so that
+# NODE_USE_ENV_PROXY=1 makes native fetch use HTTPS_PROXY.
+FROM node:24-slim
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
+COPY index.js ./
+COPY lib ./lib
+USER node
+ENTRYPOINT ["node", "/app/index.js"]

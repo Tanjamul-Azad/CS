@@ -1,0 +1,7 @@
+# Trusted egress broker for network experiments: Python + cryptography only.
+# The repo's src/ is mounted read-only at run time; nothing else is installed.
+FROM python:3.12-slim
+RUN pip install --no-cache-dir cryptography==46.0.3
+ENV PYTHONPATH=/src PYTHONUNBUFFERED=1
+USER 65534:65534
+ENTRYPOINT ["python", "-m", "mcpgate.egress_service"]

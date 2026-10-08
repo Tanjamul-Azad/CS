@@ -19,6 +19,7 @@ calls come from pin-time effect templates.
 | `gateway.py`, `executors.py` | trusted-executor gateway (earlier design) |
 | `network_broker.py` | outbound HTTP broker core (not in the paper's claims) |
 | `request_templates.py` | pin-time templates for outbound HTTP requests: canonical request view, inference, per-call contract |
+| `egress_service.py`, `mock_apis.py`, `mock_tls_server.py` | broker container entrypoint; recording far-side mocks (the network oracle) |
 | `egress_proxy.py` | trusted egress proxy: per-run CA, TLS termination, credential injection, pre-send `CallGate` |
 
 ## Supporting code

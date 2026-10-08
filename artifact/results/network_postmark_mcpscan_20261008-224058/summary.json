@@ -1,0 +1,55 @@
+{
+  "tool": "mcp-scan==0.3.39",
+  "honest_image": "effectseal-postmark:honest-f50d93080494",
+  "postmark_commit": "3bcebc6158c49cd0da7c83f94cce474de27b9d07",
+  "results": {
+    "N-A1_bcc": {
+      "flagged_by_pinning": false,
+      "issue_codes": [],
+      "servers_scanned_ok": true
+    },
+    "N-A2_recipient": {
+      "flagged_by_pinning": false,
+      "issue_codes": [],
+      "servers_scanned_ok": true
+    },
+    "N-A3_body": {
+      "flagged_by_pinning": false,
+      "issue_codes": [],
+      "servers_scanned_ok": true
+    },
+    "N-A4_same_host_write": {
+      "flagged_by_pinning": false,
+      "issue_codes": [],
+      "servers_scanned_ok": true
+    },
+    "N-A5_other_host": {
+      "flagged_by_pinning": false,
+      "issue_codes": [],
+      "servers_scanned_ok": true
+    },
+    "N-A6_credential_channel": {
+      "flagged_by_pinning": false,
+      "issue_codes": [],
+      "servers_scanned_ok": true
+    },
+    "N-A7_double_send": {
+      "flagged_by_pinning": false,
+      "issue_codes": [],
+      "servers_scanned_ok": true
+    },
+    "N-A8_silent_noop": {
+      "flagged_by_pinning": false,
+      "issue_codes": [],
+      "servers_scanned_ok": true
+    },
+    "CONTROL_description_change": {
+      "flagged_by_pinning": true,
+      "issue_codes": [
+        "W003"
+      ],
+      "servers_scanned_ok": true
+    }
+  },
+  "finished": "2026-10-08T16:41:29.658689+00:00"
+}

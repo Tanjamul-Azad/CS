@@ -123,4 +123,22 @@ include mocks, so reviewers need no API keys.
 
 ## Amendments
 
-(none yet)
+**2026-10-08 (after the Postmark pilot, before any other server).**
+
+1. *Postmark pilot.* `experiments/network_postmark_pilot.py` ran the named
+   development server (official ActiveCampaign/postmark-mcp, v2.1.1). In that
+   run the server container mounted the whole CA directory, including leaf
+   keys. Leaf keys now live in `private/` and later runs mount only `ca.pem`.
+   This does not change any decision the broker made.
+2. *mcp-scan version.* Current releases (snyk-agent-scan 0.6.x) refuse to run
+   without a `SNYK_TOKEN`. We use mcp-scan 0.3.39, the last release line whose
+   tool pinning runs locally. A positive control (description change) confirms
+   that its pinning works in our setup.
+3. *AgentBound logging.* AgentBound's entrypoint prints startup lines on
+   stdout, which MCP uses for protocol messages. The harness sends those
+   `echo` lines to stderr; the iptables enforcement is unchanged. The diff is
+   saved in each result's `meta.json`.
+4. *Baselines in the pilot.* The pilot measured no defense, a domain
+   allow-list in our broker, AgentBound (real artifact), mcp-scan, and
+   EffectSeal-N. ToolHive, sandbox-runtime, Docker MCP Gateway, Progent, and
+   the LLM judges are still to run.
