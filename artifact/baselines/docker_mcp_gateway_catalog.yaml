@@ -1,0 +1,19 @@
+registry:
+  es-postmark:
+    description: "EffectSeal Postmark test server"
+    title: "ES Postmark"
+    type: "server"
+    image: "effectseal-postmark:honest-f50d93080494"
+    allowHosts:
+      - api.postmarkapp.com:443
+    env:
+      - name: DEFAULT_SENDER_EMAIL
+        value: reports@ourco.test
+      - name: DEFAULT_MESSAGE_STREAM
+        value: outbound
+      - name: NODE_USE_ENV_PROXY
+        value: "1"
+    secrets:
+      - name: es-postmark.token
+        env: POSTMARK_SERVER_TOKEN
+        example: POSTMARK_API_TEST
