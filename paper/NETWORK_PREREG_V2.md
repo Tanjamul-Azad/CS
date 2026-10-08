@@ -142,3 +142,21 @@ include mocks, so reviewers need no API keys.
    allow-list in our broker, AgentBound (real artifact), mcp-scan, and
    EffectSeal-N. ToolHive, sandbox-runtime, Docker MCP Gateway, Progent, and
    the LLM judges are still to run.
+
+**2026-10-09 (before server selection runs).**
+
+5. *Selection procedure, made executable.* `experiments/network_select_servers.py`
+   implements the selection rule over the 2026-10-08 harvest
+   (`data/raw/registry_latest_2026-10-08.jsonl.gz`, hash in
+   `artifact/results/m1_local_remote_2026-10-08.raw.sha256`). Rule 1 is read
+   as: npm or PyPI package, stdio transport, at least one declared secret
+   environment variable. Servers that require positional package arguments are
+   excluded. Rule 3 (test mode or mockable API) is met by a generic recording
+   mock that echoes written objects. Rule 6 is checked by calling up to three
+   write-like tools (by name; not read-only, not destructive, no delete) with
+   arguments generated from the input schema, as an agent would fill them.
+   The README-based exemplar in "Workloads" is replaced by these
+   schema-generated arguments, because 12 servers cannot be hand-curated
+   without seeing their behavior first. A server qualifies when one such call
+   returns without error and sends at least one POST/PUT/PATCH to exactly one
+   host. Screening stops at 12 qualifiers or 200 candidates.

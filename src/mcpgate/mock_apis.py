@@ -43,7 +43,24 @@ class FarSideRecorder:
 def respond(host: str, method: str, target: str, body: bytes) -> tuple[int, dict]:
     if host == "api.postmarkapp.com":
         return _postmark(method, target.split("?", 1)[0], body)
-    return 200, {"ok": True}
+    return _generic(method, body)
+
+
+def _generic(method: str, body: bytes) -> tuple[int, dict]:
+    """Answer an unknown vendor API plausibly: echo a written object back with
+    an id, list endpoints return empty collections. Servers that need a richer
+    answer fail their honest workflow and are excluded by the selection rule."""
+    if method in ("POST", "PUT", "PATCH"):
+        try:
+            sent = json.loads(body or b"{}")
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            sent = {}
+        echo = sent if isinstance(sent, dict) else {"items": sent}
+        return 200, {**echo, "id": str(uuid.uuid4()), "ok": True, "success": True,
+                     "status": "ok"}
+    if method == "DELETE":
+        return 200, {"ok": True, "success": True, "deleted": True}
+    return 200, {"ok": True, "data": [], "items": [], "results": []}
 
 
 def _postmark(method: str, path: str, body: bytes) -> tuple[int, dict]:
