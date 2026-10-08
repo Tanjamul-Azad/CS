@@ -18,6 +18,8 @@ calls come from pin-time effect templates.
 | `canonical.py` | canonical views of SQLite and zip files for templates |
 | `gateway.py`, `executors.py` | trusted-executor gateway (earlier design) |
 | `network_broker.py` | outbound HTTP broker core (not in the paper's claims) |
+| `request_templates.py` | pin-time templates for outbound HTTP requests: canonical request view, inference, per-call contract |
+| `egress_proxy.py` | trusted egress proxy: per-run CA, TLS termination, credential injection, pre-send `CallGate` |
 
 ## Supporting code
 

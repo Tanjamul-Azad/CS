@@ -4,6 +4,7 @@
 
 | Doc | Content |
 |---|---|
+| `paper/ACCEPTANCE_PLAN_2027.md` | current plan (2026-10-08): network admission, real incidents, strong baselines, held-out batch 3, timeline to 2027-01-26 |
 | `docs/44-strengthening-plan.md` | the plan of workstreams A–K toward USENIX 2027 |
 | `docs/45-effect-templates.md` | A: pin-time templates, early development runs (numbers superseded by 46) |
 | `docs/46-confinement-adaptive-formal.md` | A run 4 (current dev numbers), C confinement, D adaptive attacks, E TLA+/TLC |
