@@ -187,6 +187,7 @@ def destination_stops(approved_host: str, variant: list[CapturedRequest]) -> boo
 def evaluate(broker: SEL.GenericBroker, entry: dict, calls: int, rng: random.Random) -> dict:
     image, tool, exemplar = entry["image"], entry["tool"], entry["args"]
     env = {e: "DUMMYKEY" + e.lower() for e in entry.get("env_names", [])}
+    env.update(entry.get("extra_env", {}))
     result = {"name": entry["name"], "image": image, "tool": tool}
 
     # Pin: exemplar + perturbations; hold fixed any field whose change errors.

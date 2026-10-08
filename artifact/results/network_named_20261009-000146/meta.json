@@ -1,0 +1,12 @@
+{
+  "servers": {
+    "github": {
+      "name": "github/github-mcp-server",
+      "image": "ghcr.io/github/github-mcp-server:latest",
+      "tool": "add_issue_comment"
+    }
+  },
+  "seed": 20261008,
+  "calls": 12,
+  "finished": "2026-10-08T18:02:06.290285+00:00"
+}
