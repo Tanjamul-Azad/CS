@@ -42,6 +42,7 @@ SEED = 20261008
 STAMP = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
 OUT = ROOT / "artifact" / "results" / f"network_selection_{STAMP}"
 WANTED = 12
+SCREEN_TIMEOUT = 120
 OPEN_LICENSES = ("MIT", "APACHE", "BSD", "ISC", "MPL", "GPL", "LGPL", "AGPL", "UNLICENSE",
                  "0BSD", "CC0", "ARTISTIC", "EPL", "ZLIB", "PYTHON SOFTWARE")
 WRITE_VERBS = re.compile(r"(create|send|post|add|update|write|set|insert|publish|upload|"
@@ -259,14 +260,29 @@ def screen(broker: GenericBroker, c: dict, image: str) -> dict:
     record: dict = {"tools_tried": []}
     call_id = uuid.uuid4().hex[:10]
     broker.write_state({"mode": "record", "call_id": f"{call_id}/startup"})
+    # A hung tool call must not stall selection: after the deadline the
+    # watchdog removes the server container, the session fails, and the
+    # candidate is recorded as not qualified.
+    import threading
+    name = None
+    timer = threading.Timer(SCREEN_TIMEOUT, lambda: P.sh("docker", "rm", "-f", name, check=False)
+                            if name else None)
     try:
-        return _screen_session(broker, image, env, record, call_id)
+        command = broker.command_for(image, env)
+        name = broker.last_server
+        timer.start()
+        return _screen_session(broker, command, record, call_id)
+    except Exception as error:  # noqa: BLE001
+        record.update(qualified=False, reason=f"session failed or timed out "
+                                              f"({SCREEN_TIMEOUT}s): {type(error).__name__}")
+        return record
     finally:
+        timer.cancel()
         broker.remove_server()
 
 
-def _screen_session(broker, image, env, record, call_id) -> dict:
-    with LiveSession(broker.command_for(image, env)) as session:
+def _screen_session(broker, command, record, call_id) -> dict:
+    with LiveSession(command) as session:
         tools = session.list_tools()
         record["tool_count"] = len(tools)
         for tool in write_tools(tools):
@@ -300,18 +316,27 @@ def _screen_session(broker, image, env, record, call_id) -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--max-candidates", type=int, default=200)
+    parser.add_argument("--resume", help="existing selection directory to continue")
     a = parser.parse_args()
-    OUT.mkdir(parents=True)
+    out = Path(a.resume) if a.resume else OUT
+    out.mkdir(parents=True, exist_ok=bool(a.resume))
+    done = {}
+    if a.resume and (out / "screening.jsonl").exists():
+        for line in (out / "screening.jsonl").read_text(encoding="utf-8").splitlines():
+            entry = json.loads(line)
+            done[entry["rank"]] = entry
     cands = candidates()
-    (OUT / "candidates.json").write_text(json.dumps(
+    (out / "candidates.json").write_text(json.dumps(
         {"seed": SEED, "raw": str(RAW.relative_to(ROOT)), "count": len(cands),
          "order": [c["name"] for c in cands]}, indent=1), encoding="utf-8")
     print(f"{len(cands)} candidates", flush=True)
-    log = (OUT / "screening.jsonl").open("a", encoding="utf-8")
-    qualified: list[dict] = []
+    log = (out / "screening.jsonl").open("a", encoding="utf-8")
+    qualified: list[dict] = [e for _, e in sorted(done.items()) if e.get("qualified")]
     work = Path(tempfile.mkdtemp(prefix="es-sel-"))
     with GenericBroker(work) as broker:
         for index, c in enumerate(cands[:a.max_candidates]):
+            if index in done:
+                continue
             entry = {"rank": index, "name": c["name"], "registry": c["registry"],
                      "identifier": c["identifier"], "version": c["version"]}
             if any(arg.get("isRequired") for arg in c["arguments"]):
@@ -341,7 +366,7 @@ def main() -> None:
     sets = {"development": [q["name"] for q in qualified[:6]],
             "held_out": [q["name"] for q in qualified[6:12]],
             "screened": index + 1, "finished": dt.datetime.now(dt.timezone.utc).isoformat()}
-    (OUT / "sets.json").write_text(json.dumps(sets, indent=2), encoding="utf-8")
+    (out / "sets.json").write_text(json.dumps(sets, indent=2), encoding="utf-8")
     print(json.dumps(sets, indent=2))
 
 

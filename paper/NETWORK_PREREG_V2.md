@@ -176,3 +176,9 @@ leak consumed memory during screening. Server containers are now named and
 removed after each session, and only `ca.pem` is mounted into them. The second
 selection run (stopped at rank 19, three qualifiers) is kept; selection
 restarts from rank 0 in a new result directory.
+
+**2026-10-09.** 8. *Per-candidate timeout, resumed.* Selection run 3 hung at rank
+21 on a tool call that never returned. Screening now has a 120-second
+watchdog: a candidate whose session does not finish in time is recorded as not
+qualified. Run 3 resumes in the same directory from rank 21; ranks 0–20 are
+kept as logged (the rule and the order are unchanged).
