@@ -18,7 +18,7 @@ python --version > "$OUT/python.txt" 2>&1
 uname -a >> "$OUT/python.txt"
 
 echo "installing hash-locked dependencies"
-python -m pip install -q --no-cache-dir --require-hashes \
+python -m pip install -q --no-cache-dir --timeout 120 --retries 10 --require-hashes \
   -r artifact/requirements-full-linux.txt > "$OUT/pip-install.log" 2>&1 \
   || { echo "FAIL pip-install"; exit 1; }
 python -m pip freeze > "$OUT/pip-freeze.txt"
