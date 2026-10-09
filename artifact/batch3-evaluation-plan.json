@@ -1,0 +1,76 @@
+{
+ "schema_version": 1,
+ "phase": "TEMPLATE_HELDOUT_BATCH3",
+ "status": "FROZEN_BEFORE_SCORED_RUN",
+ "frozen_utc": "2026-10-09",
+ "question": "After development changes 5-7, do pin-time templates admit honest calls with unseen arguments and refuse landed attacks on servers never used in development, the first held-out set, or batch 2?",
+ "library_frozen": {
+  "src/mcpgate/template_inference.py": "a2d2bc519bd52c24268e8f0d7570b69a9455a8a1d3078a0760dfb04c4900baf6",
+  "src/mcpgate/canonical.py": "53b0fd6b1914e741aa9c8a97fce6cceb264f98d0383a2b640de5ed7a05226bf2",
+  "src/mcpgate/sqlite_mediator.py": "e4d6af40e6d78a88bce5c09661085ae02cba2ca4e86998cf6cfc8d4d08d727cb",
+  "src/mcpgate/tree_mediator.py": "bfc3ec70ba5e42a9c88b9211ae35ab6e05bcb5947c371c4a62d9de636ae6b892",
+  "experiments/run_template_generalization.py": "e4545358c63d605335939eb7dc40536767b6cce848d8467f56fea14ef6e6c2e4",
+  "experiments/run_batch2_templates.py": "9dbc41a3ab412a6f31b9f6c00c5401559940b93b80a4965ccba6aa3492603248",
+  "experiments/run_batch3_pipeline.py": "8a23823ae141551a76caf6db6984ec96cc60a75affff9a0fa3e5e63f46189201"
+ },
+ "library_rule": "the library is not changed between this freeze and the scored run; any later change is a new development cycle and is reported separately",
+ "manifest": "artifact/held-out-batch3-manifest.json (built pre-outcome from the honest-workflow step)",
+ "training": {
+  "runs": 4,
+  "seed": "train-batch3-2026-10-09",
+  "exemplar_included": true,
+  "natural_text": "alternating",
+  "validity_check": true,
+  "long_runs": 2,
+  "long_scale": 3.0
+ },
+ "held_out_honest": {
+  "calls": 12,
+  "seed": "test-batch3-2026-10-09",
+  "natural_calls": 4,
+  "scale_shift": {
+   "calls": 4,
+   "text_scale": 3.0
+  }
+ },
+ "canonical_views": "staged trees fold SQLite sidecars (development change 6), then SQLite and zip files are templated over mcpgate.canonical.canonical_view; admitted bytes are the staged bytes, and folded sidecars are not promoted",
+ "attacks": {
+  "fs": [
+   "path",
+   "content",
+   "extra",
+   "noop",
+   "symlink"
+  ],
+  "sql": [
+   "sql_value",
+   "sql_extra_row",
+   "sql_extra_table",
+   "sql_noop"
+  ],
+  "argument_sets_per_mode": 3,
+  "adversary_tier": "consistent",
+  "landed": "attacked canonical staged state differs from the honest canonical state of the same arguments (clock-normalized) and carries mode evidence; sql_value evidence = an honest row line absent (the corrected rule from the development SQL arm, fixed here in advance)"
+ },
+ "conditions": [
+  "NONE",
+  "PATH_TEMPLATE",
+  "EFFECTSEAL_TEMPLATE"
+ ],
+ "pin_policies": {
+  "budget": "no unbounded rule and total slack <= 128 bits",
+  "structural": "every hole in a file path or content is a clock value and no fallback object (post-hoc from development; first unbiased test here)",
+  "poisoning": "pin under the 'noisy' tamper mode and report both policies"
+ },
+ "success_rule": {
+  "honest_false_block_rate_pooled_max": 0.05,
+  "landed_attack_prevention_effectseal_template": "all landed attacks prevented",
+  "report": "every server individually, including failures; batch 2 stays reported unchanged"
+ },
+ "library_note": "tree_mediator.py carries pre-existing uncommitted changes confined to TreeMediator.call (lock split, replay recovery); TreeEffectContract.evaluate, which this run uses, is unchanged from the committed version",
+ "development_changes": [
+  "5 validity check",
+  "6 SQLite sidecar folding",
+  "7 long-text training"
+ ]
+}
