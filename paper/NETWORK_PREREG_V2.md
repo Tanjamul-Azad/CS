@@ -223,3 +223,11 @@ change). Honest: 7 of 7 tool calls admitted and completed, no false block.
 Compromised (content change, and other-host send): under no defense 6-7 of 8
 effects landed; under EffectSeal-N none did, every diverted call refused. As in
 the filesystem agent study, the agent often did not notice the refusal.
+
+**2026-10-09.** 12. *Non-OpenAI agent replication.* Before any such episode:
+`experiments/network_rq5_agents.py` gains `--base-url` and `--api-key`, and the
+same eight GitHub comment tasks, the same 91-tool server (all toolsets), the same
+two diversions, and the same pin are run with Meta Llama 3.1 8B served locally by
+Ollama (tag `llama3.1:8b`, context 32768 so the full tool list fits, temperature
+0). Results are reported whatever they are, including tasks where the model picks
+a different tool or none. The gpt-4o-mini run is kept as it is.
