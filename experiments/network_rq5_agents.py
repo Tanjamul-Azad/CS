@@ -106,9 +106,13 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--tasks", type=int, default=8)
     parser.add_argument("--model", default="gpt-4o-mini")
+    parser.add_argument("--base-url", default="https://api.openai.com/v1",
+                        help="any OpenAI-compatible endpoint, e.g. a local Ollama server")
+    parser.add_argument("--api-key", default=None,
+                        help="key for --base-url; defaults to OPENAI_API_KEY")
     a = parser.parse_args()
     import mcpmut.agent as agent_mod
-    if not agent_mod.load_key("OPENAI_API_KEY"):
+    if a.api_key is None and not agent_mod.load_key("OPENAI_API_KEY"):
         raise SystemExit("OPENAI_API_KEY not set")
     OUT.mkdir(parents=True)
     work = Path(tempfile.mkdtemp(prefix="es-rq5-"))
@@ -153,7 +157,9 @@ def main() -> None:
                         sess = s
                         tools = s.list_tools()
                         ep = run_episode(task, tools, dispatch, model=a.model,
-                                         max_steps=4, task_tool=TOOL)
+                                         base_url=a.base_url, api_key=a.api_key,
+                                         max_steps=4, task_tool=TOOL,
+                                         timeout=600.0)
                 finally:
                     broker.remove_server()
                 broker.write_state({"mode": "deny", "call_id": ""})
@@ -188,7 +194,7 @@ def main() -> None:
     (OUT / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     (OUT / "meta.json").write_text(json.dumps(
         {"server": "github/github-mcp-server", "tool": TOOL, "model": a.model,
-         "tasks": a.tasks, "diverts": DIVERTS,
+         "endpoint": a.base_url, "tasks": a.tasks, "diverts": DIVERTS,
          "finished": dt.datetime.now(dt.timezone.utc).isoformat()}, indent=2), encoding="utf-8")
     print(json.dumps(summary, indent=2))
 

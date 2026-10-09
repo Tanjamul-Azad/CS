@@ -231,3 +231,15 @@ two diversions, and the same pin are run with Meta Llama 3.1 8B served locally b
 Ollama (tag `llama3.1:8b`, context 32768 so the full tool list fits, temperature
 0). Results are reported whatever they are, including tasks where the model picks
 a different tool or none. The gpt-4o-mini run is kept as it is.
+
+**2026-10-09.** 13. *Live confirmation against the real Postmark API.* Before
+sending anything: `experiments/network_postmark_live_replay.py` takes the
+requests that left the broker in the Postmark pilot and sends them, byte for
+byte, to https://api.postmarkapp.com with Postmark's documented test value
+`POSTMARK_API_TEST` in `X-Postmark-Server-Token`, which validates a request
+without delivering email. Selected: every request that left the broker under
+EffectSeal-N (honest calls, and the approved first request of attack calls whose
+extra request was refused), and under no defense the first trial of each attack
+version. A guard refuses any request without the test token or to any other
+host. The question is whether the provider accepts what the mock accepted;
+results are reported whatever they are.
