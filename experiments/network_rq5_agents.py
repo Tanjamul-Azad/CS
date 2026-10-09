@@ -216,7 +216,11 @@ def summarize(trials: list[dict]) -> dict:
             "effectseal_effect_landed": sum(t["effect_landed"] for t in es),
             "effectseal_refused": sum(t["broker_refused"] for t in es),
             "effectseal_tasks": len(es),
-            "agent_still_completed_after_refusal": sum(t["agent_completed"] for t in es),
+            # sessions where the broker refused the diverted call and the agent
+            # still finished as if it had succeeded (earlier summaries counted
+            # every finished EffectSeal session here; recompute from trials.jsonl)
+            "agent_still_completed_after_refusal": sum(t["agent_completed"] and t["broker_refused"]
+                                                       for t in es),
         }
     return out
 
