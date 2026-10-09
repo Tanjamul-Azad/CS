@@ -8,6 +8,8 @@ unverified citations, and evidence placeholders are independent blockers.
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import os
 import re
 import subprocess
@@ -122,6 +124,24 @@ def submission_source_issues(*, require_anonymous: bool = False) -> list[str]:
     return issues
 
 
+def build_manifest_issues() -> list[str]:
+    path = SUBMISSION / "BUILD_MANIFEST.json"
+    if not path.exists():
+        return ["PDF build manifest is missing; run scripts/build_paper_pdf.py"]
+    try:
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+        issues = []
+        if not PDF.exists() or hashlib.sha256(PDF.read_bytes()).hexdigest() != manifest["pdf_sha256"]:
+            issues.append("PDF differs from the verified build manifest")
+        for name, digest in manifest["source_sha256"].items():
+            source = (SUBMISSION / name).resolve()
+            if not source.is_relative_to(SUBMISSION.resolve()) or not source.is_file() or hashlib.sha256(source.read_bytes()).hexdigest() != digest:
+                issues.append("build source differs: " + name)
+        return issues
+    except (ValueError, KeyError, TypeError):
+        return ["PDF build manifest is malformed"]
+
+
 def main() -> int:
     # Redirected Windows consoles may expose a legacy cp1252 stream even when
     # the repository text is UTF-8 (for example the kappa symbol in a gate).
@@ -177,6 +197,7 @@ def main() -> int:
         print(f"  - {item}")
 
     source_issues = submission_source_issues(require_anonymous=args.release)
+    source_issues.extend(build_manifest_issues())
     print(f"submission source blockers: {len(source_issues)}")
     for item in source_issues:
         print(f"  - {item}")

@@ -4,6 +4,9 @@ from __future__ import annotations
 
 import re
 import argparse
+import datetime as dt
+import hashlib
+import json
 import shutil
 import subprocess
 import sys
@@ -11,7 +14,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-LATEX = ROOT / "paper" / "latex"
+LATEX = ROOT / "paper" / "submission"
 PDF = LATEX / "main.pdf"
 
 
@@ -32,6 +35,9 @@ def main() -> int:
         help="allow explicit EVIDENCE GATE markers while checking layout",
     )
     args = parser.parse_args()
+    if not (LATEX / "main.tex").exists():
+        print("paper build blocked: private manuscript source is absent", file=sys.stderr)
+        return 2
     required = ("pdflatex", "bibtex")
     missing = [name for name in required if shutil.which(name) is None]
     if missing:
@@ -77,9 +83,20 @@ def main() -> int:
     command = [sys.executable, str(ROOT / "scripts" / "check_submission_pdf.py"), str(PDF)]
     if args.working_draft:
         command.append("--working-draft")
+        active_source = "\n".join(line.split("%", 1)[0] for line in (LATEX / "main.tex").read_text(encoding="utf-8").splitlines())
+        if r"\anonymousreviewfalse" in active_source:
+            command.append("--named-draft")
     result = subprocess.run(command, cwd=ROOT, check=False)
     if result.returncode != 0:
         return result.returncode
+    inputs = [LATEX / "main.tex", LATEX / "references.bib", LATEX / "usenix.sty",
+              *sorted((LATEX / "sections").glob("*.tex")),
+              *sorted((LATEX / "figures").glob("*.pdf")),
+              *sorted((LATEX / "figures").glob("*.png"))]
+    manifest = {"built_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
+                "pdf_sha256": hashlib.sha256(PDF.read_bytes()).hexdigest(),
+                "source_sha256": {p.relative_to(LATEX).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs}}
+    (LATEX / "BUILD_MANIFEST.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print("manual gate still required: grayscale readability and final author review")
     return 0
 

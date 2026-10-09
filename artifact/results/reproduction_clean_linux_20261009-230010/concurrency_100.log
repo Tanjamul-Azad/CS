@@ -1,0 +1,20 @@
+  20/100
+  40/100
+  60/100
+  80/100
+  100/100
+{
+ "trials_with_exactly_one_commit_and_distinct_stages": 100,
+ "trials_with_more_than_one_commit": 0,
+ "outcome_distribution": {
+  "(1, 7)": 100
+ }
+}
+{
+ "trials_refused_at_freeze": 100,
+ "trials_with_any_committed_file": 0,
+ "refusal_distribution": {
+  "refused:freeze": 100
+ }
+}
+concurrency_100_all_pass=True

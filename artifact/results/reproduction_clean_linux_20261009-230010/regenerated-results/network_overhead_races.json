@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-09T16:53:52.857758+00:00",
+  "phase": "NETWORK_PRESEND_OVERHEAD_AND_ALLOWANCE_RACES",
+  "request_shape": "Postmark sendEmail (POST /email, JSON body)",
+  "iters": 500,
+  "note": "Overhead is the gate's added compute per request; network round-trip is unchanged and excluded. The durable allowance component uses SQLite WAL with synchronous=FULL, so it is disk-bound and dominates.",
+  "overhead": {
+    "admission_check": {
+      "n": 500,
+      "p50_us": 141.2,
+      "p95_us": 256.0,
+      "p99_us": 4317.67,
+      "mean_us": 238.24,
+      "max_us": 6425.81
+    },
+    "template_instantiate": {
+      "n": 500,
+      "p50_us": 67.4,
+      "p95_us": 104.4,
+      "p99_us": 227.7,
+      "mean_us": 88.96,
+      "max_us": 6210.2
+    },
+    "durable_allowance_reserve_commit": {
+      "n": 500,
+      "p50_us": 7796.73,
+      "p95_us": 9881.36,
+      "p99_us": 13604.42,
+      "mean_us": 8203.05,
+      "max_us": 14392.43
+    },
+    "gate_total_per_request": {
+      "n": 500,
+      "p50_us": 7938.53,
+      "p95_us": 10029.87,
+      "p99_us": 17904.89,
+      "mean_us": 8441.29,
+      "max_us": 19975.03
+    },
+    "host_allowlist_baseline": {
+      "n": 500,
+      "p50_us": 3.8,
+      "p95_us": 8.1,
+      "p99_us": 12.2,
+      "mean_us": 4.53,
+      "max_us": 25.4
+    }
+  },
+  "allowance_race": {
+    "trials": 100,
+    "contenders_per_trial": 8,
+    "trials_exactly_one_committed": 100,
+    "trials_with_more_than_one_commit": 0,
+    "outcome_distribution": {
+      "1c/7r": 100
+    },
+    "replay_guard_trials_passed": 100
+  },
+  "races_all_pass": true
+}

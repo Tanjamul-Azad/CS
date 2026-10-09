@@ -1,0 +1,270 @@
+Collecting agentdojo==0.1.35 (from -r /src-repo/artifact/requirements-full-linux.txt (line 7))
+  Downloading agentdojo-0.1.35-py3-none-any.whl (192 kB)
+Requirement already satisfied: annotated-types==0.8.0 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 11)) (0.8.0)
+Collecting anthropic==1.8.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 15))
+  Downloading anthropic-1.8.0-py3-none-any.whl (1.3 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 7.3 MB/s eta 0:00:00
+Requirement already satisfied: anyio==4.15.1 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 19)) (4.15.1)
+Requirement already satisfied: attrs==26.1.0 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 32)) (26.1.0)
+Collecting cachebox==5.2.3 (from -r /src-repo/artifact/requirements-full-linux.txt (line 38))
+  Downloading cachebox-5.2.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (398 kB)
+Requirement already satisfied: certifi==2026.7.22 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 152)) (2026.7.22)
+Requirement already satisfied: cffi==2.1.1 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 159)) (2.1.1)
+Collecting charset-normalizer==3.5.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 263))
+  Downloading charset_normalizer-3.5.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (248 kB)
+Requirement already satisfied: click==8.5.0 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 437)) (8.5.0)
+Collecting cohere==7.1.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 444))
+  Downloading cohere-7.1.1-py3-none-any.whl (370 kB)
+Collecting contourpy==1.4.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 448))
+  Downloading contourpy-1.4.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (383 kB)
+Requirement already satisfied: cryptography==50.0.1 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 520)) (50.0.1)
+Collecting cycler==0.12.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 570))
+  Downloading cycler-0.12.1-py3-none-any.whl (8.3 kB)
+Collecting deepdiff==9.1.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 574))
+  Downloading deepdiff-9.1.0-py3-none-any.whl (184 kB)
+Collecting distro==1.9.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 578))
+  Downloading distro-1.9.0-py3-none-any.whl (20 kB)
+Collecting dnspython==2.8.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 584))
+  Downloading dnspython-2.8.0-py3-none-any.whl (331 kB)
+Collecting docstring-parser==0.18.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 588))
+  Downloading docstring_parser-0.18.0-py3-none-any.whl (22 kB)
+Collecting email-validator==2.3.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 594))
+  Downloading email_validator-2.3.0-py3-none-any.whl (35 kB)
+Collecting fastavro==1.12.2 (from -r /src-repo/artifact/requirements-full-linux.txt (line 598))
+  Downloading fastavro-1.12.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (3.4 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.4/3.4 MB 8.4 MB/s eta 0:00:00
+Collecting filelock==4.0.3 (from -r /src-repo/artifact/requirements-full-linux.txt (line 651))
+  Downloading filelock-4.0.3-py3-none-any.whl (108 kB)
+Collecting fonttools==4.66.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 655))
+  Downloading fonttools-4.66.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.4 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.4/5.4 MB 5.9 MB/s eta 0:00:00
+Collecting formulaic==1.2.2 (from -r /src-repo/artifact/requirements-full-linux.txt (line 715))
+  Downloading formulaic-1.2.2-py3-none-any.whl (118 kB)
+Collecting fsspec==2026.9.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 719))
+  Downloading fsspec-2026.9.0-py3-none-any.whl (221 kB)
+Collecting google-auth==2.58.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 723))
+  Downloading google_auth-2.58.1-py3-none-any.whl (262 kB)
+Collecting google-genai==2.25.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 727))
+  Downloading google_genai-2.25.0-py3-none-any.whl (1.2 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 4.9 MB/s eta 0:00:00
+Requirement already satisfied: h11==0.16.0 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 731)) (0.16.0)
+Collecting hf-xet==1.6.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 738))
+  Downloading hf_xet-1.6.0-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.5 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.5/4.5 MB 5.1 MB/s eta 0:00:00
+Requirement already satisfied: httpcore==1.0.9 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 757)) (1.0.9)
+Collecting httpcore2==2.13.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 761))
+  Downloading httpcore2-2.13.1-py3-none-any.whl (83 kB)
+Requirement already satisfied: httpx==0.28.1 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 765)) (0.28.1)
+Collecting httpx2==2.13.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 775))
+  Downloading httpx2-2.13.1-py3-none-any.whl (95 kB)
+Collecting huggingface-hub==1.33.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 783))
+  Downloading huggingface_hub-1.33.0-py3-none-any.whl (846 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 846.4/846.4 kB 5.6 MB/s eta 0:00:00
+Collecting idna==3.20 (from -r /src-repo/artifact/requirements-full-linux.txt (line 787))
+  Downloading idna-3.20-py3-none-any.whl (69 kB)
+Collecting iniconfig==2.3.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 796))
+  Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Collecting interface-meta==2.0.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 800))
+  Downloading interface_meta-2.0.1-py3-none-any.whl (15 kB)
+Collecting jiter==0.17.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 804))
+  Downloading jiter-0.17.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (345 kB)
+Collecting jsonpatch==1.33 (from -r /src-repo/artifact/requirements-full-linux.txt (line 927))
+  Downloading jsonpatch-1.33-py2.py3-none-any.whl (12 kB)
+Collecting jsonpointer==3.1.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 931))
+  Downloading jsonpointer-3.1.1-py3-none-any.whl (7.7 kB)
+Requirement already satisfied: jsonschema==4.26.0 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 935)) (4.26.0)
+Requirement already satisfied: jsonschema-specifications==2025.9.1 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 939)) (2025.9.1)
+Collecting kiwisolver==1.5.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 943))
+  Downloading kiwisolver-1.5.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (1.5 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.5/1.5 MB 5.4 MB/s eta 0:00:00
+Collecting langchain==1.4.2 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1086))
+  Downloading langchain-1.4.2-py3-none-any.whl (163 kB)
+Collecting langchain-core==1.6.5 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1090))
+  Downloading langchain_core-1.6.5-py3-none-any.whl (572 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 572.1/572.1 kB 5.7 MB/s eta 0:00:00
+Collecting langchain-protocol==0.0.19 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1099))
+  Downloading langchain_protocol-0.0.19-py3-none-any.whl (7.3 kB)
+Collecting langgraph==1.2.12 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1105))
+  Downloading langgraph-1.2.12-py3-none-any.whl (250 kB)
+Collecting langgraph-checkpoint==4.2.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1109))
+  Downloading langgraph_checkpoint-4.2.0-py3-none-any.whl (56 kB)
+Collecting langgraph-prebuilt==1.1.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1115))
+  Downloading langgraph_prebuilt-1.1.0-py3-none-any.whl (41 kB)
+Collecting langgraph-sdk==0.4.5 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1119))
+  Downloading langgraph_sdk-0.4.5-py3-none-any.whl (162 kB)
+Collecting langsmith==0.14.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1123))
+  Downloading langsmith-0.14.1-py3-none-any.whl (812 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 812.1/812.1 kB 169.2 kB/s eta 0:00:00
+Collecting markdown-it-py==4.2.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1127))
+  Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+Collecting matplotlib==3.11.2 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1131))
+  Downloading matplotlib-3.11.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (9.9 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.9/9.9 MB 1.5 MB/s eta 0:00:00
+Collecting mcp==2.1.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1186))
+  Downloading mcp-2.1.1-py3-none-any.whl (357 kB)
+Collecting mcp-types==2.1.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1190))
+  Downloading mcp_types-2.1.1-py3-none-any.whl (69 kB)
+Collecting mdurl==0.1.2 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1194))
+  Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Collecting narwhals==2.26.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1198))
+  Downloading narwhals-2.26.0-py3-none-any.whl (474 kB)
+Collecting numpy==2.5.3 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1202))
+  Downloading numpy-2.5.3-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 2.9 MB/s eta 0:00:00
+Collecting openai==3.19.2 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1278))
+  Downloading openai-3.19.2-py3-none-any.whl (2.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 5.0 MB/s eta 0:00:00
+Collecting opentelemetry-api==1.45.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1284))
+  Downloading opentelemetry_api-1.45.1-py3-none-any.whl (60 kB)
+Collecting orderly-set==5.5.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1288))
+  Downloading orderly_set-5.5.0-py3-none-any.whl (13 kB)
+Collecting orjson==3.12.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1292))
+  Downloading orjson-3.12.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (131 kB)
+Collecting ormsgpack==1.12.2 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1361))
+  Downloading ormsgpack-1.12.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (212 kB)
+Collecting packaging==26.3 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1412))
+  Downloading packaging-26.3-py3-none-any.whl (129 kB)
+Collecting pandas==3.0.6 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1423))
+  Downloading pandas-3.0.6-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (10.8 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 4.9 MB/s eta 0:00:00
+Collecting patsy==1.0.3 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1486))
+  Downloading patsy-1.0.3-py2.py3-none-any.whl (233 kB)
+Collecting pillow==12.3.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1490))
+  Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.9 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.9/6.9 MB 3.0 MB/s eta 0:00:00
+Collecting pluggy==1.6.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1579))
+  Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+Collecting pyasn1==0.6.4 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1583))
+  Downloading pyasn1-0.6.4-py3-none-any.whl (84 kB)
+Collecting pyasn1-modules==0.4.2 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1587))
+  Downloading pyasn1_modules-0.4.2-py3-none-any.whl (181 kB)
+Requirement already satisfied: pycparser==3.0 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 1591)) (3.0)
+Requirement already satisfied: pydantic==2.13.5 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 1595)) (2.13.5)
+Requirement already satisfied: pydantic-core==2.46.5 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 1611)) (2.46.5)
+Collecting pygithub==2.10.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1735))
+  Downloading pygithub-2.10.0-py3-none-any.whl (455 kB)
+Collecting pygments==2.21.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1739))
+  Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 2.9 MB/s eta 0:00:00
+Collecting pyjwt==2.15.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1745))
+  Downloading pyjwt-2.15.0-py3-none-any.whl (33 kB)
+Collecting pynacl==1.6.2 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1751))
+  Downloading pynacl-1.6.2-cp38-abi3-manylinux_2_34_x86_64.whl (1.4 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.4/1.4 MB 3.1 MB/s eta 0:00:00
+Collecting pyparsing==3.3.3 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1778))
+  Downloading pyparsing-3.3.3-py3-none-any.whl (126 kB)
+Collecting pypdf==6.9.2 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1782))
+  Downloading pypdf-6.9.2-py3-none-any.whl (333 kB)
+Collecting pytest==9.1.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1786))
+  Downloading pytest-9.1.1-py3-none-any.whl (386 kB)
+Collecting python-dateutil==2.9.0.post0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1790))
+  Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Collecting python-dotenv==1.2.3 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1796))
+  Downloading python_dotenv-1.2.3-py3-none-any.whl (22 kB)
+Requirement already satisfied: python-multipart==0.0.32 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 1802)) (0.0.32)
+Collecting pyyaml==6.0.3 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1806))
+  Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 3.1 MB/s eta 0:00:00
+Requirement already satisfied: referencing==0.37.0 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 1884)) (0.37.0)
+Collecting requests==2.34.2 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1890))
+  Downloading requests-2.34.2-py3-none-any.whl (73 kB)
+Collecting requests-toolbelt==1.0.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1901))
+  Downloading requests_toolbelt-1.0.0-py2.py3-none-any.whl (54 kB)
+Collecting rich==15.0.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1905))
+  Downloading rich-15.0.0-py3-none-any.whl (310 kB)
+Collecting rpds-py==2026.9.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 1909))
+  Downloading rpds_py-2026.9.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (371 kB)
+Collecting ruff==0.16.9 (from -r /src-repo/artifact/requirements-full-linux.txt (line 2041))
+  Downloading ruff-0.16.9-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (10.4 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.4/10.4 MB 2.8 MB/s eta 0:00:00
+Collecting scipy==1.18.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 2061))
+  Downloading scipy-1.18.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.3 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.3/35.3 MB 2.8 MB/s eta 0:00:00
+Collecting six==1.17.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 2127))
+  Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Collecting sniffio==1.3.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 2131))
+  Downloading sniffio-1.3.1-py3-none-any.whl (10 kB)
+Collecting sse-starlette==3.5.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 2139))
+  Downloading sse_starlette-3.5.0-py3-none-any.whl (17 kB)
+Collecting starlette==1.7.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 2143))
+  Downloading starlette-1.7.0-py3-none-any.whl (78 kB)
+Collecting statsmodels==0.15.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 2149))
+  Downloading statsmodels-0.15.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (12.0 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.0/12.0 MB 2.1 MB/s eta 0:00:00
+Collecting tenacity==9.1.4 (from -r /src-repo/artifact/requirements-full-linux.txt (line 2206))
+  Downloading tenacity-9.1.4-py3-none-any.whl (28 kB)
+Collecting tokenizers==0.23.2 (from -r /src-repo/artifact/requirements-full-linux.txt (line 2214))
+  Downloading tokenizers-0.23.2-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.4 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.4/3.4 MB 1.6 MB/s eta 0:00:00
+Collecting tqdm==4.70.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 2233))
+  Downloading tqdm-4.70.1-py3-none-any.whl (80 kB)
+Requirement already satisfied: truststore==0.10.4 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 2237)) (0.10.4)
+Collecting types-requests==2.33.0.20260906 (from -r /src-repo/artifact/requirements-full-linux.txt (line 2243))
+  Downloading types_requests-2.33.0.20260906-py3-none-any.whl (21 kB)
+Requirement already satisfied: typing-extensions==4.16.0 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 2247)) (4.16.0)
+Requirement already satisfied: typing-inspection==0.4.4 in /usr/local/lib/python3.12/site-packages (from -r /src-repo/artifact/requirements-full-linux.txt (line 2272)) (0.4.4)
+Collecting urllib3==2.8.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 2278))
+  Downloading urllib3-2.8.0-py3-none-any.whl (135 kB)
+Collecting uuid-utils==0.17.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 2285))
+  Downloading uuid_utils-0.17.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (323 kB)
+Collecting uvicorn==0.54.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 2383))
+  Downloading uvicorn-0.54.0-py3-none-any.whl (87 kB)
+Collecting websockets==16.1.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 2387))
+  Downloading websockets-16.1.1-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (187 kB)
+Collecting wrapt==2.4.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 2501))
+  Downloading wrapt-2.4.1-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (236 kB)
+Collecting xxhash==4.0.1 (from -r /src-repo/artifact/requirements-full-linux.txt (line 2604))
+  Downloading xxhash-4.0.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (261 kB)
+Collecting zstandard==0.25.0 (from -r /src-repo/artifact/requirements-full-linux.txt (line 2822))
+  Downloading zstandard-0.25.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.5 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.5/5.5 MB 1.6 MB/s eta 0:00:00
+Installing collected packages: zstandard, xxhash, wrapt, websockets, uvicorn, uuid-utils, urllib3, tqdm, tenacity, sniffio, six, ruff, rpds-py, pyyaml, python-dotenv, pypdf, pyparsing, pyjwt, pygments, pyasn1, pluggy, pillow, packaging, ormsgpack, orjson, orderly-set, opentelemetry-api, numpy, narwhals, mdurl, langchain-protocol, kiwisolver, jsonpointer, jiter, interface-meta, iniconfig, idna, httpcore2, hf-xet, fsspec, fonttools, filelock, fastavro, docstring-parser, dnspython, distro, cycler, charset-normalizer, cachebox, types-requests, scipy, requests, python-dateutil, pytest, pynacl, pyasn1-modules, patsy, markdown-it-py, jsonpatch, email-validator, deepdiff, contourpy, starlette, rich, requests-toolbelt, pandas, mcp-types, matplotlib, httpx2, google-auth, sse-starlette, pygithub, openai, langsmith, huggingface-hub, formulaic, anthropic, tokenizers, statsmodels, mcp, langchain-core, google-genai, langgraph-sdk, langgraph-checkpoint, cohere, langgraph-prebuilt, langgraph, langchain, agentdojo
+  Attempting uninstall: uvicorn
+    Found existing installation: uvicorn 0.53.0
+    Uninstalling uvicorn-0.53.0:
+      Successfully uninstalled uvicorn-0.53.0
+  Attempting uninstall: rpds-py
+    Found existing installation: rpds-py 2026.6.3
+    Uninstalling rpds-py-2026.6.3:
+      Successfully uninstalled rpds-py-2026.6.3
+  Attempting uninstall: pyjwt
+    Found existing installation: PyJWT 2.14.0
+    Uninstalling PyJWT-2.14.0:
+      Successfully uninstalled PyJWT-2.14.0
+  Attempting uninstall: opentelemetry-api
+    Found existing installation: opentelemetry-api 1.44.0
+    Uninstalling opentelemetry-api-1.44.0:
+      Successfully uninstalled opentelemetry-api-1.44.0
+  Attempting uninstall: idna
+    Found existing installation: idna 3.19
+    Uninstalling idna-3.19:
+      Successfully uninstalled idna-3.19
+  Attempting uninstall: httpcore2
+    Found existing installation: httpcore2 2.13.0
+    Uninstalling httpcore2-2.13.0:
+      Successfully uninstalled httpcore2-2.13.0
+  Attempting uninstall: starlette
+    Found existing installation: starlette 1.6.0
+    Uninstalling starlette-1.6.0:
+      Successfully uninstalled starlette-1.6.0
+  Attempting uninstall: mcp-types
+    Found existing installation: mcp-types 2.2.0
+    Uninstalling mcp-types-2.2.0:
+      Successfully uninstalled mcp-types-2.2.0
+  Attempting uninstall: httpx2
+    Found existing installation: httpx2 2.13.0
+    Uninstalling httpx2-2.13.0:
+      Successfully uninstalled httpx2-2.13.0
+  Attempting uninstall: sse-starlette
+    Found existing installation: sse-starlette 3.4.11
+    Uninstalling sse-starlette-3.4.11:
+      Successfully uninstalled sse-starlette-3.4.11
+  Attempting uninstall: mcp
+    Found existing installation: mcp 2.2.0
+    Uninstalling mcp-2.2.0:
+      Successfully uninstalled mcp-2.2.0
+Successfully installed agentdojo-0.1.35 anthropic-1.8.0 cachebox-5.2.3 charset-normalizer-3.5.1 cohere-7.1.1 contourpy-1.4.0 cycler-0.12.1 deepdiff-9.1.0 distro-1.9.0 dnspython-2.8.0 docstring-parser-0.18.0 email-validator-2.3.0 fastavro-1.12.2 filelock-4.0.3 fonttools-4.66.0 formulaic-1.2.2 fsspec-2026.9.0 google-auth-2.58.1 google-genai-2.25.0 hf-xet-1.6.0 httpcore2-2.13.1 httpx2-2.13.1 huggingface-hub-1.33.0 idna-3.20 iniconfig-2.3.0 interface-meta-2.0.1 jiter-0.17.0 jsonpatch-1.33 jsonpointer-3.1.1 kiwisolver-1.5.1 langchain-1.4.2 langchain-core-1.6.5 langchain-protocol-0.0.19 langgraph-1.2.12 langgraph-checkpoint-4.2.0 langgraph-prebuilt-1.1.0 langgraph-sdk-0.4.5 langsmith-0.14.1 markdown-it-py-4.2.0 matplotlib-3.11.2 mcp-2.1.1 mcp-types-2.1.1 mdurl-0.1.2 narwhals-2.26.0 numpy-2.5.3 openai-3.19.2 opentelemetry-api-1.45.1 orderly-set-5.5.0 orjson-3.12.0 ormsgpack-1.12.2 packaging-26.3 pandas-3.0.6 patsy-1.0.3 pillow-12.3.0 pluggy-1.6.0 pyasn1-0.6.4 pyasn1-modules-0.4.2 pygithub-2.10.0 pygments-2.21.0 pyjwt-2.15.0 pynacl-1.6.2 pyparsing-3.3.3 pypdf-6.9.2 pytest-9.1.1 python-dateutil-2.9.0.post0 python-dotenv-1.2.3 pyyaml-6.0.3 requests-2.34.2 requests-toolbelt-1.0.0 rich-15.0.0 rpds-py-2026.9.1 ruff-0.16.9 scipy-1.18.1 six-1.17.0 sniffio-1.3.1 sse-starlette-3.5.0 starlette-1.7.0 statsmodels-0.15.0 tenacity-9.1.4 tokenizers-0.23.2 tqdm-4.70.1 types-requests-2.33.0.20260906 urllib3-2.8.0 uuid-utils-0.17.1 uvicorn-0.54.0 websockets-16.1.1 wrapt-2.4.1 xxhash-4.0.1 zstandard-0.25.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.1
+[notice] To update, run: pip install --upgrade pip

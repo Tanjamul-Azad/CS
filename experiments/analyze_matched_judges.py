@@ -9,8 +9,7 @@ ROOT=Path(__file__).resolve().parents[1];sys.path[:0]=[str(ROOT/'src'),str(ROOT/
 from analyze_judge_leaks import signature
 
 
-def main():
-    paths=[ROOT/'artifact/results'/n for n in ['llm_judge_transcripts_v2.json','llm_judge_v2.json','llm_judge_ollama_v2.json']]
+def analyze(paths):
     rows=json.loads(paths[0].read_text())['rows'];by_key={(r['server_id'],r['scenario'],r['tier'],r['rep']):r for r in rows}
     def key(r):return (r['server_id'],r['scenario'],r['tier'],r['rep'])
     def match_signature(r):return (r['server_id'],json.dumps(r['request'],sort_keys=True),signature(r))
@@ -31,6 +30,12 @@ def main():
         result.append({'model':model,'matched_attacks':len(pairs),'attacks_flagged':sum(p['attack_flag'] for p in pairs),
                        'matched_honest_flag_rate':sum(p['honest_mean_flag'] for p in pairs)/len(pairs) if pairs else None,
                        'attack_flag_rate':sum(p['attack_flag'] for p in pairs)/len(pairs) if pairs else None,'pairs':pairs})
+    return result
+
+
+def main():
+    paths=[ROOT/'artifact/results'/n for n in ['llm_judge_transcripts_v2.json','llm_judge_v2.json','llm_judge_ollama_v2.json']]
+    result=analyze(paths)
     out=ROOT/'artifact/results'/('judge_matched_sensitivity_'+dt.datetime.now().strftime('%Y%m%d-%H%M%S')+'.json')
     data={'created_utc':dt.datetime.now(dt.timezone.utc).isoformat(),'scope':'Post hoc descriptive sensitivity only. Matches same server, identical approved request, and judge-free normalized responses/readbacks. Does not establish equality of raw transcripts or an independent inferential test.',
           'source_hashes':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in paths},'models':result}

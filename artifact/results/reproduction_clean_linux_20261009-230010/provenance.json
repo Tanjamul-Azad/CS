@@ -1,0 +1,12 @@
+{
+  "source_commit": "c22e867b49be16ebb537eeac48e22f07f82f679e",
+  "started_utc": "2026-10-09T16:52:27.8229128Z",
+  "finished_utc": "2026-10-09T16:54:04.84417991Z",
+  "container_exit_code": 0,
+  "image_id": "sha256:996f08b46779bfa39e20816de7e1e451d4064cc7641d2358e6110225f8dae791",
+  "network": "none; loopback-only integration",
+  "dependencies": "hash-locked full Linux requirements installed in the captured image before cloning; pip install log and pip freeze preserved",
+  "private_manuscript": "absent; generated PDF check skipped",
+  "steps_passed": 12,
+  "note": "Run directory is a unique label. Exact times above come from the Docker runtime."
+}

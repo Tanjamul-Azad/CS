@@ -1,0 +1,11 @@
+Full                 1387 states  all invariants hold
+NoSameRead           1657 states  violates CommittedIsChecked, TrustedOnlyAccepted
+    CommittedIsChecked: shortest counterexample 6 steps: Reserve -> ServerWrite -> Stop -> Read -> ServerWrite -> Commit
+    TrustedOnlyAccepted: shortest counterexample 6 steps: Reserve -> ServerWrite -> Stop -> Read -> ServerWrite -> Commit
+NoAtomicReserve     12167 states  violates AllowanceBound
+    AllowanceBound: shortest counterexample 6 steps: CheckRoom -> TakeSlot -> CheckRoom -> CheckRoom -> TakeSlot -> TakeSlot
+NoReplayGuard       15694 states  violates CommittedIsChecked, CrashStaysSpent, ExecAtMostOnce
+    CommittedIsChecked: shortest counterexample 7 steps: Reserve -> ServerWrite -> Stop -> Read -> Commit -> Replay -> Crash
+    CrashStaysSpent: shortest counterexample 6 steps: Reserve -> Stop -> Read -> Refuse -> Replay -> Crash
+    ExecAtMostOnce: shortest counterexample 5 steps: Reserve -> Stop -> Read -> Refuse -> Replay
+NoStopWriters        1027 states  all invariants hold

@@ -11,6 +11,8 @@ from verify_network_bundle import verify
 from mcpgate.request_templates import RequestObservation, infer_request_template
 import network_postmark_pilot as P
 from measure_integrated_network import percentiles
+import analyze_matched_judges as J
+import reanalyze_local_capacity as C
 
 def check_hashes(path):
     errors = []
@@ -60,6 +62,25 @@ def main():
             if len(rows) != sets['screened'] or [x['name'] for x in rows if x.get('qualified')] != sets['held_out'] or sets['development']:
                 errors.append('selection qualifiers differ')
         results.append({'key': key, 'passed': not errors, 'errors': errors})
+    judge = json.loads((ROOT / 'artifact/results' / pointers['judge_matched_sensitivity']).read_text(encoding='utf-8'))
+    inputs = [ROOT / 'artifact/results' / n for n in ['llm_judge_transcripts_v2.json', 'llm_judge_v2.json', 'llm_judge_ollama_v2.json']]
+    errors = []
+    if any(hashlib.sha256(p.read_bytes()).hexdigest() != judge['source_hashes'][p.name] for p in inputs):
+        errors.append('judge source hash differs')
+    if json.loads(json.dumps(J.analyze(inputs))) != judge['models']:
+        errors.append('judge matched pairs/rates differ')
+    results.append({'key': 'judge_matched_sensitivity', 'passed': not errors, 'errors': errors})
+    capacities = json.loads((ROOT / 'artifact/results' / pointers['local_capacity_reanalysis']).read_text(encoding='utf-8'))
+    errors = [] if C.analyze() == capacities['rows'] else ['local capacity reanalysis differs']
+    results.append({'key': 'local_capacity_reanalysis', 'passed': not errors, 'errors': errors})
+    if pointers.get('clean_linux_reproduction'):
+        path = ROOT / 'artifact/results' / pointers['clean_linux_reproduction']
+        errors = check_hashes(path)
+        summary = (path / 'summary.txt').read_text().splitlines()
+        provenance = json.loads((path / 'provenance.json').read_text())
+        if len(summary) != provenance['steps_passed'] or any(not s.startswith('PASS ') for s in summary) or provenance['container_exit_code'] != 0:
+            errors.append('clean Linux reproduction status differs')
+        results.append({'key': 'clean_linux_reproduction', 'passed': not errors, 'errors': errors})
     print(json.dumps(results, indent=2))
     return 0 if all(r['passed'] for r in results) else 1
 

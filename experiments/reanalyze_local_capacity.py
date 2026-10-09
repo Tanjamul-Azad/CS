@@ -36,7 +36,7 @@ def corrected(data):
     return data
 
 
-def main():
+def analyze():
     rows=[]
     for name in ['template_generalization_run5.json','template_generalization_sql_run3.json','batch2_templates.json']:
         p=ROOT/'artifact/results'/name; data=json.loads(p.read_text(encoding='utf-8'))
@@ -50,6 +50,11 @@ def main():
             rows.append({'source':name,'source_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'server':server['server_id'],
                          'package':server.get('package'),'previous_canonical_slack_bits':old,
                          'corrected_canonical_slack_bits':new,'template':updated})
+    return rows
+
+
+def main():
+    rows=analyze()
     out=ROOT/'artifact/results'/('local_capacity_reanalysis_'+dt.datetime.now().strftime('%Y%m%d-%H%M%S')+'.json')
     out.write_text(json.dumps({'scope':'Offline capacity correction of archived local templates, using each archived honest call arguments. No new local honest/adversarial scoring; excludes raw container metadata. Clock dates bound to trusted admission date.', 'rows':rows},indent=2))
     print([(r['package'],r['previous_canonical_slack_bits'],r['corrected_canonical_slack_bits']) for r in rows]);print('RESULT',out)

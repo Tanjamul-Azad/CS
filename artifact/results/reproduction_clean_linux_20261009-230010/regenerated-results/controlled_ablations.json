@@ -1,0 +1,51 @@
+[
+  {
+    "variant": "full_mcpgate",
+    "removed_property": "none",
+    "attack": "content_substitution",
+    "failure_exposed": false,
+    "observation": "refused=True; trusted_file_exists=False"
+  },
+  {
+    "variant": "no_allowance_ledger",
+    "removed_property": "atomic reserve/idempotency",
+    "attack": "same-ID replay",
+    "failure_exposed": true,
+    "observation": "runner_entries=2; expected_with_full=1"
+  },
+  {
+    "variant": "no_request_shape",
+    "removed_property": "preflight and transport argument checks",
+    "attack": "hidden extra field",
+    "failure_exposed": true,
+    "observation": "runner_saw_hidden=True; decision=COMMITTED"
+  },
+  {
+    "variant": "independent_second_read",
+    "removed_property": "same-read promotion",
+    "attack": "TOCTOU mutation",
+    "failure_exposed": true,
+    "observation": "decision_matched=True; attacker_bytes_committed=True"
+  },
+  {
+    "variant": "shared_staging",
+    "removed_property": "per-invocation staging",
+    "attack": "two honest overlapping calls",
+    "failure_exposed": true,
+    "observation": "outcomes=['refused', 'refused']; false_refusals=2"
+  },
+  {
+    "variant": "path_policy_only",
+    "removed_property": "content/effect diff",
+    "attack": "content substitution",
+    "failure_exposed": true,
+    "observation": "approved_path_written=True; approved_content=False"
+  },
+  {
+    "variant": "no_outer_namespace",
+    "removed_property": "whole-world filesystem confinement",
+    "attack": "outside-world side write",
+    "failure_exposed": true,
+    "observation": "outside_effect=True; trusted_admission_correct=True"
+  }
+]

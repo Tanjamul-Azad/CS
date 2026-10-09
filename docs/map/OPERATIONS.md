@@ -72,3 +72,9 @@ the marked supplementary network tables when private source is available.
 Run in a fresh clone; its fixed-name outputs must not overwrite earlier evidence.
 The script runs integrated proxy timing/races in addition to isolated mechanism
 measurements. No live model/provider API scoring is part of that script.
+
+`python scripts/build_paper_pdf.py --working-draft` builds the canonical current
+manuscript, selects named-draft checks from its source switch, and records
+`paper/submission/BUILD_MANIFEST.json`. Readiness checks reject a stale PDF or
+changed source relative to this verified build. The Overleaf ZIP is source-only
+and carries its own source hash manifest.

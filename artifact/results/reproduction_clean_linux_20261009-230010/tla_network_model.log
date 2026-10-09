@@ -1,0 +1,41 @@
+{
+  "NetFull": {
+    "result": "all invariants hold",
+    "distinct_states": 441
+  },
+  "NetNoPreSend": {
+    "result": "violated",
+    "invariants": [
+      "OnlyApprovedSent"
+    ],
+    "distinct_states": 41
+  },
+  "NetNoCredInjection": {
+    "result": "violated",
+    "invariants": [
+      "NoCredentialLeak"
+    ],
+    "distinct_states": 85
+  },
+  "NetNotConfined": {
+    "result": "violated",
+    "invariants": [
+      "OnlyApprovedSent"
+    ],
+    "distinct_states": 19
+  },
+  "NetNoAtomicCount": {
+    "result": "violated",
+    "invariants": [
+      "SendBound"
+    ],
+    "distinct_states": 510
+  },
+  "NetNoReplayGuard": {
+    "result": "violated",
+    "invariants": [
+      "SendBound"
+    ],
+    "distinct_states": 847
+  }
+}
