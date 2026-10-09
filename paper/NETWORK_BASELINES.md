@@ -47,3 +47,32 @@ defense inspects before allowing an effect.
 Only EffectSeal-N decides on the effect, so only it separates a diverted
 same-host request (different recipient, extra field, bad content, extra write,
 replay) from the approved one. Every destination-class defense admits those.
+
+## File arm: the same three tools on local file effects
+
+On a local file server the matched harness already runs the container these
+tools configure: a read-only root filesystem, one writable bind mount for the
+client-selected area, and no network. Their file guarantee therefore coincides
+with conditions the paper already reports, so we record the mechanism and map
+it rather than re-run identical containers (`experiments/make_file_baselines.py`,
+`artifact/results/file_baselines.json`).
+
+| Tool | File enforcement object | Maps to |
+|---|---|---|
+| ToolHive `--isolate-network` | network host:port only; no filesystem rule in the profile | PLAIN_SANDBOX |
+| AgentBound | FSAccess = writable bind mount of the granted path (destination, not content) | STATIC_LP (per-path) / PLAIN_SANDBOX (whole dir) |
+| srt | `filesystem.allowWrite` (allow-only write list), a per-path write boundary | STATIC_LP |
+
+Matched filesystem outcomes these land on (`matched_filesystem.json`): honest
+completion is 5/5 for every condition; attacks prevented are PLAIN_SANDBOX 9/31,
+STATIC_LP 18/31, and EffectSeal 31/31. A destination- or sandbox-class defense
+binds where a write lands, never its content, so it admits content
+substitution, extra files, and silent no-ops inside the client area.
+
+srt was installed (`@anthropic-ai/sandbox-runtime` 0.0.79) and its Windows
+sandbox provisioned, but its host-OS filesystem enforcement did not engage in
+our virtualized environment: a working directory on C: was refused as a remote
+drive under the sandbox logon, and on F: an empty `allowWrite` still permitted a
+workspace write, with `--debug` showing WFP running non-elevated and no
+working-tree ACE in effect. This is an environment limitation, not srt's policy,
+so its file guarantee is taken from its documented allow-only write mechanism.
