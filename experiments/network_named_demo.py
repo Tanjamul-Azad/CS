@@ -19,6 +19,8 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import hashlib
+import shutil
 import random
 import sys
 import tempfile
@@ -58,6 +60,8 @@ def main() -> None:
     work = Path(tempfile.mkdtemp(prefix="es-named-"))
     results = []
     todo = {a.only: NAMED[a.only]} if a.only else NAMED
+    todo = {k: {**spec, "image": M.P.sh("docker", "image", "inspect", "--format", "{{.Id}}", spec["image"])}
+            for k, spec in todo.items()}
     with SEL.GenericBroker(work) as broker:
         for key, spec in todo.items():
             print(f"evaluating {spec['name']}", flush=True)
@@ -69,12 +73,25 @@ def main() -> None:
             results.append(r)
             print("  ", {k: r.get(k) for k in ("qualified", "slack_bits", "honest", "reason")}, flush=True)
             (OUT / "results.jsonl").open("a", encoding="utf-8").write(json.dumps(r) + "\n")
+    (OUT / "broker").mkdir()
+    for path in broker.control.iterdir():
+        if path.is_file():
+            shutil.copy2(path, OUT / "broker" / path.name)
+    (OUT / "sources").mkdir()
+    for path in [Path(__file__), ROOT / "experiments/network_matched_eval.py", *sorted((ROOT / "src/mcpgate").glob("*.py"))]:
+        shutil.copy2(path, OUT / "sources" / path.name)
     (OUT / "summary.json").write_text(json.dumps(M.summarize(results), indent=2), encoding="utf-8")
     (OUT / "meta.json").write_text(json.dumps(
-        {"servers": {k: {kk: v[kk] for kk in ("name", "image", "tool")} for k, v in todo.items()},
+        {"bundle_version": 2, "git_commit": M.P.sh("git", "rev-parse", "HEAD"),
+         "plan_sha256": hashlib.sha256((ROOT / "artifact/effectseal-repair-plan-20261009.json").read_bytes()).hexdigest(),
+         "servers": {k: {kk: v[kk] for kk in ("name", "image", "tool")} for k, v in todo.items()},
          "seed": 20261008, "calls": a.calls,
          "finished": dt.datetime.now(dt.timezone.utc).isoformat()}, indent=2), encoding="utf-8")
+    hashes = {str(p.relative_to(OUT)).replace("\\", "/"): hashlib.sha256(p.read_bytes()).hexdigest()
+              for p in OUT.rglob("*") if p.is_file()}
+    (OUT / "SHA256SUMS.json").write_text(json.dumps(hashes, indent=2), encoding="utf-8")
     print(json.dumps(M.summarize(results), indent=2))
+    print("BUNDLE", OUT)
 
 
 if __name__ == "__main__":

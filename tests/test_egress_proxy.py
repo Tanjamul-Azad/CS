@@ -56,11 +56,11 @@ def template():
 
 # -- templates ---------------------------------------------------------------
 
-def test_canonical_view_undoes_json_escaping_and_drops_credentials():
+def test_canonical_view_preserves_json_types_and_escapes_newlines():
     view = canonical_view(_email(EXEMPLAR), credential_headers=frozenset({TOKEN_HEADER.lower()}))
-    assert "body.TextBody=Hello Alice,\nthe Q3 totals are below." in view
+    assert '["body","TextBody"],"string","Hello Alice,\\nthe Q3 totals are below."' in view
     assert DUMMY not in view
-    assert view.startswith(f"POST https://{HOST}:443/email\n")
+    assert view.startswith(f'[["authority"],"fixed",["POST","https","{HOST}",443]]\n')
 
 
 def test_template_admits_new_honest_call(template):

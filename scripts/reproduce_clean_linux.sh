@@ -18,18 +18,22 @@ python --version > "$OUT/python.txt" 2>&1
 uname -a >> "$OUT/python.txt"
 
 echo "installing hash-locked dependencies"
+if [ "${SKIP_INSTALL:-0}" != "1" ]; then
 python -m pip install -q --no-cache-dir --timeout 120 --retries 10 --require-hashes \
   -r artifact/requirements-full-linux.txt > "$OUT/pip-install.log" 2>&1 \
   || { echo "FAIL pip-install"; exit 1; }
+fi
 python -m pip freeze > "$OUT/pip-freeze.txt"
 
 : > "$OUT/summary.txt"
+failures=0
 run() {
   name=$1; shift
   if "$@" > "$OUT/$name.log" 2>&1; then
     echo "PASS $name" | tee -a "$OUT/summary.txt"
   else
     echo "FAIL $name (exit $?)" | tee -a "$OUT/summary.txt"
+    failures=$((failures + 1))
   fi
 }
 
@@ -44,3 +48,4 @@ run file_baselines    python experiments/make_file_baselines.py
 run figures_paper     python scripts/make_strengthening_figures.py
 run figures_network   python scripts/make_network_figures.py
 echo "done; see $OUT/summary.txt"
+[ "$failures" -eq 0 ] || exit 1

@@ -105,7 +105,7 @@ def test_compose_template_survives_a_later_date_and_bounds_timestamps():
     template = infer_template("add_roadmap_entry", observations)
     call = {"code": "ZXQWBTR-K4", "description": "another roadmap item body", "phase": "Beta"}
     later = _compose(call, day="2027-01-02", ts="2027-01-02T23:59:59.001Z")
-    contract = template.instantiate(call)
+    contract = template.instantiate(call, now=__import__("datetime").datetime(2027, 1, 2, tzinfo=__import__("datetime").timezone.utc))
     verdict = contract.evaluate(_snap(later))
     assert verdict.allowed, verdict.reason
     slack = template.slack(call)
@@ -207,7 +207,7 @@ def test_slugged_filename_is_bound_to_the_title():
     template = infer_template("ori_add", _train(_ori, exemplar, fixed={"type"}),
                               fixed={"type": "insight"})
     call = {"title": "Totally New Title words", "type": "insight"}
-    contract = template.instantiate(call)
+    contract = template.instantiate(call, now=__import__("datetime").datetime(2026, 9, 26, tzinfo=__import__("datetime").timezone.utc))
     assert contract.evaluate(_snap(_ori(call))).allowed
     other = _ori({"title": "some other note entirely", "type": "insight"})
     assert not contract.evaluate(_snap(other)).allowed

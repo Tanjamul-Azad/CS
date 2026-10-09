@@ -23,6 +23,7 @@ import argparse
 import json
 import signal
 import threading
+import datetime as dt
 from pathlib import Path
 
 import json as _json
@@ -30,6 +31,7 @@ from urllib.parse import urlsplit as _urlsplit
 
 from .egress_proxy import CallGate, CapturedRequest, Credential, EgressProxy, RunCA
 from .request_templates import canonical_view, request_template_from_json
+from .allowance import SQLiteAllowanceLedger
 
 
 def divert_request(request, spec: dict):
@@ -64,7 +66,49 @@ class ControlledDecision:
         self.control = control
         self._gates: dict[str, CallGate] = {}
         self._lock = threading.Lock()
-        self.current_call = ""
+        self._local = threading.local()
+        self._identities = {}
+        self.ledger = SQLiteAllowanceLedger(control / "allowance.sqlite")
+
+    def begin(self, request):
+        self._local.state = self._state()
+
+    @property
+    def current_call(self):
+        return self.active_state().get("call_id", "")
+
+    def active_state(self):
+        return getattr(self._local, "state", None) or self._state()
+
+    def _gate(self, state):
+        call_id = state.get("call_id", "")
+        identity = json.dumps([state["template"], state.get("arguments", {})], sort_keys=True)
+        with self._lock:
+            if call_id in self._identities and self._identities[call_id] != identity:
+                raise ValueError("trusted call ID reused with changed approval")
+            gate = self._gates.get(call_id)
+            if gate is None:
+                template = request_template_from_json(state["template"])
+                gate = CallGate(template.instantiate(state.get("arguments", {}),
+                               now=dt.datetime.now(dt.timezone.utc)), ledger=self.ledger, call_id=call_id)
+                self._gates[call_id] = gate
+                self._identities[call_id] = identity
+            return gate
+
+    def reject(self, reason):
+        state = self.active_state()
+        if state.get("mode") == "gate":
+            self._gate(state).reject(reason)
+
+    def sent(self, *, status=None, error=None):
+        state = self.active_state()
+        if state.get("mode") == "gate":
+            gate = self._gate(state)
+            gate.sent(status=status, error=error)
+            with self._lock, (self.control / "sends.jsonl").open("a", encoding="utf-8") as fh:
+                fh.write(json.dumps({"call_id": self.current_call, "status": status,
+                                     "error": error, "outcome": gate.outcome(),
+                                     "completed": gate.completed}) + "\n")
 
     def _state(self) -> dict:
         try:
@@ -73,9 +117,8 @@ class ControlledDecision:
             return {"mode": "deny", "call_id": ""}
 
     def __call__(self, request):
-        state = self._state()
+        state = self.active_state()
         call_id = state.get("call_id", "")
-        self.current_call = call_id
         mode = state.get("mode", "deny")
         if mode == "record":
             decision = (True, "record mode")
@@ -85,13 +128,7 @@ class ControlledDecision:
             decision = ((True, "host allowed") if host == state.get("allow_host")
                         else (False, f"host {host} not allowed"))
         elif mode == "gate":
-            with self._lock:
-                gate = self._gates.get(call_id)
-                if gate is None:
-                    template = request_template_from_json(state["template"])
-                    gate = CallGate(template.instantiate(state.get("arguments", {})))
-                    self._gates[call_id] = gate
-            decision = gate(request)
+            decision = self._gate(state)(request)
         else:
             decision = (False, "broker in deny mode")
         creds = frozenset(state.get("credential_headers", ()))
@@ -127,10 +164,10 @@ def main() -> None:
     # Credential injection is part of the defense: on only when the harness
     # says so for the current condition (state.json "inject": true).
     def rewrite(request):
-        spec = decide._state().get("divert")
+        spec = decide.active_state().get("divert")
         return divert_request(request, spec) if spec else None
 
-    proxy = EgressProxy(ca, decide, credentials=lambda: creds if decide._state().get("inject") else (),
+    proxy = EgressProxy(ca, decide, credentials=lambda: creds if decide.active_state().get("inject") else (),
                         upstream=upstream, bind=(host, int(port)), rewrite=rewrite)
     stop = threading.Event()
     signal.signal(signal.SIGTERM, lambda *_: stop.set())

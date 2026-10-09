@@ -6,18 +6,10 @@ new call comes from the same pin-time idea as file effects: the approved
 server version runs on perturbed arguments, its outbound requests are recorded
 by the broker, and the requests are anti-unified into one template per tool.
 
-Each request is reduced to a canonical text view, one field per line:
-
-    METHOD https://host:port/path
-    query.<name>=<value>          (sorted)
-    header.<name>=<value>         (sorted; credential and transport headers dropped)
-    body.<dotted.key>=<value>     (JSON bodies, flattened and sorted)
-    body=<text>                   (any other body)
-
-Argument values appear raw in this view (JSON escaping is undone), so the
-existing argument abstraction and anti-unification apply unchanged. A field the
-honest version never sent, such as an added ``Bcc`` recipient, is a line the
-template does not contain, and the request is refused before it is sent.
+Canonical fields use JSON-encoded names and typed values. Keys are path arrays;
+leaves are inferred separately and structure is checked independently of holes.
+JSON bodies are normalized before forwarding. Capacity describes this canonical
+representation rather than excluded transport serialization.
 """
 
 from __future__ import annotations
@@ -58,58 +50,109 @@ def _default_port(scheme: str) -> int:
     return 443 if scheme == "https" else 80
 
 
-def _flatten_json(value: Any, prefix: str, out: list[tuple[str, str]]) -> None:
-    if isinstance(value, Mapping):
-        if not value:
-            out.append((prefix, "{}"))
-        for key in sorted(value):
-            _flatten_json(value[key], f"{prefix}.{key}", out)
-    elif isinstance(value, list):
-        if not value:
-            out.append((prefix, "[]"))
-        for index, item in enumerate(value):
-            _flatten_json(item, f"{prefix}[{index}]", out)
-    elif isinstance(value, str):
-        out.append((prefix, value))
-    else:
-        out.append((prefix, json.dumps(value)))
+FORMAT_VERSION = 2
 
 
-def canonical_view(request: CapturedRequest, *,
-                   credential_headers: frozenset[str] = frozenset()) -> str:
-    """Deterministic text view of one request, used for both training and checking."""
+def _json(value):
+    return json.dumps(value, sort_keys=True, separators=(",", ":"),
+                      ensure_ascii=False, allow_nan=False)
+
+
+def _unique_object(pairs):
+    obj = {}
+    for key, value in pairs:
+        if key in obj:
+            raise ValueError("duplicate JSON key")
+        obj[key] = value
+    return obj
+
+
+def _body_json(request):
+    ctype = next((v for k, v in request.headers.items() if k.lower() == "content-type"), "")
+    if request.body and "json" in ctype.lower():
+        return True, json.loads(request.body.decode("utf-8"), object_pairs_hook=_unique_object,
+                               parse_constant=lambda _: (_ for _ in ()).throw(ValueError("non-finite JSON")))
+    return False, None
+
+
+def normalized_body(request):
+    is_json, value = _body_json(request)
+    return _json(value).encode("utf-8") if is_json else request.body
+
+
+def _fields(request, credential_headers=frozenset()):
     parts = urlsplit(request.url)
     scheme = parts.scheme.lower()
-    if scheme not in ("http", "https") or not parts.hostname:
-        raise ValueError(f"request URL must be absolute http(s): {request.url!r}")
-    host = parts.hostname.lower()
+    if (scheme not in ("http", "https") or not parts.hostname or parts.username is not None
+            or parts.password is not None or parts.fragment or any(ord(c) < 32 for c in request.url)):
+        raise ValueError("invalid absolute HTTP(S) URL")
+    if not re.fullmatch(r"[A-Za-z]+", request.method):
+        raise ValueError("invalid HTTP method")
     port = parts.port or _default_port(scheme)
-    lines = [f"{request.method.upper()} {scheme}://{host}:{port}{parts.path or '/'}"]
-    for name, value in sorted(parse_qsl(parts.query, keep_blank_values=True)):
-        lines.append(f"query.{name}={value}")
+    fields = [(('authority',), [request.method.upper(), scheme, parts.hostname.lower(), port], 'fixed'),
+              (('path',), parts.path or '/', 'string')]
+    for i, (key, value) in enumerate(parse_qsl(parts.query, keep_blank_values=True,
+                                              encoding='utf-8', errors='strict')):
+        fields.append((('query', i, key), value, 'string'))
+    lowered = {}
+    for name, value in request.headers.items():
+        name = name.lower()
+        if name in lowered:
+            raise ValueError("duplicate HTTP header")
+        if not re.fullmatch(r"[!#$%&'*+.^_`|~0-9a-z-]+", name) or any(
+                ord(c) < 32 and c != '\t' for c in value):
+            raise ValueError("invalid HTTP header")
+        lowered[name] = value
     dropped = TRANSPORT_HEADERS | {h.lower() for h in credential_headers}
-    for name, value in sorted((k.lower(), v) for k, v in request.headers.items()):
-        if name not in dropped:
-            lines.append(f"header.{name}={value}")
-    body = request.body or b""
-    if body:
-        ctype = {k.lower(): v for k, v in request.headers.items()}.get("content-type", "")
-        parsed: Any = None
-        if "json" in ctype.lower():
-            try:
-                parsed = json.loads(body.decode("utf-8"))
-            except (UnicodeDecodeError, json.JSONDecodeError):
-                parsed = None
-        if parsed is not None:
-            flat: list[tuple[str, str]] = []
-            _flatten_json(parsed, "body", flat)
-            lines.extend(f"{k}={v}" for k, v in flat)
-        else:
-            try:
-                lines.append("body=" + body.decode("utf-8"))
-            except UnicodeDecodeError:
-                lines.append("body.sha256=" + hashlib.sha256(body).hexdigest())
-    return "\n".join(lines)
+    fields.extend((('header', k), v, 'string') for k, v in sorted(lowered.items()) if k not in dropped)
+    is_json, value = _body_json(request)
+    if is_json:
+        def walk(obj, path):
+            if isinstance(obj, dict):
+                fields.append((('body', *path), sorted(obj), 'object'))
+                for key in sorted(obj):
+                    walk(obj[key], path + (key,))
+            elif isinstance(obj, list):
+                fields.append((('body', *path), len(obj), 'array'))
+                for i, item in enumerate(obj):
+                    walk(item, path + (i,))
+            else:
+                kind = ('null' if obj is None else 'boolean' if isinstance(obj, bool)
+                        else 'number' if isinstance(obj, (int, float)) else 'string')
+                fields.append((('body', *path), obj, kind))
+        walk(value, ())
+    elif request.body:
+        fields.append((('body-bytes',), hashlib.sha256(request.body).hexdigest(), 'fixed'))
+    return fields
+
+
+def canonical_view(request, *, credential_headers=frozenset()):
+    return "\n".join(_json([key, kind, value]) for key, value, kind in _fields(request, credential_headers))
+
+
+def _structure(request, credential_headers):
+    return _json([(key, kind, value if kind in ('object', 'array', 'fixed') else None)
+                  for key, value, kind in _fields(request, credential_headers)])
+
+
+def _request_transforms():
+    return {'json_' + name: (lambda value, fn=fn: _json(fn(value))[1:-1])
+            for name, fn in _make_transforms(DEFAULT_ROOT).items()}
+
+
+def _request_sources(arguments):
+    by_text = {}
+    for name, value in sorted(flatten_arguments(arguments).items()):
+        if not isinstance(value, str) or len(value) < 4:
+            continue
+        for tname, fn in _request_transforms().items():
+            text = fn(value)
+            if len(text) < 4:
+                continue
+            owner = by_text.setdefault(text, (name, []))
+            if owner[0] == name:
+                owner[1].append(tname)
+    return sorted([(t, n, '+'.join(ts)) for t, (n, ts) in by_text.items()], key=lambda item: -len(item[0]))
 
 
 @dataclass(frozen=True)
@@ -125,6 +168,7 @@ class RequestObservation:
 class RequestRule:
     index: int
     tokens: tuple[tuple, ...]
+    structure: str
 
 
 @dataclass(frozen=True)
@@ -134,13 +178,19 @@ class RequestContract:
     tool: str
     patterns: tuple[str, ...]
     credential_headers: frozenset[str] = frozenset()
+    structures: tuple[str, ...] = ()
 
     def check(self, request: CapturedRequest, sent_so_far: int) -> tuple[bool, str]:
         """Decide one request before it is sent. ``sent_so_far`` counts the
         requests this call has already had admitted."""
         if sent_so_far >= len(self.patterns):
             return False, f"request {sent_so_far + 1} exceeds the {len(self.patterns)} the template allows"
-        view = canonical_view(request, credential_headers=self.credential_headers)
+        try:
+            if not self.structures or _structure(request, self.credential_headers) != self.structures[sent_so_far]:
+                return False, "request structure differs from the pinned template"
+            view = canonical_view(request, credential_headers=self.credential_headers)
+        except (ValueError, UnicodeError):
+            return False, "malformed request"
         if re.fullmatch(self.patterns[sent_so_far], view):
             return True, "matches template"
         return False, "request differs from the pinned template"
@@ -157,7 +207,7 @@ class RequestTemplate:
     def _render(self, tokens: Sequence[tuple], values: Mapping[str, Any],
                 now=None) -> str:
         from .template_inference import _clock_regex
-        transforms = _make_transforms(DEFAULT_ROOT)
+        transforms = _request_transforms()
         out: list[str] = []
         for token in tokens:
             if token[0] == "L":
@@ -177,6 +227,7 @@ class RequestTemplate:
         return "".join(out)
 
     def instantiate(self, arguments: Mapping[str, Any], *, now=None) -> RequestContract:
+        now = now or _dt.datetime.now(_dt.timezone.utc)
         values = flatten_arguments(arguments)
         for name, expected in self.fixed.items():
             if values.get(name) != expected:
@@ -185,7 +236,8 @@ class RequestTemplate:
         return RequestContract(
             tool=self.tool,
             patterns=tuple(self._render(r.tokens, values, now) for r in self.rules),
-            credential_headers=self.credential_headers)
+            credential_headers=self.credential_headers,
+            structures=tuple(r.structure for r in self.rules))
 
     def slack(self, *, clock_bound: bool = True) -> float:
         bits = 0.0
@@ -198,10 +250,10 @@ class RequestTemplate:
         return bits
 
     def to_json(self) -> dict:
-        return {"tool": self.tool, "fixed": dict(self.fixed),
+        return {"format_version": FORMAT_VERSION, "tool": self.tool, "fixed": dict(self.fixed),
                 "credential_headers": sorted(self.credential_headers),
                 "training_runs": self.training_runs,
-                "rules": [{"index": r.index, "tokens": [list(t[:3]) for t in r.tokens]}
+                "rules": [{"index": r.index, "structure": r.structure, "tokens": [list(t[:3]) for t in r.tokens]}
                           for r in self.rules]}
 
 
@@ -223,16 +275,18 @@ def infer_request_template(tool: str, observations: Sequence[RequestObservation]
     (count,) = counts
     rules: list[RequestRule] = []
     for index in range(count):
-        heads = {canonical_view(o.requests[index]).split("\n", 1)[0].split(" ", 1)[0]
-                 + " " + urlsplit(o.requests[index].url).netloc.lower()
-                 for o in observations}
-        if len(heads) != 1:
-            raise TemplateError(f"request {index} differs in method or host: {sorted(heads)}")
-        runs = []
-        for o in observations:
-            view = canonical_view(o.requests[index], credential_headers=credential_headers)
-            runs.append(abstract(view, _sources(o.arguments, DEFAULT_ROOT), o.clock_at))
-        rules.append(RequestRule(index=index, tokens=tuple(anti_unify(runs))))
+        structures = {_structure(o.requests[index], credential_headers) for o in observations}
+        if len(structures) != 1:
+            raise TemplateError(f"request {index} has inconsistent structure or authority")
+        lines = [canonical_view(o.requests[index], credential_headers=credential_headers).split("\n")
+                 for o in observations]
+        tokens = []
+        for column in zip(*lines):
+            if tokens:
+                tokens.append(("L", "\n"))
+            tokens.extend(anti_unify([abstract(line, _request_sources(o.arguments), o.clock_at)
+                                     for line, o in zip(column, observations)]))
+        rules.append(RequestRule(index, tuple(tokens), next(iter(structures))))
     return RequestTemplate(tool=tool, rules=tuple(rules), fixed=dict(fixed or {}),
                            credential_headers=frozenset(credential_headers),
                            training_runs=len(observations))
@@ -240,9 +294,11 @@ def infer_request_template(tool: str, observations: Sequence[RequestObservation]
 
 def request_template_from_json(data: Mapping[str, Any]) -> RequestTemplate:
     """Inverse of ``RequestTemplate.to_json``."""
+    if data.get("format_version") != FORMAT_VERSION:
+        raise TemplateError("legacy request template; repin using typed format v2")
     return RequestTemplate(
         tool=data["tool"],
-        rules=tuple(RequestRule(index=r["index"], tokens=tuple(tuple(t) for t in r["tokens"]))
+        rules=tuple(RequestRule(index=r["index"], tokens=tuple(tuple(t) for t in r["tokens"]), structure=r["structure"])
                     for r in data["rules"]),
         fixed=dict(data.get("fixed", {})),
         credential_headers=frozenset(data.get("credential_headers", ())),

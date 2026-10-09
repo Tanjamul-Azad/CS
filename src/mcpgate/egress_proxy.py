@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import datetime as _dt
 import http.client
+import re
 import socket
 import socketserver
 import ssl
@@ -39,7 +40,8 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.x509.oid import NameOID
 
-from .request_templates import CapturedRequest
+from .request_templates import CapturedRequest, TRANSPORT_HEADERS, normalized_body
+from .allowance import SQLiteAllowanceLedger, SlotState
 
 MAX_HEADER_BYTES = 64 * 1024
 MAX_BODY_BYTES = 8 * 1024 * 1024
@@ -226,7 +228,11 @@ def _read_head(stream) -> tuple[str, list[tuple[str, str]]] | None:
         name, sep, value = line.decode("latin-1").partition(":")
         if not sep:
             raise _BadRequest("malformed header line")
-        headers.append((name.strip(), value.strip()))
+        if (not re.fullmatch(r"[!#$%&'*+.^_`|~0-9A-Za-z-]+", name)
+                or any(k.lower() == name.lower() for k, _ in headers)
+                or any(ord(c) < 32 and c != "\t" for c in value.strip())):
+            raise _BadRequest("invalid or duplicate header")
+        headers.append((name, value.strip()))
     return request_line, headers
 
 
@@ -338,7 +344,9 @@ class EgressProxy:
             else:
                 self._handle_one(stream, method, target, headers, None, None, None)
                 self._serve_requests(stream, None, None, None)
-        except (_BadRequest, ssl.SSLError, OSError):
+        except _BadRequest as error:
+            _send_response(stream, 400, [], str(error).encode())
+        except (ssl.SSLError, OSError):
             return
         finally:
             try:
@@ -369,7 +377,9 @@ class EgressProxy:
             return
         if scheme is None:  # absolute-form request sent to the proxy in plaintext
             parts = urlsplit(target)
-            if parts.scheme not in ("http", "https") or not parts.hostname:
+            if (parts.scheme not in ("http", "https") or not parts.hostname
+                    or parts.username is not None or parts.password is not None or parts.fragment
+                    or any(ord(c) < 32 for c in target)):
                 self._record(EgressRecord(method, target, False, "not absolute-form", False))
                 _send_response(stream, 400, [], b"absolute-form URL required")
                 return
@@ -380,6 +390,8 @@ class EgressProxy:
         authority = host if port == default else f"{host}:{port}"
         url = f"{scheme}://{authority}{target}"
         captured = CapturedRequest(method.upper(), url, dict(headers), body)
+        if hasattr(self.decide, "begin"):
+            self.decide.begin(captured)
         if self.rewrite is not None:
             try:
                 new = self.rewrite(captured)
@@ -404,6 +416,8 @@ class EgressProxy:
              for k, v in headers if k.lower() == c.header.lower() and v != c.dummy), None)
         if bad_credential is not None:
             admitted, reason = False, f"credential header {bad_credential!r} altered"
+            if hasattr(self.decide, "reject"):
+                self.decide.reject(reason)
         else:
             try:
                 admitted, reason = self.decide(captured)
@@ -414,22 +428,25 @@ class EgressProxy:
             _send_response(stream, 403, [("Content-Type", "text/plain")],
                            f"EffectSeal refused this request: {reason}".encode())
             return
-        out_headers = {k: v for k, v in headers
-                       if k.lower() not in ("proxy-connection", "proxy-authorization",
-                                            "connection", "keep-alive")}
+        out_headers = {k: v for k, v in headers if k.lower() not in TRANSPORT_HEADERS}
         for cred in credentials:
             if cred.host == host:
                 for name in list(out_headers):
                     if name.lower() == cred.header.lower() and out_headers[name] == cred.dummy:
                         out_headers[name] = cred.real
         try:
+            body = normalized_body(captured)
             status, resp_headers, resp_body = self.upstream(
                 scheme, host, port, method.upper(), target, out_headers, body)
         except Exception as error:
+            if hasattr(self.decide, "sent"):
+                self.decide.sent(error=str(error))
             self._record(EgressRecord(method, url, True, f"upstream error: {error}",
                                       True, 502, captured))
             _send_response(stream, 502, [], b"upstream error")
             return
+        if hasattr(self.decide, "sent"):
+            self.decide.sent(status=status)
         self._record(EgressRecord(method, url, True, reason, True, status, captured))
         _send_response(stream, status, resp_headers, resp_body)
 
@@ -444,26 +461,74 @@ class CallGate:
     refused before it is sent. Once a request is refused, the call is spoiled
     and every later request is refused too."""
 
-    def __init__(self, contract):
+    def __init__(self, contract, *, ledger: SQLiteAllowanceLedger | None = None,
+                 call_id: str = ""):
         self.contract = contract
         self.admitted = 0
+        self.completed = 0
         self.refused: list[str] = []
         self._lock = threading.Lock()
+        self.ledger, self.call_id = ledger, call_id
+        self._reserved = False
+        self._pending = False
+
+    def _reserve(self):
+        if self.ledger is not None and not self._reserved:
+            if not self.call_id:
+                self.refused.append("missing trusted call ID")
+                return False
+            previous = self.ledger.reserve("egress:" + self.call_id, "call", 1)
+            if previous is not None:
+                self.refused.append("durable call already spent: " + previous.state.value)
+                return False
+        self._reserved = True
+        return True
+
+    def _fail(self, reason):
+        self.refused.append(reason)
+        if (self.ledger is not None and self._reserved and
+                self.ledger.state_of("egress:" + self.call_id, "call") is SlotState.RESERVED):
+            self.ledger.fail("egress:" + self.call_id, "call", reason)
+
+    def reject(self, reason):
+        with self._lock:
+            if not self.refused and self._reserve():
+                self._fail(reason)
 
     def __call__(self, request: CapturedRequest) -> tuple[bool, str]:
         with self._lock:
             if self.refused:
                 return False, "call already refused"
+            if not self._reserve():
+                return False, self.refused[-1]
+            if self._pending:
+                # A request cannot race ahead of a send whose outcome is unknown.
+                return False, "prior send is still pending"
             ok, reason = self.contract.check(request, self.admitted)
             if ok:
                 self.admitted += 1
+                self._pending = True
             else:
-                self.refused.append(reason)
+                self._fail(reason)
             return ok, reason
+
+    def sent(self, *, status=None, error=None):
+        """Called after upstream returns; errors may already have caused an effect."""
+        with self._lock:
+            if not self._pending:
+                raise RuntimeError("send completion without an admitted request")
+            self._pending = False
+            if error is not None:
+                self._fail("upstream outcome unknown: " + error)
+                return
+            self.completed += 1
+            if self.ledger is not None and self.completed == len(self.contract.patterns):
+                self.ledger.commit("egress:" + self.call_id, "call",
+                                   {"completed_requests": self.completed, "last_status": status})
 
     def outcome(self) -> str:
         if self.refused:
             return "PARTIAL" if self.admitted else "REFUSED"
-        if self.admitted < len(self.contract.patterns):
+        if self._pending or self.completed < len(self.contract.patterns):
             return "INCOMPLETE"
         return "ADMITTED"

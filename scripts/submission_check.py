@@ -20,10 +20,10 @@ ROOT = Path(__file__).resolve().parents[1]
 MATRIX = ROOT / "paper" / "CLAIM_EVIDENCE_MATRIX.md"
 ROADMAP = ROOT / "paper" / "SUBMISSION_ROADMAP.md"
 SUBMISSION = ROOT / "paper" / "submission"
-PDF = ROOT / "paper" / "mcpgate-submission.pdf"
+PDF = SUBMISSION / "main.pdf"
 
 CLAIM_ROW = re.compile(
-    r"^\|\s*C\d+\s*\|.*?\|\s*(READY|QUALIFIED|OPEN|RETIRED)(?:\s+[^|]+)?\s*\|",
+    r"^\|\s*(?:C|N)\d+\s*\|.*?\|\s*(READY|QUALIFIED|OPEN|RETIRED)(?:\s+[^|]+)?\s*\|",
     re.MULTILINE,
 )
 

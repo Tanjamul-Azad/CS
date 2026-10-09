@@ -159,10 +159,10 @@ _LITERAL_TOKEN = re.compile(r"[A-Za-z]+|[0-9]+|\s+|[^A-Za-z0-9\s]")
 # zone style) so that runs agree on it, while the fraction stays optional
 # because some runtimes omit a zero fraction.
 _CLOCK = re.compile(
-    r"(?P<date>\d{4}-\d{2}-\d{2})"
-    r"(?:(?P<sep>[T ])\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?P<tz>Z|[+-]\d{2}:?\d{2})?)?"
-    r"|(?P<time>\d{2}:\d{2}:\d{2})(?:\.\d{1,9})?")
-_TIME = r"\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?"
+    r"(?P<date>[0-9]{4}-[0-9]{2}-[0-9]{2})"
+    r"(?:(?P<sep>[T ])[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]{1,9})?(?P<tz>Z|[+-][0-9]{2}:?[0-9]{2})?)?"
+    r"|(?P<time>[0-9]{2}:[0-9]{2}:[0-9]{2})(?:\.[0-9]{1,9})?")
+_TIME = r"[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]{1,9})?"
 _TIME_BITS = 15 * math.log2(10) + 1  # six digits, up to nine fraction digits
 
 
@@ -195,7 +195,7 @@ def _clock_regex(spec: str, now=None) -> str:
     if shape == "t":
         return _TIME
     if now is None:
-        date = r"\d{4}-\d{2}-\d{2}"
+        date = r"[0-9]{4}-[0-9]{2}-[0-9]{2}"
     else:
         day = now.astimezone(_dt.timezone.utc).date()
         days = sorted({(day + _dt.timedelta(days=d)).isoformat() for d in (-1, 0, 1)})
@@ -203,7 +203,7 @@ def _clock_regex(spec: str, now=None) -> str:
     if shape == "d":
         return date
     sep, zone = shape[1], shape[3:]
-    tz = {"": "", "Z": "Z", "o": r"[+-]\d{2}:?\d{2}"}[zone]
+    tz = {"": "", "Z": "Z", "o": r"[+-][0-9]{2}:?[0-9]{2}"}[zone]
     return f"{date}{re.escape(sep)}{_TIME}{tz}"
 
 
@@ -306,11 +306,11 @@ def _gap_hole(texts: Sequence[str], *, path: bool) -> tuple:
             break
     if regex_class is None:
         if path:
-            regex_class, size = "[^/\\n]", 95
+            regex_class, size = "[^/\\n\\ud800-\\udfff]", 0x110000 - 2048 - 2
         elif "\n" not in chars:
-            regex_class, size = "[^\\n]", 95
+            regex_class, size = "[^\\n\\ud800-\\udfff]", 0x110000 - 2048 - 1
         else:
-            regex_class, size = "[\\s\\S]", 256
+            regex_class, size = "[^\\ud800-\\udfff]", 0x110000 - 2048
     lengths = [len(t) for t in texts]
     low, high = min(lengths), max(lengths)
     if low != high:
@@ -516,8 +516,8 @@ class EffectTemplate:
     def instantiate(self, arguments: Mapping[str, Any],
                     expected_before: TreeSnapshot | None = None, *,
                     now=None) -> TreeEffectContract:
-        """Contract for one call. With ``now`` (an aware datetime), clock
-        holes are bound to the admission date; without it, any date passes."""
+        """Contract for one call, bound to the trusted UTC admission date."""
+        now = now or _dt.datetime.now(_dt.timezone.utc)
         values = flatten_arguments(arguments)
         self._check_fixed(values)
         rules: list[PathRule] = []

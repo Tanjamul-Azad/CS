@@ -22,6 +22,7 @@ the call's own arguments; the server's MCP response is never used.
 
 from __future__ import annotations
 
+import argparse
 import datetime as dt
 import hashlib
 import json
@@ -228,10 +229,11 @@ def state_for(condition: str, call_id: str, template: dict | None, arguments: di
 
 def run_call(broker: Broker, image: str, condition: str, templates: dict | None,
              tool: str, args: dict) -> dict:
+    started = dt.datetime.now(dt.timezone.utc).isoformat()
     call_id = uuid.uuid4().hex[:10]
     broker.write_state(state_for(condition, f"{call_id}/startup",
                                  templates and templates["startup"], {}))
-    result = {"call_id": call_id, "condition": condition, "image": image, "args": args}
+    result = {"call_id": call_id, "condition": condition, "image": image, "args": args, "started": started}
     try:
         # Baselines give the server the real token, as deployments do today;
         # EffectSeal gives it a dummy and injects the real one on admitted requests.
@@ -250,6 +252,7 @@ def run_call(broker: Broker, image: str, condition: str, templates: dict | None,
     time.sleep(0.3)
     result["decisions"] = [r for r in broker.lines("records.jsonl")
                            if r["call_id"].startswith(call_id)]
+    result["sends"] = [r for r in broker.lines("sends.jsonl") if r["call_id"].startswith(call_id)]
     result["far_side"] = [r for r in broker.lines("far_side.jsonl")
                           if r["call_id"].startswith(call_id)]
     return result
@@ -290,6 +293,9 @@ def gate_outcome(trial: dict) -> str:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--reuse-meta", type=Path, help="reuse already built immutable attack images")
+    args = parser.parse_args()
     if OUT.exists():
         raise SystemExit(f"{OUT} exists")
     OUT.mkdir(parents=True)
@@ -300,11 +306,17 @@ def main() -> None:
             "server": "ActiveCampaign/postmark-mcp", "source_commit": source_commit(),
             "prereg": "paper/NETWORK_PREREG_V2.md", "attacks": {}, "images": {}}
     print("building images", flush=True)
-    images = {"honest": build_variant("honest", work)}
+    cached = json.loads(args.reuse_meta.read_text()) if args.reuse_meta else None
+    tags = cached["images"] if cached else {"honest": build_variant("honest", work)}
+    images = {"honest": sh("docker", "image", "inspect", "--format", "{{.Id}}", tags["honest"])}
     for name in ATTACKS:
-        images[name] = build_variant(name, work)
+        tag = tags[name] if cached else build_variant(name, work)
+        images[name] = sh("docker", "image", "inspect", "--format", "{{.Id}}", tag)
         meta["attacks"][name] = {"anchor": ATTACKS[name][0], "replacement": ATTACKS[name][1]}
     meta["images"] = images
+    meta["bundle_version"] = 2
+    meta["git_commit"] = sh("git", "rev-parse", "HEAD")
+    meta["plan_sha256"] = hashlib.sha256((ROOT / "artifact/effectseal-repair-plan-20261009.json").read_bytes()).hexdigest()
     trials: list[dict] = []
     with Broker(work) as broker:
         # -- pin: honest server, record mode, exemplar + 4 perturbations --
@@ -315,10 +327,10 @@ def main() -> None:
             p["phase"] = "pin"
         trials += pins
         startup = infer_request_template(
-            "__startup__", [RequestObservation({}, observation(p, "startup")) for p in pins],
+            "__startup__", [RequestObservation({}, observation(p, "startup"), dt.datetime.fromisoformat(p["started"])) for p in pins],
             credential_headers=frozenset({TOKEN_HEADER.lower()}))
         call = infer_request_template(
-            "sendEmail", [RequestObservation(p["args"], observation(p, "call")) for p in pins],
+            "sendEmail", [RequestObservation(p["args"], observation(p, "call"), dt.datetime.fromisoformat(p["started"])) for p in pins],
             credential_headers=frozenset({TOKEN_HEADER.lower()}))
         templates = {"startup": startup.to_json(), "call": call.to_json()}
         meta["templates"] = templates
@@ -337,6 +349,13 @@ def main() -> None:
                     t.update(phase="attack", variant=name)
                     trials.append(t)
             print(f"condition {condition} done", flush=True)
+    (OUT / "broker").mkdir()
+    for path in broker.control.iterdir():
+        if path.is_file():
+            shutil.copy2(path, OUT / "broker" / path.name)
+    (OUT / "sources").mkdir()
+    for path in [Path(__file__), *sorted((ROOT / "src/mcpgate").glob("*.py"))]:
+        shutil.copy2(path, OUT / "sources" / path.name)
     for t in trials:
         t["oracle"] = oracle(t)
         t["gate_outcome"] = gate_outcome(t)
@@ -347,6 +366,10 @@ def main() -> None:
             fh.write(json.dumps(t) + "\n")
     print(json.dumps(summarize(trials), indent=2))
     (OUT / "summary.json").write_text(json.dumps(summarize(trials), indent=2), encoding="utf-8")
+    hashes = {str(p.relative_to(OUT)).replace("\\", "/"): hashlib.sha256(p.read_bytes()).hexdigest()
+              for p in OUT.rglob("*") if p.is_file()}
+    (OUT / "SHA256SUMS.json").write_text(json.dumps(hashes, indent=2), encoding="utf-8")
+    print("BUNDLE", OUT)
 
 
 def summarize(trials: list[dict]) -> dict:

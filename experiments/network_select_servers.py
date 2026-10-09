@@ -134,8 +134,7 @@ def build_image(c: dict, work: Path) -> str:
     slug = re.sub(r'[^a-z0-9]+', '-', ident.lower()).strip('-')[:60]
     ver = re.sub(r'[^a-z0-9.]+', '-', version.lower()).strip('-.')
     tag = f"effectseal-net:{slug}-{ver}"  # a tag must not start with '-' or '.'
-    P.sh("docker", "build", "-q", "-t", tag, str(ctx), timeout=900)
-    shutil.rmtree(ctx, ignore_errors=True)
+    P.sh("docker", "build", "-q", "-t", tag, str(ctx), timeout=300)
     return tag
 
 
@@ -257,6 +256,7 @@ def write_tools(tools: list[dict]) -> list[dict]:
 
 def screen(broker: GenericBroker, c: dict, image: str) -> dict:
     env = server_env(c)
+    broker.candidate_env = c["env"]
     record: dict = {"tools_tried": []}
     call_id = uuid.uuid4().hex[:10]
     broker.write_state({"mode": "record", "call_id": f"{call_id}/startup"})
@@ -305,7 +305,9 @@ def _screen_session(broker, command, record, call_id, env) -> dict:
             record["tools_tried"].append(attempt)
             if not error and writes and len({urlsplit(r["url"]).hostname for r in writes}) == 1:
                 record.update(qualified=True, tool=tool["name"], args=args, env_names=sorted(env),
-                              input_schema=tool.get("inputSchema"))
+                              input_schema=tool.get("inputSchema"),
+                              extra_env={k: v for k, v in env.items() if not any(
+                                  e.get("name") == k and e.get("isSecret") for e in getattr(broker, "candidate_env", []))})
                 return record
     record["qualified"] = False
     record["reason"] = ("no write-like tool" if not record["tools_tried"]
@@ -314,8 +316,13 @@ def _screen_session(broker, command, record, call_id, env) -> dict:
 
 
 def main() -> None:
+    global SEED
     parser = argparse.ArgumentParser()
     parser.add_argument("--max-candidates", type=int, default=200)
+    parser.add_argument("--seed", type=int, default=SEED)
+    parser.add_argument("--wanted", type=int, default=WANTED)
+    parser.add_argument("--exclude-selection", type=Path)
+    parser.add_argument("--held-out-only", action="store_true")
     parser.add_argument("--resume", help="existing selection directory to continue")
     a = parser.parse_args()
     out = Path(a.resume) if a.resume else OUT
@@ -325,7 +332,12 @@ def main() -> None:
         for line in (out / "screening.jsonl").read_text(encoding="utf-8").splitlines():
             entry = json.loads(line)
             done[entry["rank"]] = entry
+    SEED = a.seed
     cands = candidates()
+    excluded = set()
+    if a.exclude_selection:
+        excluded = {json.loads(line)["name"] for line in (a.exclude_selection / "screening.jsonl").read_text(encoding="utf-8").splitlines()}
+        cands = [c for c in cands if c["name"] not in excluded]
     (out / "candidates.json").write_text(json.dumps(
         {"seed": SEED, "raw": str(RAW.relative_to(ROOT)), "count": len(cands),
          "order": [c["name"] for c in cands]}, indent=1), encoding="utf-8")
@@ -337,8 +349,11 @@ def main() -> None:
         for index, c in enumerate(cands[:a.max_candidates]):
             if index in done:
                 continue
+            if shutil.disk_usage("C:/" if sys.platform == "win32" else "/").free < 5 * 1024**3:
+                raise SystemExit("disk space below 5 GiB; selection stopped")
             entry = {"rank": index, "name": c["name"], "registry": c["registry"],
                      "identifier": c["identifier"], "version": c["version"]}
+            entry["seed"] = SEED
             if any(arg.get("isRequired") for arg in c["arguments"]):
                 entry.update(qualified=False, reason="requires package arguments")
             else:
@@ -353,18 +368,18 @@ def main() -> None:
                     except Exception as error:  # noqa: BLE001
                         entry.update(qualified=False, reason=f"install or launch failed: "
                                                              f"{type(error).__name__}: {str(error)[:300]}")
-                    if not entry.get("qualified") and entry.get("image"):
-                        P.sh("docker", "rmi", "-f", entry["image"], check=False)
+                    if entry.get("image"):
+                        entry["image_id"] = P.sh("docker", "image", "inspect", "--format", "{{.Id}}", entry["image"])
             log.write(json.dumps(entry) + "\n")
             log.flush()
             print(f"[{index}] {c['name']}: {'QUALIFIED' if entry.get('qualified') else entry.get('reason')}",
                   flush=True)
             if entry.get("qualified"):
                 qualified.append(entry)
-                if len(qualified) == WANTED:
+                if len(qualified) == a.wanted:
                     break
-    sets = {"development": [q["name"] for q in qualified[:6]],
-            "held_out": [q["name"] for q in qualified[6:12]],
+    sets = {"development": [] if a.held_out_only else [q["name"] for q in qualified[:6]],
+            "held_out": [q["name"] for q in qualified] if a.held_out_only else [q["name"] for q in qualified[6:12]],
             "screened": index + 1, "finished": dt.datetime.now(dt.timezone.utc).isoformat()}
     (out / "sets.json").write_text(json.dumps(sets, indent=2), encoding="utf-8")
     print(json.dumps(sets, indent=2))
