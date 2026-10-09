@@ -10,7 +10,22 @@ from pypdf import PdfReader
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_PDF = ROOT / "paper" / "mcpgate-submission.pdf"
+DEFAULT_PDF = ROOT / "paper" / "submission" / "main.pdf"
+
+
+def body_page_issues(texts: list[str]) -> list[str]:
+    """Count body text on a shared appendix page too, rather than subtracting it."""
+    for number, text in enumerate(texts, 1):
+        heading = re.search(r"^(?:[A-Z]\s+)?Ethical Considerations\s*$", text, re.MULTILINE)
+        if heading:
+            prefix = text[:heading.start()].strip()
+            # A page number alone is not body text. The canonical source starts
+            # appendices with clearpage, but imported PDFs may share that page.
+            shares_body = bool(prefix and not re.fullmatch(r"\d+", prefix))
+            body_pages = number if shares_body else number - 1
+            return ([f"body is {body_pages} pages; USENIX limit is 13"]
+                    if body_pages > 13 else [])
+    return ["Ethical Considerations appendix heading was not found"]
 
 
 def _font_descriptor(font: object) -> object | None:
@@ -42,6 +57,7 @@ def check(
         issues.append("named-draft PDF Author metadata is missing the lead author")
 
     texts: list[str] = []
+    link_uris: list[str] = []
     fonts: dict[str, bool] = {}
     for number, page in enumerate(reader.pages, start=1):
         width = float(page.mediabox.width)
@@ -49,6 +65,13 @@ def check(
         if abs(width - 612) > 1 or abs(height - 792) > 1:
             issues.append(f"page {number} is not U.S. Letter: {width}x{height} pt")
         texts.append(page.extract_text() or "")
+        for reference in page.get("/Annots", []):
+            annotation = reference.get_object()
+            action = annotation.get("/A")
+            if action:
+                uri = action.get_object().get("/URI")
+                if uri:
+                    link_uris.append(str(uri))
         resources = page.get("/Resources")
         if not resources:
             continue
@@ -86,7 +109,7 @@ def check(
         issues.append("local Windows path appears in PDF text")
     if not working_draft and "EVIDENCE GATE" in all_text:
         issues.append("EVIDENCE GATE marker remains in release PDF")
-    if not working_draft and "ANONYMOUS-ARTIFACT-URL-PENDING" in all_text:
+    if not working_draft and "ANONYMOUS-ARTIFACT-URL-PENDING" in all_text + "\n".join(link_uris):
         issues.append("anonymous artifact URL placeholder remains in release PDF")
 
     appendix_page = next(
@@ -94,10 +117,7 @@ def check(
          if re.search(r"^(?:[A-Z]\s+)?Ethical Considerations\s*$", text, re.MULTILINE)),
         None,
     )
-    if appendix_page is None:
-        issues.append("Ethical Considerations appendix heading was not found")
-    elif appendix_page - 1 > 13:
-        issues.append(f"body is {appendix_page - 1} pages; USENIX limit is 13")
+    issues.extend(body_page_issues(texts))
     open_science_page = next(
         (index for index, text in enumerate(texts, start=1)
          if re.search(r"^(?:[A-Z]\s+)?Open Science\s*$", text, re.MULTILINE)),

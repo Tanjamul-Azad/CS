@@ -1,81 +1,35 @@
-# Claim–Evidence Matrix
+# Current claim–evidence matrix
 
-Status vocabulary:
+Updated 2026-10-09 after the correctness audit. This file supersedes the
+pre-repair matrix preserved in `paper/history/claim-evidence-before-20261009-repair.md`.
+Evidence pointers are explicit in `artifact/paper-evidence-20261009.json`.
+READY means supported within its stated experiment; QUALIFIED requires its
+limitation beside the claim. A failed deployment criterion is not silently
+converted into a passing criterion.
 
-- **READY** — evidence supports the precise claim as written.
-- **QUALIFIED** — usable only with the listed limitation in the same paragraph.
-- **OPEN** — work is required before the claim enters the paper.
-- **RETIRED** — do not claim.
-
-| ID | Proposed paper claim | Evidence | Status | Required action |
+| ID | Current claim | Evidence | Status | Required qualification |
 |---|---|---|---|---|
-| C1 | A passive client cannot distinguish honest and diverted effects when their client-visible transcripts are identical. | `docs/05`, `docs/33`, `experiments/demo_theorem1.py` | READY | Position as a boundary/application of indistinguishability, not a wholly new proof technique. |
-| C2 | No tested response-auditing configuration reached a usable operating point on the 1,242-server usable corpus. | `results/tables/operating_points.md`, notebooks 04–06, `docs/30` | READY | Define “usable”; report the permissive detections and 71.8–78.3% FPR, not only “0%”. |
-| C3 | The full corpus funnel is 8,692 candidates → 4,121 launches → 1,242 usable paired trials. | `results/tables/funnel.md`, `run_status.md`, manifest | READY | Report selection effects; do not generalize to credentialed servers. |
-| C4 | 69.7% of tools are A0. | classifier output; κ = 0.559 | RETIRED | Omitted from the first paper. Reintroduce only after independent Round-2 validation. |
-| C5 | L1/L2/L3 separate destination, structure, and content-level authorization. | `docs/27`, controlled ladder, seven real servers | QUALIFIED | Keep per-property verdicts; state that L2 added no protection on tested free-text tools. |
-| C6 | Opaque SQL declarations do not expose a schema-derived content boundary. | two independent SQL server probes in `docs/29` | READY | State as a two-implementation negative replication, not a universal SQL theorem. |
-| C7 | M2 proper meets 10/10 prevention, 1/14 UNKNOWN, and 0 pp honest-completion gap on registered scenarios. | `results/tables/boundary_probe_m2.md`, `docs/31` | READY | Preserve paired undefended controls and exact scenario scope. |
-| C8 | The final MCPGate filesystem pipeline is implemented end to end against a pinned real server. | `artifact/results/integrated_real_server.json`; `filesystem-mcp@1.3.0`; exact npm integrity; Linux container/image digest; honest COMMITTED; path/content mutations refused from trusted state; integrated regression | READY | Preserve the explicit `/tmp/exfil.dat` world-effect limitation and repeat from the clean release commit before artifact freeze. |
-| C9 | MCPGate prevents external path-diversion effects. | `/tmp/exfil.dat` was written in `docs/37`, `41`, `42` | RETIRED | Either add namespace confinement or claim only trusted-state rejection. |
-| C10 | MCPGate keeps mismatching staged results out of trusted committed state in the tested real-server scenarios. | `docs/37`, M5 results | READY | Always distinguish this from rollback/world-effect prevention. |
-| C11 | The mechanism transfers across heterogeneous unmodified servers and effect domains. | matched five-condition runs on five filesystem-class servers (`artifact/results/matched_filesystem.json`, MCPGate 31/31) and two SQLite servers (`artifact/results/matched_sql.json`, MCPGate 10/10), no false block in either | READY (filesystem + SQL) | Transfer is shown across seven frozen third-party servers in two effect domains and two languages. The network arm remains to broaden beyond local state. |
-| C12 | Same-read commit closes the observed TOCTOU race. | 5/20 → 0/20, `docs/32` | QUALIFIED | Increase repetitions and report an interval; claim the tested race, not all TOCTOU. |
-| C13 | Pre-effect allowance reservation closes the observed replay/double-commit gap. | `docs/38`; `AllowanceLedger`; integrated replay, exhaustion, and concurrent-last-slot tests | READY | Now wired into `FilesystemMediator`; retain the different-ID replay ablation in the Docker evaluation. |
-| C14 | A filesystem-only mediator cannot observe socket exfiltration. | `docs/39` | READY | Present as a demonstrated scope boundary, not a bug fixed by tuning. |
-| C15 | A fixed observation window cannot distinguish every honest slow write from every patient delayed attack. | `docs/40` | READY | Phrase as the measured ambiguity of this design; propose explicit completion/freezing as future work. |
-| C16 | Static least privilege is structurally blind to content substitution at an allowed writable path. | two real servers, `docs/41`, `42` | READY | Limit empirical statement to two servers; explain the permission semantics argument separately. |
-| C17 | Static least privilege never catches path diversion. | second server refused relative-path diversion | RETIRED | Replace with the contingent path-resolution claim. |
-| C18 | The mechanism outperforms state-of-the-art adjacent research systems. | no head-to-head external implementation | RETIRED | Compare properties; add a reproducible external baseline only if feasible. |
-| C19 | Contract authenticity and expiry are enforced. | canonical ID/immutability only | RETIRED | `Valid(C)` is an explicit trusted-input assumption; do not claim signing or expiry as an implemented contribution. |
-| C20 | The mechanism handles genuine concurrent calls. | atomic thread test plus `run_concurrency_eval.py`: two real child writers overlap in distinct staging roots and both commit; final-slot competition starts one child | QUALIFIED | Local process evidence is now present; add pinned Linux/third-party-server overlap and effect-to-call attribution before an unqualified ecosystem claim. |
-| C21 | The evaluation establishes network/process-domain mediation. | not evaluated | RETIRED | Narrow the paper to filesystem effects. |
-| C22 | The released artifact supports every paper result equally. | matched per-cell JSON is checked in; registry-scale traces remain local with released aggregates and hashes | QUALIFIED | Claim fresh-clone reproduction for matched/deterministic results only. Describe registry aggregates and omitted traces explicitly in Open Science. |
-| C23 | Removing individual MCPGate properties re-exposes their registered failure modes in the controlled implementation. | `experiments/run_mediator_ablations.py`; `artifact/results/controlled_ablations.json`; generated table; regression test | READY | Keep this explicitly local/deterministic; do not present it as a third-party-server or performance result. |
-| C24 | For the current exact single-write workload, a trusted direct writer is the simpler engineering baseline and has lower local latency than invoking the staged mediator. | `experiments/run_exact_write_baseline.py`; 100-repetition development run; security cases; generated table | QUALIFIED | Report the measured 1.671x p50 ratio only as development-machine data; use it to narrow utility, not as a release performance result. |
-| C25 | A durable allowance backend prevents restart replay and competing processes from reusing the same final slot. | `SQLiteAllowanceLedger`; restart, unavailable-result, and two-backend contention tests; durable backend wired into the revised real-server adapter | READY | Claim fail-closed at-most-once entry only. Orphaned RESERVED outcomes still require domain-specific reconciliation; do not claim exactly-once world effects. |
+| C1 | Equal raw transcripts give equal passive-monitor information. | `docs/05`, `docs/33`, `demo_theorem1.py` | READY | An observation boundary, not a new cryptographic primitive. Normalized empirical matches do not prove raw equality. |
+| C2 | No tested registry response auditor reached the frozen operating point. | `results/tables/operating_points.md`, funnel 8692/4121/1242 | QUALIFIED | Credential-free launchable subset; no ecosystem prevalence claim. |
+| C3 | Honest-run local contracts stopped 32/32 landed attacks on seven development servers. | `matched_filesystem_consistent.json`, `matched_sql_consistent.json` | QUALIFIED | Same-call references, not pin-time generalization. |
+| C4 | Local templates stopped 75/75 development and 39/39 held-out landed attacks; blocked 1/84 and 6/48 honest calls. | `template_generalization_run4.json`, `batch2_templates.json` | QUALIFIED | Held-out false blocks exceed the frozen 5% criterion; later fixes lack a new eligible local cohort. |
+| C5 | Original network cohort: 10/12 template coverage, 120/120 honest protocol trials, 792/816 fixed send refusals. | active `network_matched` bundle | QUALIFIED | Conditional on coverage; check-level transformations; mocks do not establish vendor task completion. Development zero-admission criterion FAILED. |
+| C6 | Original adaptive leaf attacks: 612/648 refused, 36 admitted (24 splitifi, 12 held-out travel). | active `network_matched` bundle | QUALIFIED | Every string leaf and request position tested, not every possible adversarial request. Cluster CI 85.3–100%. |
+| C7 | Additional held-out selection: 40 screened, 5 qualified; 60/60 honest protocol trials, 312/312 fixed sends refused, 324/336 adaptive refused. | active `additional_selection`, `additional_network_held_out` | QUALIFIED | Target six not met; 12 conekta adaptive admissions; two tools have zero string-leaf cases; telemetry/empty payload included; two packages share an author. |
+| C8 | Rebuilt Postmark: 21/21 unauthorized sends refused; 3 no-ops incomplete; honest 12/12 admitted. | active `network_postmark` bundle | READY | Rebuilt attack code against mocks, including approved prefixes before a later refusal; not transactional rollback. |
+| C9 | Actual ToolHive/AgentBound each refused 3/21 Postmark send cases; pinning alerted on 0/8 attack versions. | dated ToolHive/AgentBound/mcp-scan bundles | QUALIFIED | Version-level alerts and send prevention are distinct metrics; local baseline values are mechanism mappings. |
+| C10 | Official GitHub: 12/12 honest; 84/84 fixed sends and 24/24 adaptive variants refused; 12 no-ops incomplete. | active `network_named` bundle | QUALIFIED | Check-level request transformations; one official implementation. |
+| C11 | Quiet integrated proxy timing: gate p50/p95 14.5/33.6ms; record-only 1.7/20.9ms. | active `network_integrated`, 300 raw samples each | QUALIFIED | Includes state reads, instantiation, SQLite, logs and loopback HTTP; excludes TLS, WAN/vendor latency; development machine. |
+| C12 | Actual proxy: exactly one far-side effect in all 100 races with eight requests/two workers; restart replay 403. | active integrated bundle, `test_network_repairs.py` | READY | Durable at-most-once admission; ambiguous sends remain UNKNOWN/spent, not exactly-once effects. |
+| C13 | Separate pin sessions agree on honest and stable poisoning, disagree on session noise. | active `network_crosssession` bundle | QUALIFIED | Repeatability is not an honesty oracle; broker transformations against mocks. |
+| C14 | Local canonical-view capacities use Unicode scalar alphabets; raw ZIP metadata is outside the bound. | active `local_capacity_reanalysis`, `reanalyze_local_capacity.py` | QUALIFIED | Corrected capacities without rescoring historical local security outcomes. |
+| C15 | Post hoc normalized matching gives no observed judge advantage: 0/0,21.4/21.4,35.7/40.0,28.6/28.6%. | active `judge_matched_sensitivity` | QUALIFIED | Matched approved requests and normalized signatures, not raw transcript equality or a new preregistered judge trial. |
+| C16 | Recorded agents: compromised local/network effects admitted without defense were kept out with admission. | dated OpenAI/Llama agent bundles | QUALIFIED | Historical runs, narrow tools/tasks/models, incomplete sessions and honest blocks retained; no fresh model API scoring. |
+| C17 | Vendor Postmark test endpoint accepted 12 honest requests and 7/9 undefended diversions. | `network_postmark_live_20261009-170400.json` | QUALIFIED | Separately dated test-token replay; no delivered email; two stated scope/guard exclusions. |
+| C18 | Local and network model invariants hold, with mechanism-removal counterexamples. | TLA+/TLC and independent Python checkers | READY | Abstract models, not a proof of all Python/container/TLS behavior. |
+| C19 | v2 network bundles support offline inference, request replay, counts, intervals, hashes and source/image provenance. | `verify_current_evidence.py`, bundle snapshots | READY | Older aggregate-only data and registry measurements have narrower reproduction scope. |
+| C20 | All MCP effects are secure, template agreement proves honesty, or held-out templates are universally useful. | contradicted by recorded failures | RETIRED | Never claim. |
 
-## Abstract-safe claims today
-
-The abstract may currently say:
-
-- 8,692 candidates, 4,121 launches, and 1,242 usable paired trials;
-- no tested response-auditing configuration reached a usable operating point;
-- the M2 registered controlled scenarios met their pre-registered thresholds;
-- a seven-server transfer study reproduced both the ladder's positive prediction
-  and the underspecified-SQL negative prediction;
-- adaptive evaluation found two bugs and demonstrated two limits; and
-- held-out comparison showed static permissions were blind to content
-  substitution on both tested servers.
-
-The abstract may not yet say:
-
-- empirically validated end-to-end real-server enforcement with the revised integrated path;
-- generality across MCP servers;
-- prevention of all external effects;
-- validated A0 prevalence;
-- network/process mediation; or
-- superiority to state-of-the-art systems.
-
-## Rewrite of 2026-10-09: claims added with the network arm
-
-Every number below appears in the manuscript and was traced to the listed file
-on 2026-10-09.
-
-| ID | Paper claim | Evidence | Status | Note |
-|---|---|---|---|---|
-| N1 | 40,238 active registry servers; 15,991 local; 6,068 declare a secret; 23,566 remote only. | `artifact/results/m1_local_remote_2026-10-08.json` | READY | Declared secret is a lower bound on network use. |
-| N2 | Of 13,877 resolved local npm/PyPI packages: 66% released in 90 days; 68% pinned version is still latest; 95% of npm packages single-maintainer. | `artifact/results/m2_rugpull_exposure_2026-10-09.json` | QUALIFIED | Exposure, not attacks; maintainer hand-off history is not observable, so single-maintainer concentration is reported instead. |
-| N3 | Four judges flag identical attacked transcripts no more often than honest runs (gpt-4.1 0/42 vs 0/50; gpt-5-mini 21% vs 24%; gpt-4.1-mini 36% vs 44%; Llama 3.1 8B 12/42 vs 30/50). | `llm_judge_v2_leak_split.json`, `llm_judge_ollama_v2_leak_split.json` | READY | Leak split is post hoc for OpenAI verdicts; Llama was scored after the rule was fixed. |
-| N4 | Ten registry network servers: 120/120 honest, 912/936 diversions stopped; destination policy 120/936. Dev 552/576, held-out 360/360 (0/48 blocked). | `artifact/results/network_matched_20261008-234304/` | QUALIFIED | Attacks are transformations of captured honest requests (check-level). Pre-registered dev criterion (zero admitted) not met: 24 admitted on splitifi (328-bit slack). Two held-out servers produced no template. |
-| N5 | Postmark rebuilt: EffectSeal 24/24; ToolHive 3/24; AgentBound 3/24; mcp-scan pinning 0/8 (control flagged); honest 12/12 under every runtime defense. | `network_postmark_20261008-223144/`, `_toolhive_`, `_agentbound_`, `_mcpscan_` | READY | End-to-end with rebuilt attack versions; sends to local mocks only. |
-| N6 | Official GitHub MCP server: 12/12 honest, 96/96 stopped, destination 12/96. | `artifact/results/network_named_20261009-000146/` | QUALIFIED | Check-level transformations, as N4. |
-| N7 | Network agents (gpt-4o-mini, GitHub server): 7/7 honest admitted; 13/16 diversions landed without EffectSeal, 0/16 with; 3 of 15 refused sessions the agent still reported success. | `artifact/results/network_rq5_20261009-002654/` | QUALIFIED | One server, one model; four earlier development runs kept (one refused two honest comments). |
-| N8 | Network gate overhead: check p50 45 µs (p95 66 µs); durable slot p50 10.0 ms (p95 12.0 ms); host allow-list 3.6 µs. Race: 100/100 exactly one commit; replay guard 100/100. | `artifact/results/network_overhead_races.json` | READY | Mechanism measurement on the Postmark request shape; network round trip excluded. |
-| N9 | Network TLA+ model: full model holds (441 states); removing pre-send check, credential injection, confinement, atomic count, or replay guard each violates its invariant. | `formal/EffectSealNet.tla`, `formal/tlc/Net*.log`, `formal/check_net_model.py` | READY | Violated-run state counts depend on search order and are not reported. |
-| N10 | File-arm baselines: ToolHive equals plain sandbox (0/32); AgentBound and srt bind destination (11/32 class). | `artifact/results/file_baselines.json` | QUALIFIED | Mapping by mechanism; srt's Windows filesystem enforcement did not engage in our environment. |
-| N11 | Held-out batch 3: 0 of 14 schema-eligible servers had a client-selected local-file effect. | `artifact/held-out-batch3-manifest.json`, `artifact/results/batch3_workflow.json` | READY | Reported as supply exhaustion; no scored server. |
-| N12 | File-server agents with Llama 3.1 8B: compromised sessions landed 48/60 without EffectSeal, 0/60 with; honest 47 to 45 of 60 (both blocks: an optional enumerated field set to a value never seen at pin time). | `artifact/results/agent_e2e_llama.json` | READY | Pre-registered as agent plan amendment v3; local model, no API spend. |
-| N13 | Network agents with Llama 3.1 8B: tool called in 5/8 honest tasks, all admitted; 10/16 diversions landed without EffectSeal, 0/16 with; the agent reported success in all 10 refused sessions. | `artifact/results/network_rq5_20261009-170042/` | QUALIFIED | One server; counts recomputed from trials.jsonl (the summary key miscounted before the fix in 196255a). |
-| N14 | Real Postmark API accepted all 12 admitted honest sends and 7 of 9 undefended diversions (Bcc included); refused requests never left the broker. | `artifact/results/network_postmark_live_20261009-170400.json` | READY | Documented test token, no email delivered; one request outside the test token's scope, one withheld by the guard. |
-| N15 | A fresh clone reproduces the offline artifact on Linux: 10/10 steps, 310 tests pass, 4 skip; every recorded hash verifies on any OS. | `artifact/results/reproduction_clean_linux_2026-10-09/`, `.gitattributes` | READY | Skips: three Windows-only tests, one needs the gitignored PDF. |
+Clean Linux reproduction is reported with its exact source commit in the dated
+reproduction bundle. No new run is asserted until its step logs exist.
+Independent annotation is unfinished; no retained claim requires A0 prevalence.

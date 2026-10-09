@@ -2,8 +2,10 @@
 
 EffectSeal runs an unmodified MCP server against a private copy of state,
 stops every writer, reads the result once, and promotes exactly those bytes
-only if they match a contract bound to the approved call. Contracts for new
-calls come from pin-time effect templates.
+only if they match a contract bound to the approved call. The generalized tree
+adapter instead freezes and promotes the stable tree. Network effects pass a
+pre-send broker with typed request templates, broker-held credentials and a
+durable approval ledger. Contracts for new calls come from pin-time templates.
 
 ## Core library: `src/mcpgate/`
 
@@ -38,3 +40,7 @@ calls come from pin-time effect templates.
 
 - Development set (7): `artifact/held-out-manifest.json` (5 file, 2 SQLite used).
 - Held-out batch (4): `artifact/held-out-batch2-manifest.json`.
+
+Network cohorts are selected by the dated plans; exact current bundles are
+listed in `artifact/paper-evidence-20261009.json`. Actual proxy tests cover
+multi-worker races, restart replay, abandoned reservations and unknown sends.

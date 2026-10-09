@@ -1,124 +1,25 @@
-# MCPGate Submission Status (2026-09-26)
+# EffectSeal-এর বর্তমান অবস্থা — 2026-10-09 correctness repair
 
-## এক লাইনের verdict
+Paper এখন আগের চেয়ে বেশি defensible: implementation bugs ঠিক করা হয়েছে,
+নতুন evidence দিয়ে claims মিলেছে, আর negative results লুকানো হয়নি।
+এটি এখনও anonymous submission package নয়; artifact URL ও author review বাকি।
 
-Project এখন একটি strong working paper + auditable artifact scaffold; এখনও
-submission-ready নয়। Local implementation/test/paper-formatting side শক্ত,
-কিন্তু human validation এবং fresh isolated real-server evidence ছাড়া top-tier
-claim করা যাবে না।
+- Original network cohort: coverage 10/12; covered servers-এ 120/120 honest
+  protocol trial; fixed sends 792/816 refused; adaptive 612/648 refused।
+- নতুন held-out cohort: 40 candidates থেকে 5 qualifier; honest 60/60;
+  fixed sends 312/312 refused; adaptive 324/336 refused, conekta-তে 12 admission।
+- Rebuilt Postmark: 21 unauthorized sends refused, 3 no-op incomplete;
+  GitHub: 84 fixed sends ও 24 adaptive variants refused।
+- Actual proxy: 100 races-এ 8 requests/2 workers-এর মধ্যে ঠিক 1 far-side effect;
+  restart replay refused; upstream uncertainty UNKNOWN হিসেবে থাকে।
+- Quiet proxy timing: gate p50/p95 14.5/33.6ms; record-only 1.7/20.9ms;
+  TLS/WAN latency এখানে নেই।
+- Unicode slack, request types/structure, escaped values, clock binding,
+  outcome accounting এবং stale paper scripts সংশোধিত হয়েছে।
+- Repeat pinning honesty প্রমাণ করে না; stable Bcc poisoning দুই session-এ
+  একই template দিয়েছে। Local held-out honest false blocks 6/48 এখনও সত্য।
 
-## এখন যা সত্যিই complete
-
-- Integrated contract + allowance + private staging + same-read promotion path
-  reusable code-এ আছে।
-- Controlled baselines, seven ablations, content/path/replay/TOCTOU/security
-  cases, real child-process concurrency, এবং trusted-writer comparison আছে।
-- Current regression: 241 passed, 1 platform skip; reference gate passes।
-- SQLite WAL/FULL-sync durable allowance backend restart replay এবং
-  competing-backend final-slot race fail-closed করে; orphaned effect outcome
-  এখনও domain-specific reconciliation ছাড়া UNKNOWN।
-- Manuscript-এর 21টি used citation primary-source verified; 41টি unused entry
-  quarantined।
-- Official USENIX Security 2027 template-এ anonymous working PDF build হয়েছে।
-  এটি 15 pages total: 11 body, pages 12--13 Ethics/Open Science appendices,
-  pages 14--15 references। Letter size, embedded fonts, blank Author metadata,
-  এবং figure rendering check pass করেছে।
-- Ten held-out primary candidates plus same-class reserves package
-  version/integrity-সহ security result দেখার আগে pre-registered হয়েছে।
-- Pre-effect eligibility-তে 12/13 candidate `tools/list` পর্যন্ত পৌঁছেছে;
-  actual mutating workflow + trusted oracle যাচাই করে 10-server manifest
-  `FROZEN` হয়েছে (EXACT 4, CONSTRAINED 4, UNDERSPECIFIED 2)। Freeze-এর আগে
-  attack call বা defense outcome চালানো হয়নি।
-- Python 3.12 Linux dependency graph exact version ও SHA-256 hashসহ lock;
-  clean container-এ `pip --require-hashes` install rehearsal pass করেছে।
-- Pinned `filesystem-mcp@1.3.0` integrated Linux-container run pass করেছে:
-  honest COMMITTED; path/content mutations trusted store থেকে refused; raw
-  JSON, image digest, Docker এবং container-kernel metadata preserved। Path
-  diversion `/tmp/exfil.dat`-এ landed হওয়ায় limitation-ও একই artifact-এ আছে।
-- Quick runner pass করেছে; full runner incomplete evidence থাকলে fail-closed।
-- Network pre-send broker এবং transactional/private-copy SQL mediation-এর
-  threat model, attack set, baselines, metrics ও go/no-go rule
-  `paper/NETWORK_SQL_EXTENSION_PLAN.md`-এ pre-registered। Exact HTTP request,
-  trusted DNS/address pinning, response bound, durable replay এবং SQLite full
-  schema/row diff + atomic private-copy promotion-এর local core ও adversarial
-  unit tests আছে। Local network-disabled container integration-এ direct TCP,
-  UDP, raw-socket ও child-process attempt synthetic target-এ পৌঁছায়নি, আর
-  trusted broker exact request একবার পাঠিয়েছে। Real MCP network adapter,
-  broader bypass suite, matched baselines ও repeated results না হওয়া পর্যন্ত
-  এটি current paper claim নয়।
-- SQLite private-copy core এখন দুই frozen real server-এর honest workflow-এ
-  exact schema এবং row state match হওয়ার পর commit করেছে। প্রথম
-  `sqlite-mcp` compatibility run-এ stacked SQL-এর শুধু প্রথম statement execute
-  হওয়ার methodological bug ধরা পড়ে। Failed raw artifact রাখা হয়েছে, এবং কোনো
-  security outcome দেখার আগে disclosed amendment দিয়ে CREATE ও INSERT আলাদা
-  call করে 2/2 rerun pass করেছে। Frozen attacks ও five matched conditions এখনও
-  চালানো হয়নি।
-- 10-server matched evaluation plan outcome দেখার আগে
-  `artifact/held-out-evaluation-plan.json`-এ frozen হয়েছে। এতে five conditions,
-  per-server scenario applicability, 100-trial race counts, independent oracle,
-  outcome fields এবং fail-closed decision rules আছে।
-- Primary target USENIX Security 2027 Cycle 2। Official page budget, deadlines,
-  anonymous/Open Science requirements, award-winning structural models এবং
-  human-readable prose rules `paper/VENUE_AND_WRITING_STANDARD.md`-এ fixed।
-
-## যে কারণে এখনই submit করা যাবে না
-
-1. 265-row Round-2 sheet দুইজন independent human এখনও label করেননি।
-2. Frozen workloads-এ five matched conditions চালানো হয়নি।
-3. Clean release commit থেকে final image/result bundle rerun হয়নি।
-4. Manuscript-এ দুইটি explicit `EVIDENCE GATE` আছে; release PDF checker তাই
-   ইচ্ছাকৃতভাবে fail করে।
-
-## এখন আপনার কাছ থেকে দরকার
-
-### A. দুইজন human annotator
-
-তাদের `paper/ROUND2_ANNOTATION_RUNBOOK_BN.md` এবং আলাদা A/B TSV দিন। একজন
-মানুষ দুই file করতে পারবেন না। তারা শেষ না করা পর্যন্ত একে অন্যের label
-দেখবেন না।
-
-### B. Current PC-এর Docker/WSL2 release environment
-
-Existing Docker Desktop 4.89.0 / Docker 29.7.2 backend এই PC-তে চালু হয়েছে;
-Linux kernel `6.18.33.2-microsoft-standard-WSL2`। Integrated pinned-server run
-এখানেই pass করেছে। Held-out candidates personal credentials ছাড়া disposable,
-network-controlled containers-এ চালাতে হবে; host directories/secrets mount করা
-যাবে না।
-
-Manual read-only GitHub Actions fallback প্রস্তুত আছে:
-`.github/workflows/release-evidence.yml`; Bangla instructions:
-`paper/CI_LINUX_RUNBOOK_BN.md`। Local GitHub token বর্তমানে invalid, তাই push বা
-remote dispatch না হওয়া পর্যন্ত এটি prepared path, completed run নয়।
-
-### C. Author metadata
-
-2027-01-19-এর আগে final title, সম্পূর্ণ author list, ORCID, topics, এবং
-conflicts freeze করতে হবে। এগুলো automation দিয়ে invent করা যাবে না।
-
-## Machine handoff sequence
-
-Final release run-এর order বদলাবেন না:
-
-1. clean clone/commit এবং secret scan;
-2. frozen candidate/manifest/log hash verify;
-3. integrated pinned server rerun;
-4. identical workloads-এ five matched conditions;
-5. full artifact runner;
-6. tables/figures/PDF regenerate;
-7. claim matrix, evidence gates, appendices, and anonymous export finalize।
-
-## Official deadlines (AoE)
-
-- USENIX Security 2027 Cycle 2 registration: 2027-01-19
-- Paper: 2027-01-26
-- Artifact: 2027-01-29
-
-Internal schedule এবং go/no-go dates: `paper/EXECUTION_CALENDAR.md`।
-
-## Source of truth
-
-- Scientific claim state: `paper/CLAIM_EVIDENCE_MATRIX.md`
-- Required work/order: `paper/SUBMISSION_ROADMAP.md`
-- Automated readiness: `python scripts/submission_check.py --tests`
-- Full release preflight: `python scripts/run_full_artifact.py --preflight-only`
-- Current review PDF: `output/pdf/mcpgate-usenix-working-draft.pdf`
+সর্বশেষ ফলের নির্দিষ্ট pointers: `artifact/paper-evidence-20261009.json`।
+পূর্ণ claim mapping: `paper/CLAIM_EVIDENCE_MATRIX.md`।
+Current tests ও fresh Linux reproduction-এর exact counts dated logs-এ থাকবে;
+পুরোনো run-এর সংখ্যা নতুন code-এর প্রমাণ হিসেবে ব্যবহার করা যাবে না।

@@ -1,0 +1,15 @@
+{
+  "bundle_version": 2,
+  "git_commit": "bdf8801b2181d76f61f081923411dc1cb1f7d6b2",
+  "plan_sha256": "8782004cd1b82e5b1060a71a4da4a64a07bce034eff9440a10d541171b26f520",
+  "servers": {
+    "github": {
+      "name": "github/github-mcp-server",
+      "image": "sha256:ffced0d76e77428532a2ced185516992d77fd146d69eec2f244e6237d1a97796",
+      "tool": "add_issue_comment"
+    }
+  },
+  "seed": 20261008,
+  "calls": 12,
+  "finished": "2026-10-09T16:13:42.063318+00:00"
+}

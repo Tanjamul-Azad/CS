@@ -66,7 +66,7 @@ def postmark_outcomes() -> list[tuple[str, int, int]]:
 
 
 def teaser() -> None:
-    fig = plt.figure(figsize=(COLUMN, 3.0))
+    fig = plt.figure(figsize=(COLUMN, 2.6))
     top = fig.add_axes([0.0, 0.46, 1.0, 0.54])
     top.set_xlim(0, 10)
     top.set_ylim(0.3, 4.3)
@@ -108,12 +108,12 @@ def teaser() -> None:
     for y, (label, k, n) in zip(ys, data):
         share = 100 * k / n
         color = BLUE if label.startswith("EffectSeal") else "#9A9A9A"
-        ax.barh(y, max(share, 0.8), height=0.62, color=color, edgecolor="none")
+        ax.barh(y, share, height=0.62, color=color, edgecolor="none")
         ax.text(share + 2.5, y, f"{k}/{n}", va="center", fontsize=7)
     ax.set_yticks(ys, [d[0] for d in data], fontsize=7, linespacing=0.95)
     ax.set_xlim(0, 118)
     ax.set_xticks([0, 50, 100], ["0", "50", "100%"], fontsize=7)
-    ax.set_xlabel("Alerts (pinning); unauthorized sends refused", fontsize=7, labelpad=1.5)
+    ax.set_xlabel("Pinning alerts; sends refused (%)", fontsize=7, labelpad=1.5)
     ax.spines[["top", "right"]].set_visible(False)
     ax.tick_params(axis="y", length=0, pad=2)
     sf.save(fig, "fig0_teaser")
@@ -167,10 +167,10 @@ def architecture() -> None:
     y_local, y_net = 2.95, 0.72
     lane(y_local, "Call time, local state (files, SQLite)",
          [("Check request\nshape", BLUE), ("Reserve\nallowance", BLUE),
-          ("Run server on\na private copy", ORANGE), ("Stop every\nwriter", ORANGE),
+          ("Run server on\na private copy", ORANGE), ("Stop every\nwriter", TEAL),
           ("Read the copy\nonce", TEAL), ("Check the\ninstantiated\ntemplate", TEAL),
           ("Promote the\nsame bytes", TEAL)],
-         (2, 4), "untrusted server: no network, read-only root, private copy writable")
+         (2, 3), "no network; private copy\nonly writable")
     lane(y_net, "Call time, outgoing requests (network)",
          [("Server runs with\na dummy token", ORANGE), ("Only route out:\nthe broker", BLUE),
           ("TLS, typed\ncanonical view", TEAL), ("Durably reserve\nthe call", BLUE),
@@ -216,7 +216,7 @@ def network_attacks() -> None:
         for off, k, color, name in ((h / 2, v["effectseal_stops"], BLUE, "EffectSeal (request template)"),
                                     (-h / 2, v["destination_stops"], ORANGE, "Destination policy (host allow-list)")):
             share = 100 * k / n
-            ax.barh(y + off, max(share, 0.8), height=h * 0.9, color=color, edgecolor="none",
+            ax.barh(y + off, share, height=h * 0.9, color=color, edgecolor="none",
                     label=name if i == 0 else None)
             ax.text(share + 2, y + off, f"{k}/{n}", va="center", fontsize=7)
     assert (total_es, total_n) == (912, 936) and total_dst == 120, (total_es, total_dst, total_n)

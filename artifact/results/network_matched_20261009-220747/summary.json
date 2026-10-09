@@ -1,0 +1,246 @@
+{
+  "servers_evaluated": 12,
+  "servers_with_template": 10,
+  "honest": {
+    "calls": 120,
+    "completed": 120,
+    "blocked": 0
+  },
+  "attacks": {
+    "A1_add_field": {
+      "applicable": 120,
+      "effectseal_stops": 120,
+      "destination_stops": 0
+    },
+    "A2_change_value": {
+      "applicable": 108,
+      "effectseal_stops": 96,
+      "destination_stops": 0
+    },
+    "A3_append_text": {
+      "applicable": 108,
+      "effectseal_stops": 96,
+      "destination_stops": 0
+    },
+    "A4_extra_same_host": {
+      "applicable": 120,
+      "effectseal_stops": 120,
+      "destination_stops": 0
+    },
+    "A5_extra_other_host": {
+      "applicable": 120,
+      "effectseal_stops": 120,
+      "destination_stops": 120
+    },
+    "A6_credential_channel": {
+      "applicable": 120,
+      "effectseal_stops": 120,
+      "destination_stops": 0
+    },
+    "A7_duplicate": {
+      "applicable": 120,
+      "effectseal_stops": 120,
+      "destination_stops": 0
+    },
+    "A8_silent_noop": {
+      "applicable": 120,
+      "effectseal_stops": 120,
+      "destination_stops": 0
+    }
+  },
+  "send_cases": {
+    "applicable": 816,
+    "stopped": 792
+  },
+  "coverage_wilson_95": [
+    0.5519691377470266,
+    0.9530348578161463
+  ],
+  "honest_server_cluster_95": [
+    1.0,
+    1.0
+  ],
+  "fixed_send_server_cluster_95": [
+    0.9117647058823529,
+    1.0
+  ],
+  "adaptive": {
+    "applicable": 648,
+    "stopped": 612,
+    "admitted": 36
+  },
+  "adaptive_server_cluster_95": [
+    0.8529411764705882,
+    1.0
+  ],
+  "outcomes": {
+    "ADMITTED": 60,
+    "REFUSED": 1044,
+    "PARTIAL": 360,
+    "INCOMPLETE": 120
+  },
+  "development": {
+    "servers_evaluated": 6,
+    "servers_with_template": 6,
+    "honest": {
+      "calls": 72,
+      "completed": 72,
+      "blocked": 0
+    },
+    "attacks": {
+      "A1_add_field": {
+        "applicable": 72,
+        "effectseal_stops": 72,
+        "destination_stops": 0
+      },
+      "A2_change_value": {
+        "applicable": 72,
+        "effectseal_stops": 60,
+        "destination_stops": 0
+      },
+      "A3_append_text": {
+        "applicable": 72,
+        "effectseal_stops": 60,
+        "destination_stops": 0
+      },
+      "A4_extra_same_host": {
+        "applicable": 72,
+        "effectseal_stops": 72,
+        "destination_stops": 0
+      },
+      "A5_extra_other_host": {
+        "applicable": 72,
+        "effectseal_stops": 72,
+        "destination_stops": 72
+      },
+      "A6_credential_channel": {
+        "applicable": 72,
+        "effectseal_stops": 72,
+        "destination_stops": 0
+      },
+      "A7_duplicate": {
+        "applicable": 72,
+        "effectseal_stops": 72,
+        "destination_stops": 0
+      },
+      "A8_silent_noop": {
+        "applicable": 72,
+        "effectseal_stops": 72,
+        "destination_stops": 0
+      }
+    },
+    "send_cases": {
+      "applicable": 504,
+      "stopped": 480
+    },
+    "coverage_wilson_95": [
+      0.6096657120978346,
+      1
+    ],
+    "honest_server_cluster_95": [
+      1.0,
+      1.0
+    ],
+    "fixed_send_server_cluster_95": [
+      0.8571428571428571,
+      1.0
+    ],
+    "adaptive": {
+      "applicable": 336,
+      "stopped": 312,
+      "admitted": 24
+    },
+    "adaptive_server_cluster_95": [
+      0.7692307692307693,
+      1.0
+    ],
+    "outcomes": {
+      "ADMITTED": 48,
+      "REFUSED": 576,
+      "PARTIAL": 216,
+      "INCOMPLETE": 72
+    }
+  },
+  "held_out": {
+    "servers_evaluated": 6,
+    "servers_with_template": 4,
+    "honest": {
+      "calls": 48,
+      "completed": 48,
+      "blocked": 0
+    },
+    "attacks": {
+      "A1_add_field": {
+        "applicable": 48,
+        "effectseal_stops": 48,
+        "destination_stops": 0
+      },
+      "A2_change_value": {
+        "applicable": 36,
+        "effectseal_stops": 36,
+        "destination_stops": 0
+      },
+      "A3_append_text": {
+        "applicable": 36,
+        "effectseal_stops": 36,
+        "destination_stops": 0
+      },
+      "A4_extra_same_host": {
+        "applicable": 48,
+        "effectseal_stops": 48,
+        "destination_stops": 0
+      },
+      "A5_extra_other_host": {
+        "applicable": 48,
+        "effectseal_stops": 48,
+        "destination_stops": 48
+      },
+      "A6_credential_channel": {
+        "applicable": 48,
+        "effectseal_stops": 48,
+        "destination_stops": 0
+      },
+      "A7_duplicate": {
+        "applicable": 48,
+        "effectseal_stops": 48,
+        "destination_stops": 0
+      },
+      "A8_silent_noop": {
+        "applicable": 48,
+        "effectseal_stops": 48,
+        "destination_stops": 0
+      }
+    },
+    "send_cases": {
+      "applicable": 312,
+      "stopped": 312
+    },
+    "coverage_wilson_95": [
+      0.299993315138392,
+      0.9032285888942195
+    ],
+    "honest_server_cluster_95": [
+      1.0,
+      1.0
+    ],
+    "fixed_send_server_cluster_95": [
+      1.0,
+      1.0
+    ],
+    "adaptive": {
+      "applicable": 312,
+      "stopped": 300,
+      "admitted": 12
+    },
+    "adaptive_server_cluster_95": [
+      0.9375,
+      1.0
+    ],
+    "outcomes": {
+      "ADMITTED": 12,
+      "REFUSED": 468,
+      "PARTIAL": 144,
+      "INCOMPLETE": 48
+    }
+  }
+}

@@ -2,7 +2,7 @@
 
 ## Tests
 
-`python -m pytest -q` (about 290 tests, roughly 12 s).
+`python -m pytest -q`; current counts are in the dated test/reproduction logs.
 
 ## Docker on this machine
 
@@ -11,8 +11,7 @@
 - Prefix runs with `MSYS_NO_PATHCONV=1` and set `MCPGATE_SCRATCH` to a
   Windows path in the session scratchpad (bind mounts need Windows paths).
 - Subprocess output must be decoded as UTF-8 (`encoding="utf-8", errors="replace"`).
-- Kill leftover containers with `docker ps -q | xargs docker kill` before
-  stopping a runner process.
+- Stop only containers owned by the current run; preserve unrelated work.
 
 ## Experiments: plan -> runner -> result
 
@@ -32,8 +31,7 @@ unnumbered file is the latest valid run.
 
 ## Figures
 
-- `python scripts/make_strengthening_figures.py` (figures 11–16 and the
-  matplotlib architecture) writes `paper/figures/` and copies PDFs into
+- `python scripts/make_strengthening_figures.py` (figures 11–16 ) writes `paper/figures/` and copies PDFs into
   `paper/submission/figures/`.
 - `python scripts/make_submission_figures.py` for the older figures.
 - `python scripts/matched_stats.py` for matched statistics.
@@ -56,8 +54,21 @@ document and pdfLaTeX as the compiler. Fonts: Times text (from usenix.sty),
 hyphens, so every character extracts cleanly for text-based checkers. Do not
 add `newtxmath`: its math letters extract as invalid bytes.
 
-To upload: `python scripts/make_overleaf_zip.py` writes `../EffectSeal_Overleaf.zip`
+To upload: `python scripts/make_overleaf_zip.py` writes a dated `../EffectSeal_Overleaf_YYYYMMDD-HHMMSS.zip`
 (outside the repo) with only the files the paper needs.
 
 Before submission: set `\anonymousreviewtrue` and replace `\artifacturl`.
 Backups go to `../private_submission_backups/` as dated zips.
+
+## Correctness repair and current network evidence
+
+`artifact/paper-evidence-20261009.json` selects current bundles explicitly;
+never choose a directory merely because it sorts last.
+`python scripts/verify_current_evidence.py` checks hashes, re-infers templates,
+replays request sequences and recomputes summaries/controls/races offline.
+`python scripts/summarize_current_evidence.py --update-manuscript` regenerates
+the marked supplementary network tables when private source is available.
+`sh scripts/reproduce_clean_linux.sh` returns nonzero for any failed step.
+Run in a fresh clone; its fixed-name outputs must not overwrite earlier evidence.
+The script runs integrated proxy timing/races in addition to isolated mechanism
+measurements. No live model/provider API scoring is part of that script.

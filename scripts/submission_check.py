@@ -74,6 +74,8 @@ def static_artifact_issues(*, require_annotation: bool = False) -> list[str]:
 
 def submission_source_issues(*, require_anonymous: bool = False) -> list[str]:
     issues: list[str] = []
+    if not (SUBMISSION / "main.tex").exists():
+        return ["private manuscript source is absent; obtain the local source package"]
     main = (SUBMISSION / "main.tex").read_text(encoding="utf-8")
     section_paths = sorted((SUBMISSION / "sections").glob("*.tex"))
     source = "\n".join([main] + [path.read_text(encoding="utf-8") for path in section_paths])
@@ -143,6 +145,10 @@ def main() -> int:
         help="require Round-2 labels even though the current paper omits prevalence",
     )
     args = parser.parse_args()
+
+    if not (SUBMISSION / "main.tex").exists():
+        print("NOT SUBMISSION-READY: private manuscript source is absent; obtain the local source package.")
+        return 1
 
     statuses = Counter(CLAIM_ROW.findall(MATRIX.read_text(encoding="utf-8")))
     pending_p0 = p0_unchecked(ROADMAP.read_text(encoding="utf-8"))

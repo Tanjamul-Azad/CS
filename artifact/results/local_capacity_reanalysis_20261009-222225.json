@@ -1,0 +1,1772 @@
+{
+  "scope": "Offline capacity correction of archived local templates, using each archived honest call arguments. No new local honest/adversarial scoring; excludes raw container metadata. Clock dates bound to trusted admission date.",
+  "rows": [
+    {
+      "source": "template_generalization_run5.json",
+      "source_sha256": "1d2c7281615ffb8705691971131b2299f131a439fba774a06ab6262be3749583",
+      "server": "io.github.Oncorporation/filesystem-server",
+      "package": "vs-filesystem-mcp-server",
+      "previous_canonical_slack_bits": 1.0,
+      "corrected_canonical_slack_bits": 1.0,
+      "template": {
+        "tool": "write_file",
+        "root": "/sandbox",
+        "fixed": {},
+        "training_runs": 7,
+        "objects": [
+          {
+            "name": "file:{file_path|relpath/basename}",
+            "kind": "file",
+            "path": [
+              [
+                "A",
+                "file_path",
+                "relpath+basename"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "A",
+                "content",
+                "identity+stem"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:tmp",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "tmp"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          }
+        ]
+      }
+    },
+    {
+      "source": "template_generalization_run5.json",
+      "source_sha256": "1d2c7281615ffb8705691971131b2299f131a439fba774a06ab6262be3749583",
+      "server": "io.github.bytedance/mcp-server-filesystem",
+      "package": "@agent-infra/mcp-server-filesystem",
+      "previous_canonical_slack_bits": 1.0,
+      "corrected_canonical_slack_bits": 1.0,
+      "template": {
+        "tool": "write_file",
+        "root": "/sandbox",
+        "fixed": {},
+        "training_runs": 7,
+        "objects": [
+          {
+            "name": "file:{path|relpath/basename}",
+            "kind": "file",
+            "path": [
+              [
+                "A",
+                "path",
+                "relpath+basename"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "A",
+                "content",
+                "identity+stem"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:tmp",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "tmp"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          }
+        ]
+      }
+    },
+    {
+      "source": "template_generalization_run5.json",
+      "source_sha256": "1d2c7281615ffb8705691971131b2299f131a439fba774a06ab6262be3749583",
+      "server": "io.github.aayoawoyemi/ori-memory",
+      "package": "ori-memory",
+      "previous_canonical_slack_bits": 842.042,
+      "corrected_canonical_slack_bits": 2058.373,
+      "template": {
+        "tool": "ori_add",
+        "root": "/sandbox",
+        "fixed": {},
+        "training_runs": 7,
+        "objects": [
+          {
+            "name": "file:.ori",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                ".ori"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:inbox",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "inbox"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:inbox/.gitkeep",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "inbox/.gitkeep"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:notes",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "notes"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:notes/{title|slug_drop}.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "notes/"
+              ],
+              [
+                "A",
+                "title",
+                "slug_drop"
+              ],
+              [
+                "L",
+                ".md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "---\ndescription: \"\"\ntype: "
+              ],
+              [
+                "H",
+                "(?:[0-9a-z]){7,7}",
+                36.189,
+                "insight|insight|insight|insight|insight|insight|insight"
+              ],
+              [
+                "L",
+                "\nproject: []\nstatus: active\ncreated: "
+              ],
+              [
+                "H",
+                "clock:d",
+                26.575
+              ],
+              [
+                "L",
+                "\nlast_accessed: "
+              ],
+              [
+                "H",
+                "clock:d",
+                26.575
+              ],
+              [
+                "L",
+                "\naccess_count: 1\n---\n# "
+              ],
+              [
+                "A",
+                "title",
+                "identity+stem"
+              ],
+              [
+                "L",
+                "\n\n{Content - your reasoning, evidence, context. Transform the material, don't just summarize.}\n\n---\n\nRelevant Notes:\n- [[related note]]\n\nAreas:\n- [[relevant map]]\n- [[index]]\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:notes/index.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "notes/index.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "f0eb4792cef633238885657323aebe6da8a66aaeed8cbb6083b8d5de47312ad4",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:ops",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "ops"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:ops/daily.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ops/daily.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "955b484b7954082d18bb65f1600c83abf65728f69f7b0cd43e9c82a59e7e2790",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:ops/observations",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "ops/observations"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:ops/observations/.gitkeep",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ops/observations/.gitkeep"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "unconstrained": false
+          },
+          {
+            "name": "file:ops/promote.log",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ops/promote.log"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "H",
+                "clock:dTtZ",
+                77.404
+              ],
+              [
+                "L",
+                " | "
+              ],
+              [
+                "A",
+                "title",
+                "slug_drop"
+              ],
+              [
+                "L",
+                ".md | type="
+              ],
+              [
+                "H",
+                "(?:[0-9a-z]){7,7}",
+                36.189,
+                "insight|insight|insight|insight|insight|insight|insight"
+              ],
+              [
+                "L",
+                " ("
+              ],
+              [
+                "H",
+                "(?:[0-9a-z]){3,8}",
+                41.4,
+                "high|low|low|low|low|low|low"
+              ],
+              [
+                "L",
+                ") |"
+              ],
+              [
+                "H",
+                "(?:[^\\n]){0,90}",
+                1807.633,
+                "| type classified as insight (low confidence);| type classified as insight (low confidence);| type classified as insight (low confidence);| type classified as insight (low confidence);| type classified as insight (low confidence);| type classified as insight (low confidence);"
+              ],
+              [
+                "L",
+                " assigned to area(s): index; status: inbox \u2192 active\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:ops/reminders.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ops/reminders.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "545f1680cc13aa946a5e8439fe14ae9fc0f4c98e42a50eaa4b04246bc6cb60e3",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:ops/sessions",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "ops/sessions"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:ops/sessions/.gitkeep",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ops/sessions/.gitkeep"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "unconstrained": false
+          },
+          {
+            "name": "file:ori.config.yaml",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ori.config.yaml"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "# ori.config.yaml - vault configuration for Ori Mnemos\r\n\r\nvault:\r\n  version: \"0.1\"\r\n\r\ntemplates:\r\n  default: templates/note.md\r\n  by_type:\r\n    map: templates/map.md\r\n    moc: templates/map.md\r\n\r\nvitality:\r\n  model: \"actr\"\r\n  actr_decay: 0.5\r\n  decay:\r\n    idea: 90\r\n    decision: 30\r\n    learning: 30\r\n    "
+              ],
+              [
+                "H",
+                "(?:[0-9a-z]){7,7}",
+                36.189,
+                "insight|insight|insight|insight|insight|insight|insight"
+              ],
+              [
+                "L",
+                ": 30\r\n    blocker: 14\r\n    opportunity: 30\r\n  base: 1.0\r\n  metabolic_rates:\r\n    self: 0.1\r\n    notes: 1.0\r\n    ops: 3.0\r\n  structural_boost_per_link: 0.1\r\n  structural_boost_cap: 10\r\n  revival_decay_rate: 0.2\r\n  revival_window_days: 14\r\n  access_saturation_k: 10\r\n\r\npromote:\r\n  auto: true               # ori add auto-promotes to notes/\r\n  require_llm: false       # true = only auto-promote when LLM available\r\n  min_confidence: 0.6      # below this, skip auto-promotion and warn\r\n  project_keywords: {}     # project_name: [keyword, keyword, ...]\r\n  project_map_routing: {}  # project_name: map_note_title\r\n  default_area: \"index\"    # fallback area when no project match\r\n\r\nllm:\r\n  provider: null           # \"anthropic\" | \"openai\" (OpenAI-compatible)\r\n  model: null              # e.g. \"claude-sonnet-4-20250514\", \"gpt-4o\", \"qwen2.5\"\r\n  api_key_env: null        # env var name containing API key\r\n  base_url: null           # API base URL (null = provider default)\r\n  # Examples:\r\n  #   Anthropic:  provider: \"anthropic\", model: \"claude-sonnet-4-20250514\", api_key_env: \"ANTHROPIC_API_KEY\"\r\n  #   OpenAI:     provider: \"openai\", model: \"gpt-4o\", api_key_env: \"OPENAI_API_KEY\"\r\n  #   Ollama:     provider: \"openai\", model: \"llama3\", base_url: \"http://localhost:11434/v1\"\r\n  #   LM Studio:  provider: \"openai\", model: \"local-model\", base_url: \"http://localhost:1234/v1\"\r\n  #   Kimi K2:    provider: \"openai\", model: \"kimi-k2\", api_key_env: \"MOONSHOT_API_KEY\", base_url: \"https://api.moonshot.cn/v1\"\r\n\r\ngraph:\r\n  pagerank_alpha: 0.85\r\n  bridge_vitality_floor: 0.5\r\n  hub_degree_multiplier: 2.0\r\n\r\nengine:\r\n  embedding_model: \"Xenova/all-MiniLM-L6-v2\"\r\n  embedding_dims: 384\r\n  piecewise_bins: 8\r\n  community_dims: 16\r\n  db_path: \".ori/embeddings.db\"\r\n\r\nretrieval:\r\n  default_limit: 10\r\n  candidate_multiplier: 5\r\n  rrf_k: 60\r\n  signal_weights:\r\n    composite: 2.0\r\n    keyword: 1.0\r\n    graph: 1.5\r\n  exploration_budget: 0.10\r\n\r\nbm25:\r\n  k1: 1.2\r\n  b: 0.75\r\n  title_boost: 3.0\r\n  description_boost: 2.0\r\n\r\nips:\r\n  enabled: true\r\n  epsilon: 0.01\r\n  log_path: \"ops/access.jsonl\"\r\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:self",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "self"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:self/goals.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "self/goals.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "4de90e7d0fac0013585bc1e5bd34c569f6c93926f341d604441f1bdb606064e6",
+            "unconstrained": false
+          },
+          {
+            "name": "file:self/identity.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "self/identity.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "2b7852a978bd6c315345e7acef00062e37135460fb5c27d0b9fab8bf8eb5269d",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:self/memory",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "self/memory"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:self/memory/.gitkeep",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "self/memory/.gitkeep"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "unconstrained": false
+          },
+          {
+            "name": "file:self/methodology.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "self/methodology.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "bd8aa4feed31f55e054302671c025f77d52ae4955c4ba2ce39d9c8af1d0a1ad2",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:templates",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "templates"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:templates/map.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "templates/map.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "74ced54b16e0bfcc001329c48b93c76ac6b4a793feaf258f9811de1a59920e22",
+            "unconstrained": false
+          },
+          {
+            "name": "file:templates/note.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "templates/note.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "---\r\n_schema:\r\n  entity_type: \"note\"\r\n  applies_to: \"notes/*.md\"\r\n  required:\r\n    - description\r\n    - type\r\n    - project\r\n    - status\r\n    - created\r\n  optional:\r\n    - confidence\r\n    - alternatives\r\n    - rationale\r\n    - superseded_by\r\n    - next_step\r\n    - source\r\n  enums:\r\n    type:\r\n      - idea\r\n      - decision\r\n      - learning\r\n      - "
+              ],
+              [
+                "H",
+                "(?:[0-9a-z]){7,7}",
+                36.189,
+                "insight|insight|insight|insight|insight|insight|insight"
+              ],
+              [
+                "L",
+                "\r\n      - blocker\r\n      - opportunity\r\n    status:\r\n      - inbox\r\n      - active\r\n      - completed\r\n      - superseded\r\n      - archived\r\n    confidence:\r\n      - speculative\r\n      - promising\r\n      - validated\r\n  constraints:\r\n    description:\r\n      max_length: 200\r\n      format: \"One sentence adding context beyond the title\"\r\n    project:\r\n      format: \"Array of project tags\"\r\n\r\n# Template fields\r\ndescription: \"\"\r\ntype: \"\"\r\nproject: []\r\nstatus: active\r\ncreated: YYYY-MM-DD\r\n---\r\n\r\n# {prose-as-title: a complete thought that works as a statement}\r\n\r\n{Content - your reasoning, evidence, context. Transform the material, don't just summarize.}\r\n\r\n---\r\n\r\nRelevant Notes:\r\n- [[related note]] -- why this connection matters\r\n\r\nAreas:\r\n- [[relevant map]]\r\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:tmp",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "tmp"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          }
+        ]
+      }
+    },
+    {
+      "source": "template_generalization_run5.json",
+      "source_sha256": "1d2c7281615ffb8705691971131b2299f131a439fba774a06ab6262be3749583",
+      "server": "ai.smartmemory/compose-mcp",
+      "package": "@smartmemory/compose-mcp",
+      "previous_canonical_slack_bits": 63.169000000000004,
+      "corrected_canonical_slack_bits": 63.169000000000004,
+      "template": {
+        "tool": "add_roadmap_entry",
+        "root": "/sandbox",
+        "fixed": {
+          "complexity": null,
+          "impact": null,
+          "status": null
+        },
+        "training_runs": 7,
+        "objects": [
+          {
+            "name": "directory:.compose",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                ".compose"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:.compose/data",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                ".compose/data"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:.compose/data/feature-events.jsonl",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                ".compose/data/feature-events.jsonl"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "{\"ts\":\""
+              ],
+              [
+                "H",
+                "clock:dTtZ",
+                77.404
+              ],
+              [
+                "L",
+                "\",\"actor\":\"mcp:agent\",\"build_id\":null,\"tool\":\"add_roadmap_entry\",\"code\":\""
+              ],
+              [
+                "A",
+                "code",
+                "identity+stem+upper"
+              ],
+              [
+                "L",
+                "\",\"to\":\"PLANNED\",\"phase\":\""
+              ],
+              [
+                "A",
+                "phase",
+                "identity+stem"
+              ],
+              [
+                "L",
+                "\"}\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:ROADMAP.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "ROADMAP.md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "# Project Roadmap\n\n<!-- Generated from feature.json \u2014 do not edit manually -->\n<!-- Run: compose roadmap generate -->\n\n**Last updated:** "
+              ],
+              [
+                "H",
+                "clock:d",
+                26.575
+              ],
+              [
+                "L",
+                "\n\n---\n\n## Roadmap Conventions\n\n- **Status:** `PLANNED` | `IN_PROGRESS` | `PARTIAL` | `COMPLETE` | `SUPERSEDED` | `PARKED`\n- Items are numbered sequentially. Never reuse a number.\n- Cross-reference stable IDs (e.g. `FEAT-1`) not section headings.\n\n---\n\n## "
+              ],
+              [
+                "A",
+                "phase",
+                "identity+stem"
+              ],
+              [
+                "L",
+                " \u2014 PLANNED\n\n| # | Feature | Description | Status |\n|---|---------|-------------|--------|\n| 1 | "
+              ],
+              [
+                "A",
+                "code",
+                "identity+stem+upper"
+              ],
+              [
+                "L",
+                " | "
+              ],
+              [
+                "A",
+                "description",
+                "identity+stem"
+              ],
+              [
+                "L",
+                " | PLANNED |\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:docs",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "docs"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:docs/features",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "docs/features"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:docs/features/{code|identity/stem/upper}",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "docs/features/"
+              ],
+              [
+                "A",
+                "code",
+                "identity+stem+upper"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:docs/features/{code|identity/stem/upper}/feature.json",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "docs/features/"
+              ],
+              [
+                "A",
+                "code",
+                "identity+stem+upper"
+              ],
+              [
+                "L",
+                "/feature.json"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "{\n  \"code\": \""
+              ],
+              [
+                "A",
+                "code",
+                "identity+stem+upper"
+              ],
+              [
+                "L",
+                "\",\n  \"description\": \""
+              ],
+              [
+                "A",
+                "description",
+                "identity+stem"
+              ],
+              [
+                "L",
+                "\",\n  \"status\": \"PLANNED\",\n  \"phase\": \""
+              ],
+              [
+                "A",
+                "phase",
+                "identity+stem"
+              ],
+              [
+                "L",
+                "\",\n  \"created\": \""
+              ],
+              [
+                "H",
+                "clock:d",
+                26.575
+              ],
+              [
+                "L",
+                "\",\n  \"updated\": \""
+              ],
+              [
+                "H",
+                "clock:d",
+                26.575
+              ],
+              [
+                "L",
+                "\",\n  \"position\": 1\n}\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:tmp",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "tmp"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          }
+        ]
+      }
+    },
+    {
+      "source": "template_generalization_run5.json",
+      "source_sha256": "1d2c7281615ffb8705691971131b2299f131a439fba774a06ab6262be3749583",
+      "server": "io.github.DanielGuru/repomemory",
+      "package": "repomemory",
+      "previous_canonical_slack_bits": 8.0,
+      "corrected_canonical_slack_bits": 8.0,
+      "template": {
+        "tool": "context_write",
+        "root": "/sandbox",
+        "fixed": {
+          "category": "facts",
+          "scope": "repo"
+        },
+        "training_runs": 7,
+        "objects": [
+          {
+            "name": "directory:.context",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                ".context"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:.context/.gitignore",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                ".context/.gitignore"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": "771a9feadb33eb7ba29943f694987763ea3c9292a713d003380facb91d3f68fb",
+            "unconstrained": false
+          },
+          {
+            "name": "directory:.context/changelog",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                ".context/changelog"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:.context/decisions",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                ".context/decisions"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:.context/{category|identity/stem/lower/slug_dash/slug_drop/slug_strict}",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                ".context/"
+              ],
+              [
+                "A",
+                "category",
+                "identity+stem+lower+slug_dash+slug_drop+slug_strict"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:.context/{category|identity/stem/lower/slug_dash/slug_drop/slug_strict}/{filename|identity/stem/lower/slug_dash/slug_drop}.md",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                ".context/"
+              ],
+              [
+                "A",
+                "category",
+                "identity+stem+lower+slug_dash+slug_drop+slug_strict"
+              ],
+              [
+                "L",
+                "/"
+              ],
+              [
+                "A",
+                "filename",
+                "identity+stem+lower+slug_dash+slug_drop"
+              ],
+              [
+                "L",
+                ".md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "A",
+                "content",
+                "identity+stem"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:.context/preferences",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                ".context/preferences"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:.context/regressions",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                ".context/regressions"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:.context/sessions",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                ".context/sessions"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:tmp",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "tmp"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          }
+        ]
+      }
+    },
+    {
+      "source": "template_generalization_sql_run3.json",
+      "source_sha256": "0b3b3df49151ff3013486424413e38149d9b751ff170aeb641866c6ce52bd8f4",
+      "server": "io.github.daedalus/mcp-sqlite3",
+      "package": "mcp-sqlite3",
+      "previous_canonical_slack_bits": 0.0,
+      "corrected_canonical_slack_bits": 0.0,
+      "template": {
+        "tool": "insert_value",
+        "root": "/sandbox",
+        "fixed": {},
+        "training_runs": 5,
+        "objects": [
+          {
+            "name": "file:db.state",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "db.state"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "schema table evidence evidence CREATE TABLE evidence(value TEXT)\ncolumns evidence [\"value\"]\nrow evidence [[\"text\", \""
+              ],
+              [
+                "A",
+                "value",
+                "identity+stem+lower"
+              ],
+              [
+                "L",
+                "\"]]\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          }
+        ]
+      }
+    },
+    {
+      "source": "template_generalization_sql_run3.json",
+      "source_sha256": "0b3b3df49151ff3013486424413e38149d9b751ff170aeb641866c6ce52bd8f4",
+      "server": "io.github.mrfentmen/sqlite-mcp",
+      "package": "@mrfentmen/sqlite-mcp",
+      "previous_canonical_slack_bits": 0.0,
+      "corrected_canonical_slack_bits": 0.0,
+      "template": {
+        "tool": "insert_value",
+        "root": "/sandbox",
+        "fixed": {},
+        "training_runs": 5,
+        "objects": [
+          {
+            "name": "file:db.state",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "db.state"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "schema table evidence evidence CREATE TABLE evidence(value TEXT)\ncolumns evidence [\"value\"]\nrow evidence [[\"text\", \""
+              ],
+              [
+                "A",
+                "value",
+                "identity+stem+lower"
+              ],
+              [
+                "L",
+                "\"]]\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          }
+        ]
+      }
+    },
+    {
+      "source": "batch2_templates.json",
+      "source_sha256": "2237b5b04118837114c7d436d0610244fd8f003f70ae60fe320539cd1ce506b9",
+      "server": "io.github.oborchers/tablestakes",
+      "package": "tablestakes",
+      "previous_canonical_slack_bits": Infinity,
+      "corrected_canonical_slack_bits": Infinity,
+      "template": {
+        "tool": "create_table",
+        "root": "/sandbox",
+        "fixed": {
+          "format": null
+        },
+        "training_runs": 5,
+        "objects": [
+          {
+            "name": "file:~/*.md",
+            "kind": "file",
+            "path": null,
+            "path_regex": "[^/]+\\.md",
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": true
+          }
+        ]
+      }
+    },
+    {
+      "source": "batch2_templates.json",
+      "source_sha256": "2237b5b04118837114c7d436d0610244fd8f003f70ae60fe320539cd1ce506b9",
+      "server": "io.github.ionasrobert/tacitus-mcp-server",
+      "package": "@dashiro/tacitus-mcp-server",
+      "previous_canonical_slack_bits": 374.414,
+      "corrected_canonical_slack_bits": 374.414,
+      "template": {
+        "tool": "create_note",
+        "root": "/sandbox",
+        "fixed": {},
+        "training_runs": 5,
+        "objects": [
+          {
+            "name": "directory:.tacitus",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                ".tacitus"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:.tacitus/audit.log",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                ".tacitus/audit.log"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "{\"ts\":\""
+              ],
+              [
+                "H",
+                "clock:dTtZ",
+                77.404
+              ],
+              [
+                "L",
+                "\",\"action\":\"commit\",\"version_id\":\"v_"
+              ],
+              [
+                "H",
+                "(?:[0-9a-f]){16,16}",
+                64.0,
+                "4916405f4a4499d4|7210f49d9b416f31|88f5e10b2d041501|48b5bc046d1795ad|c7de24ed953d3a32"
+              ],
+              [
+                "L",
+                "\",\"change_id\":\"chg_"
+              ],
+              [
+                "H",
+                "(?:[0-9a-f]){16,16}",
+                64.0,
+                "2d640f9349ab303e|e8c8c62c15660d1a|2817334719630e85|0a565252b287c9ed|7512c65068afc69d"
+              ],
+              [
+                "L",
+                "\",\"notes\":[\""
+              ],
+              [
+                "A",
+                "note_id",
+                "identity+stem+lower+slug_dash+slug_drop"
+              ],
+              [
+                "L",
+                "\"],\"scope\":\"read-write\"}\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "directory:.tacitus/history",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                ".tacitus/history"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:.tacitus/history/v_{*}.json",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                ".tacitus/history/v_"
+              ],
+              [
+                "H",
+                "(?:[0-9a-f]){16,16}",
+                64.0,
+                "4916405f4a4499d4|7210f49d9b416f31|88f5e10b2d041501|48b5bc046d1795ad|c7de24ed953d3a32"
+              ],
+              [
+                "L",
+                ".json"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "{\n  \"version_id\": \"v_"
+              ],
+              [
+                "H",
+                "(?:[0-9a-f]){16,16}",
+                64.0,
+                "4916405f4a4499d4|7210f49d9b416f31|88f5e10b2d041501|48b5bc046d1795ad|c7de24ed953d3a32"
+              ],
+              [
+                "L",
+                "\",\n  \"change_id\": \"chg_"
+              ],
+              [
+                "H",
+                "(?:[0-9a-f]){16,16}",
+                64.0,
+                "2d640f9349ab303e|e8c8c62c15660d1a|2817334719630e85|0a565252b287c9ed|7512c65068afc69d"
+              ],
+              [
+                "L",
+                "\",\n  \"before\": {\n    \""
+              ],
+              [
+                "A",
+                "note_id",
+                "identity+stem+lower+slug_dash+slug_drop"
+              ],
+              [
+                "L",
+                "\": null\n  },\n  \"after\": {\n    \""
+              ],
+              [
+                "A",
+                "note_id",
+                "identity+stem+lower+slug_dash+slug_drop"
+              ],
+              [
+                "L",
+                "\": \""
+              ],
+              [
+                "A",
+                "content",
+                "identity+stem"
+              ],
+              [
+                "L",
+                "\\n\"\n  }\n}"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:{note_id|identity/stem/lower/slug_dash/slug_drop}.md",
+            "kind": "file",
+            "path": [
+              [
+                "A",
+                "note_id",
+                "identity+stem+lower+slug_dash+slug_drop"
+              ],
+              [
+                "L",
+                ".md"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "A",
+                "content",
+                "identity+stem"
+              ],
+              [
+                "L",
+                "\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          }
+        ]
+      }
+    },
+    {
+      "source": "batch2_templates.json",
+      "source_sha256": "2237b5b04118837114c7d436d0610244fd8f003f70ae60fe320539cd1ce506b9",
+      "server": "io.github.jackdark425/aigroup-mdtoword-mcp",
+      "package": "aigroup-mdtoword-mcp",
+      "previous_canonical_slack_bits": 5409.595,
+      "corrected_canonical_slack_bits": 14653.806999999999,
+      "template": {
+        "tool": "markdown_to_docx",
+        "root": "/sandbox",
+        "fixed": {},
+        "training_runs": 5,
+        "objects": [
+          {
+            "name": "directory:{*}",
+            "kind": "directory",
+            "path": [
+              [
+                "H",
+                "(?:[0-9A-Za-z_. -]){11,11}",
+                66.488,
+                "report.docx|to1s12.docx|4qia8i.docx|3eenkw.docx|stno4c.docx"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:{*}/{filename|identity/lower}",
+            "kind": "file",
+            "path": [
+              [
+                "H",
+                "(?:[0-9A-Za-z_. -]){11,11}",
+                66.488,
+                "report.docx|to1s12.docx|4qia8i.docx|3eenkw.docx|stno4c.docx"
+              ],
+              [
+                "L",
+                "/"
+              ],
+              [
+                "A",
+                "filename",
+                "identity+lower"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "zip-entries\nentry [Content_Types].xml\n<?xml version=\"1.0\" encoding=\"UTF-8\"?><Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\"><Default ContentType=\"image/png\" Extension=\"png\"/><Default ContentType=\"image/jpeg\" Extension=\"jpeg\"/><Default ContentType=\"image/jpeg\" Extension=\"jpg\"/><Default ContentType=\"image/bmp\" Extension=\"bmp\"/><Default ContentType=\"image/gif\" Extension=\"gif\"/><Default ContentType=\"image/svg+xml\" Extension=\"svg\"/><Default ContentType=\"application/vnd.openxmlformats-package.relationships+xml\" Extension=\"rels\"/><Default ContentType=\"application/xml\" Extension=\"xml\"/><Default ContentType=\"application/vnd.openxmlformats-officedocument.obfuscatedFont\" Extension=\"odttf\"/><Override ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml\" PartName=\"/word/document.xml\"/><Override ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml\" PartName=\"/word/styles.xml\"/><Override ContentType=\"application/vnd.openxmlformats-package.core-properties+xml\" PartName=\"/docProps/core.xml\"/><Override ContentType=\"application/vnd.openxmlformats-officedocument.custom-properties+xml\" PartName=\"/docProps/custom.xml\"/><Override ContentType=\"application/vnd.openxmlformats-officedocument.extended-properties+xml\" PartName=\"/docProps/app.xml\"/><Override ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml\" PartName=\"/word/numbering.xml\"/><Override ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.footnotes+xml\" PartName=\"/word/footnotes.xml\"/><Override ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.endnotes+xml\" PartName=\"/word/endnotes.xml\"/><Override ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml\" PartName=\"/word/settings.xml\"/><Override ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.comments+xml\" PartName=\"/word/comments.xml\"/><Override ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.fontTable+xml\" PartName=\"/word/fontTable.xml\"/></Types>\nentry _rels/\n\nentry _rels/.rels\n<?xml version=\"1.0\" encoding=\"UTF-8\"?><Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument\" Target=\"word/document.xml\"/><Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties\" Target=\"docProps/core.xml\"/><Relationship Id=\"rId3\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties\" Target=\"docProps/app.xml\"/><Relationship Id=\"rId4\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/custom-properties\" Target=\"docProps/custom.xml\"/></Relationships>\nentry docProps/\n\nentry docProps/app.xml\n<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Properties xmlns=\"http://schemas.openxmlformats.org/officeDocument/2006/extended-properties\" xmlns:vt=\"http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes\"/>\nentry docProps/core.xml\n<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:dcmitype=\"http://purl.org/dc/dcmitype/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><dc:creator>Un-named</dc:creator><cp:lastModifiedBy>Un-named</cp:lastModifiedBy><cp:revision>1</cp:revision><dcterms:created xsi:type=\"dcterms:W3CDTF\">"
+              ],
+              [
+                "H",
+                "clock:dTtZ",
+                77.404
+              ],
+              [
+                "L",
+                "</dcterms:created><dcterms:modified xsi:type=\"dcterms:W3CDTF\">"
+              ],
+              [
+                "H",
+                "clock:dTtZ",
+                77.404
+              ],
+              [
+                "L",
+                "</dcterms:modified></cp:coreProperties>\nentry docProps/custom.xml\n<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Properties xmlns=\"http://schemas.openxmlformats.org/officeDocument/2006/custom-properties\" xmlns:vt=\"http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes\"/>\nentry word/\n\nentry word/_rels/\n\nentry word/_rels/comments.xml.rels\n<?xml version=\"1.0\" encoding=\"UTF-8\"?><Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"/>\nentry word/_rels/document.xml.rels\n<?xml version=\"1.0\" encoding=\"UTF-8\"?><Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"><Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles\" Target=\"styles.xml\"/><Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering\" Target=\"numbering.xml\"/><Relationship Id=\"rId3\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/footnotes\" Target=\"footnotes.xml\"/><Relationship Id=\"rId4\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/endnotes\" Target=\"endnotes.xml\"/><Relationship Id=\"rId5\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings\" Target=\"settings.xml\"/><Relationship Id=\"rId6\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments\" Target=\"comments.xml\"/><Relationship Id=\"rId7\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/fontTable\" Target=\"fontTable.xml\"/></Relationships>\nentry word/_rels/endnotes.xml.rels\n<?xml version=\"1.0\" encoding=\"UTF-8\"?><Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"/>\nentry word/_rels/fontTable.xml.rels\n<?xml version=\"1.0\" encoding=\"UTF-8\"?><Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"/>\nentry word/_rels/footnotes.xml.rels\n<?xml version=\"1.0\" encoding=\"UTF-8\"?><Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"/>\nentry word/comments.xml\n<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><w:comments xmlns:cx=\"http://schemas.microsoft.com/office/drawing/2014/chartex\" xmlns:cx1=\"http://schemas.microsoft.com/office/drawing/2015/9/8/chartex\" xmlns:cx2=\"http://schemas.microsoft.com/office/drawing/2015/10/21/chartex\" xmlns:cx3=\"http://schemas.microsoft.com/office/drawing/2016/5/9/chartex\" xmlns:cx4=\"http://schemas.microsoft.com/office/drawing/2016/5/10/chartex\" xmlns:cx5=\"http://schemas.microsoft.com/office/drawing/2016/5/11/chartex\" xmlns:cx6=\"http://schemas.microsoft.com/office/drawing/2016/5/12/chartex\" xmlns:cx7=\"http://schemas.microsoft.com/office/drawing/2016/5/13/chartex\" xmlns:cx8=\"http://schemas.microsoft.com/office/drawing/2016/5/14/chartex\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:aink=\"http://schemas.microsoft.com/office/drawing/2016/ink\" xmlns:am3d=\"http://schemas.microsoft.com/office/drawing/2017/model3d\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:m=\"http://schemas.openxmlformats.org/officeDocument/2006/math\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:wp14=\"http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing\" xmlns:wp=\"http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing\" xmlns:w10=\"urn:schemas-microsoft-com:office:word\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" xmlns:w14=\"http://schemas.microsoft.com/office/word/2010/wordml\" xmlns:w15=\"http://schemas.microsoft.com/office/word/2012/wordml\" xmlns:w16cex=\"http://schemas.microsoft.com/office/word/2018/wordml/cex\" xmlns:w16cid=\"http://schemas.microsoft.com/office/word/2016/wordml/cid\" xmlns:w16=\"http://schemas.microsoft.com/office/word/2018/wordml\" xmlns:w16sdtdh=\"http://schemas.microsoft.com/office/word/2020/wordml/sdtdatahash\" xmlns:w16se=\"http://schemas.microsoft.com/office/word/2015/wordml/symex\" xmlns:wpg=\"http://schemas.microsoft.com/office/word/2010/wordprocessingGroup\" xmlns:wpi=\"http://schemas.microsoft.com/office/word/2010/wordprocessingInk\" xmlns:wne=\"http://schemas.microsoft.com/office/word/2006/wordml\" xmlns:wps=\"http://schemas.microsoft.com/office/word/2010/wordprocessingShape\"/>\nentry word/document.xml\n<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><w:document mc:Ignorable=\"w14 w15 wp14\" xmlns:wpc=\"http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:m=\"http://schemas.openxmlformats.org/officeDocument/2006/math\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:wp14=\"http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing\" xmlns:wp=\"http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing\" xmlns:w10=\"urn:schemas-microsoft-com:office:word\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" xmlns:w14=\"http://schemas.microsoft.com/office/word/2010/wordml\" xmlns:w15=\"http://schemas.microsoft.com/office/word/2012/wordml\" xmlns:wpg=\"http://schemas.microsoft.com/office/word/2010/wordprocessingGroup\" xmlns:wpi=\"http://schemas.microsoft.com/office/word/2010/wordprocessingInk\" xmlns:wne=\"http://schemas.microsoft.com/office/word/2006/wordml\" xmlns:wps=\"http://schemas.microsoft.com/office/word/2010/wordprocessingShape\" xmlns:cx=\"http://schemas.microsoft.com/office/drawing/2014/chartex\" xmlns:cx1=\"http://schemas.microsoft.com/office/drawing/2015/9/8/chartex\" xmlns:cx2=\"http://schemas.microsoft.com/office/drawing/2015/10/21/chartex\" xmlns:cx3=\"http://schemas.microsoft.com/office/drawing/2016/5/9/chartex\" xmlns:cx4=\"http://schemas.microsoft.com/office/drawing/2016/5/10/chartex\" xmlns:cx5=\"http://schemas.microsoft.com/office/drawing/2016/5/11/chartex\" xmlns:cx6=\"http://schemas.microsoft.com/office/drawing/2016/5/12/chartex\" xmlns:cx7=\"http://schemas.microsoft.com/office/drawing/2016/5/13/chartex\" xmlns:cx8=\"http://schemas.microsoft.com/office/drawing/2016/5/14/chartex\" xmlns:aink=\"http://schemas.microsoft.com/office/drawing/2016/ink\" xmlns:am3d=\"http://schemas.microsoft.com/office/drawing/2017/model3d\" xmlns:w16cex=\"http://schemas.microsoft.com/office/word/2018/wordml/cex\" xmlns:w16cid=\"http://schemas.microsoft.com/office/word/2016/wordml/cid\" xmlns:w16=\"http://schemas.microsoft.com/office/word/2018/wordml\" xmlns:w16sdtdh=\"http://schemas.microsoft.com/office/word/2020/wordml/sdtdatahash\" xmlns:w16se=\"http://schemas.microsoft.com/office/word/2015/wordml/symex\"><w:body><w:p><w:pPr><w:"
+              ],
+              [
+                "H",
+                "(?:[^\\n]){0,684}",
+                13738.009,
+                "pStyle w:val=\"Heading1\"/><w:spacing w:after=\"120\" w:before=\"240\" w:line=\"360\"/><w:ind/><w:jc w:val=\"center\"/></w:pPr><w:r><w:rPr><w:rFonts w:ascii=\"\u9ed1\u4f53\" w:cs=\"\u9ed1\u4f53\" w:eastAsia=\"\u9ed1\u4f53\" w:hAnsi=\"\u9ed1\u4f53\"/><w:b/><w:bCs/><w:color w:val=\"000000\"/><w:sz w:val=\"64\"/><w:szCs w:val=\"64\"/></w:rPr><w:t xml:space=\"preserve\">Report</w:t></w:r></w:p><w:p><w:pPr><w:||||"
+              ],
+              [
+                "L",
+                "spacing w:line=\"360\"/><w:ind w:firstLine=\"480\"/><w:jc w:val=\"both\"/></w:pPr><w:r><w:rPr><w:rFonts w:ascii=\"\u5b8b\u4f53\" w:cs=\"\u5b8b\u4f53\" w:eastAsia=\"\u5b8b\u4f53\" w:hAnsi=\"\u5b8b\u4f53\"/><w:color w:val=\"000000\"/><w:sz w:val=\"24\"/><w:szCs w:val=\"24\"/></w:rPr><w:t xml:space=\"preserve\">"
+              ],
+              [
+                "H",
+                "(?:[0-9A-Za-z_. -]){46,112}",
+                676.994,
+                "approved matched content MCPGATE_MATCHED_2026_09_26|mezuy bohcgtelx cjmtmy eziameyw ghnkqw 03mxl5 nwo_mac-28|before client storage our risk xsp279 tui_lig-88|cfboda gfxh zgyc mqg eudfsrv 5ljy2j sjr_ual-45|increase revised new feedback review qi1iva bau_etf-21"
+              ],
+              [
+                "L",
+                "</w:t></w:r></w:p><w:sectPr><w:pgSz w:w=\"11906\" w:h=\"16838\" w:orient=\"portrait\"/><w:pgMar w:top=\"1440\" w:right=\"1440\" w:bottom=\"1440\" w:left=\"1440\" w:header=\"708\" w:footer=\"708\" w:gutter=\"0\"/><w:pgNumType/><w:titlePg w:val=\"false\"/><w:docGrid w:linePitch=\"360\"/></w:sectPr></w:body></w:document>\nentry word/endnotes.xml\n<?xml version=\"1.0\" encoding=\"UTF-8\"?><w:endnotes xmlns:wpc=\"http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:m=\"http://schemas.openxmlformats.org/officeDocument/2006/math\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:wp14=\"http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing\" xmlns:wp=\"http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing\" xmlns:w10=\"urn:schemas-microsoft-com:office:word\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" xmlns:w14=\"http://schemas.microsoft.com/office/word/2010/wordml\" xmlns:w15=\"http://schemas.microsoft.com/office/word/2012/wordml\" xmlns:wpg=\"http://schemas.microsoft.com/office/word/2010/wordprocessingGroup\" xmlns:wpi=\"http://schemas.microsoft.com/office/word/2010/wordprocessingInk\" xmlns:wne=\"http://schemas.microsoft.com/office/word/2006/wordml\" xmlns:wps=\"http://schemas.microsoft.com/office/word/2010/wordprocessingShape\" mc:Ignorable=\"w14 w15 wp14\"><w:endnote w:type=\"separator\" w:id=\"-1\"><w:p><w:pPr><w:spacing w:after=\"0\" w:line=\"240\" w:lineRule=\"auto\"/></w:pPr><w:r><w:rPr><w:rStyle w:val=\"EndnoteReference\"/></w:rPr><w:endnoteRef/></w:r><w:r><w:separator/></w:r></w:p></w:endnote><w:endnote w:type=\"continuationSeparator\" w:id=\"0\"><w:p><w:pPr><w:spacing w:after=\"0\" w:line=\"240\" w:lineRule=\"auto\"/></w:pPr><w:r><w:rPr><w:rStyle w:val=\"EndnoteReference\"/></w:rPr><w:endnoteRef/></w:r><w:r><w:continuationSeparator/></w:r></w:p></w:endnote></w:endnotes>\nentry word/fontTable.xml\n<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><w:fonts xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" xmlns:w14=\"http://schemas.microsoft.com/office/word/2010/wordml\" xmlns:w15=\"http://schemas.microsoft.com/office/word/2012/wordml\" xmlns:w16cex=\"http://schemas.microsoft.com/office/word/2018/wordml/cex\" xmlns:w16cid=\"http://schemas.microsoft.com/office/word/2016/wordml/cid\" xmlns:w16=\"http://schemas.microsoft.com/office/word/2018/wordml\" xmlns:w16sdtdh=\"http://schemas.microsoft.com/office/word/2020/wordml/sdtdatahash\" xmlns:w16se=\"http://schemas.microsoft.com/office/word/2015/wordml/symex\" mc:Ignorable=\"w14 w15 w16se w16cid w16 w16cex w16sdtdh\"/>\nentry word/footnotes.xml\n<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><w:footnotes xmlns:wpc=\"http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:m=\"http://schemas.openxmlformats.org/officeDocument/2006/math\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:wp14=\"http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing\" xmlns:wp=\"http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing\" xmlns:w10=\"urn:schemas-microsoft-com:office:word\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" xmlns:w14=\"http://schemas.microsoft.com/office/word/2010/wordml\" xmlns:w15=\"http://schemas.microsoft.com/office/word/2012/wordml\" xmlns:wpg=\"http://schemas.microsoft.com/office/word/2010/wordprocessingGroup\" xmlns:wpi=\"http://schemas.microsoft.com/office/word/2010/wordprocessingInk\" xmlns:wne=\"http://schemas.microsoft.com/office/word/2006/wordml\" xmlns:wps=\"http://schemas.microsoft.com/office/word/2010/wordprocessingShape\" mc:Ignorable=\"w14 w15 wp14\"><w:footnote w:type=\"separator\" w:id=\"-1\"><w:p><w:pPr><w:spacing w:after=\"0\" w:line=\"240\" w:lineRule=\"auto\"/></w:pPr><w:r><w:rPr><w:rStyle w:val=\"FootnoteReference\"/></w:rPr><w:footnoteRef/></w:r><w:r><w:separator/></w:r></w:p></w:footnote><w:footnote w:type=\"continuationSeparator\" w:id=\"0\"><w:p><w:pPr><w:spacing w:after=\"0\" w:line=\"240\" w:lineRule=\"auto\"/></w:pPr><w:r><w:rPr><w:rStyle w:val=\"FootnoteReference\"/></w:rPr><w:footnoteRef/></w:r><w:r><w:continuationSeparator/></w:r></w:p></w:footnote></w:footnotes>\nentry word/numbering.xml\n<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><w:numbering mc:Ignorable=\"w14 w15 wp14\" xmlns:wpc=\"http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:m=\"http://schemas.openxmlformats.org/officeDocument/2006/math\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:wp14=\"http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing\" xmlns:wp=\"http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing\" xmlns:w10=\"urn:schemas-microsoft-com:office:word\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" xmlns:w14=\"http://schemas.microsoft.com/office/word/2010/wordml\" xmlns:w15=\"http://schemas.microsoft.com/office/word/2012/wordml\" xmlns:wpg=\"http://schemas.microsoft.com/office/word/2010/wordprocessingGroup\" xmlns:wpi=\"http://schemas.microsoft.com/office/word/2010/wordprocessingInk\" xmlns:wne=\"http://schemas.microsoft.com/office/word/2006/wordml\" xmlns:wps=\"http://schemas.microsoft.com/office/word/2010/wordprocessingShape\"><w:abstractNum w:abstractNumId=\"1\" w15:restartNumberingAfterBreak=\"0\"><w:multiLevelType w:val=\"hybridMultilevel\"/><w:lvl w:ilvl=\"0\" w15:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"bullet\"/><w:lvlText w:val=\"\u25cf\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"720\" w:hanging=\"360\"/></w:pPr></w:lvl><w:lvl w:ilvl=\"1\" w15:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"bullet\"/><w:lvlText w:val=\"\u25cb\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"1440\" w:hanging=\"360\"/></w:pPr></w:lvl><w:lvl w:ilvl=\"2\" w15:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"bullet\"/><w:lvlText w:val=\"\u25a0\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"2160\" w:hanging=\"360\"/></w:pPr></w:lvl><w:lvl w:ilvl=\"3\" w15:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"bullet\"/><w:lvlText w:val=\"\u25cf\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"2880\" w:hanging=\"360\"/></w:pPr></w:lvl><w:lvl w:ilvl=\"4\" w15:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"bullet\"/><w:lvlText w:val=\"\u25cb\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"3600\" w:hanging=\"360\"/></w:pPr></w:lvl><w:lvl w:ilvl=\"5\" w15:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"bullet\"/><w:lvlText w:val=\"\u25a0\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"4320\" w:hanging=\"360\"/></w:pPr></w:lvl><w:lvl w:ilvl=\"6\" w15:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"bullet\"/><w:lvlText w:val=\"\u25cf\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"5040\" w:hanging=\"360\"/></w:pPr></w:lvl><w:lvl w:ilvl=\"7\" w15:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"bullet\"/><w:lvlText w:val=\"\u25cf\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"5760\" w:hanging=\"360\"/></w:pPr></w:lvl><w:lvl w:ilvl=\"8\" w15:tentative=\"1\"><w:start w:val=\"1\"/><w:numFmt w:val=\"bullet\"/><w:lvlText w:val=\"\u25cf\"/><w:lvlJc w:val=\"left\"/><w:pPr><w:ind w:left=\"6480\" w:hanging=\"360\"/></w:pPr></w:lvl></w:abstractNum><w:num w:numId=\"1\"><w:abstractNumId w:val=\"1\"/><w:lvlOverride w:ilvl=\"0\"><w:startOverride w:val=\"1\"/></w:lvlOverride></w:num></w:numbering>\nentry word/settings.xml\n<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><w:settings xmlns:wpc=\"http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:m=\"http://schemas.openxmlformats.org/officeDocument/2006/math\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:wp14=\"http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing\" xmlns:wp=\"http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing\" xmlns:w10=\"urn:schemas-microsoft-com:office:word\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" xmlns:w14=\"http://schemas.microsoft.com/office/word/2010/wordml\" xmlns:w15=\"http://schemas.microsoft.com/office/word/2012/wordml\" xmlns:wpg=\"http://schemas.microsoft.com/office/word/2010/wordprocessingGroup\" xmlns:wpi=\"http://schemas.microsoft.com/office/word/2010/wordprocessingInk\" xmlns:wne=\"http://schemas.microsoft.com/office/word/2006/wordml\" xmlns:wps=\"http://schemas.microsoft.com/office/word/2010/wordprocessingShape\" mc:Ignorable=\"w14 w15 wp14\"><w:displayBackgroundShape/><w:evenAndOddHeaders w:val=\"false\"/><w:compat><w:compatSetting w:val=\"15\" w:name=\"compatibilityMode\" w:uri=\"http://schemas.microsoft.com/office/word\"/></w:compat></w:settings>\nentry word/styles.xml\n<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><w:styles mc:Ignorable=\"w14 w15\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" xmlns:w14=\"http://schemas.microsoft.com/office/word/2010/wordml\" xmlns:w15=\"http://schemas.microsoft.com/office/word/2012/wordml\"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii=\"\u5b8b\u4f53\" w:cs=\"\u5b8b\u4f53\" w:eastAsia=\"\u5b8b\u4f53\" w:hAnsi=\"\u5b8b\u4f53\"/><w:color w:val=\"000000\"/><w:sz w:val=\"24\"/><w:szCs w:val=\"24\"/></w:rPr></w:rPrDefault><w:pPrDefault/></w:docDefaults><w:style w:type=\"paragraph\" w:styleId=\"Title\"><w:name w:val=\"Title\"/><w:basedOn w:val=\"Normal\"/><w:next w:val=\"Normal\"/><w:qFormat/><w:rPr><w:sz w:val=\"56\"/><w:szCs w:val=\"56\"/></w:rPr></w:style><w:style w:type=\"paragraph\" w:styleId=\"Heading1\"><w:name w:val=\"Heading 1\"/><w:basedOn w:val=\"Normal\"/><w:next w:val=\"Normal\"/><w:qFormat/><w:pPr><w:spacing w:after=\"120\" w:before=\"240\"/><w:ind/><w:jc w:val=\"center\"/></w:pPr><w:rPr><w:rFonts w:ascii=\"\u9ed1\u4f53\" w:cs=\"\u9ed1\u4f53\" w:eastAsia=\"\u9ed1\u4f53\" w:hAnsi=\"\u9ed1\u4f53\"/><w:b/><w:bCs/><w:color w:val=\"000000\"/><w:sz w:val=\"64\"/><w:szCs w:val=\"64\"/></w:rPr></w:style><w:style w:type=\"paragraph\" w:styleId=\"Heading2\"><w:name w:val=\"Heading 2\"/><w:basedOn w:val=\"Normal\"/><w:next w:val=\"Normal\"/><w:qFormat/><w:pPr><w:spacing w:after=\"120\" w:before=\"240\"/><w:ind/></w:pPr><w:rPr><w:rFonts w:ascii=\"\u9ed1\u4f53\" w:cs=\"\u9ed1\u4f53\" w:eastAsia=\"\u9ed1\u4f53\" w:hAnsi=\"\u9ed1\u4f53\"/><w:b/><w:bCs/><w:color w:val=\"000000\"/><w:sz w:val=\"32\"/><w:szCs w:val=\"32\"/></w:rPr></w:style><w:style w:type=\"paragraph\" w:styleId=\"Heading3\"><w:name w:val=\"Heading 3\"/><w:basedOn w:val=\"Normal\"/><w:next w:val=\"Normal\"/><w:qFormat/><w:rPr><w:color w:val=\"1F4D78\"/><w:sz w:val=\"24\"/><w:szCs w:val=\"24\"/></w:rPr></w:style><w:style w:type=\"paragraph\" w:styleId=\"Heading4\"><w:name w:val=\"Heading 4\"/><w:basedOn w:val=\"Normal\"/><w:next w:val=\"Normal\"/><w:qFormat/><w:rPr><w:i/><w:iCs/><w:color w:val=\"2E74B5\"/></w:rPr></w:style><w:style w:type=\"paragraph\" w:styleId=\"Heading5\"><w:name w:val=\"Heading 5\"/><w:basedOn w:val=\"Normal\"/><w:next w:val=\"Normal\"/><w:qFormat/><w:rPr><w:color w:val=\"2E74B5\"/></w:rPr></w:style><w:style w:type=\"paragraph\" w:styleId=\"Heading6\"><w:name w:val=\"Heading 6\"/><w:basedOn w:val=\"Normal\"/><w:next w:val=\"Normal\"/><w:qFormat/><w:rPr><w:color w:val=\"1F4D78\"/></w:rPr></w:style><w:style w:type=\"paragraph\" w:styleId=\"Strong\"><w:name w:val=\"Strong\"/><w:basedOn w:val=\"Normal\"/><w:next w:val=\"Normal\"/><w:qFormat/><w:rPr><w:b/><w:bCs/></w:rPr></w:style><w:style w:type=\"paragraph\" w:styleId=\"ListParagraph\"><w:name w:val=\"List Paragraph\"/><w:basedOn w:val=\"Normal\"/><w:qFormat/></w:style><w:style w:type=\"character\" w:styleId=\"Hyperlink\"><w:name w:val=\"Hyperlink\"/><w:basedOn w:val=\"DefaultParagraphFont\"/><w:uiPriority w:val=\"99\"/><w:unhideWhenUsed/><w:rPr><w:color w:val=\"0563C1\"/><w:u w:val=\"single\"/></w:rPr></w:style><w:style w:type=\"character\" w:styleId=\"FootnoteReference\"><w:name w:val=\"footnote reference\"/><w:basedOn w:val=\"DefaultParagraphFont\"/><w:uiPriority w:val=\"99\"/><w:semiHidden/><w:unhideWhenUsed/><w:rPr><w:vertAlign w:val=\"superscript\"/></w:rPr></w:style><w:style w:type=\"paragraph\" w:styleId=\"FootnoteText\"><w:name w:val=\"footnote text\"/><w:basedOn w:val=\"Normal\"/><w:link w:val=\"FootnoteTextChar\"/><w:uiPriority w:val=\"99\"/><w:semiHidden/><w:unhideWhenUsed/><w:pPr><w:spacing w:after=\"0\" w:line=\"240\" w:lineRule=\"auto\"/></w:pPr><w:rPr><w:sz w:val=\"20\"/><w:szCs w:val=\"20\"/></w:rPr></w:style><w:style w:type=\"character\" w:styleId=\"FootnoteTextChar\"><w:name w:val=\"Footnote Text Char\"/><w:basedOn w:val=\"DefaultParagraphFont\"/><w:link w:val=\"FootnoteText\"/><w:uiPriority w:val=\"99\"/><w:semiHidden/><w:unhideWhenUsed/><w:rPr><w:sz w:val=\"20\"/><w:szCs w:val=\"20\"/></w:rPr></w:style><w:style w:type=\"character\" w:styleId=\"EndnoteReference\"><w:name w:val=\"endnote reference\"/><w:basedOn w:val=\"DefaultParagraphFont\"/><w:uiPriority w:val=\"99\"/><w:semiHidden/><w:unhideWhenUsed/><w:rPr><w:vertAlign w:val=\"superscript\"/></w:rPr></w:style><w:style w:type=\"paragraph\" w:styleId=\"EndnoteText\"><w:name w:val=\"endnote text\"/><w:basedOn w:val=\"Normal\"/><w:link w:val=\"EndnoteTextChar\"/><w:uiPriority w:val=\"99\"/><w:semiHidden/><w:unhideWhenUsed/><w:pPr><w:spacing w:after=\"0\" w:line=\"240\" w:lineRule=\"auto\"/></w:pPr><w:rPr><w:sz w:val=\"20\"/><w:szCs w:val=\"20\"/></w:rPr></w:style><w:style w:type=\"character\" w:styleId=\"EndnoteTextChar\"><w:name w:val=\"Endnote Text Char\"/><w:basedOn w:val=\"DefaultParagraphFont\"/><w:link w:val=\"EndnoteText\"/><w:uiPriority w:val=\"99\"/><w:semiHidden/><w:unhideWhenUsed/><w:rPr><w:sz w:val=\"20\"/><w:szCs w:val=\"20\"/></w:rPr></w:style></w:styles>\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          }
+        ]
+      }
+    },
+    {
+      "source": "batch2_templates.json",
+      "source_sha256": "2237b5b04118837114c7d436d0610244fd8f003f70ae60fe320539cd1ce506b9",
+      "server": "io.github.Cloto-dev/cpersona",
+      "package": "cpersona",
+      "previous_canonical_slack_bits": Infinity,
+      "corrected_canonical_slack_bits": Infinity,
+      "template": {
+        "tool": "store",
+        "root": "/sandbox",
+        "fixed": {},
+        "training_runs": 5,
+        "objects": [
+          {
+            "name": "directory:data",
+            "kind": "directory",
+            "path": [
+              [
+                "L",
+                "data"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:data/cpersona.db",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "data/cpersona.db"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": [
+              [
+                "L",
+                "sqlite-state\nschema index idx_episodes_agent episodes CREATE INDEX idx_episodes_agent\n    ON episodes(agent_id, created_at DESC)\nschema index idx_episodes_agent_channel episodes CREATE INDEX idx_episodes_agent_channel ON episodes(agent_id, channel, created_at DESC)\nschema index idx_episodes_isolation episodes CREATE INDEX idx_episodes_isolation\n    ON episodes(agent_id, project_id, created_at DESC)\nschema index idx_episodes_lost_embedding episodes CREATE INDEX idx_episodes_lost_embedding\n    ON episodes(id) WHERE embedding IS NULL\nschema index idx_memories_agent memories CREATE INDEX idx_memories_agent\n    ON memories(agent_id, created_at DESC)\nschema index idx_memories_agent_channel memories CREATE INDEX idx_memories_agent_channel ON memories(agent_id, channel, created_at DESC)\nschema index idx_memories_dedup_content memories CREATE UNIQUE INDEX idx_memories_dedup_content ON memories(agent_id, project_id, channel, content)\nschema index idx_memories_dedup_msg_id memories CREATE UNIQUE INDEX idx_memories_dedup_msg_id ON memories(agent_id, project_id, msg_id) WHERE msg_id != ''\nschema index idx_memories_isolation memories CREATE INDEX idx_memories_isolation\n    ON memories(agent_id, project_id, created_at DESC)\nschema index idx_memories_lost_embedding memories CREATE INDEX idx_memories_lost_embedding\n    ON memories(id) WHERE embedding IS NULL\nschema index idx_memories_msg_id memories CREATE INDEX idx_memories_msg_id\n    ON memories(agent_id, msg_id)\nschema index idx_memories_span memories CREATE INDEX idx_memories_span\n    ON memories(agent_id, timestamp, project_id, channel)\nschema table episodes episodes CREATE TABLE episodes (\n    id         INTEGER PRIMARY KEY AUTOINCREMENT,\n    agent_id   TEXT NOT NULL,\n    project_id TEXT NOT NULL DEFAULT '',\n    summary    TEXT NOT NULL,\n    keywords   TEXT NOT NULL DEFAULT '',\n    embedding  BLOB,\n    start_time TEXT,\n    end_time   TEXT,\n    resolved   INTEGER NOT NULL DEFAULT 0,\n    channel    TEXT NOT NULL DEFAULT '',\n    created_at TEXT NOT NULL DEFAULT (datetime('now'))\n)\nschema table episodes_fts episodes_fts CREATE VIRTUAL TABLE episodes_fts USING fts5(\n    summary,\n    keywords,\n    content=episodes,\n    content_rowid=id,\n    tokenize='trigram'\n)\nschema table episodes_fts_config episodes_fts_config CREATE TABLE 'episodes_fts_config'(k PRIMARY KEY, v) WITHOUT ROWID\nschema table episodes_fts_data episodes_fts_data CREATE TABLE 'episodes_fts_data'(id INTEGER PRIMARY KEY, block BLOB)\nschema table episodes_fts_docsize episodes_fts_docsize CREATE TABLE 'episodes_fts_docsize'(id INTEGER PRIMARY KEY, sz BLOB)\nschema table episodes_fts_idx episodes_fts_idx CREATE TABLE 'episodes_fts_idx'(segid, term, pgno, PRIMARY KEY(segid, term)) WITHOUT ROWID\nschema table memories memories CREATE TABLE memories (\n    id         INTEGER PRIMARY KEY AUTOINCREMENT,\n    agent_id   TEXT NOT NULL,\n    project_id TEXT NOT NULL DEFAULT '',\n    msg_id     TEXT NOT NULL DEFAULT '',\n    content    TEXT NOT NULL,\n    source     TEXT NOT NULL DEFAULT '{}',\n    timestamp  TEXT NOT NULL,\n    metadata   TEXT NOT NULL DEFAULT '{}',\n    embedding  BLOB,\n    channel    TEXT NOT NULL DEFAULT '',\n    recall_count INTEGER NOT NULL DEFAULT 0,\n    last_recalled_at TEXT,\n    locked     INTEGER NOT NULL DEFAULT 0,\n    created_at TEXT NOT NULL DEFAULT (datetime('now'))\n)\nschema table memories_fts memories_fts CREATE VIRTUAL TABLE memories_fts USING fts5(\n    content,\n    content=memories,\n    content_rowid=id,\n    tokenize='trigram'\n)\nschema table memories_fts_config memories_fts_config CREATE TABLE 'memories_fts_config'(k PRIMARY KEY, v) WITHOUT ROWID\nschema table memories_fts_data memories_fts_data CREATE TABLE 'memories_fts_data'(id INTEGER PRIMARY KEY, block BLOB)\nschema table memories_fts_docsize memories_fts_docsize CREATE TABLE 'memories_fts_docsize'(id INTEGER PRIMARY KEY, sz BLOB)\nschema table memories_fts_idx memories_fts_idx CREATE TABLE 'memories_fts_idx'(segid, term, pgno, PRIMARY KEY(segid, term)) WITHOUT ROWID\nschema table pending_memory_tasks pending_memory_tasks CREATE TABLE pending_memory_tasks (\n    id         INTEGER PRIMARY KEY AUTOINCREMENT,\n    task_type  TEXT NOT NULL,\n    agent_id   TEXT NOT NULL,\n    project_id TEXT NOT NULL DEFAULT '',\n    payload    TEXT NOT NULL,\n    retries    INTEGER NOT NULL DEFAULT 0,\n    created_at TEXT NOT NULL DEFAULT (datetime('now'))\n)\nschema table profiles profiles CREATE TABLE profiles (\n    id         INTEGER PRIMARY KEY AUTOINCREMENT,\n    agent_id   TEXT NOT NULL,\n    project_id TEXT NOT NULL DEFAULT '',\n    "
+              ],
+              [
+                "A",
+                "message.role",
+                "identity+stem+lower+slug_dash+slug_drop+slug_strict"
+              ],
+              [
+                "L",
+                "_id    TEXT NOT NULL DEFAULT '',\n    content    TEXT NOT NULL,\n    updated_at TEXT NOT NULL DEFAULT (datetime('now')),\n    UNIQUE(agent_id, "
+              ],
+              [
+                "A",
+                "message.role",
+                "identity+stem+lower+slug_dash+slug_drop+slug_strict"
+              ],
+              [
+                "L",
+                "_id)\n)\nschema table schema_version schema_version CREATE TABLE schema_version (\n    version    INTEGER PRIMARY KEY,\n    applied_at TEXT NOT NULL DEFAULT (datetime('now'))\n)\nschema trigger episodes_ad episodes CREATE TRIGGER episodes_ad AFTER DELETE ON episodes BEGIN\n    INSERT INTO episodes_fts(episodes_fts, rowid, summary, keywords)\n    VALUES ('delete', old.id, old.summary, old.keywords);\nEND\nschema trigger episodes_ai episodes CREATE TRIGGER episodes_ai AFTER INSERT ON episodes BEGIN\n    INSERT INTO episodes_fts(rowid, summary, keywords)\n    VALUES (new.id, new.summary, new.keywords);\nEND\nschema trigger episodes_au episodes CREATE TRIGGER episodes_au AFTER UPDATE OF summary, keywords ON episodes\nWHEN old.summary <> new.summary OR old.keywords <> new.keywords BEGIN\n    INSERT INTO episodes_fts(episodes_fts, rowid, summary, keywords)\n    VALUES ('delete', old.id, old.summary, old.keywords);\n    INSERT INTO episodes_fts(rowid, summary, keywords)\n    VALUES (new.id, new.summary, new.keywords);\nEND\nschema trigger memories_fts_ad memories CREATE TRIGGER memories_fts_ad AFTER DELETE ON memories BEGIN\n    INSERT INTO memories_fts(memories_fts, rowid, content)\n    VALUES ('delete', old.id, old.content);\nEND\nschema trigger memories_fts_ai memories CREATE TRIGGER memories_fts_ai AFTER INSERT ON memories BEGIN\n    INSERT INTO memories_fts(rowid, content) VALUES (new.id, new.content);\nEND\nschema trigger memories_fts_au memories CREATE TRIGGER memories_fts_au AFTER UPDATE OF content ON memories\nWHEN old.content <> new.content BEGIN\n    INSERT INTO memories_fts(memories_fts, rowid, content)\n    VALUES ('delete', old.id, old.content);\n    INSERT INTO memories_fts(rowid, content) VALUES (new.id, new.content);\nEND\ncolumns episodes [\"id\", \"agent_id\", \"project_id\", \"summary\", \"keywords\", \"embedding\", \"start_time\", \"end_time\", \"resolved\", \"channel\", \"created_at\"]\ncolumns episodes_fts [\"summary\", \"keywords\"]\ncolumns episodes_fts_config [\"k\", \"v\"]\nrow episodes_fts_config [[\"text\", \"version\"], [\"integer\", 4]]\ncolumns episodes_fts_data [\"id\", \"block\"]\nrow episodes_fts_data [[\"integer\", 10], [\"blob\", \"00000000000000\"]]\nrow episodes_fts_data [[\"integer\", 1], [\"blob\", \"000000\"]]\ncolumns episodes_fts_docsize [\"id\", \"sz\"]\ncolumns episodes_fts_idx [\"segid\", \"term\", \"pgno\"]\ncolumns memories [\"id\", \"agent_id\", \"project_id\", \"msg_id\", \"content\", \"source\", \"timestamp\", \"metadata\", \"embedding\", \"channel\", \"recall_count\", \"last_recalled_at\", \"locked\", \"created_at\"]\nrow memories [[\"integer\", 1], [\"text\", \""
+              ],
+              [
+                "A",
+                "agent_id",
+                "identity+stem+lower+slug_dash+slug_drop"
+              ],
+              [
+                "L",
+                "\"], [\"text\", \"\"], [\"text\", \"\"], [\"text\", \""
+              ],
+              [
+                "A",
+                "message.content",
+                "identity+stem"
+              ],
+              [
+                "L",
+                "\"], [\"text\", \"{}\"], [\"text\", \""
+              ],
+              [
+                "H",
+                "clock:dTto",
+                92.692
+              ],
+              [
+                "L",
+                "\"], [\"text\", \"{}\"], [\"null\"], [\"text\", \"\"], [\"integer\", 0], [\"null\"], [\"integer\", 0], [\"text\", \""
+              ],
+              [
+                "H",
+                "clock:d t",
+                77.404
+              ],
+              [
+                "L",
+                "\"]]\ncolumns memories_fts [\"content\"]\nrow memories_fts [[\"text\", \""
+              ],
+              [
+                "A",
+                "message.content",
+                "identity+stem"
+              ],
+              [
+                "L",
+                "\"]]\ncolumns memories_fts_config [\"k\", \"v\"]\nrow memories_fts_config [[\"text\", \"version\"], [\"integer\", 4]]\ncolumns memories_fts_data [\"id\", \"block\"]\nrow memories_fts_data [[\"integer\", 10], [\"blob\", \"000000000101010001010101\"]]\nrow memories_fts_data [[\"integer\", 137438953473], [\"blob\", \"00000143043020636f01021202026d6101020a03016301021a010330323601022c0202395f010230010332303201022b0202365f01022d0103365f3001022e0103395f3201023101035f303901022f0202323001022a03013601023202026d6101022201036170700102020202746301040c1a03016501021f010363686501040e1a02026f6e0102130202706701021c010364206301021103016d01020902025f320102290103655f6d010221020264200104080a03015f01022802026e74010217010367617401021e010368656401040f1a01036d617401040b1a0202637001021b01036e742001021803016501021501036f6e7401021402027665010206010370676101021d020270720102030202726f0102040103726f76010205010374206d0102190202636801040d1a0202655f01022003016e010216010376656401020704080706080708070808080706070808060907070806070808060708090907080608070807070808080706\"]]\nrow memories_fts_data [[\"integer\", 1], [\"blob\", \"0131\"]]\ncolumns memories_fts_docsize [\"id\", \"sz\"]\nrow memories_fts_docsize [[\"integer\", 1], [\"blob\", \"31\"]]\ncolumns memories_fts_idx [\"segid\", \"term\", \"pgno\"]\nrow memories_fts_idx [[\"integer\", 1], [\"blob\", \"\"], [\"integer\", 2]]\ncolumns pending_memory_tasks [\"id\", \"task_type\", \"agent_id\", \"project_id\", \"payload\", \"retries\", \"created_at\"]\ncolumns profiles [\"id\", \"agent_id\", \"project_id\", \""
+              ],
+              [
+                "A",
+                "message.role",
+                "identity+stem+lower+slug_dash+slug_drop+slug_strict"
+              ],
+              [
+                "L",
+                "_id\", \"content\", \"updated_at\"]\ncolumns schema_version [\"version\", \"applied_at\"]\nrow schema_version [[\"integer\", 13], [\"text\", \""
+              ],
+              [
+                "H",
+                "clock:d t",
+                77.404
+              ],
+              [
+                "L",
+                "\"]]\n"
+              ]
+            ],
+            "content_sha256": null,
+            "unconstrained": false
+          },
+          {
+            "name": "file:data/cpersona.db-wal",
+            "kind": "file",
+            "path": [
+              [
+                "L",
+                "data/cpersona.db-wal"
+              ]
+            ],
+            "path_regex": null,
+            "min_count": 1,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": true
+          },
+          {
+            "name": "file:~data/*.db-shm",
+            "kind": "file",
+            "path": null,
+            "path_regex": "data/[^/]+\\.db\\-shm",
+            "min_count": 0,
+            "max_count": 1,
+            "content": null,
+            "content_sha256": null,
+            "unconstrained": true
+          }
+        ]
+      }
+    }
+  ]
+}

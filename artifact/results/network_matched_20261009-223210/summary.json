@@ -1,0 +1,82 @@
+{
+  "servers_evaluated": 5,
+  "servers_with_template": 5,
+  "honest": {
+    "calls": 60,
+    "completed": 60,
+    "blocked": 0
+  },
+  "attacks": {
+    "A1_add_field": {
+      "applicable": 36,
+      "effectseal_stops": 36,
+      "destination_stops": 0
+    },
+    "A2_change_value": {
+      "applicable": 24,
+      "effectseal_stops": 24,
+      "destination_stops": 0
+    },
+    "A3_append_text": {
+      "applicable": 24,
+      "effectseal_stops": 24,
+      "destination_stops": 0
+    },
+    "A4_extra_same_host": {
+      "applicable": 60,
+      "effectseal_stops": 60,
+      "destination_stops": 0
+    },
+    "A5_extra_other_host": {
+      "applicable": 60,
+      "effectseal_stops": 60,
+      "destination_stops": 60
+    },
+    "A6_credential_channel": {
+      "applicable": 48,
+      "effectseal_stops": 48,
+      "destination_stops": 0
+    },
+    "A7_duplicate": {
+      "applicable": 60,
+      "effectseal_stops": 60,
+      "destination_stops": 0
+    },
+    "A8_silent_noop": {
+      "applicable": 60,
+      "effectseal_stops": 60,
+      "destination_stops": 0
+    }
+  },
+  "send_cases": {
+    "applicable": 312,
+    "stopped": 312
+  },
+  "coverage_wilson_95": [
+    0.5655175352168251,
+    1
+  ],
+  "honest_server_cluster_95": [
+    1.0,
+    1.0
+  ],
+  "fixed_send_server_cluster_95": [
+    1.0,
+    1.0
+  ],
+  "adaptive": {
+    "applicable": 336,
+    "stopped": 324,
+    "admitted": 12
+  },
+  "adaptive_server_cluster_95": [
+    0.9,
+    1.0
+  ],
+  "outcomes": {
+    "ADMITTED": 12,
+    "REFUSED": 264,
+    "PARTIAL": 372,
+    "INCOMPLETE": 60
+  }
+}

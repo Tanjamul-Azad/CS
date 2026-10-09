@@ -1,0 +1,30 @@
+{
+  "bundle_version": 2,
+  "plan_sha256": "209cd579ef1b129d730e5d7b806f642c85c43e5302cf7d80941d90f743ae1ef7",
+  "git_commit": "39b91fad702d87e2b474e50cf4e9198ce207f712",
+  "source_hashes": {
+    "experiments/network_matched_eval.py": "fd8bb9cb68a10098947ba0a5e67f5cad5d6d08ba4729bfa4ebee0735f1b6dda9",
+    "src/mcpgate/request_templates.py": "1e0674455f1619223448ea53f38de7fed5f57bccd99d1507c42faa9fb8ddbfa7",
+    "src/mcpgate/template_inference.py": "7f7dddd856a7f6e2401d9dbeec8b7b0b9d54562c69f8da654a8dd98da36fe713",
+    "src/mcpgate/egress_proxy.py": "5ff08b0a704f63bcc56304aab09165caa68823cc8f56e473f489e84acc431bb9",
+    "src/mcpgate/egress_service.py": "29dc53635757917e16da79aba3d330209a51125abacea351d9b33324bc9cf839"
+  },
+  "images": {
+    "effectseal-net:bighub-bighub-mcp-0.2.1": "sha256:85f133b7f50eb65fcfe9da8239b854138ae2d624b99ce2133f5972e462972c74",
+    "effectseal-net:codespar-mcp-inter-bank-0.2.2": "sha256:08069f733f0965692e99e4c9e2f8795c605ae950add241802cb4fc25d9dffb3c",
+    "effectseal-net:codespar-mcp-conekta-0.2.2": "sha256:a51c7ed2c9b455ee1f51304c390ef22d1df0a17986b60a8bf8ef64f50d9fcf27",
+    "effectseal-net:index365-mcp-1.0.0": "sha256:07c8955b1c12f8d025c61210b65cf668ff61f639c27659c77434f95fd1870bd5",
+    "effectseal-net:opedd-mcp-0.6.15": "sha256:110f9ac8053cbb781670f20873e880439cf2a8be87c1a3e4148ce7bab19025dd"
+  },
+  "split": {
+    "io.bighub/mcp": "held_out",
+    "io.github.codespar/mcp-inter-bank": "held_out",
+    "io.github.codespar/mcp-conekta": "held_out",
+    "io.github.index365usa/index365": "held_out",
+    "com.opedd/opedd-mcp": "held_out"
+  },
+  "selection": "artifact/results/network_selection_20261009-220747",
+  "calls": 12,
+  "seed": 20261008,
+  "finished": "2026-10-09T16:33:49.712955+00:00"
+}

@@ -2,6 +2,12 @@
 
 ## Current (read these first)
 
+The current source of truth is `artifact/paper-evidence-20261009.json`,
+`paper/CLAIM_EVIDENCE_MATRIX.md`, `paper/SUBMISSION_ROADMAP.md` and
+`paper/SUBMISSION_STATUS_BN.md`. Dated results in the older workstream docs
+remain historical measurements; revised network numbers supersede them.
+
+
 | Doc | Content |
 |---|---|
 | `paper/ACCEPTANCE_PLAN_2027.md` | current plan (2026-10-08): network admission, real incidents, strong baselines, held-out batch 3, timeline to 2027-01-26 |

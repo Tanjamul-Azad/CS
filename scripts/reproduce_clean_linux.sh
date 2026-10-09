@@ -44,6 +44,8 @@ run theorem1_demo     python experiments/demo_theorem1.py
 run mediator_ablation python experiments/run_mediator_ablations.py
 run concurrency_100   python experiments/run_concurrency_100.py
 run network_overhead  python experiments/measure_network_overhead.py --iters 500 --trials 100
+run integrated_proxy  python experiments/measure_integrated_network.py --iters 300 --trials 100
+run current_evidence  python scripts/verify_current_evidence.py
 run file_baselines    python experiments/make_file_baselines.py
 run figures_paper     python scripts/make_strengthening_figures.py
 run figures_network   python scripts/make_network_figures.py

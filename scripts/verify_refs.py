@@ -115,6 +115,9 @@ def main() -> int:
     if args.legacy:
         BIB = ROOT / "paper/references.bib"
         MANUSCRIPT = ROOT / "paper/MANUSCRIPT_DRAFT.md"
+    if not BIB.exists():
+        print("Private manuscript bibliography is not present; obtain the source package to audit citations.", file=sys.stderr)
+        return 1
     entries = parse(BIB.read_text(encoding="utf-8"))
     # Current LaTeX bibliography has no historical V/U markers. This command
     # checks required metadata and citation topology, never source truth.

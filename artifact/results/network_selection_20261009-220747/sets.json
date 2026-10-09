@@ -1,0 +1,12 @@
+{
+  "development": [],
+  "held_out": [
+    "io.bighub/mcp",
+    "io.github.codespar/mcp-inter-bank",
+    "io.github.codespar/mcp-conekta",
+    "io.github.index365usa/index365",
+    "com.opedd/opedd-mcp"
+  ],
+  "screened": 40,
+  "finished": "2026-10-09T16:28:24.366950+00:00"
+}
