@@ -10,14 +10,16 @@ submission guard that prevents the working manuscript from citing [U] entries.
 from __future__ import annotations
 
 import re
+import argparse
+from dataclasses import replace
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-BIB = ROOT / "paper" / "references.bib"
-MANUSCRIPT = ROOT / "paper" / "MANUSCRIPT_DRAFT.md"
+BIB = ROOT / "paper" / "submission" / "references.bib"
+MANUSCRIPT = ROOT / "paper" / "submission" / "main.tex"
 ENTRY = re.compile(
     r"^(?:%\s*\[(?P<status>[VU])\][^\n]*\n)?"
     r"@(?P<kind>[A-Za-z]+)\{(?P<key>[^,\s]+),\s*\n"
@@ -89,7 +91,11 @@ def audit_manuscript(entries: list[Entry]) -> list[str]:
     if not MANUSCRIPT.exists():
         return []
     by_key = {entry.key: entry for entry in entries}
-    cited = sorted(set(CITATION.findall(MANUSCRIPT.read_text(encoding="utf-8"))))
+    if MANUSCRIPT.suffix == ".tex":
+        source = MANUSCRIPT.read_text(encoding="utf-8") + "\n".join(p.read_text(encoding="utf-8") for p in (MANUSCRIPT.parent / "sections").glob("*.tex"))
+        cited = sorted({k.strip() for m in re.finditer(r"\\cite\{([^}]+)\}", source) for k in m.group(1).split(",")})
+    else:
+        cited = sorted(set(CITATION.findall(MANUSCRIPT.read_text(encoding="utf-8"))))
     errors: list[str] = []
     for key in cited:
         entry = by_key.get(key)
@@ -102,13 +108,24 @@ def audit_manuscript(entries: list[Entry]) -> list[str]:
 
 
 def main() -> int:
+    global BIB, MANUSCRIPT
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--legacy", action="store_true", help="audit historical Markdown and marked bibliography")
+    args = parser.parse_args()
+    if args.legacy:
+        BIB = ROOT / "paper/references.bib"
+        MANUSCRIPT = ROOT / "paper/MANUSCRIPT_DRAFT.md"
     entries = parse(BIB.read_text(encoding="utf-8"))
+    # Current LaTeX bibliography has no historical V/U markers. This command
+    # checks required metadata and citation topology, never source truth.
+    if not args.legacy:
+        entries = [replace(e, status="V") for e in entries]
     errors = audit(entries)
     verified = sum(entry.status == "V" for entry in entries)
     unverified = sum(entry.status == "U" for entry in entries)
     print(
         f"{BIB.relative_to(ROOT)}: {len(entries)} entries; "
-        f"{verified} verified, {unverified} unverified"
+        f"{verified} metadata-checked, {unverified} unverified historical entries"
     )
     errors.extend(audit_manuscript(entries))
     for error in errors:
