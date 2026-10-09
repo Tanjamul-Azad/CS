@@ -272,11 +272,20 @@ def convert(
 
 def main() -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--legacy-markdown", action="store_true",
+                        help="explicitly regenerate the historical Markdown draft")
     parser.add_argument(
         "--check", action="store_true",
         help="fail if checked-in generated LaTeX differs from Markdown sources",
     )
     args = parser.parse_args()
+    if not args.legacy_markdown:
+        print("Canonical source: paper/submission/main.tex and sections/*.tex")
+        import submission_check
+        issues = submission_check.submission_source_issues()
+        for issue in issues:
+            print(issue)
+        return 1 if issues else 0
     sources = (
         (PAPER / "MANUSCRIPT_DRAFT.md", OUT / "body.tex", True, False),
         (PAPER / "ETHICS_APPENDIX.md", OUT / "ethics.tex", False, True),

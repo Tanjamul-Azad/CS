@@ -19,6 +19,22 @@ def verify(path):
             errors.append('unsafe manifest path'); continue
         if not target.is_file() or hashlib.sha256(target.read_bytes()).hexdigest() != digest:
             errors.append('hash mismatch: ' + name)
+    if (path / 'trials.jsonl').exists():
+        import network_postmark_pilot as P
+        meta = json.loads((path / 'meta.json').read_text(encoding='utf-8'))
+        trials = [json.loads(line) for line in (path / 'trials.jsonl').read_text(encoding='utf-8').splitlines()]
+        pins = [t for t in trials if t['phase'] == 'pin']
+        for phase, tool in [('startup', '__startup__'), ('call', 'sendEmail')]:
+            template = infer_request_template(tool, [RequestObservation({} if phase == 'startup' else p['args'],
+                P.observation(p, phase), dt.datetime.fromisoformat(p['started'])) for p in pins],
+                credential_headers=frozenset({P.TOKEN_HEADER.lower()}))
+            if template.to_json() != meta['templates'][phase]:errors.append('Postmark template differs: ' + phase)
+        for t in trials:
+            if P.oracle(t) != t['oracle'] or P.gate_outcome(t) != t['gate_outcome']:
+                errors.append('Postmark oracle differs: ' + t['call_id'])
+        if P.summarize(trials) != json.loads((path / 'summary.json').read_text(encoding='utf-8')):
+            errors.append('Postmark summary differs')
+        return {'bundle': str(path), 'trials_checked': len(trials), 'hashes_checked': len(hashes), 'errors': errors, 'passed': not errors}
     rows = [json.loads(line) for line in (path / 'results.jsonl').read_text(encoding='utf-8').splitlines()]
     checked = 0
     for row in rows:

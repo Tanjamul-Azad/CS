@@ -26,7 +26,7 @@ ENTRY = re.compile(
     r"(?P<body>.*?)(?=^(?:%\s*\[[VU]\][^\n]*\n)?@|\Z)",
     re.MULTILINE | re.DOTALL,
 )
-FIELD = re.compile(r"^\s*(?P<name>[A-Za-z][A-Za-z0-9_-]*)\s*=", re.MULTILINE)
+FIELD = re.compile(r"(?:^|,)\s*(?P<name>[A-Za-z][A-Za-z0-9_-]*)\s*=", re.MULTILINE)
 CITATION = re.compile(r"(?<![A-Za-z0-9_])@([A-Za-z0-9_:-]+)")
 
 
