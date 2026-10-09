@@ -67,7 +67,9 @@ never choose a directory merely because it sorts last.
 `python scripts/verify_current_evidence.py` checks hashes, re-infers templates,
 replays request sequences and recomputes summaries/controls/races offline.
 `python scripts/summarize_current_evidence.py --update-manuscript` regenerates
-the marked supplementary network tables when private source is available.
+the marked main-paper cohort summary and supplementary network tables when
+private source is available. Use `--summary` to print the cohort comparison
+without changing the manuscript. Both outputs read the same selected raw rows.
 `sh scripts/reproduce_clean_linux.sh` returns nonzero for any failed step.
 Run in a fresh clone; its fixed-name outputs must not overwrite earlier evidence.
 The script runs integrated proxy timing/races in addition to isolated mechanism
@@ -78,3 +80,8 @@ manuscript, selects named-draft checks from its source switch, and records
 `paper/submission/BUILD_MANIFEST.json`. Readiness checks reject a stale PDF or
 changed source relative to this verified build. The Overleaf ZIP is source-only
 and carries its own source hash manifest.
+
+For an already sanitized anonymous export, use
+`python scripts/make_overleaf_zip.py --source <local-export-folder> --output <new-zip-path>`.
+The source override only selects files; it does not anonymize them. Build and
+scan that source and PDF before using the archive for review.

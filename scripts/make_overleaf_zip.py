@@ -9,8 +9,9 @@ from pathlib import Path
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--output", type=Path)
+parser.add_argument("--source", type=Path, help="local source directory, including a sanitized anonymous export")
 args = parser.parse_args()
-root = Path(__file__).resolve().parents[1] / "paper" / "submission"
+root = args.source.resolve() if args.source else Path(__file__).resolve().parents[1] / "paper" / "submission"
 main = (root / "main.tex").read_text(encoding="utf-8")
 sections = re.findall(r"\\input\{(sections/[^}]+)\}", main)
 text = main + "".join((root / f"{s}.tex").read_text(encoding="utf-8") for s in sections)
