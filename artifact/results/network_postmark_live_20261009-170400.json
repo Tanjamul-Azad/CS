@@ -1,0 +1,618 @@
+{
+  "created_utc": "2026-10-09T11:04:42.343244+00:00",
+  "source": "artifact/results/network_postmark_20261008-223144",
+  "endpoint": "https://api.postmarkapp.com",
+  "token": "documented test token",
+  "summary": {
+    "effectseal_honest_accepted": [
+      12,
+      12
+    ],
+    "effectseal_attack_calls_first_request_accepted": [
+      9,
+      9
+    ],
+    "no_defense_diverted_accepted": [
+      7,
+      9
+    ],
+    "pilot_effectseal_attack_trials": 24,
+    "note": "Requests EffectSeal refused never left the broker, so there is nothing to send for them; the real API saw only what the pilot admitted."
+  },
+  "rows": [
+    {
+      "condition": "none",
+      "phase": "attack",
+      "variant": "N-A1_bcc",
+      "request_fields": [
+        "Bcc",
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": "sink@attacker.test",
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 981.3
+    },
+    {
+      "condition": "none",
+      "phase": "attack",
+      "variant": "N-A2_recipient",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 977.4
+    },
+    {
+      "condition": "none",
+      "phase": "attack",
+      "variant": "N-A3_body",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 944.6
+    },
+    {
+      "condition": "none",
+      "phase": "attack",
+      "variant": "N-A4_same_host_write",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 942.6
+    },
+    {
+      "condition": "none",
+      "phase": "attack",
+      "variant": "N-A4_same_host_write",
+      "request_fields": [
+        "MessageStream",
+        "Triggers",
+        "Url"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 403,
+      "error_code": 10,
+      "message": "The Postmark Test API Token may only be used on the /email endpoint.",
+      "ms": 951.6
+    },
+    {
+      "condition": "none",
+      "phase": "attack",
+      "variant": "N-A5_other_host",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 959.6
+    },
+    {
+      "condition": "none",
+      "phase": "attack",
+      "variant": "N-A6_credential_channel",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": false,
+      "why": "guard: header is not the Postmark test token"
+    },
+    {
+      "condition": "none",
+      "phase": "attack",
+      "variant": "N-A7_double_send",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 872.2
+    },
+    {
+      "condition": "none",
+      "phase": "attack",
+      "variant": "N-A7_double_send",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 968.6
+    },
+    {
+      "condition": "effectseal",
+      "phase": "honest",
+      "variant": "honest",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 879.7
+    },
+    {
+      "condition": "effectseal",
+      "phase": "honest",
+      "variant": "honest",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 947.7
+    },
+    {
+      "condition": "effectseal",
+      "phase": "honest",
+      "variant": "honest",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 993.6
+    },
+    {
+      "condition": "effectseal",
+      "phase": "honest",
+      "variant": "honest",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 979.0
+    },
+    {
+      "condition": "effectseal",
+      "phase": "honest",
+      "variant": "honest",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 941.3
+    },
+    {
+      "condition": "effectseal",
+      "phase": "honest",
+      "variant": "honest",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 876.5
+    },
+    {
+      "condition": "effectseal",
+      "phase": "honest",
+      "variant": "honest",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 889.8
+    },
+    {
+      "condition": "effectseal",
+      "phase": "honest",
+      "variant": "honest",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 931.6
+    },
+    {
+      "condition": "effectseal",
+      "phase": "honest",
+      "variant": "honest",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 878.2
+    },
+    {
+      "condition": "effectseal",
+      "phase": "honest",
+      "variant": "honest",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 878.1
+    },
+    {
+      "condition": "effectseal",
+      "phase": "honest",
+      "variant": "honest",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 919.8
+    },
+    {
+      "condition": "effectseal",
+      "phase": "honest",
+      "variant": "honest",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 959.4
+    },
+    {
+      "condition": "effectseal",
+      "phase": "attack",
+      "variant": "N-A4_same_host_write",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 938.6
+    },
+    {
+      "condition": "effectseal",
+      "phase": "attack",
+      "variant": "N-A4_same_host_write",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 930.6
+    },
+    {
+      "condition": "effectseal",
+      "phase": "attack",
+      "variant": "N-A4_same_host_write",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 938.2
+    },
+    {
+      "condition": "effectseal",
+      "phase": "attack",
+      "variant": "N-A5_other_host",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 884.8
+    },
+    {
+      "condition": "effectseal",
+      "phase": "attack",
+      "variant": "N-A5_other_host",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 907.8
+    },
+    {
+      "condition": "effectseal",
+      "phase": "attack",
+      "variant": "N-A5_other_host",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 892.0
+    },
+    {
+      "condition": "effectseal",
+      "phase": "attack",
+      "variant": "N-A7_double_send",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 891.6
+    },
+    {
+      "condition": "effectseal",
+      "phase": "attack",
+      "variant": "N-A7_double_send",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 883.8
+    },
+    {
+      "condition": "effectseal",
+      "phase": "attack",
+      "variant": "N-A7_double_send",
+      "request_fields": [
+        "From",
+        "MessageStream",
+        "Subject",
+        "TextBody",
+        "To",
+        "TrackLinks",
+        "TrackOpens"
+      ],
+      "bcc": null,
+      "sent": true,
+      "status": 200,
+      "error_code": 0,
+      "message": "Test job accepted",
+      "ms": 920.0
+    }
+  ]
+}
