@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-09T04:51:00.218006+00:00",
+  "phase": "TEMPLATE_GENERALIZATION_DEVELOPMENT_CYCLE5",
+  "plan_sha256": "d7fe9a7e6a98e544c2a6115139e657f119b3931c6f134b5cf740016e5aac49e3",
+  "inference_sha256": "a2d2bc519bd52c24268e8f0d7570b69a9455a8a1d3078a0760dfb04c4900baf6",
+  "servers": [
+    {
+      "server_id": "io.github.Oncorporation/filesystem-server",
+      "error": "RuntimeError: honest training call failed: {'status': 'NO_JSON', 'stdout_tail': ''}",
+      "honest": [],
+      "attacks": []
+    },
+    {
+      "server_id": "io.github.bytedance/mcp-server-filesystem",
+      "error": "RuntimeError: honest training call failed: {'status': 'NO_JSON', 'stdout_tail': ''}",
+      "honest": [],
+      "attacks": []
+    },
+    {
+      "server_id": "io.github.aayoawoyemi/ori-memory",
+      "error": "RuntimeError: honest training call failed: {'status': 'NO_JSON', 'stdout_tail': ''}",
+      "honest": [],
+      "attacks": []
+    },
+    {
+      "server_id": "ai.smartmemory/compose-mcp",
+      "error": "RuntimeError: honest training call failed: {'status': 'NO_JSON', 'stdout_tail': ''}",
+      "honest": [],
+      "attacks": []
+    },
+    {
+      "server_id": "io.github.DanielGuru/repomemory",
+      "error": "RuntimeError: honest training call failed: {'status': 'NO_JSON', 'stdout_tail': ''}",
+      "honest": [],
+      "attacks": []
+    }
+  ],
+  "summary": {
+    "honest_calls": 0,
+    "false_blocks": 0,
+    "false_block_rate": null,
+    "attacks_attempted": 0,
+    "attacks_landed": 0,
+    "prevented": {
+      "NONE": 0,
+      "PATH_TEMPLATE": 0,
+      "EFFECTSEAL_TEMPLATE": 0
+    },
+    "by_server": {}
+  }
+}

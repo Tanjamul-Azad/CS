@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "phase": "TEMPLATE_GENERALIZATION_DEVELOPMENT_CYCLE5",
+  "status": "FROZEN_BEFORE_SCORED_RUN",
+  "frozen_utc": "2026-10-09",
+  "question": "Does an effect template inferred at pin time from perturbed-argument honest runs admit honest calls with unseen arguments and refuse attacks on those calls?",
+  "set_role": "DEVELOPMENT. The inference library (argument transforms, hole classes, clock shapes) was designed while inspecting honest outputs of these five servers, so this run validates the implementation rather than generalization to unseen servers. Held-out scoring of template inference uses the second frozen server batch (docs/44, workstream G).",
+  "servers": [
+    "io.github.Oncorporation/filesystem-server",
+    "io.github.bytedance/mcp-server-filesystem",
+    "io.github.aayoawoyemi/ori-memory",
+    "ai.smartmemory/compose-mcp",
+    "io.github.DanielGuru/repomemory"
+  ],
+  "training": {
+    "runs": 4,
+    "seed": "train-2026-09-27",
+    "argument_source": "perturbation of the approved exemplar call (perturb_arguments)",
+    "fixed_fields": "schema enum fields, plus fields whose single-field perturbation makes the honest server return a protocol error (discovered automatically at pin time)",
+    "validity_check": true,
+    "long_runs": 2,
+    "long_scale": 3.0
+  },
+  "held_out_honest": {
+    "calls": 12,
+    "seed": "test-2026-09-27",
+    "scale_shift": {
+      "calls": 4,
+      "text_scale": 3.0
+    },
+    "admission_clock": "contracts are instantiated with now = wall clock at admission",
+    "natural_calls": 4,
+    "natural_note": "added by development change 4: of the 8 unscaled held-out calls, the last 4 use natural-word free text; the scaled calls stay random"
+  },
+  "attacks": {
+    "modes": [
+      "path",
+      "content",
+      "extra",
+      "noop",
+      "symlink"
+    ],
+    "applicability": "per server, from artifact/held-out-evaluation-plan.json (A1 path, A2 content, A4 extra, A6 noop, A7 symlink)",
+    "argument_sets_per_mode": 3,
+    "argument_source": "the first three unscaled held-out honest calls",
+    "adversary_tier": "consistent"
+  },
+  "conditions": {
+    "NONE": "admit everything the server staged",
+    "PATH_TEMPLATE": "the instantiated template with every content predicate and object-kind restriction removed (content-blind ablation)",
+    "EFFECTSEAL_TEMPLATE": "the instantiated template in full, after the unsafe-object check"
+  },
+  "outcome_definitions": {
+    "false_block": "an honest held-out call whose staged effect the instantiated template refuses",
+    "landed": "the attacked staged state differs from the honest staged state of the same arguments (after clock normalization) AND carries mode-specific evidence: content = payload bytes present; path = honest path set changed; extra = a path outside the honest set; noop = an honest file missing or changed with no protocol error; symlink = a link or special object present. The honest run is an evaluator-only oracle; the defense never sees it.",
+    "prevented": "a landed attack whose staged state the condition refuses",
+    "slack_bits": "EffectTemplate.slack with clock_bound = true, per honest call"
+  },
+  "amendments": [
+    {
+      "recorded": "2026-09-27, before any SQL template outcome",
+      "change": "add the SQL arm on the two frozen SQLite servers (io.github.daedalus/mcp-sqlite3, io.github.mrfentmen/sqlite-mcp)",
+      "method": "the database is serialized by mcpgate.sqlite_mediator.sqlite_state_text into one canonical text object and inferred with the same template machinery; the perturbed argument is the inserted value; same training runs, seeds, held-out counts, and scale shift as the filesystem arm",
+      "attacks": "sql_value, sql_extra_row, sql_extra_table, sql_noop on the first three unscaled held-out values; landed = attacked canonical state differs from the honest state of the same value and carries mode evidence (value: honest value absent; extra_row: more rows; extra_table: more tables; noop: fewer rows with no protocol error)"
+    }
+  ],
+  "development_changes": [
+    {
+      "after_run": "run1 (artifact/results/template_generalization_run1.json, kept unchanged)",
+      "failure": "ori-memory: 12/12 honest held-out calls falsely blocked. ops/daily.md carries the constant epoch sentinel 'date: 1970-01-01'; inference treated every date as a clock value and the admission-time clock binding then refused it.",
+      "change": "a date is a clock hole only if it lies within one day of the training run's own wall clock (Observation.observed_at); other dates are ordinary text. Regression test test_a_constant_sentinel_date_is_not_a_clock_value."
+    },
+    {
+      "after_run": "run1",
+      "failure": "compose-mcp: harness KeyError before any outcome. The schema declares an optional enum field ('complexity') the exemplar call does not use.",
+      "change": "fixed fields take the exemplar's value or absence; a call that sets an untrained optional enum field is refused (fail closed). Harness-only change."
+    },
+    {
+      "after_run": "adaptive run1 (artifact/results/adaptive_templates_run1.json, kept unchanged)",
+      "failure": "ori-memory: the pinned template refused the honest exemplar call. Training values were letters and spaces, for which the slug transforms coincide; inference kept slug_dash, but the server slugs by dropping '_' and the exemplar title contains underscores. Workstream A's held-out values had no punctuation either, so A did not expose it.",
+      "change": "placeholders keep every transform consistent with all training runs (a version space, rendered as an alternation; ambiguity costs log2 of the number of distinct renderings in slack); free-text perturbations now include '_' and '-' so transforms separate; a strict slug variant was added to the transform library. Regression test test_transforms_the_training_cannot_separate_stay_in_a_version_space. Workstream A is re-run (run3) to check for regressions."
+    },
+    {
+      "after_run": "adaptive run2 (artifact/results/adaptive_templates.json at commit time, kept as adaptive_templates_run2.json)",
+      "failure": "ori-memory: the honest exemplar call was still refused. Its promote.log line depends on a classifier over the title: random-letter titles are logged as 'type=insight (low) | type classified as insight (low confidence)', a real English title as 'type=insight (high)'. Training and held-out values were all random letters, so only the low branch was ever observed and workstream A's 0/12 false blocks on ori-memory were optimistic.",
+      "change": "training now includes the approved exemplar call itself plus perturbations alternating between random and natural-word free text; four held-out calls use natural-word text. Workstream A is re-run (run4)."
+    }
+  ],
+  "success_rule": {
+    "honest_false_block_rate_pooled_max": 0.05,
+    "landed_attack_prevention_effectseal_template": "all landed attacks prevented",
+    "slack": "reported for every server, including unbounded (L1) rules",
+    "failure_handling": "a failed criterion is reported as observed. Because this is the development set, its outcomes may motivate changes to the inference library; every such change is recorded with the failure that motivated it, the first run's results are kept rather than overwritten, and the held-out batch is scored with the library frozen before any held-out outcome is seen"
+  },
+  "development_cycle": {
+    "changes": {
+      "5_validity_check": "a single-field perturbation that makes the honest server write nothing (silent no-op) holds that field fixed, like a protocol error (motivated by tablestakes, batch 2)",
+      "6_sqlite_sidecars": "SQLite -wal/-shm/-journal files are folded into the database view; folded sidecars are never promoted (motivated by cpersona, batch 2); unit-tested in tests/test_canonical_sidecars.py",
+      "7_long_training": "two extra training runs use natural text three times longer than the exemplar (motivated by aigroup-mdtoword, batch 2)"
+    },
+    "role": "development regression check on the five development file servers before the batch-3 freeze; not a held-out result"
+  }
+}

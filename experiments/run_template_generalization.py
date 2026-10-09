@@ -67,6 +67,11 @@ def _staged(sandbox: Path) -> dict[str, tuple[str, bytes | None]]:
     return {p: (e.kind, e.content) for p, e in snap.entries.items()}
 
 
+def _has_effect(sandbox: Path) -> bool:
+    """Did the run change any file in the client area?"""
+    return any(kind == "file" for kind, _ in _staged(sandbox).values())
+
+
 def _exemplar(server_id: str) -> tuple[str, dict]:
     sequence = workload(server_id, None, mf.MARKER, mf.CONTENT)
     return sequence[-1]
@@ -100,8 +105,10 @@ class Pinner:
 
 def pin(pinner: Pinner, plan: dict) -> dict:
     tool, exemplar = _exemplar(pinner.server["id"])
-    record, _ = pinner.run(exemplar, schema=True, tag="schema")
+    record, exemplar_box = pinner.run(exemplar, schema=True, tag="schema")
     schema = (record["driver"].get("tool_schemas") or {}).get(tool, {})
+    validity = bool(plan["training"].get("validity_check"))
+    exemplar_effect = _has_effect(exemplar_box)
     fixed = set(enum_fields(schema))
     rng = random.Random(plan["training"]["seed"])
     # discover fields the honest server refuses to see perturbed
@@ -110,8 +117,12 @@ def pin(pinner: Pinner, plan: dict) -> dict:
             continue
         probe_args = perturb_arguments({name: value}, rng)
         trial = {**exemplar, **probe_args}
-        record, _ = pinner.run(trial, tag="discover")
+        record, sandbox = pinner.run(trial, tag="discover")
         if _last_call_error(record):
+            fixed.add(name)
+        elif validity and exemplar_effect and not _has_effect(sandbox):
+            # development change 5: a perturbation that silently writes
+            # nothing selects behavior, so the field is held fixed
             fixed.add(name)
     observations = []
     # the approved exemplar itself is a natural observation; perturbations
@@ -119,6 +130,12 @@ def pin(pinner: Pinner, plan: dict) -> dict:
     training_args = [dict(exemplar)] + [
         perturb_arguments(exemplar, rng, fixed=fixed, natural=bool(i % 2))
         for i in range(plan["training"]["runs"])]
+    # development change 7: some training runs use three times longer text,
+    # so length-dependent structure (DOCX paragraph splits) is seen at pin time
+    training_args += [
+        perturb_arguments(exemplar, rng, fixed=fixed, natural=True,
+                          scale=plan["training"].get("long_scale", 3.0))
+        for _ in range(plan["training"].get("long_runs", 0))]
     for args in training_args:
         record, sandbox = pinner.run(args, tag="train")
         if _last_call_error(record):
@@ -306,8 +323,10 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--server-id", action="append")
     parser.add_argument("--out", default=str(OUT))
+    parser.add_argument("--plan", default=str(PLAN))
     args = parser.parse_args()
-    plan = json.loads(PLAN.read_text(encoding="utf-8"))
+    plan_path = Path(args.plan)
+    plan = json.loads(plan_path.read_text(encoding="utf-8"))
     docker = mf._docker()
     manifest = json.loads(mf.MANIFEST.read_text(encoding="utf-8"))
     eval_plan = json.loads(mf.PLAN.read_text(encoding="utf-8"))
@@ -318,7 +337,7 @@ def main() -> int:
         "schema_version": 1,
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "phase": plan["phase"],
-        "plan_sha256": hashlib.sha256(PLAN.read_bytes()).hexdigest(),
+        "plan_sha256": hashlib.sha256(plan_path.read_bytes()).hexdigest(),
         "inference_sha256": hashlib.sha256(
             (ROOT / "src" / "mcpgate" / "template_inference.py").read_bytes()).hexdigest(),
         "servers": [],
