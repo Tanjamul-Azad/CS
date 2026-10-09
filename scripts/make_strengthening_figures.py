@@ -276,7 +276,9 @@ def matched_heatmap() -> None:
     assert totals["MCPGATE"] == [32, 32] and totals["STATIC_LP"] == [11, 32], totals
     rows.append(("Total", None, None))
     grid.append([tuple(totals[c]) for c, _ in conds])
-    cmap = matplotlib.colors.LinearSegmentedColormap.from_list("prev", ["#FFFFFF", "#C6DBEF", BLUE])
+    # Darkest cell stays light enough for black labels: white text on a PDF
+    # page is flagged as hidden text by similarity checkers.
+    cmap = matplotlib.colors.LinearSegmentedColormap.from_list("prev", ["#FFFFFF", "#C6DBEF", "#6BAED6"])
     fig, ax = plt.subplots(figsize=(COLUMN, 3.05))
     import numpy as np
     values = np.array([[k / n if n else np.nan for k, n in line] for line in grid])
@@ -285,8 +287,7 @@ def matched_heatmap() -> None:
         for j, (k, n) in enumerate(line):
             bold = i == len(grid) - 1
             ax.text(j, i, f"{k}/{n}", ha="center", va="center", fontsize=6.4,
-                    fontweight="bold" if bold else "normal",
-                    color="white" if n and k / n > 0.6 else "black")
+                    fontweight="bold" if bold else "normal", color="black")
     ax.set_xticks(range(len(conds)), [lab for _, lab in conds], fontsize=6.6)
     ax.set_yticks(range(len(rows)), [r[0] for r in rows], fontsize=6.6)
     ax.xaxis.tick_top()
@@ -340,6 +341,39 @@ def template_bars() -> None:
     ax.spines[["top", "right"]].set_visible(False)
     ax.tick_params(axis="x", length=0)
     save(fig, "fig15_template_generalization")
+
+
+def teaser() -> None:
+    """Call-level authorization and effect admission check different steps."""
+    fig, ax = plt.subplots(figsize=(COLUMN, 1.7))
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 5.4)
+    ax.axis("off")
+    boxes = [(0.1, "Intent", "#DDDDDD", "black"), (3.55, "Approved call", BLUE, "white"),
+             (7.0, "Effect on state", TEAL, "white")]
+    y, h, w = 1.75, 0.85, 2.9
+    for x, label, face, tcolor in boxes:
+        ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.02,rounding_size=0.12",
+                                    facecolor=face, edgecolor="none"))
+        ax.text(x + w / 2, y + h / 2, label, ha="center", va="center", fontsize=7,
+                color=tcolor, fontweight="bold")
+    for x0, x1 in ((3.0, 3.52), (6.45, 6.97)):
+        ax.add_patch(FancyArrowPatch((x0, y + h / 2), (x1, y + h / 2), arrowstyle="-|>",
+                                     mutation_scale=7, color=GRAY, linewidth=0.9))
+
+    def bracket(x0, x1, text):
+        top = y + h + 0.2
+        ax.plot([x0, x0, x1, x1], [top, top + 0.22, top + 0.22, top], color=GRAY, lw=0.7)
+        ax.text((x0 + x1) / 2, top + 0.35, text, ha="center", va="bottom", fontsize=6.0,
+                color="black", linespacing=1.05)
+
+    bracket(1.55, 4.85, "Call-level authorization\n(Progent, CaMeL)\nchecks this step")
+    bracket(5.15, 8.45, "EffectSeal\nchecks this step")
+    ax.add_patch(FancyArrowPatch((6.71, 0.75), (6.71, y - 0.05), arrowstyle="-|>",
+                                 mutation_scale=7, color=RED, linewidth=1.0))
+    ax.text(6.71, 0.62, "a server changed after approval\nalters only this step",
+            ha="center", va="top", fontsize=6.0, color="black", linespacing=1.05)
+    save(fig, "fig0_teaser")
 
 
 def confinement_bars() -> None:
