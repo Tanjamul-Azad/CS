@@ -34,11 +34,12 @@ import make_strengthening_figures as sf  # noqa: E402
 RES = sf.RES
 BLUE, TEAL, ORANGE, RED, SKY, GRAY, LIGHT = sf.BLUE, sf.TEAL, sf.ORANGE, sf.RED, sf.SKY, sf.GRAY, sf.LIGHT
 COLUMN, FULL = sf.COLUMN, sf.FULL
-PILOT = "network_postmark_20261008-223144"
+EVIDENCE = json.loads((sf.ROOT / "artifact/paper-evidence-20261009.json").read_text(encoding="utf-8"))
+PILOT = EVIDENCE["network_postmark"]
 AGENTBOUND = "network_postmark_agentbound_20261008-223502"
 TOOLHIVE = "network_postmark_toolhive_20261008-230230"
 MCPSCAN = "network_postmark_mcpscan_20261008-224058"
-MATCHED = "network_matched_20261008-234304"
+MATCHED = EVIDENCE["network_matched"]
 
 
 def summary(run: str) -> dict:
@@ -48,24 +49,24 @@ def summary(run: str) -> dict:
 def postmark_outcomes() -> list[tuple[str, int, int]]:
     """(defense, diverted sends stopped, diverted sends) from the pilot runs."""
     pilot = summary(PILOT)["attacks"]
-    es = (sum(v["effectseal"]["stopped"] for v in pilot.values()),
-          sum(v["effectseal"]["landed"] for v in pilot.values()))
+    es = (sum(v["effectseal"]["stopped"] for k,v in pilot.items() if not k.startswith("N-A8")),
+          sum(v["effectseal"]["landed"] for k,v in pilot.items() if not k.startswith("N-A8")))
     rows = []
     scan = summary(MCPSCAN)["results"]
     attacks = {k: v for k, v in scan.items() if k.startswith("N-A")}
-    rows.append(("Tool pinning\n(mcp-scan)", sum(v["flagged_by_pinning"] for v in attacks.values()),
+    rows.append(("Pinning alerts\n(mcp-scan)", sum(v["flagged_by_pinning"] for v in attacks.values()),
                  len(attacks)))
     for label, run in (("Host allow-list\n(ToolHive)", TOOLHIVE), ("Host allow-list\n(AgentBound)", AGENTBOUND)):
-        att = summary(run)["attacks"]
+        att = {k:v for k,v in summary(run)["attacks"].items() if not k.startswith("N-A8")}
         trials = sum(v["trials"] for v in att.values())
         rows.append((label, trials - sum(v["diverted_or_noop"] for v in att.values()), trials))
     rows.append(("EffectSeal\n(request template)", *es))
-    assert rows[-1] == ("EffectSeal\n(request template)", 24, 24), rows
+    assert rows[-1] == ("EffectSeal\n(request template)", 21, 21), rows
     return rows
 
 
 def teaser() -> None:
-    fig = plt.figure(figsize=(COLUMN, 2.5))
+    fig = plt.figure(figsize=(COLUMN, 3.0))
     top = fig.add_axes([0.0, 0.46, 1.0, 0.54])
     top.set_xlim(0, 10)
     top.set_ylim(0.3, 4.3)
@@ -73,18 +74,18 @@ def teaser() -> None:
     cols = [(0.0, 1.25, ""), (1.35, 2.75, "Approved call"), (4.2, 1.85, "Server's reply"),
             (6.1, 3.78, "Request sent to the provider")]
     for x, w, head in cols[1:]:
-        top.text(x + w / 2, 3.95, head, ha="center", va="center", fontsize=6.2, fontweight="bold")
-    top.text(0.05, 3.95, "(a)", ha="left", va="center", fontsize=6.4, fontweight="bold")
+        top.text(x + w / 2, 3.95, head, ha="center", va="center", fontsize=7.2, fontweight="bold")
+    top.text(0.05, 3.95, "(a)", ha="left", va="center", fontsize=7, fontweight="bold")
     rows = [(2.85, "1.0.15\n(honest)", "To: alice@corp", None),
             (1.55, "1.0.16\n(rug pull)", "To: alice@corp", "Bcc: attacker")]
     for y, ver, req, extra in rows:
-        top.text(0.62, y, ver, ha="center", va="center", fontsize=6.0, linespacing=1.0)
+        top.text(0.62, y, ver, ha="center", va="center", fontsize=7, linespacing=1.0)
         for (x, w, _), text, face in ((cols[1], "sendEmail(\nto=alice@corp)", "#EEF4FA"),
                                       (cols[2], "“Email sent”", "#EEF4FA")):
             top.add_patch(FancyBboxPatch((x, y - 0.5), w, 1.0,
                                          boxstyle="round,pad=0.02,rounding_size=0.1",
                                          facecolor=face, edgecolor="none"))
-            top.text(x + w / 2, y, text, ha="center", va="center", fontsize=5.9,
+            top.text(x + w / 2, y, text, ha="center", va="center", fontsize=7,
                      family="monospace", linespacing=1.05)
         x, w, _ = cols[3]
         top.add_patch(FancyBboxPatch((x, y - 0.5), w, 1.0,
@@ -92,27 +93,27 @@ def teaser() -> None:
                                      facecolor="#EEF4FA" if extra is None else "#FBE9DD",
                                      edgecolor="none" if extra is None else RED, linewidth=0.8))
         body = req if extra is None else f"{req}\n{extra}"
-        top.text(x + w / 2, y, body, ha="center", va="center", fontsize=5.9, family="monospace",
+        top.text(x + w / 2, y, body, ha="center", va="center", fontsize=7, family="monospace",
                  linespacing=1.15)
     for (x, w, _), verdict, color in ((cols[1], "identical", GRAY), (cols[2], "identical", GRAY),
                                       (cols[3], "differs", RED)):
-        top.text(x + w / 2, 0.55, verdict, ha="center", va="center", fontsize=5.8, color=color,
+        top.text(x + w / 2, 0.55, verdict, ha="center", va="center", fontsize=7, color=color,
                  style="italic", fontweight="bold" if color == RED else "normal")
     top.plot([0.05, 9.95], [0.95, 0.95], color=LIGHT, lw=0.6)
 
     ax = fig.add_axes([0.36, 0.08, 0.6, 0.34])
-    fig.text(0.005, 0.43, "(b)", ha="left", va="center", fontsize=6.4, fontweight="bold")
+    fig.text(0.005, 0.43, "(b)", ha="left", va="center", fontsize=7, fontweight="bold")
     data = postmark_outcomes()
     ys = list(range(len(data)))[::-1]
     for y, (label, k, n) in zip(ys, data):
         share = 100 * k / n
         color = BLUE if label.startswith("EffectSeal") else "#9A9A9A"
         ax.barh(y, max(share, 0.8), height=0.62, color=color, edgecolor="none")
-        ax.text(share + 2.5, y, f"{k}/{n}", va="center", fontsize=5.9)
-    ax.set_yticks(ys, [d[0] for d in data], fontsize=5.6, linespacing=0.95)
+        ax.text(share + 2.5, y, f"{k}/{n}", va="center", fontsize=7)
+    ax.set_yticks(ys, [d[0] for d in data], fontsize=7, linespacing=0.95)
     ax.set_xlim(0, 118)
-    ax.set_xticks([0, 50, 100], ["0", "50", "100%"], fontsize=5.6)
-    ax.set_xlabel("Diverted sends stopped", fontsize=6.0, labelpad=1.5)
+    ax.set_xticks([0, 50, 100], ["0", "50", "100%"], fontsize=7)
+    ax.set_xlabel("Alerts (pinning); unauthorized sends refused", fontsize=7, labelpad=1.5)
     ax.spines[["top", "right"]].set_visible(False)
     ax.tick_params(axis="y", length=0, pad=2)
     sf.save(fig, "fig0_teaser")
@@ -124,7 +125,7 @@ def architecture() -> None:
     ax.set_ylim(0.25, 6.55)
     ax.axis("off")
 
-    def box(x, y, w, h, text, color, tcolor="white", size=6.2):
+    def box(x, y, w, h, text, color, tcolor="white", size=7.2):
         ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.03,rounding_size=0.08",
                                     facecolor=color, edgecolor="none"))
         ax.text(x + w / 2, y + h / 2, text, ha="center", va="center", color=tcolor,
@@ -155,7 +156,7 @@ def architecture() -> None:
         zw = (zone[1] - zone[0]) * (width + gap) - gap + 0.2
         ax.add_patch(Rectangle((zx, y - 0.16), zw, 1.08, facecolor="none", edgecolor=ORANGE,
                                linewidth=0.8, linestyle=(0, (3, 2))))
-        ax.text(zx + zw / 2, y - 0.36, note, ha="center", fontsize=5.6, color="#8A5A00",
+        ax.text(zx + zw / 2, y - 0.36, note, ha="center", fontsize=7, color="#8A5A00",
                 style="italic")
         for i, (t, c) in enumerate(stages):
             x = start + i * (width + gap)
@@ -171,18 +172,18 @@ def architecture() -> None:
           ("Promote the\nsame bytes", TEAL)],
          (2, 4), "untrusted server: no network, read-only root, private copy writable")
     lane(y_net, "Call time, outgoing requests (network)",
-         [("Check request\nshape", BLUE), ("Reserve\nallowance", BLUE),
-          ("Server runs with\na dummy token", ORANGE), ("Only route out:\nthe broker", ORANGE),
-          ("Broker ends TLS,\ncanonical view", TEAL), ("Check each write\nagainst request\ntemplate", TEAL),
-          ("Swap in real\ncredential, send", TEAL)],
-         (2, 4), "untrusted server: holds no credential, no direct egress")
+         [("Server runs with\na dummy token", ORANGE), ("Only route out:\nthe broker", BLUE),
+          ("TLS, typed\ncanonical view", TEAL), ("Durably reserve\nthe call", BLUE),
+          ("Check ordered\nrequest template", TEAL), ("Inject credential\nand send", TEAL),
+          ("Record send\noutcome", TEAL)],
+         (0, 1), "no direct egress")
     # The pinned template feeds both check steps. One line runs down the gap
     # between the fifth and sixth columns, so it crosses no box.
     bus_x = start + 5 * (width + gap) - gap / 2
     check_left = start + 5 * (width + gap) + 0.25
     arrow(bus_x, tmpl_y, check_left, y_local + 0.76, BLUE)
     ax.plot([bus_x, bus_x], [tmpl_y, y_net + 1.05], color=BLUE, linewidth=0.8)
-    arrow(bus_x, y_net + 1.05, check_left, y_net + 0.76, BLUE)
+    arrow(bus_x, y_net + 1.05, start + 4 * (width + gap) + 0.25, y_net + 0.76, BLUE)
     del tmpl_x
     sf.save(fig, "fig1_effectseal_architecture")
 
@@ -195,14 +196,14 @@ ATTACK_LABELS = {
     "A5_extra_other_host": "Extra write, other host",
     "A6_credential_channel": "Credential channel",
     "A7_duplicate": "Duplicate send",
-    "A8_silent_noop": "Silent no-op",
+    "A8_silent_noop": "No-op: incomplete",
 }
 
 
 def network_attacks() -> None:
     att = summary(MATCHED)["attacks"]
     order = list(ATTACK_LABELS)
-    fig, ax = plt.subplots(figsize=(COLUMN, 2.25))
+    fig, ax = plt.subplots(figsize=(COLUMN, 2.8))
     h = 0.36
     total_es = total_dst = total_n = 0
     for i, key in enumerate(order):
@@ -217,15 +218,15 @@ def network_attacks() -> None:
             share = 100 * k / n
             ax.barh(y + off, max(share, 0.8), height=h * 0.9, color=color, edgecolor="none",
                     label=name if i == 0 else None)
-            ax.text(share + 2, y + off, f"{k}/{n}", va="center", fontsize=5.4)
+            ax.text(share + 2, y + off, f"{k}/{n}", va="center", fontsize=7)
     assert (total_es, total_n) == (912, 936) and total_dst == 120, (total_es, total_dst, total_n)
-    ax.set_yticks(range(len(order)), [ATTACK_LABELS[k] for k in order][::-1], fontsize=6.0)
+    ax.set_yticks(range(len(order)), [ATTACK_LABELS[k] for k in order][::-1], fontsize=7)
     ax.set_xlim(0, 125)
-    ax.set_xticks([0, 50, 100], ["0", "50", "100%"], fontsize=6.0)
-    ax.set_xlabel("Diverted requests stopped", fontsize=6.4)
+    ax.set_xticks([0, 50, 100], ["0", "50", "100%"], fontsize=7)
+    ax.set_xlabel("Refused sends; no-op completion failures", fontsize=7)
     ax.spines[["top", "right"]].set_visible(False)
     ax.tick_params(axis="y", length=0)
-    ax.legend(frameon=False, fontsize=5.8, loc="upper center", ncol=1,
+    ax.legend(frameon=False, fontsize=7, loc="upper center", ncol=1,
               bbox_to_anchor=(0.45, 1.22), handlelength=1.0)
     sf.save(fig, "fig17_network_attacks")
 

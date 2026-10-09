@@ -1,0 +1,11 @@
+{
+  "network_matched": "network_matched_20261009-220747",
+  "network_named": "network_named_20261009-221321",
+  "network_postmark": "network_postmark_20261009-220747",
+  "network_integrated": "network_integrated_20261009-221321",
+  "network_crosssession": "network_crosssession_20261009-221321",
+  "judge_matched_sensitivity": "judge_matched_sensitivity_20261009-221935.json",
+  "local_capacity_reanalysis": "local_capacity_reanalysis_20261009-222225.json",
+  "additional_selection": "network_selection_20261009-220747",
+  "note": "Explicit current evidence pointers. Historical results remain unchanged. Legacy paid-model and real-baseline runs remain separately dated in claims."
+}

@@ -359,6 +359,8 @@ def cluster_interval(rows, numerator, denominator):
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--selection", required=True)
+    parser.add_argument("--held-out-only", action="store_true")
+    parser.add_argument("--plan", type=Path, default=ROOT / "artifact/effectseal-repair-plan-20261009.json")
     parser.add_argument("--calls", type=int, default=12)
     parser.add_argument("--limit", type=int, default=12)
     a = parser.parse_args()
@@ -367,7 +369,7 @@ def main() -> None:
                  if json.loads(l).get("qualified")][:a.limit]
     OUT.mkdir(parents=True)
     rng = random.Random(20261008)
-    plan = ROOT / "artifact/effectseal-repair-plan-20261009.json"
+    plan = a.plan
     source_paths = [Path(__file__), ROOT / "src/mcpgate/request_templates.py", ROOT / "src/mcpgate/template_inference.py",
                     ROOT / "src/mcpgate/egress_proxy.py", ROOT / "src/mcpgate/egress_service.py"]
     (OUT / "sources").mkdir()
@@ -379,7 +381,7 @@ def main() -> None:
     images = {e["image"]: P.sh("docker", "image", "inspect", "--format", "{{.Id}}", e["image"]) for e in qualified}
     provenance = {"bundle_version": 2, "plan_sha256": hashlib.sha256(plan.read_bytes()).hexdigest(),
                   "git_commit": P.sh("git", "rev-parse", "HEAD"), "source_hashes": source_hashes,
-                  "images": images, "split": {e["name"]: "development" if i < 6 else "held_out" for i, e in enumerate(qualified)}}
+                  "images": images, "split": {e["name"]: "held_out" if a.held_out_only else "development" if i < 6 else "held_out" for i, e in enumerate(qualified)}}
     results = []
     import tempfile
     work = Path(tempfile.mkdtemp(prefix="es-meval-"))

@@ -61,7 +61,7 @@ def judge_boundary() -> None:
     models = [("gpt-4.1-2025-04-14", "gpt-4.1"), ("gpt-5-mini-2025-08-07", "gpt-5-mini"),
               ("gpt-4.1-mini-2025-04-14", "gpt-4.1-mini"), ("llama3.1:8b", "Llama 3.1 8B")]
     series = [("honest", "Honest (false positive)", GRAY, "o"),
-              ("consistent_indistinguishable", "Attack, transcript identical", TEAL, "s"),
+              ("consistent_indistinguishable", "Attack, normalized match", TEAL, "s"),
               ("consistent_leaked", "Attack, transcript leaked", ORANGE, "D")]
     fig, ax = plt.subplots(figsize=(COLUMN, 2.45))
     offsets = [-0.22, 0.0, 0.22]
@@ -78,7 +78,7 @@ def judge_boundary() -> None:
                     solid_capstyle="round", zorder=2)
             ax.scatter([rate], [y + dy], color=color, marker=marker, s=22, zorder=3,
                        edgecolor="white", linewidth=0.6, label=slabel if row == 0 else None)
-            ax.text(100 * hi + 2, y + dy, f"{k}/{n}", va="center", fontsize=6, color="black")
+            ax.text(100 * hi + 2, y + dy, f"{k}/{n}", va="center", fontsize=7, color="black")
     ax.set_yticks(range(len(models)), [m[1] for m in reversed(models)])
     ax.set_xlim(0, 112)
     ax.set_xticks([0, 25, 50, 75, 100])
@@ -86,7 +86,7 @@ def judge_boundary() -> None:
     ax.grid(axis="x", color=LIGHT, linewidth=0.5, zorder=0)
     ax.spines[["top", "right"]].set_visible(False)
     ax.tick_params(axis="y", length=0)
-    ax.legend(frameon=False, fontsize=6, loc="upper center", bbox_to_anchor=(0.45, 1.24),
+    ax.legend(frameon=False, fontsize=7, loc="upper center", bbox_to_anchor=(0.45, 1.24),
               ncol=2, handletextpad=0.2, columnspacing=0.8)
     save(fig, "fig11_judge_boundary")
 
@@ -94,6 +94,8 @@ def judge_boundary() -> None:
 def slack_ladder() -> None:
     """Contract slack per server: development versus held-out."""
     dev = load("template_generalization.json")["servers"]
+    current = json.loads((ROOT / "artifact/paper-evidence-20261009.json").read_text(encoding="utf-8"))
+    capacities = {r["server"]: r["corrected_canonical_slack_bits"] for r in load(current["local_capacity_reanalysis"])["rows"]}
     sql = load("template_generalization_sql.json")["servers"]
     held = load("batch2_templates.json")["servers"]
     rows = []
@@ -102,7 +104,7 @@ def slack_ladder() -> None:
             honest = [r for r in s["honest"] if not r["call_error"] and r["slack_bits"] is not None]
             if not honest:
                 continue
-            bits = max(r["slack_bits"] for r in honest)
+            bits = capacities.get(s["server_id"], max(r["slack_bits"] for r in honest))
             name = short(s["server_id"])
             rows.append((group, name, bits, color))
     finite = [b for _, _, b, _ in rows if not math.isinf(b)]
@@ -115,17 +117,17 @@ def slack_ladder() -> None:
                 hatch="////" if math.isinf(bits) else None, alpha=0.95)
         label = "unbounded" if math.isinf(bits) else ("0 (exact)" if bits == 0
                                                       else f"{bits:,.0f}")
-        ax.text(shown * 1.15, y, label, va="center", fontsize=6)
-    ax.set_yticks(range(len(rows)), [f"{r[1]}" for r in reversed(rows)], fontsize=6.4)
+        ax.text(shown * 1.15, y, label, va="center", fontsize=7)
+    ax.set_yticks(range(len(rows)), [f"{r[1]}" for r in reversed(rows)], fontsize=7)
     ax.set_xscale("log")
     ax.set_xlim(0.5, cap * 60)
-    ax.set_xlabel("Contract slack per honest call (bits, log)")
+    ax.set_xlabel("Canonical-view slack (bits, log)")
     ax.spines[["top", "right"]].set_visible(False)
     ax.tick_params(axis="y", length=0)
     from matplotlib.patches import Patch
     ax.legend(handles=[Patch(color=BLUE, label="development"),
                        Patch(color=ORANGE, label="first held-out batch")],
-              frameon=False, fontsize=6, loc="upper center", ncol=2,
+              frameon=False, fontsize=7, loc="upper center", ncol=2,
               bbox_to_anchor=(0.5, 1.1))
     save(fig, "fig12_slack_ladder")
 
@@ -148,15 +150,15 @@ def agent_harm() -> None:
         hn, n1, he, n2 = per_server[name]
         ax.bar(i - width / 2, 100 * hn / n1, width, color=RED, edgecolor="none")
         ax.bar(i + width / 2, max(100 * he / n2, 0.8), width, color=TEAL, edgecolor="none")
-        ax.text(i - width / 2, 100 * hn / n1 + 3, f"{hn}/{n1}", ha="center", fontsize=5.6)
-        ax.text(i + width / 2, 6, f"{he}/{n2}", ha="center", fontsize=5.6)
-    ax.set_xticks(range(len(names)), [short(n) for n in names], fontsize=6.0, rotation=15)
+        ax.text(i - width / 2, 100 * hn / n1 + 3, f"{hn}/{n1}", ha="center", fontsize=7)
+        ax.text(i + width / 2, 6, f"{he}/{n2}", ha="center", fontsize=7)
+    ax.set_xticks(range(len(names)), [short(n) for n in names], fontsize=7, rotation=15)
     ax.set_ylabel("Compromised sessions\nwith harm (%)")
     ax.set_ylim(0, 118)
     ax.set_yticks([0, 50, 100])
     from matplotlib.patches import Patch
     ax.legend(handles=[Patch(color=RED, label="no defense"), Patch(color=TEAL, label="EffectSeal")],
-              frameon=False, fontsize=6, loc="upper right", ncol=2, bbox_to_anchor=(1.0, 1.12))
+              frameon=False, fontsize=7, loc="upper right", ncol=2, bbox_to_anchor=(1.0, 1.12))
     ax.spines[["top", "right"]].set_visible(False)
     ax.tick_params(axis="x", length=0)
     save(fig, "fig13_agent_harm")
@@ -201,7 +203,7 @@ def architecture() -> None:
                            edgecolor=ORANGE, linewidth=0.8, linestyle=(0, (3, 2))))
     ax.text(zone_x + (2 * width + gap + 0.2) / 2, y - 0.45,
             "untrusted server: no network, read-only root, staging is the only writable mount",
-            ha="center", fontsize=5.8, color="#8A5A00", style="italic")
+            ha="center", fontsize=7, color="#8A5A00", style="italic")
     for i, (t, c) in enumerate(stages):
         x = start + i * (width + gap)
         box(x, y, width, 0.9, t, c, "black" if c == ORANGE else "white")
@@ -212,7 +214,7 @@ def architecture() -> None:
     dx = start + 5 * (width + gap) + width / 2
     arrow(tx, 3.75, dx, y + 0.9, BLUE)
     ax.text(7.1, 0.35, "Any refusal discards staging and marks the allowance slot FAILED; "
-            "nothing reaches the trusted store.", ha="center", fontsize=6.3, color=GRAY)
+            "nothing reaches the trusted store.", ha="center", fontsize=7, color=GRAY)
     save(fig, "fig1_effectseal_architecture")
 
 
@@ -289,10 +291,10 @@ def matched_heatmap() -> None:
     for i, line in enumerate(grid):
         for j, (k, n) in enumerate(line):
             bold = i == len(grid) - 1
-            ax.text(j, i, f"{k}/{n}", ha="center", va="center", fontsize=6.4,
+            ax.text(j, i, f"{k}/{n}", ha="center", va="center", fontsize=7,
                     fontweight="bold" if bold else "normal", color="black")
-    ax.set_xticks(range(len(conds)), [lab for _, lab in conds], fontsize=6.6)
-    ax.set_yticks(range(len(rows)), [r[0] for r in rows], fontsize=6.6)
+    ax.set_xticks(range(len(conds)), [lab for _, lab in conds], fontsize=7)
+    ax.set_yticks(range(len(rows)), [r[0] for r in rows], fontsize=7)
     ax.xaxis.tick_top()
     ax.set_xticks([x - 0.5 for x in range(len(conds) + 1)], minor=True)
     ax.set_yticks([y - 0.5 for y in range(len(rows) + 1)], minor=True)
@@ -334,12 +336,12 @@ def template_bars() -> None:
                    label=slabel if g == 0 else None)
             ax.errorbar(x, 100 * k / n, yerr=[[100 * (k / n - lo)], [100 * (hi - k / n)]],
                         fmt="none", ecolor=GRAY, elinewidth=0.7, capsize=1.5)
-            ax.text(x, 100 * hi + 3, f"{k}/{n}", ha="center", fontsize=5.6)
-    ax.set_xticks(range(len(groups)), [g[0] for g in groups], fontsize=6.6)
+            ax.text(x, 100 * hi + 3, f"{k}/{n}", ha="center", fontsize=7)
+    ax.set_xticks(range(len(groups)), [g[0] for g in groups], fontsize=7)
     ax.set_ylabel("Percent (95% Wilson)")
     ax.set_ylim(0, 128)
     ax.set_yticks([0, 25, 50, 75, 100])
-    ax.legend(frameon=False, fontsize=5.9, loc="upper center", ncol=3,
+    ax.legend(frameon=False, fontsize=7, loc="upper center", ncol=3,
               bbox_to_anchor=(0.5, 1.17), handlelength=1.0, columnspacing=0.8)
     ax.spines[["top", "right"]].set_visible(False)
     ax.tick_params(axis="x", length=0)
@@ -367,7 +369,7 @@ def teaser() -> None:
     def bracket(x0, x1, text):
         top = y + h + 0.2
         ax.plot([x0, x0, x1, x1], [top, top + 0.22, top + 0.22, top], color=GRAY, lw=0.7)
-        ax.text((x0 + x1) / 2, top + 0.35, text, ha="center", va="bottom", fontsize=6.0,
+        ax.text((x0 + x1) / 2, top + 0.35, text, ha="center", va="bottom", fontsize=7,
                 color="black", linespacing=1.05)
 
     bracket(1.55, 4.85, "Call-level authorization\n(Progent, CaMeL)\nchecks this step")
@@ -375,7 +377,7 @@ def teaser() -> None:
     ax.add_patch(FancyArrowPatch((6.71, 0.75), (6.71, y - 0.05), arrowstyle="-|>",
                                  mutation_scale=7, color=RED, linewidth=1.0))
     ax.text(6.71, 0.62, "a server changed after approval\nalters only this step",
-            ha="center", va="top", fontsize=6.0, color="black", linespacing=1.05)
+            ha="center", va="top", fontsize=7, color="black", linespacing=1.05)
     save(fig, "fig0_teaser")
 
 
@@ -393,12 +395,12 @@ def confinement_bars() -> None:
             x = g + (s_i - 0.5) * width
             ax.bar(x, max(100 * k / n, 0.8), width * 0.92, color=color, edgecolor="none",
                    label=name if g == 0 else None)
-            ax.text(x, 100 * k / n + 4, f"{k}/{n}", ha="center", fontsize=5.8)
-    ax.set_xticks(range(2), [g[0] for g in groups], fontsize=6.6)
+            ax.text(x, 100 * k / n + 4, f"{k}/{n}", ha="center", fontsize=7)
+    ax.set_xticks(range(2), [g[0] for g in groups], fontsize=7)
     ax.set_ylabel("Runs (%)")
     ax.set_ylim(0, 128)
     ax.set_yticks([0, 50, 100])
-    ax.legend(frameon=False, fontsize=5.9, loc="upper center", ncol=2,
+    ax.legend(frameon=False, fontsize=7, loc="upper center", ncol=2,
               bbox_to_anchor=(0.5, 1.2), handlelength=1.0)
     ax.spines[["top", "right"]].set_visible(False)
     ax.tick_params(axis="x", length=0)
@@ -409,7 +411,6 @@ def main() -> None:
     judge_boundary()
     slack_ladder()
     agent_harm()
-    architecture()
     matched_heatmap()
     template_bars()
     confinement_bars()
