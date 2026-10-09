@@ -113,8 +113,8 @@ def slack_ladder() -> None:
         shown = cap if math.isinf(bits) else max(bits, 0.6)
         ax.barh(y, shown, color=color, height=0.62, edgecolor="none",
                 hatch="////" if math.isinf(bits) else None, alpha=0.95)
-        label = "unbounded (L1)" if math.isinf(bits) else ("0 (L3, exact)" if bits == 0
-                                                           else f"{bits:,.0f} (L2)")
+        label = "unbounded" if math.isinf(bits) else ("0 (exact)" if bits == 0
+                                                      else f"{bits:,.0f}")
         ax.text(shown * 1.15, y, label, va="center", fontsize=6)
     ax.set_yticks(range(len(rows)), [f"{r[1]}" for r in reversed(rows)], fontsize=6.4)
     ax.set_xscale("log")
@@ -124,7 +124,7 @@ def slack_ladder() -> None:
     ax.tick_params(axis="y", length=0)
     from matplotlib.patches import Patch
     ax.legend(handles=[Patch(color=BLUE, label="development"),
-                       Patch(color=ORANGE, label="held-out batch")],
+                       Patch(color=ORANGE, label="first held-out batch")],
               frameon=False, fontsize=6, loc="upper center", ncol=2,
               bbox_to_anchor=(0.5, 1.1))
     save(fig, "fig12_slack_ladder")
@@ -262,7 +262,7 @@ def matched_heatmap() -> None:
     sql_rows = [("A2", "SQL: value"), ("S1", "SQL: extra row"), ("S2", "SQL: extra table"),
                 ("A5", "SQL: replay"), ("A6", "SQL: silent no-op")]
     conds = [("NONE", "None"), ("PLAIN_SANDBOX", "Sandbox"), ("MBA", "Auditor"),
-             ("STATIC_LP", "Static\nLP"), ("MCPGATE", "EffectSeal")]
+             ("STATIC_LP", "Static least\nprivilege"), ("MCPGATE", "EffectSeal")]
     fs_t = landed_table(fs, [s for s, _ in fs_rows])
     sql_t = landed_table(sql, [s for s, _ in sql_rows])
     rows = [(lab, fs_t, s) for s, lab in fs_rows] + [(lab, sql_t, s) for s, lab in sql_rows]

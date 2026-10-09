@@ -23,6 +23,9 @@ PyGithub>=2.3
 # Figures
 matplotlib>=3.8
 
+# Release checks (PDF metadata and fonts)
+pypdf>=6.0
+
 # Dev
 pytest>=8.0
 ruff>=0.5
