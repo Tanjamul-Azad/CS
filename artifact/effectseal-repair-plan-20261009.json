@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_BEFORE_REPAIR_RUNS",
+  "created_local_date": "2026-10-09",
+  "previous_head": "bf9a0be",
+  "purpose": "Resolve the independent correctness, integration, evidence, and manuscript review without replacing historical outcomes.",
+  "changes": ["typed unambiguous request representation and structural envelope", "Unicode capacity and trusted admission clock", "durable reservation on the actual proxy path", "full pin/test/variant/oracle bundles and offline verification", "per-field adaptive request changes and separate completion outcomes", "server-clustered intervals and coverage", "current-source readiness and fail-closed reproduction", "related work, worked example, manuscript and dated packaging"],
+  "network_selection": "artifact/results/network_selection_20261008-225940",
+  "selection_rule": "Reuse all twelve previously selected registry servers in their original order; first six development, next six held-out. Do not replace inference failures.",
+  "named_servers": ["previously built official Postmark versions", "previously built official GitHub MCP image, resolved to its immutable image ID"],
+  "workload": {"pin_runs": 5, "honest_calls_per_server": 12, "seed": 20261008, "additional_adaptive_suite": "Change and append to every applicable JSON string leaf, including nested leaves. Save each original and changed request sequence."},
+  "durable_suite": ["same-process duplicate", "service restart after successful send", "process restart with RESERVED/UNKNOWN", "concurrent proxy requests for final call allowance", "partial multi-request call", "template mismatch and no-op"],
+  "poisoning_suite": {"sessions": 2, "controls": ["honest repeat", "independent noise", "stable repeated poisoning"], "interpretation": "Agreement tests stability, not honesty. Report the stable poisoner even if it defeats comparison."},
+  "metrics": ["template coverage over selected servers", "honest completion conditional on coverage", "send-diversion cases excluding silent no-op", "incomplete calls", "partial calls", "fixed-suite and adaptive per-field cases separately", "canonical-view slack with actual clock/alphabet", "95 percent server-clustered intervals", "actual proxy-path durable admission latency"],
+  "success_rule": "All confirmed regression examples must be refused, durable restart/race tests must prevent second sends, and saved network bundles must reproduce their own decisions offline. Scientific security/utility results are reported regardless of thresholds; prior failed gates remain failed.",
+  "artifact_rule": "Every scored run gets a new directory. Preserve old results, exact source hashes, immutable image IDs, plans, and all failed runs. Commit this plan before scoring.",
+  "scope": "Existing cached images and tools first. Expanded held-out packages require separately documented selection and the download authorization required by CLAUDE.md. No paid LLM or live user API action is necessary for these repairs."
+}
