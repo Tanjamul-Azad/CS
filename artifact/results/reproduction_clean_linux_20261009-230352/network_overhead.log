@@ -1,0 +1,55 @@
+{
+  "overhead": {
+    "admission_check": {
+      "n": 500,
+      "p50_us": 169.7,
+      "p95_us": 260.1,
+      "p99_us": 4394.09,
+      "mean_us": 250.52,
+      "max_us": 5823.25
+    },
+    "template_instantiate": {
+      "n": 500,
+      "p50_us": 85.8,
+      "p95_us": 119.1,
+      "p99_us": 279.91,
+      "mean_us": 102.47,
+      "max_us": 5331.29
+    },
+    "durable_allowance_reserve_commit": {
+      "n": 500,
+      "p50_us": 7697.18,
+      "p95_us": 9666.24,
+      "p99_us": 11420.67,
+      "mean_us": 7589.26,
+      "max_us": 13617.97
+    },
+    "gate_total_per_request": {
+      "n": 500,
+      "p50_us": 7868.78,
+      "p95_us": 9872.18,
+      "p99_us": 14941.07,
+      "mean_us": 7839.78,
+      "max_us": 17918.45
+    },
+    "host_allowlist_baseline": {
+      "n": 500,
+      "p50_us": 5.0,
+      "p95_us": 8.9,
+      "p99_us": 12.0,
+      "mean_us": 5.68,
+      "max_us": 123.3
+    }
+  },
+  "allowance_race": {
+    "trials": 100,
+    "contenders_per_trial": 8,
+    "trials_exactly_one_committed": 100,
+    "trials_with_more_than_one_commit": 0,
+    "outcome_distribution": {
+      "1c/7r": 100
+    },
+    "replay_guard_trials_passed": 100
+  },
+  "races_all_pass": true
+}

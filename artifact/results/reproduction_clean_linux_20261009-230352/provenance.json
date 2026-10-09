@@ -1,0 +1,13 @@
+{
+  "source_commit": "3fc86f24d5b6f55cf28998cfc7eebccce69808df",
+  "started_utc": "2026-10-09T17:03:52.640944294Z",
+  "finished_utc": "2026-10-09T17:05:26.700054069Z",
+  "container_exit_code": 0,
+  "image_id": "sha256:996f08b46779bfa39e20816de7e1e451d4064cc7641d2358e6110225f8dae791",
+  "network": "none; loopback-only integration",
+  "dependencies": "Hash-locked full Linux requirements installed before cloning; install log and pip freeze preserved. No API keys supplied.",
+  "private_manuscript": "absent; PDF-dependent test skipped",
+  "tests": "327 passed, 4 skipped",
+  "steps_passed": 12,
+  "scope": "Final core/analysis/build-script source at 3fc86f2. Later changes only select this evidence and record the completed repair."
+}

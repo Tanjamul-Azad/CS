@@ -1,0 +1,23 @@
+{
+  "timings": {
+    "gate": {
+      "n": 300,
+      "p50_us": 8707.98,
+      "p95_us": 11019.9,
+      "p99_us": 17026.9,
+      "mean_us": 9315.74,
+      "max_us": 30675.29
+    },
+    "record_proxy_baseline": {
+      "n": 300,
+      "p50_us": 887.92,
+      "p95_us": 1133.24,
+      "p99_us": 1286.96,
+      "mean_us": 910.95,
+      "max_us": 2155.07
+    }
+  },
+  "all_pass": true,
+  "restart_replay_status": 403
+}
+BUNDLE /work/artifact/results/network_integrated_20261009-170514

@@ -1,0 +1,2 @@
+Python 3.12.14
+Linux 0841c96f5896 6.18.40.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Fri Jul 31 22:12:15 UTC 2026 x86_64 GNU/Linux

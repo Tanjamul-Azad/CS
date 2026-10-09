@@ -23,3 +23,8 @@ Paper এখন আগের চেয়ে বেশি defensible: implementatio
 পূর্ণ claim mapping: `paper/CLAIM_EVIDENCE_MATRIX.md`।
 Current tests ও fresh Linux reproduction-এর exact counts dated logs-এ থাকবে;
 পুরোনো run-এর সংখ্যা নতুন code-এর প্রমাণ হিসেবে ব্যবহার করা যাবে না।
+
+Final verification: Windows 328 passed/3 skipped; fresh Linux 327 passed/4
+skipped ও 12/12 reproduction steps PASS। PDF 13 body pages/19 total; anonymous
+working draft-ও তৈরি হয়েছে, কিন্তু artifact URL placeholder থাকায় release gate
+fail করে। সব পরিবর্তনের record: `docs/49-correctness-repair-20261009.md`।

@@ -1,0 +1,67 @@
+[
+  {
+    "bundle": "/work/artifact/results/network_matched_20261009-220747",
+    "servers": 12,
+    "cases_replayed": 1584,
+    "hashes_checked": 16,
+    "errors": [],
+    "passed": true,
+    "key": "network_matched"
+  },
+  {
+    "bundle": "/work/artifact/results/network_matched_20261009-223210",
+    "servers": 5,
+    "cases_replayed": 708,
+    "hashes_checked": 16,
+    "errors": [],
+    "passed": true,
+    "key": "additional_network_held_out"
+  },
+  {
+    "bundle": "/work/artifact/results/network_named_20261009-221321",
+    "servers": 1,
+    "cases_replayed": 120,
+    "hashes_checked": 29,
+    "errors": [],
+    "passed": true,
+    "key": "network_named"
+  },
+  {
+    "bundle": "/work/artifact/results/network_postmark_20261009-222456",
+    "trials_checked": 113,
+    "hashes_checked": 28,
+    "errors": [],
+    "passed": true,
+    "key": "network_postmark"
+  },
+  {
+    "key": "network_integrated",
+    "passed": true,
+    "errors": []
+  },
+  {
+    "key": "network_crosssession",
+    "passed": true,
+    "errors": []
+  },
+  {
+    "key": "additional_selection",
+    "passed": true,
+    "errors": []
+  },
+  {
+    "key": "judge_matched_sensitivity",
+    "passed": true,
+    "errors": []
+  },
+  {
+    "key": "local_capacity_reanalysis",
+    "passed": true,
+    "errors": []
+  },
+  {
+    "key": "clean_linux_reproduction",
+    "passed": true,
+    "errors": []
+  }
+]

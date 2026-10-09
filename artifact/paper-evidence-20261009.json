@@ -8,6 +8,6 @@
   "local_capacity_reanalysis": "local_capacity_reanalysis_20261009-222225.json",
   "additional_selection": "network_selection_20261009-220747",
   "additional_network_held_out": "network_matched_20261009-223210",
-  "clean_linux_reproduction": "reproduction_clean_linux_20261009-230010",
+  "clean_linux_reproduction": "reproduction_clean_linux_20261009-230352",
   "note": "Explicit current evidence pointers. Historical results remain unchanged. Legacy paid-model and real-baseline runs remain separately dated in claims."
 }

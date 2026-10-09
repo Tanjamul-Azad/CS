@@ -33,3 +33,7 @@ converted into a passing criterion.
 Clean Linux reproduction is reported with its exact source commit in the dated
 reproduction bundle. No new run is asserted until its step logs exist.
 Independent annotation is unfinished; no retained claim requires A0 prevalence.
+
+Current offline reproduction: 12/12 steps PASS at source commit `3fc86f2`,
+Linux tests 327 passed/4 skipped; Windows tests 328 passed/3 skipped.
+Full repair and deliverable record: `docs/49-correctness-repair-20261009.md`.

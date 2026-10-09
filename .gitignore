@@ -63,5 +63,9 @@ paper/latex/
 paper/*submission*.pdf
 paper/submission-source-backup*
 
+# Private manuscript deliveries and rendered review pages stay local.
+output/pdf/effectseal*.pdf
+output/reviews/
+
 # Upstream sources cloned for experiments (pinned by commit in the run records)
 third_party/

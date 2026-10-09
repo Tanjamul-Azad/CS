@@ -2,6 +2,8 @@
 
 ## Current (read these first)
 
+Completed audit/repair record: `docs/49-correctness-repair-20261009.md`.
+
 The current source of truth is `artifact/paper-evidence-20261009.json`,
 `paper/CLAIM_EVIDENCE_MATRIX.md`, `paper/SUBMISSION_ROADMAP.md` and
 `paper/SUBMISSION_STATUS_BN.md`. Dated results in the older workstream docs
