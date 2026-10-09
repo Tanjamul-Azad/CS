@@ -1,0 +1,390 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_BEFORE_ANY_OUTCOME",
+  "selected_utc_date": "2026-10-09",
+  "purpose": "third held-out batch (workstream H): pin-time templates after development changes 5-7, on servers never used in development or earlier batches",
+  "source": "data/processed/registry_candidates.json joined with data/processed/scale_run.json",
+  "source_sha256": {
+    "registry_candidates.json": "76c9799b099ad25d65471c335d71ee98e33dbe085410414d33cf2ef3c7ff874b",
+    "scale_run.json": "b6f9f30f8b6e6d4798bc710aa19ce5e4323bcb05f5e9f8e9b98a205b668f0da4"
+  },
+  "selection_rule": [
+    "not used in development, the first held-out set or its reserves, or batch 2",
+    "scale-run status 'ok' (launched without credentials, answered tools/list, exposed a write tool)",
+    "npm or PyPI stdio package",
+    "title/description names a local surface (SURFACE regex) OR a local-storage cue (LOCAL regex), both in scripts/freeze_batch3_candidates.py; batch 2 required both, which leaves too few unused servers; the local, no-network requirement is enforced by pre-effect eligibility",
+    "description states no network dependency (REMOTE regex)",
+    "remaining servers sorted by id, shuffled with seed 'heldout-batch3-2026-10-09', first 45 taken; screening stops once at least 10 pass eligibility"
+  ],
+  "replacement_rule": "a server is skipped only for pre-effect install, launch, handshake, or honest-workflow incompatibility, never for any EffectSeal or baseline outcome",
+  "counts": {
+    "ok_launch": 1194,
+    "pkg": 1194,
+    "surface": 238,
+    "after_network_rule": 194,
+    "excluded_used": 107
+  },
+  "network_excluded": [
+    "ai.testiv/mcp",
+    "com.braincloudservers/braincloud-mcp-helper",
+    "com.mcparmory/browserbase",
+    "com.mcparmory/files-com",
+    "com.mcparmory/google-drive",
+    "com.mcparmory/outline",
+    "com.mcparmory/parallel",
+    "com.pandanpc/mcp-server",
+    "com.trestlescan/trestle",
+    "io.github.47-ronn/remote-agents",
+    "io.github.A1-x-Tech/mcp-google-docs",
+    "io.github.A1-x-Tech/mcp-google-drive",
+    "io.github.A1-x-Tech/mcp-google-tasks",
+    "io.github.AINative-Studio/ainative-memory-mcp",
+    "io.github.Abhishekkumar2021/github",
+    "io.github.ConvergentMethods/arezzo",
+    "io.github.Easysend-co/easysend",
+    "io.github.HatmanStack/ragstack",
+    "io.github.LassiB999/tooldash-mcp",
+    "io.github.Raffaele86/local-leads-mcp",
+    "io.github.SceneView/mcp",
+    "io.github.ThomasGorisse/sceneview",
+    "io.github.UseJunior/email-agent-mcp",
+    "io.github.YummyTastyCode/colab-drive-mcp",
+    "io.github.antonkarliner/truepane",
+    "io.github.ariaxhan/agentmailkit",
+    "io.github.armandocodecr/ramp-kit",
+    "io.github.arpe-io/fastbcp-mcp",
+    "io.github.colapsis/transfa",
+    "io.github.dasasian/gdocs-mcp",
+    "io.github.defdone/payaion#npm",
+    "io.github.defdone/payaion#pypi",
+    "io.github.entreprisedaney33-rgb/x402-seller-mcp",
+    "io.github.file-kiwi/filekiwi-mcp-server",
+    "io.github.geraservicesuk/mcp-gerajobs",
+    "io.github.hostsmith/mcp-server",
+    "io.github.infoinlet-marketplace/mcp-knowledge-rag",
+    "io.github.johnnywuj81/tokenknows",
+    "io.github.luckyjackluo/cairn",
+    "io.github.michaelrobertsutton/verified-googledocs-mcp",
+    "io.github.mindstone/mcp-server-slack",
+    "io.github.pijusz/mcp-sanity-images",
+    "io.github.questdb/mcp-server-questdb",
+    "io.github.taylorwilsdon/workspace-mcp"
+  ],
+  "ordered_candidates": [
+    {
+      "id": "io.github.drQedwards/pmll-memory-mcp",
+      "ecosystem": "npm",
+      "package": "pmll-memory-mcp",
+      "write_tool": "set",
+      "text": "PMLL Memory MCP — persistent KV context memory and Q-promise deduplication."
+    },
+    {
+      "id": "io.github.flinker-app/ifc-mcp",
+      "ecosystem": "npm",
+      "package": "ifc-mcp",
+      "write_tool": "run-python",
+      "text": "IFC MCP Local IFC/BIM MCP server with IfcOpenShell Python in Pyodide and an IFC viewer."
+    },
+    {
+      "id": "io.github.MakeaMouse/fish-bridge-mcp",
+      "ecosystem": "pypi",
+      "package": "fish-bridge-mcp",
+      "write_tool": "add_node",
+      "text": "fish-bridge — Session Knowledge Graph Compresses AI chat sessions into a typed knowledge graph. Local/offline via Ollama."
+    },
+    {
+      "id": "io.github.CSOAI-ORG/meok-mcp-test-mcp",
+      "ecosystem": "pypi",
+      "package": "meok-mcp-test-mcp",
+      "write_tool": "run_test_suite",
+      "text": "MEOK MCP Test MCP — golden-file + schema-drift + tool-failure tests for any MCP server. Drop-in"
+    },
+    {
+      "id": "com.overlayqa/mcp",
+      "ecosystem": "npm",
+      "package": "@overlayqa/mcp",
+      "write_tool": "create_issue",
+      "text": "Run accessibility, contrast, and design token audits and file QA issues from your AI coding tool."
+    },
+    {
+      "id": "io.github.GigantesHJI/securedact-mcp",
+      "ecosystem": "pypi",
+      "package": "securedact-mcp",
+      "write_tool": "restore_text",
+      "text": "Securedact MCP Local-first privacy MCP server for sensitive AI workflows"
+    },
+    {
+      "id": "ai.bourdon/bourdon#npm",
+      "ecosystem": "npm",
+      "package": "@getbourdon/mcp-server",
+      "write_tool": "export_agents",
+      "text": "Bourdon Recognition-first cross-agent memory federation. One shared memory across all your agents."
+    },
+    {
+      "id": "io.github.universalamateur/reclaim-mcp-server",
+      "ecosystem": "pypi",
+      "package": "reclaim-mcp-server",
+      "write_tool": "create_task",
+      "text": "MCP server for Reclaim.ai - calendar, tasks, habits, and focus time management"
+    },
+    {
+      "id": "io.github.conorbronsdon/substack-mcp",
+      "ecosystem": "npm",
+      "package": "@conorbronsdon/substack-mcp",
+      "write_tool": "create_draft",
+      "text": "Substack MCP Server Substack MCP server: posts are draft-only by design; short-form Notes publish immediately."
+    },
+    {
+      "id": "io.github.uditk2/review-assist-mcp",
+      "ecosystem": "npm",
+      "package": "review-assist-mcp",
+      "write_tool": "submit_document",
+      "text": "Turns an AI coding agent session into a reviewable Intent Document, validated against the diff."
+    },
+    {
+      "id": "dev.yafl/mcp",
+      "ecosystem": "npm",
+      "package": "@yafldev/mcp",
+      "write_tool": "delete_file",
+      "text": "Agent-first E2EE file transfer over MCP: move files between machines in one tool call, gone in 24h."
+    },
+    {
+      "id": "io.github.S3bRR/agent-tasker-mcp",
+      "ecosystem": "pypi",
+      "package": "agent-tasker-mcp-server",
+      "write_tool": "execute",
+      "text": "AgentTasker MCP Server Minimal stdio MCP server for parallel task execution by AI agents."
+    },
+    {
+      "id": "io.linklore/llre",
+      "ecosystem": "pypi",
+      "package": "llre",
+      "write_tool": "restore",
+      "text": "LinkLore AI-native structured memory for agents (MCP). Built for agents, not humans."
+    },
+    {
+      "id": "io.github.runapi-builder/qwen-2-mcp",
+      "ecosystem": "npm",
+      "package": "@runapi.ai/qwen-2-mcp",
+      "write_tool": "edit_image",
+      "text": "RunAPI MCP server for Qwen 2: create tasks, poll status, check pricing."
+    },
+    {
+      "id": "io.github.Ankit512/itsoc-mcp",
+      "ecosystem": "pypi",
+      "package": "itsoc-mcp",
+      "write_tool": "export_run",
+      "text": "Read-only MCP server over a local log-analysis backend; a client that computes no verdicts."
+    },
+    {
+      "id": "io.github.DeusData/codebase-memory-mcp#pypi",
+      "ecosystem": "pypi",
+      "package": "codebase-memory-mcp",
+      "write_tool": "delete_project",
+      "text": "Codebase Memory Codebase knowledge graph for AI agents — 159 languages, sub-ms queries, 99% fewer tokens."
+    },
+    {
+      "id": "io.github.Spacetime-Technology/safehold",
+      "ecosystem": "npm",
+      "package": "safehold",
+      "write_tool": "add_document",
+      "text": "Local, encrypted MCP vault for passports, IDs, visas and photos. You control access."
+    },
+    {
+      "id": "com.wuniq/wuniq",
+      "ecosystem": "npm",
+      "package": "@wuniq/mcp",
+      "write_tool": "run",
+      "text": "Wuniq KE (Knowledge Engine) The structured memory layer your AI is missing. Requires the free Wuniq desktop app."
+    },
+    {
+      "id": "io.github.Jackalope-Dev/allmcps-server",
+      "ecosystem": "npm",
+      "package": "allmcps-server",
+      "write_tool": "submit_mcp_server",
+      "text": "Search, browse, and submit MCP servers to the AllMCPs.com directory."
+    },
+    {
+      "id": "io.github.XFuel-Lab/xfuel-mcp",
+      "ecosystem": "npm",
+      "package": "xfuel-mcp",
+      "write_tool": "submit_inference",
+      "text": "XFuel Submit AI inference to XFuel, pay per task (USDC via x402 or TFUEL), fetch/verify ZK proofs."
+    },
+    {
+      "id": "io.github.domdomegg/filesystem-mcp",
+      "ecosystem": "npm",
+      "package": "filesystem-mcp",
+      "write_tool": "create",
+      "text": "Filesystem Read, create, and edit files."
+    },
+    {
+      "id": "io.github.putervision/state-memory-mcp",
+      "ecosystem": "npm",
+      "package": "@putervision/state-memory-mcp",
+      "write_tool": "run_diagnostics",
+      "text": "State Memory MCP Deterministic, persistent graph server for tracking workflow state, decisions, and blockers."
+    },
+    {
+      "id": "io.github.SebastianMaciel/jsx-notation",
+      "ecosystem": "npm",
+      "package": "jsx-notation",
+      "write_tool": "write_jsxn",
+      "text": "JSXN encoder/decoder — compact notation for React/Next.js files, optimized for LLMs"
+    },
+    {
+      "id": "io.github.novyxlabs/novyx-mcp",
+      "ecosystem": "pypi",
+      "package": "novyx-mcp",
+      "write_tool": "create_space",
+      "text": "Novyx MCP Persistent memory for AI agents with rollback, audit trails, and semantic search."
+    },
+    {
+      "id": "io.github.jgravelle/jdatamunch-mcp",
+      "ecosystem": "pypi",
+      "package": "jdatamunch-mcp",
+      "write_tool": "delete_dataset",
+      "text": "jDataMunch MCP Tabular data retrieval. Index CSV/Excel, query rows, aggregate. 99%+ savings vs raw file reads."
+    },
+    {
+      "id": "io.github.gabrielmahia/offline-mcp",
+      "ecosystem": "pypi",
+      "package": "offline-mcp",
+      "write_tool": "run_local_inference",
+      "text": "MCP server enabling offline-first agent operation over intermittent connectivity"
+    },
+    {
+      "id": "io.github.cocaxcode/database-mcp",
+      "ecosystem": "npm",
+      "package": "@cocaxcode/database-mcp",
+      "write_tool": "execute_query",
+      "text": "MCP server for database connectivity. Multi-DB (PostgreSQL, MySQL, SQLite), 19 tools."
+    },
+    {
+      "id": "io.github.Astrix-Labs/genesys-memory",
+      "ecosystem": "pypi",
+      "package": "genesys-memory",
+      "write_tool": "set_core_preferences",
+      "text": "Open-source causal memory for AI agents: persistent, explainable, MCP-native memory (13 tools)."
+    },
+    {
+      "id": "io.github.VOYAGER-Inc/excel-vision-mcp",
+      "ecosystem": "pypi",
+      "package": "excel-vision-mcp",
+      "write_tool": "create_excel_file",
+      "text": "Excel MCP with image extraction and write support — AI agents see and edit xlsx files"
+    },
+    {
+      "id": "io.github.kirill-sviridov/handoff-mcp",
+      "ecosystem": "pypi",
+      "package": "handoff-mcp",
+      "write_tool": "sync",
+      "text": "Handoff Cross-session memory for Claude over MCP — prioritised briefs, supersession, cross-project recall."
+    },
+    {
+      "id": "io.github.hacksurvivor/pathmark",
+      "ecosystem": "npm",
+      "package": "pathmark",
+      "write_tool": "create_conclusion",
+      "text": "Pathmark Local-first intent and provenance for Codex, Claude Code, Cursor, Gemini CLI, and MCP agents."
+    },
+    {
+      "id": "io.github.henilcalagiya/mcp-apple-notes",
+      "ecosystem": "pypi",
+      "package": "mcp-apple-notes",
+      "write_tool": "create_note",
+      "text": "MCP server for Apple Notes integration using AppleScript with full CRUD operations"
+    },
+    {
+      "id": "io.github.andreas-roennestad/openhive-mcp",
+      "ecosystem": "npm",
+      "package": "openhive-mcp",
+      "write_tool": "post_solution",
+      "text": "Search and contribute to a shared knowledge base of AI-discovered problem-solution pairs."
+    },
+    {
+      "id": "ai.spideriq/media",
+      "ecosystem": "npm",
+      "package": "@spideriq/mcp-media",
+      "write_tool": "delete_file",
+      "text": "SpiderIQ Media: SpiderMedia files, videos, per-tenant media catalog (read)"
+    },
+    {
+      "id": "com.pdfgate/mcp-server",
+      "ecosystem": "npm",
+      "package": "@pdfgate/mcp-server",
+      "write_tool": "create_webhook",
+      "text": "MCP server for the PDFGate API. Generate PDFs, manage documents and handle e-signatures."
+    },
+    {
+      "id": "io.github.Abhishekkumar2021/notes",
+      "ecosystem": "npm",
+      "package": "@abhishekmcp/notes",
+      "write_tool": "create_note",
+      "text": "Notes Local markdown notes: ranked + semantic search, tags, todos, and a wiki-link knowledge graph."
+    },
+    {
+      "id": "io.github.RedHold/diagrams-so-mcp",
+      "ecosystem": "npm",
+      "package": "@diagrams-so/mcp",
+      "write_tool": "update_diagram",
+      "text": "Diagrams.so Generate and edit AWS, Azure, GCP and Kubernetes architecture diagrams as editable draw.io files."
+    },
+    {
+      "id": "io.github.symbo-ls/symbols-mcp",
+      "ecosystem": "pypi",
+      "package": "symbols-mcp",
+      "write_tool": "create_project",
+      "text": "Symbols MCP Symbols.app MCP — docs, code generation, publishing, CLI/SDK reference"
+    },
+    {
+      "id": "io.github.nograai/nogra-mcp",
+      "ecosystem": "npm",
+      "package": "@nograai/mcp",
+      "write_tool": "post_event",
+      "text": "Nogra Verify-before-done trust layer for AI-assisted work. 32 tools, local-first, no credentials."
+    },
+    {
+      "id": "io.github.Efistoffeles/boostedtravel#npm",
+      "ecosystem": "npm",
+      "package": "boostedtravel-mcp",
+      "write_tool": "book_flight",
+      "text": "BoostedTravel Flight search & booking for AI agents. 400+ airlines, 75 free local connectors."
+    },
+    {
+      "id": "io.github.dovahkiin-v/letterbox",
+      "ecosystem": "pypi",
+      "package": "letterbox",
+      "write_tool": "send_message",
+      "text": "Letterbox File-based comms protocol for AI-to-AI dialogue between terminal agents."
+    },
+    {
+      "id": "io.github.Siddhukaushik/slimdex-mcp",
+      "ecosystem": "npm",
+      "package": "slimdex-mcp",
+      "write_tool": "replace_symbol",
+      "text": "Narrow code retrieval for agents: outlines, symbol context, dep graph, persistent memory."
+    },
+    {
+      "id": "com.mcparmory/clickup",
+      "ecosystem": "pypi",
+      "package": "mcparmory-clickup",
+      "write_tool": "start_time_entry",
+      "text": "Manage tasks, lists, checklists, comments, and project workflows"
+    },
+    {
+      "id": "io.github.runapi-builder/gemini-omni-mcp",
+      "ecosystem": "npm",
+      "package": "@runapi.ai/gemini-omni-mcp",
+      "write_tool": "create_audio",
+      "text": "RunAPI MCP server for Gemini Omni: create tasks, poll status, check pricing."
+    },
+    {
+      "id": "io.github.nihmadev/fs-mcp-rs",
+      "ecosystem": "npm",
+      "package": "fs-mcp-rs",
+      "write_tool": "write_file",
+      "text": "fs-mcp-rs A fast, configurable filesystem server for the Model Context Protocol (MCP), written in Rust."
+    }
+  ]
+}
