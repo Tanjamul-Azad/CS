@@ -33,7 +33,15 @@ mediator ablations, the 100-trial allowance races (local and network), the
 network overhead measurement, the file-arm baseline mapping, and regenerates
 every paper figure from the checked-in results. Every step should print `PASS`.
 On our machine the whole run, including the dependency install, takes about
-ten minutes.
+ten minutes. Our own clean-clone run is recorded in
+`artifact/results/reproduction_clean_linux_2026-10-09/`: all ten steps passed,
+with 310 tests passing and 4 skipped (three exercise Windows path handling, one
+needs the gitignored manuscript PDF).
+
+Every pre-registration record stores the sha256 of the exact bytes it pins.
+`.gitattributes` keeps those files byte for byte, so the hashes verify from a
+clone on any operating system. A plan pins the library as it was when that plan
+was frozen; to rerun an older plan, check out the commit that froze it.
 
 ## 2. Full reproduction (Docker)
 

@@ -1,0 +1,1 @@
+0319ac86e8ef53f218dbcc34383fd6ca4c287fbb Lock mcp 2.1.1 and its dependencies (needed by the live-session tests and the ToolHive driver); existing pins unchanged
