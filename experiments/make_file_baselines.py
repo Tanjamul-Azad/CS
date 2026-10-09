@@ -18,9 +18,9 @@ mechanism and evidence rather than re-running identical containers.
              working-tree ACEs) did not engage in our virtualized environment,
              recorded below; the mechanism is taken from its documented policy.
 
-The matched numbers these map onto (artifact/results/matched_filesystem.json):
-PLAIN_SANDBOX 9/31 attacks prevented, STATIC_LP 18/31, EffectSeal 31/31, each
-at 5/5 honest completion.
+The matched numbers these map onto (matched_filesystem.json + matched_sql.json,
+landed attacks only, seven servers): PLAIN_SANDBOX stops 0/32, STATIC_LP 11/32,
+EffectSeal 32/32, with no honest workflow blocked.
 
     python experiments/make_file_baselines.py
 """
@@ -38,17 +38,26 @@ OUT = ROOT / "artifact" / "results" / "file_baselines.json"
 
 
 def matched_by_condition() -> dict:
-    data = json.loads(MATCHED.read_text(encoding="utf-8"))
-    cells = [c for s in data["servers"] for c in s.get("cells", [])]
+    """Landed attacks stopped per condition, files and SQL together.
+
+    Counts an attack only if it landed with no defense, the metric the paper
+    reports (same rule as scripts/make_strengthening_figures.landed_table)."""
+    cells = []
+    for name in ("matched_filesystem.json", "matched_sql.json"):
+        data = json.loads((MATCHED.parent / name).read_text(encoding="utf-8"))
+        cells += [c for s in data["servers"] for c in s.get("cells", [])]
+    landed = {(c["server_id"], c["scenario"]) for c in cells
+              if c["mutation_attempted"] and c["condition"] == "NONE" and c["attack_succeeded"]}
     out = {}
     for cond in ("NONE", "PLAIN_SANDBOX", "MBA", "STATIC_LP", "MCPGATE"):
         cc = [c for c in cells if c["condition"] == cond]
         h0 = [c for c in cc if c["scenario"] == "H0"]
-        atk = [c for c in cc if c["mutation_attempted"]]
-        out[cond] = {"honest_completed": sum(c["authorized_effect"] for c in h0),
+        atk = [c for c in cc if c["mutation_attempted"]
+               and (c["server_id"], c["scenario"]) in landed]
+        out[cond] = {"honest_completed": sum(bool(c["authorized_effect"]) for c in h0),
                      "honest_total": len(h0),
-                     "attacks_prevented": sum(c["prevented"] for c in atk),
-                     "attacks_total": len(atk)}
+                     "landed_attacks_stopped": sum(bool(c["prevented"]) for c in atk),
+                     "landed_attacks": len(atk)}
     return out
 
 
@@ -101,16 +110,16 @@ def main() -> int:
                  "configuration the matched harness already runs (read-only root, one writable "
                  "client-area mount, no network). Their file guarantees therefore coincide with "
                  "measured conditions rather than adding a new number."),
-        "matched_source": "artifact/results/matched_filesystem.json",
+        "matched_source": "artifact/results/matched_filesystem.json + matched_sql.json (landed attacks only)",
         "matched_conditions": conditions,
         "baselines": baselines,
         "takeaway": ("Every destination- or sandbox-class file baseline lands at PLAIN_SANDBOX "
-                     f"({conditions['PLAIN_SANDBOX']['attacks_prevented']}/"
-                     f"{conditions['PLAIN_SANDBOX']['attacks_total']} attacks prevented) or "
-                     f"STATIC_LP ({conditions['STATIC_LP']['attacks_prevented']}/"
-                     f"{conditions['STATIC_LP']['attacks_total']}); EffectSeal prevents "
-                     f"{conditions['MCPGATE']['attacks_prevented']}/"
-                     f"{conditions['MCPGATE']['attacks_total']}, all at "
+                     f"({conditions['PLAIN_SANDBOX']['landed_attacks_stopped']}/"
+                     f"{conditions['PLAIN_SANDBOX']['landed_attacks']} landed attacks stopped) or "
+                     f"STATIC_LP ({conditions['STATIC_LP']['landed_attacks_stopped']}/"
+                     f"{conditions['STATIC_LP']['landed_attacks']}); EffectSeal prevents "
+                     f"{conditions['MCPGATE']['landed_attacks_stopped']}/"
+                     f"{conditions['MCPGATE']['landed_attacks']}, all at "
                      f"{conditions['MCPGATE']['honest_completed']}/"
                      f"{conditions['MCPGATE']['honest_total']} honest completion."),
     }

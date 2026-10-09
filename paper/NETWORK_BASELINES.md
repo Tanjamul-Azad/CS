@@ -63,9 +63,10 @@ it rather than re-run identical containers (`experiments/make_file_baselines.py`
 | AgentBound | FSAccess = writable bind mount of the granted path (destination, not content) | STATIC_LP (per-path) / PLAIN_SANDBOX (whole dir) |
 | srt | `filesystem.allowWrite` (allow-only write list), a per-path write boundary | STATIC_LP |
 
-Matched filesystem outcomes these land on (`matched_filesystem.json`): honest
-completion is 5/5 for every condition; attacks prevented are PLAIN_SANDBOX 9/31,
-STATIC_LP 18/31, and EffectSeal 31/31. A destination- or sandbox-class defense
+Matched outcomes these land on (`matched_filesystem.json` + `matched_sql.json`,
+seven servers, landed attacks only): no honest workflow is blocked under any
+condition; PLAIN_SANDBOX stops 0/32 landed attacks, STATIC_LP 11/32, and
+EffectSeal 32/32. A destination- or sandbox-class defense
 binds where a write lands, never its content, so it admits content
 substitution, extra files, and silent no-ops inside the client area.
 

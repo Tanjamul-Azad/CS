@@ -1,39 +1,39 @@
 {
   "schema_version": 1,
-  "created_utc": "2026-10-09T09:55:48.754486+00:00",
+  "created_utc": "2026-10-09T10:11:59.281654+00:00",
   "phase": "FILE_ARM_BASELINES_MECHANISM_AND_MAPPING",
   "note": "On local file effects AgentBound, ToolHive, and srt enforce the container configuration the matched harness already runs (read-only root, one writable client-area mount, no network). Their file guarantees therefore coincide with measured conditions rather than adding a new number.",
-  "matched_source": "artifact/results/matched_filesystem.json",
+  "matched_source": "artifact/results/matched_filesystem.json + matched_sql.json (landed attacks only)",
   "matched_conditions": {
     "NONE": {
-      "honest_completed": 5,
-      "honest_total": 5,
-      "attacks_prevented": 9,
-      "attacks_total": 31
+      "honest_completed": 7,
+      "honest_total": 7,
+      "landed_attacks_stopped": 0,
+      "landed_attacks": 32
     },
     "PLAIN_SANDBOX": {
-      "honest_completed": 5,
-      "honest_total": 5,
-      "attacks_prevented": 9,
-      "attacks_total": 31
+      "honest_completed": 7,
+      "honest_total": 7,
+      "landed_attacks_stopped": 0,
+      "landed_attacks": 32
     },
     "MBA": {
-      "honest_completed": 5,
-      "honest_total": 5,
-      "attacks_prevented": 9,
-      "attacks_total": 31
+      "honest_completed": 7,
+      "honest_total": 7,
+      "landed_attacks_stopped": 0,
+      "landed_attacks": 32
     },
     "STATIC_LP": {
-      "honest_completed": 5,
-      "honest_total": 5,
-      "attacks_prevented": 18,
-      "attacks_total": 31
+      "honest_completed": 7,
+      "honest_total": 7,
+      "landed_attacks_stopped": 11,
+      "landed_attacks": 32
     },
     "MCPGATE": {
-      "honest_completed": 5,
-      "honest_total": 5,
-      "attacks_prevented": 31,
-      "attacks_total": 31
+      "honest_completed": 7,
+      "honest_total": 7,
+      "landed_attacks_stopped": 32,
+      "landed_attacks": 32
     }
   },
   "baselines": {
@@ -68,5 +68,5 @@
       }
     }
   },
-  "takeaway": "Every destination- or sandbox-class file baseline lands at PLAIN_SANDBOX (9/31 attacks prevented) or STATIC_LP (18/31); EffectSeal prevents 31/31, all at 5/5 honest completion."
+  "takeaway": "Every destination- or sandbox-class file baseline lands at PLAIN_SANDBOX (0/32 landed attacks stopped) or STATIC_LP (11/32); EffectSeal prevents 32/32, all at 7/7 honest completion."
 }

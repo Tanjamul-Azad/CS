@@ -56,3 +56,22 @@ The abstract may not yet say:
 - validated A0 prevalence;
 - network/process mediation; or
 - superiority to state-of-the-art systems.
+
+## Rewrite of 2026-10-09: claims added with the network arm
+
+Every number below appears in the manuscript and was traced to the listed file
+on 2026-10-09.
+
+| ID | Paper claim | Evidence | Status | Note |
+|---|---|---|---|---|
+| N1 | 40,238 active registry servers; 15,991 local; 6,068 declare a secret; 23,566 remote only. | `artifact/results/m1_local_remote_2026-10-08.json` | READY | Declared secret is a lower bound on network use. |
+| N2 | Of 13,877 resolved local npm/PyPI packages: 66% released in 90 days; 68% pinned version is still latest; 95% of npm packages single-maintainer. | `artifact/results/m2_rugpull_exposure_2026-10-09.json` | QUALIFIED | Exposure, not attacks; maintainer hand-off history is not observable, so single-maintainer concentration is reported instead. |
+| N3 | Four judges flag identical attacked transcripts no more often than honest runs (gpt-4.1 0/42 vs 0/50; gpt-5-mini 21% vs 24%; gpt-4.1-mini 36% vs 44%; Llama 3.1 8B 12/42 vs 30/50). | `llm_judge_v2_leak_split.json`, `llm_judge_ollama_v2_leak_split.json` | READY | Leak split is post hoc for OpenAI verdicts; Llama was scored after the rule was fixed. |
+| N4 | Ten registry network servers: 120/120 honest, 912/936 diversions stopped; destination policy 120/936. Dev 552/576, held-out 360/360 (0/48 blocked). | `artifact/results/network_matched_20261008-234304/` | QUALIFIED | Attacks are transformations of captured honest requests (check-level). Pre-registered dev criterion (zero admitted) not met: 24 admitted on splitifi (328-bit slack). Two held-out servers produced no template. |
+| N5 | Postmark rebuilt: EffectSeal 24/24; ToolHive 3/24; AgentBound 3/24; mcp-scan pinning 0/8 (control flagged); honest 12/12 under every runtime defense. | `network_postmark_20261008-223144/`, `_toolhive_`, `_agentbound_`, `_mcpscan_` | READY | End-to-end with rebuilt attack versions; sends to local mocks only. |
+| N6 | Official GitHub MCP server: 12/12 honest, 96/96 stopped, destination 12/96. | `artifact/results/network_named_20261009-000146/` | QUALIFIED | Check-level transformations, as N4. |
+| N7 | Network agents (gpt-4o-mini, GitHub server): 7/7 honest admitted; 13/16 diversions landed without EffectSeal, 0/16 with; 3 of 15 refused sessions the agent still reported success. | `artifact/results/network_rq5_20261009-002654/` | QUALIFIED | One server, one model; four earlier development runs kept (one refused two honest comments). |
+| N8 | Network gate overhead: check p50 45 µs (p95 66 µs); durable slot p50 10.0 ms (p95 12.0 ms); host allow-list 3.6 µs. Race: 100/100 exactly one commit; replay guard 100/100. | `artifact/results/network_overhead_races.json` | READY | Mechanism measurement on the Postmark request shape; network round trip excluded. |
+| N9 | Network TLA+ model: full model holds (441 states); removing pre-send check, credential injection, confinement, atomic count, or replay guard each violates its invariant. | `formal/EffectSealNet.tla`, `formal/tlc/Net*.log`, `formal/check_net_model.py` | READY | Violated-run state counts depend on search order and are not reported. |
+| N10 | File-arm baselines: ToolHive equals plain sandbox (0/32); AgentBound and srt bind destination (11/32 class). | `artifact/results/file_baselines.json` | QUALIFIED | Mapping by mechanism; srt's Windows filesystem enforcement did not engage in our environment. |
+| N11 | Held-out batch 3: 0 of 14 schema-eligible servers had a client-selected local-file effect. | `artifact/held-out-batch3-manifest.json`, `artifact/results/batch3_workflow.json` | READY | Reported as supply exhaustion; no scored server. |

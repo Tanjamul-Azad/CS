@@ -373,3 +373,64 @@ Verified by/date:
 
 This ledger will be updated together with `references.bib`; a reference is not
 considered fixed merely because its arXiv identifier resolves.
+
+## E. Records added for the network rewrite (verified 2026-10-09)
+
+Each entry was fetched from its primary source on 2026-10-09. "Supports" lists
+only what the source states; "Does not support" lists claims we must not attach.
+
+### `postmark2025statement`
+- **Source:** https://postmarkapp.com/blog/information-regarding-malicious-postmark-mcp-package
+- **Identity:** Postmark, "Security Alert: Malicious 'postmark-mcp' npm Package Impersonating Postmark", 25 Sep 2025 (modified 29 Sep 2025).
+- **Supports:** the npm package `postmark-mcp` was not Postmark's; the actor "built trust over 15 versions" and version 1.0.16 added a backdoor that BCC'd emails to an external server; the official server is ActiveCampaign/postmark-mcp on GitHub.
+- **Does not support:** download counts or victim numbers (news sources disagree; do not cite them).
+
+### `korolevski2025jfrog`
+- **Source:** https://research.jfrog.com/post/3-malicious-mcps-pypi-reverse-shell/
+- **Identity:** Guy Korolevski, JFrog Security Research, "3 Malicious MCP servers found on PyPI", 19 Oct 2025.
+- **Supports:** three PyPI MCP packages open a reverse shell at initialization; linked to an earlier malicious package `@lanyer640/mcp-runcommand-server`.
+- **Does not support:** a "clean first release, malicious later update" history; the article gives no version history. Do not cite it for that.
+
+### `checkpoint2025mcpoison`
+- **Source:** https://research.checkpoint.com/2025/cursor-vulnerability-mcpoison/
+- **Identity:** Check Point Research, "CVE-2025-54136 – MCPoison Cursor IDE: Persistent Code Execution via MCP Trust Bypass", 5 Aug 2025.
+- **Supports:** Cursor bound approval of an MCP configuration to the entry's name; the command could later change silently and run without a new prompt.
+
+### `beber2025escaperoute`
+- **Source:** https://cymulate.com/blog/cve-2025-53109-53110-escaperoute-anthropic/
+- **Identity:** Elad Beber (Cymulate), "EscapeRoute: Breaking the Scope of Anthropic's Filesystem MCP Server (CVE-2025-53109 & CVE-2025-53110)"; reported 30 Mar 2025.
+- **Supports:** the reference filesystem server's directory-prefix and symlink checks could be bypassed (versions before 0.6.3 / 2025.7.1).
+
+### `zhao2025mcpattack`
+- **Source:** arXiv:2509.24272 (v1, 29 Sep 2025). Weibo Zhao, Jiahao Liu, Bonan Ruan, Shaofei Li, Zhenkai Liang.
+- **Supports:** malicious MCP servers as adversaries; a taxonomy of twelve attack categories; proof-of-concept servers; current scanners often fail to detect them.
+
+### `li2025firstlook`
+- **Source:** arXiv:2510.16558 (v1 18 Oct 2025, v2 27 Apr 2026). Xiaofan Li, Xing Gao.
+- **Supports:** an ecosystem study of 67,057 servers across six public registries.
+
+### `huang2026malicious`
+- **Source:** arXiv:2604.01905 (v1 2 Apr 2026, v2 19 May 2026). Yiheng Huang et al. (eight authors).
+- **Supports:** a 114-server proof-of-concept dataset of malicious MCP servers and Connor, a two-stage behavioral-deviation detector.
+- **Does not support:** effect admission or a guarantee about committed state; it is a detection approach.
+
+### `padilla2026exposed`
+- **Source:** arXiv:2608.00150 (v1 31 Jul 2026). Nicolás Padilla.
+- **Supports:** internet-facing (remote) MCP servers assessed at scale; most lack authentication.
+
+### `stacklok2025toolhive`
+- **Source:** https://github.com/stacklok/toolhive (Apache-2.0). We ran v0.51.4 (`thv run --isolate-network` with a permission profile).
+- **Supports:** each MCP server runs in its own container with a minimal permission file and network isolation. Our own run establishes the host:port egress behavior we report.
+
+### `invariant2025mcpscan`
+- **Source:** https://invariantlabs.ai/blog/introducing-mcp-scan, 11 Apr 2025. The project is now Snyk Agent Scan (github.com/snyk/agent-scan).
+- **Supports:** MCP-Scan "verifies the integrity of installed tools by tracking changes via tool hashing" (tool pinning). We ran mcp-scan 0.3.39; its pinning flagged our description-change control (W003).
+
+### `anthropic2025srt`
+- **Source:** https://github.com/anthropics/sandbox-runtime (Apache-2.0), npm `@anthropic-ai/sandbox-runtime`; 0.0.79 installed.
+- **Supports:** OS-level sandboxing; writes denied by default except allow-listed paths; network denied except allow-listed domains via host proxies; Windows mode uses a dedicated sandbox account and WFP filters.
+
+### `docker2025mcpgateway`
+- **Source:** https://docs.docker.com/reference/cli/docker/mcp/gateway/gateway_run/ (repo github.com/docker/mcp-gateway, MIT).
+- **Supports:** `--block-network` blocks tools from reaching forbidden network resources; `--block-secrets` (default true) stops secrets being sent to or received from tools.
+- **Does not support:** any statement about request content beyond secret-like payloads.

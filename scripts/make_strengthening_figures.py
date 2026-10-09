@@ -55,12 +55,15 @@ def save(fig, name: str) -> None:
 def judge_boundary() -> None:
     """Detection versus false positives, split by transcript distinguishability."""
     split = load("llm_judge_v2_leak_split.json")["summary"]
+    # The non-OpenAI judge re-scored the same 176 transcripts locally; its
+    # split uses the same judge-free leak rule (analyze_judge_leaks.py).
+    split.update(load("llm_judge_ollama_v2_leak_split.json")["summary"])
     models = [("gpt-4.1-2025-04-14", "gpt-4.1"), ("gpt-5-mini-2025-08-07", "gpt-5-mini"),
-              ("gpt-4.1-mini-2025-04-14", "gpt-4.1-mini")]
+              ("gpt-4.1-mini-2025-04-14", "gpt-4.1-mini"), ("llama3.1:8b", "Llama 3.1 8B")]
     series = [("honest", "Honest (false positive)", GRAY, "o"),
               ("consistent_indistinguishable", "Attack, transcript identical", TEAL, "s"),
               ("consistent_leaked", "Attack, transcript leaked", ORANGE, "D")]
-    fig, ax = plt.subplots(figsize=(COLUMN, 2.05))
+    fig, ax = plt.subplots(figsize=(COLUMN, 2.45))
     offsets = [-0.22, 0.0, 0.22]
     for row, (key, label) in enumerate(models):
         entry = split[key]
@@ -83,7 +86,7 @@ def judge_boundary() -> None:
     ax.grid(axis="x", color=LIGHT, linewidth=0.5, zorder=0)
     ax.spines[["top", "right"]].set_visible(False)
     ax.tick_params(axis="y", length=0)
-    ax.legend(frameon=False, fontsize=6, loc="upper center", bbox_to_anchor=(0.45, 1.3),
+    ax.legend(frameon=False, fontsize=6, loc="upper center", bbox_to_anchor=(0.45, 1.24),
               ncol=2, handletextpad=0.2, columnspacing=0.8)
     save(fig, "fig11_judge_boundary")
 
