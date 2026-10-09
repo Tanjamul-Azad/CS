@@ -1,0 +1,26 @@
+{
+  "as_of": "2026-10-08",
+  "window_days": 90,
+  "packages_considered": 13988,
+  "packages_measured": 13877,
+  "fetch_errors": {
+    "no releases": 48,
+    "pypi 404": 27,
+    "npm 404": 36
+  },
+  "by_registry": {
+    "npm": 10014,
+    "pypi": 3863
+  },
+  "released_in_last_90d_frac": 0.6612380197449016,
+  "median_versions_total": 5,
+  "median_releases_90d": 2,
+  "median_days_since_last_release": 44,
+  "pinned_is_latest_frac": 0.6838653887727895,
+  "pinned_is_latest_n": 13877,
+  "versions_published_after_pin_frac": 0.31521503433321285,
+  "versions_published_after_pin_n": 13835,
+  "npm_single_maintainer_frac": 0.9491711603754743,
+  "npm_single_maintainer_n": 10014,
+  "note": "pinned_is_latest: the version approved in the MCP registry is still the current latest, so an approved launch tracking latest would adopt the maintainer's next release unreviewed. Maintainer hand-off history is not exposed by the public APIs; we report npm single-maintainer concentration instead, and PyPI maintainer count is unknown."
+}
