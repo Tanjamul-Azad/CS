@@ -417,7 +417,7 @@ class EgressProxy:
         if bad_credential is not None:
             admitted, reason = False, f"credential header {bad_credential!r} altered"
             if hasattr(self.decide, "reject"):
-                self.decide.reject(reason)
+                self.decide.reject(reason, request=captured)
         else:
             try:
                 admitted, reason = self.decide(captured)
@@ -471,6 +471,7 @@ class CallGate:
         self.ledger, self.call_id = ledger, call_id
         self._reserved = False
         self._pending = False
+        self._unknown = False
 
     def _reserve(self):
         if self.ledger is not None and not self._reserved:
@@ -490,7 +491,7 @@ class CallGate:
                 self.ledger.state_of("egress:" + self.call_id, "call") is SlotState.RESERVED):
             self.ledger.fail("egress:" + self.call_id, "call", reason)
 
-    def reject(self, reason):
+    def reject(self, reason, *, request=None):
         with self._lock:
             if not self.refused and self._reserve():
                 self._fail(reason)
@@ -519,6 +520,7 @@ class CallGate:
                 raise RuntimeError("send completion without an admitted request")
             self._pending = False
             if error is not None:
+                self._unknown = True
                 self._fail("upstream outcome unknown: " + error)
                 return
             self.completed += 1
@@ -527,8 +529,10 @@ class CallGate:
                                    {"completed_requests": self.completed, "last_status": status})
 
     def outcome(self) -> str:
+        if self._unknown:
+            return "UNKNOWN"
         if self.refused:
-            return "PARTIAL" if self.admitted else "REFUSED"
+            return "PARTIAL" if self.completed else "REFUSED"
         if self._pending or self.completed < len(self.contract.patterns):
             return "INCOMPLETE"
         return "ADMITTED"

@@ -130,6 +130,7 @@ def test_actual_proxy_reserved_crash_and_ambiguous_send_are_spent(tmp_path):
     with EgressProxy(RunCA(tmp_path / "ca2"), decide2, upstream=lost_response) as proxy:
         assert send(proxy) == 502
     assert decide2.ledger.state_of("egress:approved-call", "call") is SlotState.FAILED
+    assert decide2._gates["approved-call"].outcome() == "UNKNOWN"
     with EgressProxy(RunCA(tmp_path / "ca3"), ControlledDecision(control2), upstream=lost_response) as proxy:
         assert send(proxy) == 403
     assert len(seen) == 1

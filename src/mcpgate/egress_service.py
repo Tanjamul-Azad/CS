@@ -95,10 +95,12 @@ class ControlledDecision:
                 self._identities[call_id] = identity
             return gate
 
-    def reject(self, reason):
+    def reject(self, reason, *, request=None):
         state = self.active_state()
         if state.get("mode") == "gate":
             self._gate(state).reject(reason)
+        if request is not None:
+            self._record_decision(request, state, (False, reason))
 
     def sent(self, *, status=None, error=None):
         state = self.active_state()
@@ -131,6 +133,12 @@ class ControlledDecision:
             decision = self._gate(state)(request)
         else:
             decision = (False, "broker in deny mode")
+        self._record_decision(request, state, decision)
+        return decision
+
+    def _record_decision(self, request, state, decision):
+        call_id = state.get("call_id", "")
+        mode = state.get("mode", "deny")
         creds = frozenset(state.get("credential_headers", ()))
         try:
             view = canonical_view(request, credential_headers=creds)
@@ -142,7 +150,6 @@ class ControlledDecision:
                                  "reason": decision[1], "view": view,
                                  "headers": dict(request.headers),
                                  "body": request.body.decode("utf-8", "replace")}) + "\n")
-        return decision
 
 
 def main() -> None:
