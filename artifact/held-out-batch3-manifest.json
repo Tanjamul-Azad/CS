@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_BEFORE_SCORED_RUN",
+  "frozen_utc": "2026-10-09T05:27:47.879670+00:00",
+  "source": "batch3_workflow.json",
+  "workflow_sha256": "1147cc007df62550de368c36d174e04619a733f9a3a788f2695772cd3d14fda7",
+  "servers": [],
+  "excluded": [
+    {
+      "id": "io.github.drQedwards/pmll-memory-mcp",
+      "reason": "honest effect not in the client-selected folder",
+      "changed": []
+    },
+    {
+      "id": "io.github.flinker-app/ifc-mcp",
+      "reason": "honest workflow did not complete",
+      "error": "ValueError: no free-text field to carry the marker in set-bcf-view"
+    },
+    {
+      "id": "io.github.MakeaMouse/fish-bridge-mcp",
+      "reason": "honest effect not in the client-selected folder",
+      "changed": [
+        ".fish_bridge/session.lock",
+        "home/.fish_bridge/.cloud_backend_warned",
+        "home/.fish_bridge/sessions/sandbox-2026-10-09.db",
+        "home/.fish_bridge/sessions/sandbox-2026-10-09.db-shm",
+        "home/.fish_bridge/sessions/sandbox-2026-10-09.db-wal"
+      ]
+    },
+    {
+      "id": "com.overlayqa/mcp",
+      "reason": "honest workflow did not complete",
+      "error": null
+    },
+    {
+      "id": "io.github.GigantesHJI/securedact-mcp",
+      "reason": "honest effect not in the client-selected folder",
+      "changed": []
+    },
+    {
+      "id": "ai.bourdon/bourdon#npm",
+      "reason": "honest effect not in the client-selected folder",
+      "changed": [
+        "home/.bourdon/audit.jsonl",
+        "home/agent-library/agents/meetings.l5.yaml",
+        "home/agent-library/provenance/meetings.jsonl",
+        "home/agent-library/versions/meetings/20261009T052319580000Z-5e1f9486.l5.yaml"
+      ]
+    },
+    {
+      "id": "io.github.universalamateur/reclaim-mcp-server",
+      "reason": "honest workflow did not complete",
+      "error": null
+    },
+    {
+      "id": "io.github.uditk2/review-assist-mcp",
+      "reason": "honest workflow did not complete",
+      "error": "ValueError: no free-text field to carry the marker in record_hunk_notes"
+    },
+    {
+      "id": "dev.yafl/mcp",
+      "reason": "honest workflow did not complete",
+      "error": "ValueError: no free-text field to carry the marker in upload_file"
+    },
+    {
+      "id": "io.github.S3bRR/agent-tasker-mcp",
+      "reason": "honest workflow did not complete",
+      "error": "ValueError: no write-like tool in tools/list"
+    },
+    {
+      "id": "io.github.runapi-builder/qwen-2-mcp",
+      "reason": "honest effect not in the client-selected folder",
+      "changed": []
+    },
+    {
+      "id": "io.github.Ankit512/itsoc-mcp",
+      "reason": "honest effect not in the client-selected folder",
+      "changed": []
+    },
+    {
+      "id": "io.github.Spacetime-Technology/safehold",
+      "reason": "honest effect not in the client-selected folder",
+      "changed": [
+        "home/.safehold/master.key",
+        "home/.safehold/vault/cf5b5fef-6188-4ad6-9c76-cdd2e58922b9.enc"
+      ]
+    },
+    {
+      "id": "com.wuniq/wuniq",
+      "reason": "honest workflow did not complete",
+      "error": "ValueError: no write-like tool in tools/list"
+    }
+  ],
+  "note": "servers never used in development, the first held-out set, or batch 2"
+}

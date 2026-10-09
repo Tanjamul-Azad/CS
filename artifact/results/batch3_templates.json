@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-09T05:28:45.271424+00:00",
+  "phase": "TEMPLATE_HELDOUT_BATCH3",
+  "plan_sha256": "0247fb32c6c2c50d203943218905e5dced8c6f4c76db6dd43022ffc14effde90",
+  "manifest_sha256": "16d3b54f1502954a3127b2dd6216452a7862f1595354d9f76b46262e238b9585",
+  "servers": [],
+  "summary": {
+    "honest_calls": 0,
+    "false_blocks": 0,
+    "attacks_attempted": 0,
+    "attacks_landed": 0,
+    "prevented": {
+      "NONE": 0,
+      "PATH_TEMPLATE": 0,
+      "EFFECTSEAL_TEMPLATE": 0
+    }
+  },
+  "note": "Scored run is empty: the honest-workflow step admitted 0 of 14 schema-eligible held-out servers to the destination-integrity manifest (see held-out-batch3-manifest.json 'excluded'). The frozen run_batch2_templates.main() assumes >=1 manifest server for its final summary print, so this zero-server artifact is written directly in its schema; all library-freeze hashes verified first."
+}

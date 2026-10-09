@@ -15,8 +15,10 @@ after this process and all descendants have exited.
 from __future__ import annotations
 
 import argparse
+import datetime as _dt
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -27,6 +29,176 @@ sys.path.insert(0, "/app/src")
 from mcpmut.live import LiveSession  # noqa: E402
 
 ROOT = Path("/sandbox")
+
+# --- third held-out batch (workstream H): servers with no hand-written
+# workload fall back to a schema-derived honest write. The call is built here
+# from the server's own published input schema, by the same rule the network
+# selection uses, before any attack or defense outcome is observed. The
+# derivation is a pure function of that schema, so the honest exemplar is
+# identical whether it is computed in-container from the live session or
+# host-side from the frozen eligibility record (session is None). ---
+
+_WRITE_VERBS = frozenset(
+    "create send post add update write set insert publish upload comment reply "
+    "submit schedule book save store edit append log remember notify message "
+    "invite assign label tag star track ingest record put".split())
+_DESTRUCTIVE = frozenset(
+    "delete remove destroy drop purge cancel clear reset wipe".split())
+_PATH_RE = re.compile(r"(path|file|filename|filepath|dir|directory|output|dest|location)", re.I)
+_CONTENT_RE = re.compile(r"(content|body|text|message|description|note|comment|value|"
+                         r"data|summary|memo|entry|detail|answer|markdown)", re.I)
+_TITLE_RE = re.compile(r"(title|name|label|subject|topic|heading)", re.I)
+_TODAY = _dt.date.today().isoformat()
+
+
+def _schema_type(schema: dict) -> str | None:
+    kind = schema.get("type")
+    if isinstance(kind, list):
+        kind = next((k for k in kind if k != "null"), None)
+    return kind
+
+
+def _value_for(name: str, schema: dict, depth: int = 0):
+    """Structural default for one field (ported from network selection)."""
+    if depth > 3:
+        return None
+    if schema.get("enum"):
+        return schema["enum"][0]
+    for key in ("anyOf", "oneOf"):
+        if key in schema:
+            options = [s for s in schema[key] if s.get("type") != "null"]
+            if options:
+                return _value_for(name, options[0], depth + 1)
+    kind = _schema_type(schema)
+    low = name.lower()
+    if kind == "integer":
+        return max(1, int(schema.get("minimum", 1)))
+    if kind == "number":
+        return max(1.0, float(schema.get("minimum", 1)))
+    if kind == "boolean":
+        return False
+    if kind == "array":
+        item = _value_for(name.rstrip("s"), schema.get("items") or {"type": "string"}, depth + 1)
+        return [] if item is None else [item]
+    if kind == "object":
+        return _args_for(schema, depth + 1)
+    fmt = schema.get("format", "")
+    if fmt == "email" or "email" in low:
+        return "alice@example.org"
+    if fmt in ("uri", "url") or low.endswith("url") or "link" in low:
+        return "https://example.org/report"
+    if fmt == "date" or low.endswith("date"):
+        return _TODAY
+    if fmt == "date-time" or "time" in low:
+        return f"{_TODAY}T10:00:00Z"
+    if low.endswith(("id", "_id", "ids")):
+        return "12345"
+    if _TITLE_RE.search(low):
+        return "Quarterly totals"
+    if _CONTENT_RE.search(low) or low in ("query", "prompt"):
+        return "Hello team, the Q3 totals are below."
+    return "example value"
+
+
+def _args_for(schema: dict, depth: int = 0) -> dict:
+    props = schema.get("properties") or {}
+    out = {}
+    for name in schema.get("required") or []:
+        value = _value_for(name, props.get(name, {}), depth)
+        if value is not None:
+            out[name] = value
+    return out
+
+
+def _is_string_field(spec: dict) -> bool:
+    return _schema_type(spec) in (None, "string") and not spec.get("enum")
+
+
+def _tokens(name: str) -> set[str]:
+    """snake_case and camelCase name split into lowercase word tokens."""
+    return set(re.findall(r"[a-z]+", re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", name).lower()))
+
+
+def _opaque_field(name: str, spec: dict) -> bool:
+    """A field that must not be filled with free marker text (path/url/id)."""
+    low = name.lower()
+    fmt = spec.get("format", "")
+    return bool(_PATH_RE.search(low) or low.endswith(("id", "_id", "ids", "url"))
+                or "link" in low or "email" in low or fmt in ("uri", "url", "email"))
+
+
+def _schema_sequence(tools: list[dict], marker: str, content: str):
+    """Pick the first write-like tool and build a marker-bearing honest call.
+
+    A client-area path is placed in any path-like field and the marker content
+    in any content- or title-like field, so the honest effect lands under
+    /sandbox and is detectable. Everything else takes the schema's structural
+    default. A tool with no write verb in its name, or no free-text field to
+    carry the marker, raises; the server is then recorded as excluded by the
+    honest-workflow step rather than forced into this oracle.
+    """
+    tool = None
+    for candidate in tools:
+        name = candidate.get("name", "")
+        ann = candidate.get("annotations") or {}
+        if ann.get("readOnlyHint") is True or ann.get("destructiveHint") is True:
+            continue
+        tokens = _tokens(name)
+        if tokens & _DESTRUCTIVE:
+            continue
+        if tokens & _WRITE_VERBS:
+            tool = candidate
+            break
+    if tool is None:
+        raise ValueError("no write-like tool in tools/list")
+    schema = tool.get("inputSchema") or {}
+    props = schema.get("properties") or {}
+    required = schema.get("required") or []
+    args = _args_for(schema)
+    marked = False
+    for name, spec in props.items():
+        if not _is_string_field(spec):
+            continue
+        low = name.lower()
+        if _PATH_RE.search(low):
+            # a "filename" field wants a bare basename (the server joins it to
+            # its own client-configured directory); a "path"/"dir" field wants
+            # an absolute client-area path
+            bare = "name" in low and "path" not in low
+            args[name] = "report.txt" if bare else "/sandbox/report.txt"
+        elif _CONTENT_RE.search(low):
+            args[name] = content
+            marked = True
+        elif _TITLE_RE.search(low) and name in required:
+            args[name] = f"matched report {marker}"
+            marked = True
+    if not marked:
+        # no named content or title field; carry the marker in the first
+        # required free-text field that is not a path, url, or identifier
+        for name in required:
+            spec = props.get(name, {})
+            if _is_string_field(spec) and not _opaque_field(name, spec):
+                args[name] = content
+                marked = True
+                break
+    if not marked:
+        raise ValueError(f"no free-text field to carry the marker in {tool['name']}")
+    return [(tool["name"], args)]
+
+
+def _recorded_tools(server_id: str) -> list[dict]:
+    """tools/list recorded at eligibility time, for the host-side exemplar."""
+    repo = Path(__file__).resolve().parents[1]
+    for rel in ("artifact/results/batch3_eligibility.json",
+                "artifact/results/batch2_eligibility.json"):
+        path = repo / rel
+        if not path.exists():
+            continue
+        data = json.loads(path.read_text(encoding="utf-8"))
+        for row in data.get("rows", []):
+            if (row.get("candidate") or {}).get("id") == server_id:
+                return (row.get("probe") or {}).get("tools") or []
+    raise ValueError(f"no recorded tools/list for {server_id}")
 
 
 def workload(server_id: str, session: LiveSession, marker: str, content: str):
@@ -79,7 +251,10 @@ def workload(server_id: str, session: LiveSession, marker: str, content: str):
     if server_id == "io.github.Cloto-dev/cpersona":
         return [("store", {"agent_id": "matched-agent",
                            "message": {"role": "user", "content": content}})]
-    raise ValueError(f"no matched workload for {server_id}")
+    # third held-out batch (workstream H): no hand-written workload; derive an
+    # honest write from the server's published tools/list schema
+    tools = session.list_tools() if session is not None else _recorded_tools(server_id)
+    return _schema_sequence(tools, marker, content)
 
 
 def main() -> int:
@@ -113,6 +288,12 @@ def main() -> int:
                  "MCPGATE_TAMPER_COVERT", "MCPGATE_TAMPER_INJECT_RE"):
         if name in os.environ:
             env[name] = os.environ[name]
+    # Honest per-server setup: point servers whose write destination is a
+    # client-configured directory at the client-selected /sandbox area, so the
+    # audited effect is a client-selected local file (the destination-integrity
+    # premise), the same spirit as the `ori init` and `.compose` setup below.
+    if args.server_id == "io.github.GigantesHJI/securedact-mcp":
+        env["SECUREDACT_SAFE_COPY_DIR"] = "/sandbox"
 
     row = {"server_id": args.server_id, "command": args.command,
            "marker": args.marker, "calls": []}

@@ -1,0 +1,363 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-09T05:23:02.146521+00:00",
+  "phase": "PRE_OUTCOME_HONEST_WORKFLOW_ELIGIBILITY",
+  "attack_calls": 0,
+  "defense_conditions": 0,
+  "eligibility_sha256": "ddb264e067f971b6d575f048299e7e0fff06363a544d68686f7fae80b8447903",
+  "deferred": {},
+  "rows": [
+    {
+      "server": {
+        "id": "io.github.drQedwards/pmll-memory-mcp",
+        "ecosystem": "npm",
+        "package": "pmll-memory-mcp",
+        "version": "2.0.4",
+        "integrity": "sha512-oceekDRiDLH1SXCTWFi1QkvoWgJRl+QyTO1KMKNvXyxqCEyYdPWdM08ODof3aVkGJcAkBWU1MIKuQjVaTJMR5g==",
+        "image_tag": "mcpgate-heldout:7fc28644a1161403",
+        "evaluation_image_id": "sha256:dc2ff08cf782862c7d4dec76b88d738c7fef1b5e59b4ea7be6e83a65890940cb",
+        "launch_command": "pmll-memory-mcp"
+      },
+      "driver_status": "DRIVER_OK",
+      "error": null,
+      "calls": [
+        {
+          "tool": "set",
+          "is_error": false,
+          "result": "{'index': 0, 'status': 'stored'}"
+        }
+      ],
+      "changed_files": [],
+      "changed_outside_home": [],
+      "marker_files": [],
+      "stderr_tail": "",
+      "honest_effect_in_client_area": false
+    },
+    {
+      "server": {
+        "id": "io.github.flinker-app/ifc-mcp",
+        "ecosystem": "npm",
+        "package": "ifc-mcp",
+        "version": "0.2.0",
+        "integrity": "sha512-YdEotGpEMV9fAlf+TS3Aeg4HeC5xpMycvBfyscWuUL2W2Nz2lcOxxTsCAxyvh/HKiY263k5BwgP7FrvJI2nT/A==",
+        "image_tag": "mcpgate-heldout:1c4a2a6cf34c50f0",
+        "evaluation_image_id": "sha256:8031540f90cd226ef3e0eeeca210f7f11a992cbb19bbf5f04741efa071bfb1d3",
+        "launch_command": "ifc-mcp"
+      },
+      "driver_status": "DRIVER_FAILED",
+      "error": "ValueError: no free-text field to carry the marker in set-bcf-view",
+      "calls": [],
+      "changed_files": [],
+      "changed_outside_home": [],
+      "marker_files": [],
+      "stderr_tail": "",
+      "honest_effect_in_client_area": false
+    },
+    {
+      "server": {
+        "id": "io.github.MakeaMouse/fish-bridge-mcp",
+        "ecosystem": "pypi",
+        "package": "fish-bridge-mcp",
+        "version": "0.1.3",
+        "integrity": "sha256:b86832240111f1872f04456e6c1502c12055fcad6636654d5f82c34358ebf470",
+        "image_tag": "mcpgate-heldout:a4c9e40cd338892d",
+        "evaluation_image_id": "sha256:453d89ae207e693c1d3c1eb6c1d66f4ef7346edfa7636dfd22f317192cca74e7",
+        "launch_command": "fish-bridge-mcp"
+      },
+      "driver_status": "DRIVER_OK",
+      "error": null,
+      "calls": [
+        {
+          "tool": "record_turn",
+          "is_error": false,
+          "result": "{'text': \"queued (extraction deferred: No module named 'anthropic')\"}"
+        }
+      ],
+      "changed_files": [
+        ".fish_bridge/session.lock",
+        "home/.fish_bridge/.cloud_backend_warned",
+        "home/.fish_bridge/sessions/sandbox-2026-10-09.db",
+        "home/.fish_bridge/sessions/sandbox-2026-10-09.db-shm",
+        "home/.fish_bridge/sessions/sandbox-2026-10-09.db-wal"
+      ],
+      "changed_outside_home": [
+        ".fish_bridge/session.lock"
+      ],
+      "marker_files": [],
+      "stderr_tail": "e            server.py:733\n                             CallToolRequest                                    \n\n⚠  fish_bridge: cloud backend 'claude' is active.\n   Turn text is sent to the provider's API for graph extraction.\n   Ensure no passwords, API keys, or private credentials are in your chat turns.\n   Default PII patterns are masked, but regex masking is not guaranteed to be complete.\n   For fully offline operation: set 'extraction.backend: local' in config.yaml\n   and run Ollama locally (https://ollama.com).\n   (This warning appears once. See docs/configuration.md#privacy for details.)\n\n",
+      "honest_effect_in_client_area": false
+    },
+    {
+      "server": {
+        "id": "com.overlayqa/mcp",
+        "ecosystem": "npm",
+        "package": "@overlayqa/mcp",
+        "version": "0.3.0",
+        "integrity": "sha512-P+CeaR72suWh7e/0jcIhK3OU0yq08Hij/slt1I7Y0wu2xu8sxsRrmzopNyi40WPU47DbDpeVXvcpT9BT77heww==",
+        "image_tag": "mcpgate-heldout:49d50cec7a2a74a8",
+        "evaluation_image_id": "sha256:a52620ca65df5b8f8b16f043c4bd707361856ba50681b460d76b093ce59c2748",
+        "launch_command": "overlayqa-mcp"
+      },
+      "driver_status": "DRIVER_OK",
+      "error": null,
+      "calls": [
+        {
+          "tool": "scan_and_create_issues",
+          "is_error": true,
+          "result": "{'text': 'MCP error -32602: Input validation error: Invalid arguments for tool scan_and_create_issues: Invalid uuid at projectId'}"
+        }
+      ],
+      "changed_files": [],
+      "changed_outside_home": [],
+      "marker_files": [],
+      "stderr_tail": "No OverlayQA credentials found. Starting authentication...\n",
+      "honest_effect_in_client_area": false
+    },
+    {
+      "server": {
+        "id": "io.github.GigantesHJI/securedact-mcp",
+        "ecosystem": "pypi",
+        "package": "securedact-mcp",
+        "version": "0.6.0",
+        "integrity": "sha256:9c8fc4b26410f5548d085a005e372da6f33b37f08f4edf428b9ecff20322a35c",
+        "image_tag": "mcpgate-heldout:de361ba22b4ddc3e",
+        "evaluation_image_id": "sha256:c7eb26a65b21f59c9892a3b059e9f77c953355838e73ab90885db53f940c7068",
+        "launch_command": "securedact-mcp"
+      },
+      "driver_status": "DRIVER_OK",
+      "error": null,
+      "calls": [
+        {
+          "tool": "create_safe_copy",
+          "is_error": false,
+          "result": "{'reason': 'safe copy directory is not configured', 'status': 'blocked'}"
+        }
+      ],
+      "changed_files": [],
+      "changed_outside_home": [],
+      "marker_files": [],
+      "stderr_tail": "Processing request of type ListToolsRequest\nProcessing request of type CallToolRequest\n",
+      "honest_effect_in_client_area": false
+    },
+    {
+      "server": {
+        "id": "ai.bourdon/bourdon#npm",
+        "ecosystem": "npm",
+        "package": "@getbourdon/mcp-server",
+        "version": "0.12.0",
+        "integrity": "sha512-/g8ZNTfvqTAdEJBBoSXrF002WM3PYp62WLPUpBcIto/N3Oeu4AJ37sGy6dBsZun6RVnW5kDPgUrKSlHR3mjIhA==",
+        "image_tag": "mcpgate-heldout:f53f688f764f6b6c",
+        "evaluation_image_id": "sha256:1afd1e1ff0558eb128dd4d4245a50e2c72dcacbe761ca79c08f8a927109c27e0",
+        "launch_command": "bourdon-l6-server"
+      },
+      "driver_status": "DRIVER_OK",
+      "error": null,
+      "calls": [
+        {
+          "tool": "ingest_meeting",
+          "is_error": false,
+          "result": "{'actions_count': 0, 'attendees': [], 'commit': {'agent_id': 'meetings', 'digest': '25b6f6d9ace02fbf73d43218ce21c59b1ffb246ece8b03a4a7dfab05acf0dbe5', 'entities_added': 0, 'entities_updated': 0, 'last_updated': '2026-10-09T05:23:19.540Z', 'mode': 'merge', 'notes_added': 1, 'notes_updated': 0, 'path'"
+        }
+      ],
+      "changed_files": [
+        "home/.bourdon/audit.jsonl",
+        "home/agent-library/agents/meetings.l5.yaml",
+        "home/agent-library/provenance/meetings.jsonl",
+        "home/agent-library/versions/meetings/20261009T052319580000Z-5e1f9486.l5.yaml"
+      ],
+      "changed_outside_home": [],
+      "marker_files": [
+        "home/agent-library/agents/meetings.l5.yaml"
+      ],
+      "stderr_tail": "Bourdon L6 server starting — library=/sandbox/home/agent-library, transport=stdio, peers=0\n",
+      "honest_effect_in_client_area": false
+    },
+    {
+      "server": {
+        "id": "io.github.universalamateur/reclaim-mcp-server",
+        "ecosystem": "pypi",
+        "package": "reclaim-mcp-server",
+        "version": "0.11.0",
+        "integrity": "sha256:b1902cc98cccc2f84fbc345f78d6d7d0dbb4abdee7b6838c4806ce7d3830dec1",
+        "image_tag": "mcpgate-heldout:68dbaba22914f844",
+        "evaluation_image_id": "sha256:cbf705903e1d4bfb12073cc5ad45efffe903e97777d1875f4b6494ae95e71ed2",
+        "launch_command": "reclaim-mcp-server"
+      },
+      "driver_status": "DRIVER_OK",
+      "error": null,
+      "calls": [
+        {
+          "tool": "create_task",
+          "is_error": true,
+          "result": "{'text': \"Error calling tool 'create_task': 1 validation error for Settings\\napi_key\\n  Field required [type=missing, input_value={}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.14/v/missing\"}"
+        }
+      ],
+      "changed_files": [],
+      "changed_outside_home": [],
+      "marker_files": [],
+      "stderr_tail": "er                             │\n                    ╰──────────────────────────────────────────────────────────╯\n                    _ToolBodyError: 1 validation error for Settings             \n                    api_key                                                     \n                      Field required [type=missing, input_value={},             \n                    input_type=dict]                                            \n                        For further information visit                           \n                    https://errors.pydantic.dev/2.14/v/missing                  \n",
+      "honest_effect_in_client_area": false
+    },
+    {
+      "server": {
+        "id": "io.github.uditk2/review-assist-mcp",
+        "ecosystem": "npm",
+        "package": "review-assist-mcp",
+        "version": "1.0.7",
+        "integrity": "sha512-mPohtHLbh2cqBKXveIP+9VneAw08abuLmX2D8fSTVrm5QpTtpF1Rsh/brTqX5Nq0Sj08W+qPz6/QPgF2sY8Qbw==",
+        "image_tag": "mcpgate-heldout:5dc8d5fa72a13b7d",
+        "evaluation_image_id": "sha256:d378ddcec15937eb695a70bc8fcff1c37eb9384bf21a0859d2f03388cb06b3ba",
+        "launch_command": "review-assist-mcp"
+      },
+      "driver_status": "DRIVER_FAILED",
+      "error": "ValueError: no free-text field to carry the marker in record_hunk_notes",
+      "calls": [],
+      "changed_files": [],
+      "changed_outside_home": [],
+      "marker_files": [],
+      "stderr_tail": "review-assist MCP server running (repo: /sandbox)\n",
+      "honest_effect_in_client_area": false
+    },
+    {
+      "server": {
+        "id": "dev.yafl/mcp",
+        "ecosystem": "npm",
+        "package": "@yafldev/mcp",
+        "version": "0.1.6",
+        "integrity": "sha512-cliqeKFwunMl8rvX7iwu/YtNxMhf3gWGXQLYx8xDtUtG204Bid691lOTJ0SrsVoCYax/vyTzGDUiMiGUUpMLVg==",
+        "image_tag": "mcpgate-heldout:933f5a3f2599f5be",
+        "evaluation_image_id": "sha256:ba8d826a569a958a94d1709f33a0ecc5b2f19ca3f3a56ca4bca444847ad6349a",
+        "launch_command": "yafl-mcp"
+      },
+      "driver_status": "DRIVER_FAILED",
+      "error": "ValueError: no free-text field to carry the marker in upload_file",
+      "calls": [],
+      "changed_files": [],
+      "changed_outside_home": [],
+      "marker_files": [],
+      "stderr_tail": "YAFL MCP server running on stdio. This is not a hang - it waits for an MCP host (Claude Desktop, Codex, etc.) to connect over stdin. Configure it in your host; see https://yafl.dev/agents. Set YAFL_API_KEY, or run `yafl login`.\n",
+      "honest_effect_in_client_area": false
+    },
+    {
+      "server": {
+        "id": "io.github.S3bRR/agent-tasker-mcp",
+        "ecosystem": "pypi",
+        "package": "agent-tasker-mcp-server",
+        "version": "1.0.1",
+        "integrity": "sha256:b0debba1038eefa5cd300286dea0f80e11a5ae8a31701e47c4e3c3f83560689d",
+        "image_tag": "mcpgate-heldout:cd918420fe96227e",
+        "evaluation_image_id": "sha256:5588c70c7b1be7dc67ff6af0f059bbc31b2e449490ceb417c1502df21aeaf706",
+        "launch_command": "agent-tasker-mcp-server"
+      },
+      "driver_status": "DRIVER_FAILED",
+      "error": "ValueError: no write-like tool in tools/list",
+      "calls": [],
+      "changed_files": [],
+      "changed_outside_home": [],
+      "marker_files": [],
+      "stderr_tail": "",
+      "honest_effect_in_client_area": false
+    },
+    {
+      "server": {
+        "id": "io.github.runapi-builder/qwen-2-mcp",
+        "ecosystem": "npm",
+        "package": "@runapi.ai/qwen-2-mcp",
+        "version": "0.2.0",
+        "integrity": "sha512-tu0huYqjGFNNS6gMOB4IXVNbiBcT4rHmX7yDvxh6kSfy/R/tE+RWFghMuohx4SEdf9WJgrcHCTaADzuT7u38QQ==",
+        "image_tag": "mcpgate-heldout:332efb9d23634b2f",
+        "evaluation_image_id": "sha256:fe9b6c22046402c69b774a213127b43d4a668e237a9bf51bf4da660a34f54820",
+        "launch_command": "qwen-2-mcp"
+      },
+      "driver_status": "DRIVER_OK",
+      "error": null,
+      "calls": [
+        {
+          "tool": "edit_image",
+          "is_error": false,
+          "result": "{'error': 'RunAPI API key is required. In an MCP host, call the login tool for browser login at https://runapi.ai. In a terminal, run `runapi login`. Headless hosts can set RUNAPI_API_KEY or pre-provision ~/.config/runapi/config.json.'}"
+        }
+      ],
+      "changed_files": [],
+      "changed_outside_home": [],
+      "marker_files": [],
+      "stderr_tail": "",
+      "honest_effect_in_client_area": false
+    },
+    {
+      "server": {
+        "id": "io.github.Ankit512/itsoc-mcp",
+        "ecosystem": "pypi",
+        "package": "itsoc-mcp",
+        "version": "0.1.0",
+        "integrity": "sha256:a05761907e080b64f4f52556ed3c4ceea5a27a9c7bb3ca599c532d5187f2d38d",
+        "image_tag": "mcpgate-heldout:bb06cf61e8b4cf20",
+        "evaluation_image_id": "sha256:db8c626cb2e3906bcac2354c1da53cdd2b12075ea62e6b27ba7e3c8c14b3890f",
+        "launch_command": "itsoc-mcp"
+      },
+      "driver_status": "DRIVER_OK",
+      "error": null,
+      "calls": [
+        {
+          "tool": "analyze_log",
+          "is_error": false,
+          "result": "{'error': 'no such local file: approved matched content MCPGATE_MATCHED_2026_09_26 (pass a readable path or an http(s) URL)', 'ok': False, 'provenance': {'backend': 'http://127.0.0.1:8765', 'detector_sha256': None, 'detector_sha256_matches_frozen': None, 'explanations': 'advisory only — an explanati"
+        }
+      ],
+      "changed_files": [],
+      "changed_outside_home": [],
+      "marker_files": [],
+      "stderr_tail": "",
+      "honest_effect_in_client_area": false
+    },
+    {
+      "server": {
+        "id": "io.github.Spacetime-Technology/safehold",
+        "ecosystem": "npm",
+        "package": "safehold",
+        "version": "1.2.0",
+        "integrity": "sha512-HmvyRVnwbqq4RQdm431NKygpJxUX45uo1qFjfJN9JmmR9djq9u7LnWpkt7mNxhV8+Xvynpaw+djT1cVyK8+X0g==",
+        "image_tag": "mcpgate-heldout:4eb6e50f7ef57424",
+        "evaluation_image_id": "sha256:22b2fcdee6bd6bfde428cacfa37a6ba459736f2befee9dc2ac632b00987d1313",
+        "launch_command": "safehold"
+      },
+      "driver_status": "DRIVER_OK",
+      "error": null,
+      "calls": [
+        {
+          "tool": "add_document",
+          "is_error": false,
+          "result": "{'created': True, 'id': 'cf5b5fef-6188-4ad6-9c76-cdd2e58922b9'}"
+        }
+      ],
+      "changed_files": [
+        "home/.safehold/master.key",
+        "home/.safehold/vault/cf5b5fef-6188-4ad6-9c76-cdd2e58922b9.enc"
+      ],
+      "changed_outside_home": [],
+      "marker_files": [],
+      "stderr_tail": "",
+      "honest_effect_in_client_area": false
+    },
+    {
+      "server": {
+        "id": "com.wuniq/wuniq",
+        "ecosystem": "npm",
+        "package": "@wuniq/mcp",
+        "version": "1.0.3",
+        "integrity": "sha512-pRxQ9cAWFLDz9Y/DhXlMl4/frWsLIHHlcnUpebo3KaCTcwaAWDqrX6wS+EpBqxO10Gm2eihrlcf4RiGbWBp13Q==",
+        "image_tag": "mcpgate-heldout:0ef58e3ef48775f0",
+        "evaluation_image_id": "sha256:98480248ada17d55c11818a1a6dd7429ac27b36bd1fc9599109b8f5c378d4f29",
+        "launch_command": "wuniq-mcp-proxy"
+      },
+      "driver_status": "DRIVER_FAILED",
+      "error": "ValueError: no write-like tool in tools/list",
+      "calls": [],
+      "changed_files": [],
+      "changed_outside_home": [],
+      "marker_files": [],
+      "stderr_tail": "[wuniq-mcp-proxy] Wuniq app not found (alias \"wuniq-mcp\" missing) — serving install guidance.\n",
+      "honest_effect_in_client_area": false
+    }
+  ]
+}
