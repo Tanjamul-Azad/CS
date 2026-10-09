@@ -26,7 +26,8 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
-from matplotlib.patches import FancyArrowPatch, FancyBboxPatch, Rectangle  # noqa: E402
+from matplotlib.patches import (Circle, Ellipse, FancyArrowPatch, FancyBboxPatch,  # noqa: E402
+                                Rectangle)
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import make_strengthening_figures as sf  # noqa: E402
@@ -120,71 +121,129 @@ def teaser() -> None:
 
 
 def architecture() -> None:
-    fig, ax = plt.subplots(figsize=(FULL, 2.85))
-    ax.set_xlim(0, 14.2)
-    ax.set_ylim(0.25, 6.55)
+    """Component view: who is trusted, where the server is confined, and the
+    numbered admission steps shared by the local-state and network paths."""
+    fig, ax = plt.subplots(figsize=(FULL, 3.0))
+    ax.set_xlim(0, 21.7)
+    ax.set_ylim(0.15, 9.35)
+    ax.set_aspect("equal")
     ax.axis("off")
+    trust_fill, untrusted_fill, untrusted_text, world_fill = "#DCE9F5", "#FBE8C4", "#7A4E00", "#EDEDED"
 
-    def box(x, y, w, h, text, color, tcolor="white", size=7.2):
-        ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.03,rounding_size=0.08",
-                                    facecolor=color, edgecolor="none"))
+    def box(x, y, w, h, text, face, edge="none", tcolor="black", size=7, ls="-", weight="normal"):
+        ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.02,rounding_size=0.12",
+                                    facecolor=face, edgecolor=edge, linewidth=0.7, linestyle=ls,
+                                    zorder=3))
         ax.text(x + w / 2, y + h / 2, text, ha="center", va="center", color=tcolor,
-                fontsize=size, linespacing=1.08)
+                fontsize=size, linespacing=1.1, zorder=4, fontweight=weight)
 
-    def arrow(x0, y0, x1, y1, color=GRAY, style="-|>"):
-        ax.add_patch(FancyArrowPatch((x0, y0), (x1, y1), arrowstyle=style, mutation_scale=6,
-                                     color=color, linewidth=0.8))
+    def store(x, y, w, h, text, face, edge):
+        # A data store, drawn as a cylinder.
+        e = 0.32
+        ax.add_patch(Rectangle((x, y + e / 2), w, h - e, facecolor=face, edgecolor="none",
+                               zorder=3))
+        ax.add_patch(Ellipse((x + w / 2, y + e / 2), w, e, facecolor=face, edgecolor=edge,
+                             linewidth=0.7, zorder=2.9))
+        for side in (x, x + w):
+            ax.plot([side, side], [y + e / 2, y + h - e / 2], color=edge, lw=0.7, zorder=3.1)
+        ax.add_patch(Ellipse((x + w / 2, y + h - e / 2), w, e, facecolor=face, edgecolor=edge,
+                             linewidth=0.7, zorder=3.2))
+        ax.text(x + w / 2, y + (h - e / 2) / 2, text, ha="center", va="center", fontsize=7,
+                linespacing=1.1, zorder=4)
 
-    ax.text(0.2, 6.3, "Pin time: once per approved server version", fontsize=7,
-            fontweight="bold", color=GRAY)
-    pin = [("Approved\nexemplar call", SKY, "black"),
-           ("Perturbed honest runs\n(private copies; broker\nin record mode)", ORANGE, "black"),
-           ("Anti-unify changed\nobjects and outgoing\nrequests", BLUE, "white"),
-           ("Effect and request\ntemplates, slack\nin bits", BLUE, "white")]
-    for i, (t, c, tc) in enumerate(pin):
-        x = 0.2 + i * 2.6
-        box(x, 5.05, 2.35, 1.0, t, c, tc)
-        if i:
-            arrow(x - 0.25, 5.55, x - 0.02, 5.55)
-    tmpl_x, tmpl_y = 0.2 + 3 * 2.6 + 1.17, 5.05
+    def arrow(points, color=GRAY, ls="-"):
+        for (x0, y0), (x1, y1) in zip(points[:-2], points[1:-1]):
+            ax.plot([x0, x1], [y0, y1], color=color, lw=0.8, ls=ls, zorder=2)
+        ax.add_patch(FancyArrowPatch(points[-2], points[-1], arrowstyle="-|>", mutation_scale=7,
+                                     color=color, linewidth=0.8, linestyle=ls, zorder=2,
+                                     shrinkA=0, shrinkB=0))
 
-    width, gap, start = 1.78, 0.22, 0.2
+    def step(x, y, n):
+        ax.add_patch(Circle((x, y), 0.25, facecolor="black", edgecolor="white", linewidth=0.6,
+                            zorder=5))
+        ax.text(x, y - 0.01, str(n), ha="center", va="center", color="white", fontsize=6.3,
+                fontweight="bold", zorder=6)
 
-    def lane(y, title, stages, zone, note):
-        ax.text(0.2, y + 1.08, title, fontsize=7, fontweight="bold", color=GRAY)
-        zx = start + zone[0] * (width + gap) - 0.1
-        zw = (zone[1] - zone[0]) * (width + gap) - gap + 0.2
-        ax.add_patch(Rectangle((zx, y - 0.16), zw, 1.08, facecolor="none", edgecolor=ORANGE,
-                               linewidth=0.8, linestyle=(0, (3, 2))))
-        ax.text(zx + zw / 2, y - 0.36, note, ha="center", fontsize=7, color="#8A5A00",
-                style="italic")
-        for i, (t, c) in enumerate(stages):
-            x = start + i * (width + gap)
-            box(x, y, width, 0.76, t, c, "black" if c == ORANGE else "white")
+    def label(x, y, text, color=GRAY, ha="left", size=7, **kw):
+        ax.text(x, y, text, ha=ha, va="center", fontsize=size, color=color, zorder=4, **kw)
+
+    # (a) Pin time.
+    label(0.15, 9.1, "(a) Pin time: once per approved server version", "black",
+          fontweight="bold")
+    box(0.2, 7.45, 2.6, 1.2, "Approved\nexample call $a_0$", trust_fill, BLUE)
+    box(3.4, 7.45, 4.0, 1.2, "Honest runs on\nperturbed copies of $a_0$\n(broker records)",
+        untrusted_fill, ORANGE, ls=(0, (3, 1.5)))
+    box(8.0, 7.45, 3.9, 1.2, "Abstract arguments;\nanti-unify the runs\ninto bounded holes",
+        trust_fill, BLUE)
+    store(12.5, 7.35, 3.6, 1.4, "Templates $\\tau$\n(effects, requests)", trust_fill, BLUE)
+    for x0, x1 in ((2.8, 3.4), (7.4, 8.0), (11.9, 12.5)):
+        arrow([(x0 + 0.04, 8.05), (x1 - 0.06, 8.05)])
+    label(16.45, 8.05, "slack: a bound, in bits,\non what $\\tau$ leaves free", GRAY,
+          style="italic", size=6.8)
+
+    # (b) Call time: the trusted region holds everything but the server.
+    label(0.15, 6.75, "(b) Call time", "black", fontweight="bold")
+    ax.add_patch(FancyBboxPatch((2.95, 0.3), 15.95, 6.1, boxstyle="round,pad=0,rounding_size=0.2",
+                                facecolor="#F4F8FC", edgecolor=BLUE, linewidth=0.9, zorder=0.5))
+    label(18.75, 6.1, "EffectSeal (trusted)", BLUE, ha="right", fontweight="bold")
+    ax.add_patch(FancyBboxPatch((6.55, 0.45), 3.5, 5.45, boxstyle="round,pad=0,rounding_size=0.15",
+                                facecolor="#FEF7EA", edgecolor=ORANGE, linewidth=0.9,
+                                linestyle=(0, (3, 1.5)), zorder=1))
+    label(8.3, 5.6, "Confined sandbox", untrusted_text, ha="center", fontweight="bold")
+    label(8.3, 4.95, "no direct egress;\ndummy token only", untrusted_text, ha="center",
+          style="italic", size=6.6)
+
+    box(0.2, 4.85, 2.05, 1.2, "LLM agent\n(MCP client)", world_fill)
+    box(3.25, 4.85, 2.95, 1.2, "Check call $a$;\nbuild $C=\\tau(a)$", trust_fill, BLUE)
+    box(3.25, 3.0, 2.95, 1.2, "Reserve one\nallowance slot", trust_fill, BLUE)
+    box(6.85, 2.9, 2.9, 1.4, "MCP server\n(unmodified,\nuntrusted)", ORANGE)
+    store(6.85, 0.65, 2.9, 1.4, "Private copy $D$\n(only writable)", untrusted_fill, ORANGE)
+    arrow([(2.25, 5.45), (3.21, 5.45)])
+    label(2.73, 5.72, "$a$", GRAY, ha="center", size=7)
+    arrow([(4.72, 4.85), (4.72, 4.24)])
+    arrow([(6.2, 3.6), (6.81, 3.6)])
+    arrow([(8.3, 2.9), (8.3, 2.09)])
+    label(8.42, 2.5, "writes", GRAY, size=6.6)
+    step(3.25, 6.05, 1)
+    step(3.25, 4.2, 2)
+    step(6.85, 4.3, 3)
+
+    # The pinned template reaches step 1 along the gap between the panels.
+    arrow([(14.3, 7.35), (14.3, 6.95), (4.72, 6.95), (4.72, 6.09)], BLUE, ls=(0, (4, 2)))
+    label(9.6, 7.17, "$\\tau$ for this server version", BLUE, ha="center", size=6.6)
+
+    # The two effect paths run the same steps 4-6; step 5 is the decision.
+    cols, w, h = (10.35, 13.22, 16.09), 2.52, 1.2
+    lanes = (
+        (3.0, "Outgoing requests: the broker",
+         ("Terminate TLS;\ncanonical view", "Check every\nwrite against $C$",
+          "Inject the real\ncredential; send"),
+         "Upstream API\n(e.g., Postmark)"),
+        (0.75, "Local state: the mediator",
+         ("Stop writers;\nread $D$ once", "Check effect\n$E$ against $C$",
+          "Promote the\nsame bytes"),
+         "Real files,\nSQLite"),
+    )
+    for y, title, stages, world in lanes:
+        label(10.2, y + h + 0.55, title, "black", style="italic")
+        for i, (x, text) in enumerate(zip(cols, stages)):
+            if i == 1:
+                box(x, y, w, h, text, BLUE, tcolor="white")
+            else:
+                box(x, y, w, h, text, trust_fill, BLUE)
+            step(x, y + h, 4 + i)
             if i:
-                arrow(x - gap + 0.01, y + 0.38, x - 0.01, y + 0.38)
+                arrow([(cols[i - 1] + w + 0.03, y + h / 2), (x - 0.05, y + h / 2)])
+        box(19.25, y, 2.4, h, world, world_fill)
+        arrow([(cols[2] + w + 0.03, y + h / 2), (19.21, y + h / 2)])
+        arrow([(9.75, y + h / 2), (10.31, y + h / 2)])
 
-    y_local, y_net = 2.95, 0.72
-    lane(y_local, "Call time, local state (files, SQLite)",
-         [("Check request\nshape", BLUE), ("Reserve\nallowance", BLUE),
-          ("Run server on\na private copy", ORANGE), ("Stop every\nwriter", TEAL),
-          ("Read the copy\nonce", TEAL), ("Check the\ninstantiated\ntemplate", TEAL),
-          ("Promote the\nsame bytes", TEAL)],
-         (2, 3), "no network; private copy\nonly writable")
-    lane(y_net, "Call time, outgoing requests (network)",
-         [("Server runs with\na dummy token", ORANGE), ("Only route out:\nthe broker", BLUE),
-          ("TLS, typed\ncanonical view", TEAL), ("Durably reserve\nthe call", BLUE),
-          ("Check ordered\nrequest template", TEAL), ("Inject credential\nand send", TEAL),
-          ("Record send\noutcome", TEAL)],
-         (0, 1), "no direct egress")
-    # The pinned template feeds both check steps. One line runs down the gap
-    # between the fifth and sixth columns, so it crosses no box.
-    bus_x = start + 5 * (width + gap) - gap / 2
-    check_left = start + 5 * (width + gap) + 0.25
-    arrow(bus_x, tmpl_y, check_left, y_local + 0.76, BLUE)
-    ax.plot([bus_x, bus_x], [tmpl_y, y_net + 1.05], color=BLUE, linewidth=0.8)
-    arrow(bus_x, y_net + 1.05, start + 4 * (width + gap) + 0.25, y_net + 0.76, BLUE)
-    del tmpl_x
+    # Refusal path.
+    ax.add_patch(FancyBboxPatch((3.25, 0.6), 2.95, 1.95, boxstyle="round,pad=0,rounding_size=0.12",
+                                facecolor="white", edgecolor=RED, linewidth=0.7,
+                                linestyle=(0, (2, 1.5)), zorder=1))
+    ax.text(4.72, 1.575, "Any failed check:\ndiscard $D$ or drop\nthe request; mark\nthe slot failed",
+            ha="center", va="center", fontsize=6.8, color=RED, linespacing=1.15, zorder=4)
     sf.save(fig, "fig1_effectseal_architecture")
 
 
