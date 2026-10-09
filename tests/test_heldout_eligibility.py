@@ -45,6 +45,7 @@ def test_image_tag_is_stable_and_changes_with_artifact_identity():
     assert first.startswith("mcpgate-heldout:")
 
 
+@pytest.mark.skipif(sys.platform != "win32", reason="exercises Windows path handling")
 def test_windows_docker_desktop_fallback(monkeypatch, tmp_path):
     monkeypatch.setattr(eligibility.shutil, "which", lambda _name: None)
     monkeypatch.setattr(eligibility.os, "name", "nt")

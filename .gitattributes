@@ -1,0 +1,13 @@
+# Hash-bound files. Pre-registration plans, manifests, and result files record
+# the sha256 of these exact bytes, so git must store them byte for byte (no
+# line-ending conversion); otherwise a clone on another OS cannot verify them.
+artifact/** -text
+src/mcpgate/template_inference.py -text
+src/mcpgate/canonical.py -text
+experiments/run_template_generalization.py -text
+data/processed/label_split.json -text
+data/processed/labels_annotator_A.tsv -text
+data/processed/labels_annotator_B.tsv -text
+
+# Shell scripts run inside Linux containers.
+*.sh text eol=lf

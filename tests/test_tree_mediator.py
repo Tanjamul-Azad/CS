@@ -13,6 +13,7 @@ from __future__ import annotations
 import hashlib
 import io
 import sys
+import threading
 import zipfile
 from pathlib import Path
 
@@ -351,6 +352,91 @@ def test_second_unique_call_past_allowance_refused(tmp_path):
     with pytest.raises(AllowanceError):
         gate.call("write_file", {"path": "report.txt", "content": MARKER},
                   contract=contract, runner=runner, request_id="once-2")
+
+
+def test_overlapping_last_allowance_enters_exactly_one_runner(tmp_path):
+    """A9: reservation, not a global mediator lock, closes the race."""
+
+    baseline = _baseline(tmp_path)
+    gate = _mediator(tmp_path, baseline)
+    contract = _exact_contract(baseline)
+    entered = threading.Event()
+    release = threading.Event()
+    outcomes = []
+    executions = 0
+    executions_lock = threading.Lock()
+
+    def slow_runner(stage: Path, operation: str, args: dict) -> StagedInvocation:
+        nonlocal executions
+        with executions_lock:
+            executions += 1
+        entered.set()
+        assert release.wait(timeout=5), "test did not release the admitted runner"
+        (stage / "report.txt").write_bytes(MARKER.encode())
+        return StagedInvocation(dict(args), {"ok": True}, boundary_closed=True)
+
+    def first_call():
+        try:
+            outcomes.append(gate.call(
+                "write_file", {"path": "report.txt", "content": MARKER},
+                contract=contract, runner=slow_runner, request_id="race-first",
+            ))
+        except BaseException as error:  # surfaced in the main test thread
+            outcomes.append(error)
+
+    thread = threading.Thread(target=first_call)
+    thread.start()
+    assert entered.wait(timeout=5), "first contender never entered execution"
+    with pytest.raises(AllowanceError, match="allowance exhausted"):
+        gate.call(
+            "write_file", {"path": "report.txt", "content": MARKER},
+            contract=contract, runner=slow_runner, request_id="race-second",
+        )
+    release.set()
+    thread.join(timeout=5)
+
+    assert not thread.is_alive()
+    assert executions == 1
+    assert len(outcomes) == 1
+    assert not isinstance(outcomes[0], BaseException)
+
+
+def test_overlapping_same_request_does_not_reenter_runner(tmp_path):
+    """A concurrent retry sees RESERVED/UNKNOWN and must not execute."""
+
+    baseline = _baseline(tmp_path)
+    gate = _mediator(tmp_path, baseline)
+    contract = _exact_contract(baseline)
+    entered = threading.Event()
+    release = threading.Event()
+    outcome = []
+    executions = 0
+
+    def slow_runner(stage: Path, operation: str, args: dict) -> StagedInvocation:
+        nonlocal executions
+        executions += 1
+        entered.set()
+        assert release.wait(timeout=5)
+        (stage / "report.txt").write_bytes(MARKER.encode())
+        return StagedInvocation(dict(args), {"ok": True}, boundary_closed=True)
+
+    thread = threading.Thread(target=lambda: outcome.append(gate.call(
+        "write_file", {"path": "report.txt", "content": MARKER},
+        contract=contract, runner=slow_runner, request_id="same-request",
+    )))
+    thread.start()
+    assert entered.wait(timeout=5)
+    with pytest.raises(AllowanceError, match="RESERVED"):
+        gate.call(
+            "write_file", {"path": "report.txt", "content": MARKER},
+            contract=contract, runner=slow_runner, request_id="same-request",
+        )
+    release.set()
+    thread.join(timeout=5)
+
+    assert not thread.is_alive()
+    assert executions == 1
+    assert len(outcome) == 1
 
 
 # --- commit destination -----------------------------------------------------

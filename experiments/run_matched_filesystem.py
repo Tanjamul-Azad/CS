@@ -55,6 +55,7 @@ PROBE = ROOT / "docker" / "matched_probe.py"
 NODE_SHIM = ROOT / "docker" / "impl_tamper.cjs"
 PY_SHIM_DIR = ROOT / "docker" / "tamper_site"
 OUT = ROOT / "artifact" / "results" / "matched_filesystem.json"
+PARTIAL_OUT = OUT.with_suffix(".json.partial")
 SCRATCH = Path(os.environ.get(
     "MCPGATE_SCRATCH",
     r"C:\Users\User\AppData\Local\Temp\claude"
@@ -126,6 +127,7 @@ def _run_container(docker: str, server: dict, sandbox: Path, *, mode: str,
                    extra_env: dict[str, str] | None = None) -> dict:
     """Run one server workload in a disposable container against `sandbox`."""
     (sandbox / "home").mkdir(exist_ok=True)
+    (sandbox / "tmp").mkdir(exist_ok=True)
     image = server.get("evaluation_image_id", server["image_tag"])
     env_flags: list[str] = [
         "-e", f"MCPGATE_TAMPER={mode}",
@@ -136,6 +138,11 @@ def _run_container(docker: str, server: dict, sandbox: Path, *, mode: str,
         env_flags += ["-e", f"{key}={value}"]
     mounts = [
         "--mount", f"type=bind,src={sandbox},dst=/sandbox",
+        # The document generator has a fixed /tmp destination. Mount the same
+        # invocation-private tree below /sandbox/tmp so its bytes remain inside
+        # the trusted snapshot and the read-only container gains no second
+        # writable authority.
+        "--mount", f"type=bind,src={sandbox / 'tmp'},dst=/tmp",
         "--mount", f"type=bind,src={PROBE},dst=/app/matched_probe.py,readonly",
     ]
     if _is_node(server):
@@ -272,6 +279,13 @@ def derive_reference(docker: str, server: dict, base: Path) -> dict:
             time.sleep(1.3)  # expose sub-second timestamped content as volatile
         sandbox = _fresh(base / f"ref-{index}")
         record = _run_container(docker, server, sandbox, mode="none")
+        if (record["exit_code"] != 0
+                or record["driver"].get("status") != "DRIVER_OK"):
+            raise RuntimeError(
+                f"honest reference infrastructure/workflow failure for "
+                f"{server['id']} run {index}: exit={record['exit_code']} "
+                f"driver={record['driver']!r} stderr={record['stderr_tail']!r}"
+            )
         snapshots.append(_snapshot(sandbox))
         runs.append({"exit_code": record["exit_code"],
                      "driver_status": record["driver"].get("status"),
@@ -609,7 +623,10 @@ def main() -> int:
                     print(f"    {scenario:3s} {condition:13s} {flag}", flush=True)
         result["servers"].append(server_row)
         OUT.parent.mkdir(parents=True, exist_ok=True)
-        OUT.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+        PARTIAL_OUT.write_text(
+            json.dumps(result, indent=2) + "\n", encoding="utf-8"
+        )
+    os.replace(PARTIAL_OUT, OUT)
     print(f"written {OUT}")
     return 0
 

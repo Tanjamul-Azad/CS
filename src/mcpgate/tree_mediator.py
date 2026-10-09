@@ -367,7 +367,8 @@ class TreeMediator:
     allowance: AllowanceLedger = field(default_factory=AllowanceLedger)
     keep_staging: bool = False
     records: list[TreeMediationRecord] = field(default_factory=list)
-    _lock: threading.Lock = field(default_factory=threading.Lock, repr=False)
+    _commit_lock: threading.Lock = field(default_factory=threading.Lock, repr=False)
+    _record_lock: threading.Lock = field(default_factory=threading.Lock, repr=False)
 
     def __post_init__(self) -> None:
         self.staging_base = Path(self.staging_base)
@@ -396,8 +397,23 @@ class TreeMediator:
             rid, contract.contract_id, "REFUSED", phase, reason,
             before, after, None, response,
         )
-        self.records.append(record)
+        with self._record_lock:
+            self.records.append(record)
         raise TreeMediationRefused(record)
+
+    @staticmethod
+    def _result_from_slot(slot: Any) -> TreeMediationResult | None:
+        """Recover a committed replay result without entering execution."""
+
+        if slot.state is not SlotState.COMMITTED or not getattr(
+            slot, "result_available", True
+        ):
+            return None
+        if isinstance(slot.result, TreeMediationResult):
+            return slot.result
+        if isinstance(slot.result, Mapping):
+            return TreeMediationResult(**dict(slot.result))
+        return None
 
     def call(
         self,
@@ -413,90 +429,102 @@ class TreeMediator:
         if not proposal.allowed:
             self._refuse(rid, contract, "request-shape", str(proposal))
 
-        with self._lock:
-            existing = self.allowance.lookup(contract.contract_id, rid)
-            if existing is not None:
-                if existing.state is SlotState.COMMITTED and isinstance(
-                    existing.result, TreeMediationResult
-                ):
-                    return existing.result
-                if existing.state is SlotState.COMMITTED and isinstance(
-                    existing.result, Mapping
-                ):
-                    return TreeMediationResult(**dict(existing.result))
-                raise AllowanceError(
-                    f"request {rid} cannot execute again because its state is "
-                    f"{existing.state.value}"
-                )
+        existing = self.allowance.lookup(contract.contract_id, rid)
+        if existing is not None:
+            replay = self._result_from_slot(existing)
+            if replay is not None:
+                return replay
+            raise AllowanceError(
+                f"request {rid} cannot execute again because its state is "
+                f"{existing.state.value}"
+            )
 
-            baseline = snapshot_tree(
-                self.baseline_root,
+        baseline = snapshot_tree(
+            self.baseline_root,
+            max_entries=contract.max_entries,
+            max_file_bytes=contract.max_file_bytes,
+            max_total_bytes=contract.max_total_bytes,
+        )
+        if baseline != contract.expected_before:
+            self._refuse(
+                rid, contract, "before-state",
+                "baseline tree differs from the contracted initial state",
+                before=baseline.sha256,
+            )
+
+        # This is the only authorization step that decides whether untrusted
+        # execution may begin. It is atomic inside both ledger backends. Do not
+        # serialize the runner around it: A9 must exercise real overlapping
+        # calls, with exactly one contender able to take the final slot.
+        prior = self.allowance.reserve(
+            contract.contract_id, rid, contract.request.max_invocations
+        )
+        if prior is not None:
+            replay = self._result_from_slot(prior)
+            if replay is not None:
+                return replay
+            raise AllowanceError(
+                f"request {rid} cannot execute again because its state is "
+                f"{prior.state.value}"
+            )
+
+        token = hashlib.sha256(
+            f"{contract.contract_id}\0{rid}".encode()
+        ).hexdigest()[:24]
+        stage = self.staging_base / f"inv-{token}"
+        response: Any = None
+        moved = False
+        try:
+            shutil.copytree(self.baseline_root, stage)
+            invocation = runner(stage, operation, dict(request_arguments))
+            if not isinstance(invocation, StagedInvocation):
+                raise TypeError("runner must return StagedInvocation")
+            response = invocation.response
+            if not invocation.boundary_closed:
+                self._refuse(
+                    rid, contract, "freeze",
+                    "runner did not prove that every tree writer terminated",
+                    before=baseline.sha256, response=response, spent=True,
+                )
+            postflight = contract.request.check(
+                EffectProposal(operation, dict(invocation.actual_arguments))
+            )
+            if not postflight.allowed:
+                self._refuse(
+                    rid, contract, "transport-shape", str(postflight),
+                    before=baseline.sha256, response=response, spent=True,
+                )
+            after = snapshot_tree(
+                stage,
                 max_entries=contract.max_entries,
                 max_file_bytes=contract.max_file_bytes,
                 max_total_bytes=contract.max_total_bytes,
             )
-            if baseline != contract.expected_before:
+            dangerous = [
+                path for path, entry in after.entries.items()
+                if entry.kind in {"symlink", "hardlink", "special"}
+            ]
+            if dangerous:
                 self._refuse(
-                    rid, contract, "before-state",
-                    "baseline tree differs from the contracted initial state",
-                    before=baseline.sha256,
+                    rid, contract, "effect-diff",
+                    f"tree contains unsafe object types: {dangerous}",
+                    before=baseline.sha256, after=after.sha256,
+                    response=response, spent=True,
                 )
-            prior = self.allowance.reserve(
-                contract.contract_id, rid, contract.request.max_invocations
-            )
-            if prior is not None:
-                raise AllowanceError("request state changed while mediator lock was held")
-
-            token = hashlib.sha256(
-                f"{contract.contract_id}\0{rid}".encode()
-            ).hexdigest()[:24]
-            stage = self.staging_base / f"inv-{token}"
-            shutil.copytree(self.baseline_root, stage)
-            response: Any = None
-            moved = False
-            try:
-                invocation = runner(stage, operation, dict(request_arguments))
-                if not isinstance(invocation, StagedInvocation):
-                    raise TypeError("runner must return StagedInvocation")
-                response = invocation.response
-                if not invocation.boundary_closed:
-                    self._refuse(
-                        rid, contract, "freeze",
-                        "runner did not prove that every tree writer terminated",
-                        before=baseline.sha256, response=response, spent=True,
-                    )
-                postflight = contract.request.check(
-                    EffectProposal(operation, dict(invocation.actual_arguments))
+            verdict = contract.evaluate(after)
+            if not verdict.allowed:
+                self._refuse(
+                    rid, contract, "effect-diff", verdict.reason,
+                    before=baseline.sha256, after=after.sha256,
+                    response=response, spent=True,
                 )
-                if not postflight.allowed:
-                    self._refuse(
-                        rid, contract, "transport-shape", str(postflight),
-                        before=baseline.sha256, response=response, spent=True,
-                    )
-                after = snapshot_tree(
-                    stage,
-                    max_entries=contract.max_entries,
-                    max_file_bytes=contract.max_file_bytes,
-                    max_total_bytes=contract.max_total_bytes,
+            if os.stat(stage).st_dev != os.stat(self.committed_root.parent).st_dev:
+                raise OSError(
+                    "staging and trusted destination must share a filesystem"
                 )
-                dangerous = [
-                    path for path, entry in after.entries.items()
-                    if entry.kind in {"symlink", "hardlink", "special"}
-                ]
-                if dangerous:
-                    self._refuse(
-                        rid, contract, "effect-diff",
-                        f"tree contains unsafe object types: {dangerous}",
-                        before=baseline.sha256, after=after.sha256,
-                        response=response, spent=True,
-                    )
-                verdict = contract.evaluate(after)
-                if not verdict.allowed:
-                    self._refuse(
-                        rid, contract, "effect-diff", verdict.reason,
-                        before=baseline.sha256, after=after.sha256,
-                        response=response, spent=True,
-                    )
+            # Validation is call-parallel. Only the final destination test and
+            # rename are serialized so two valid stages cannot both promote.
+            with self._commit_lock:
                 if self.committed_root.exists():
                     self._refuse(
                         rid, contract, "commit",
@@ -504,22 +532,19 @@ class TreeMediator:
                         before=baseline.sha256, after=after.sha256,
                         response=response, spent=True,
                     )
-                if os.stat(stage).st_dev != os.stat(self.committed_root.parent).st_dev:
-                    raise OSError(
-                        "staging and trusted destination must share a filesystem"
-                    )
                 os.replace(stage, self.committed_root)
                 moved = True
-                result = TreeMediationResult(
-                    request_id=rid,
-                    contract_id=contract.contract_id,
-                    committed_root=str(self.committed_root),
-                    before_sha256=baseline.sha256,
-                    after_sha256=after.sha256,
-                    matched_counts=verdict.matched_counts,
-                    server_response=response,
-                )
-                self.allowance.commit(contract.contract_id, rid, result)
+            result = TreeMediationResult(
+                request_id=rid,
+                contract_id=contract.contract_id,
+                committed_root=str(self.committed_root),
+                before_sha256=baseline.sha256,
+                after_sha256=after.sha256,
+                matched_counts=verdict.matched_counts,
+                server_response=response,
+            )
+            self.allowance.commit(contract.contract_id, rid, result)
+            with self._record_lock:
                 self.records.append(
                     TreeMediationRecord(
                         rid, contract.contract_id, "COMMITTED", "commit",
@@ -528,13 +553,14 @@ class TreeMediator:
                         str(self.committed_root), response,
                     )
                 )
-                return result
-            except TreeMediationRefused:
-                raise
-            except BaseException as error:
-                self.allowance.fail(
-                    contract.contract_id, rid, f"{type(error).__name__}: {error}"
-                )
+            return result
+        except TreeMediationRefused:
+            raise
+        except BaseException as error:
+            self.allowance.fail(
+                contract.contract_id, rid, f"{type(error).__name__}: {error}"
+            )
+            with self._record_lock:
                 self.records.append(
                     TreeMediationRecord(
                         rid, contract.contract_id, "FAILED", "execution",
@@ -542,8 +568,7 @@ class TreeMediator:
                         baseline.sha256, None, None, response,
                     )
                 )
-                raise
-            finally:
-                if not self.keep_staging and not moved:
-                    shutil.rmtree(stage, ignore_errors=True)
-
+            raise
+        finally:
+            if not self.keep_staging and not moved:
+                shutil.rmtree(stage, ignore_errors=True)
