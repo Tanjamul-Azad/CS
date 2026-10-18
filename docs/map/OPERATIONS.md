@@ -60,6 +60,11 @@ To upload: `python scripts/make_overleaf_zip.py` writes a dated `../EffectSeal_O
 Before submission: set `\anonymousreviewtrue` and replace `\artifacturl`.
 Backups go to `../private_submission_backups/` as dated zips.
 
+The current draft puts References after the main body, followed by appendices
+A--E together. The PDF checker accepts references before or after the ethics
+appendix and counts the body at the first such heading. Recheck placement
+against the final conference instructions before submitting.
+
 ## Correctness repair and current network evidence
 
 `artifact/paper-evidence-20261009.json` selects current bundles explicitly;

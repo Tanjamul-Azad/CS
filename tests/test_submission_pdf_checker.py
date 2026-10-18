@@ -26,3 +26,17 @@ def test_checked_in_working_pdf_passes_structural_checks_when_present():
     assert "anonymous artifact URL placeholder remains in release PDF" in check(
         pdf, working_draft=False, named_draft=True,
     )
+
+
+def test_reference_first_layout_does_not_count_bibliography_as_body():
+    pages = ["Body text"] * 13 + ["References\n[1] A citation"] * 3
+    pages += ["A Ethical Considerations\nEthics text"]
+    assert body_page_issues(pages) == []
+
+
+@pytest.mark.parametrize("body_pages", [13, 14])
+def test_body_sharing_reference_page_still_counts(body_pages):
+    pages = ["Body text"] * (body_pages - 1)
+    pages += ["10 Conclusion\nFinal body paragraph\nReferences\n[1] A citation"]
+    expected = [] if body_pages == 13 else ["body is 14 pages; USENIX limit is 13"]
+    assert body_page_issues(pages) == expected

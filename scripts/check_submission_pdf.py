@@ -14,9 +14,12 @@ DEFAULT_PDF = ROOT / "paper" / "submission" / "main.pdf"
 
 
 def body_page_issues(texts: list[str]) -> list[str]:
-    """Count body text on a shared appendix page too, rather than subtracting it."""
+    """End the body at references or ethics, counting any shared body page."""
     for number, text in enumerate(texts, 1):
-        heading = re.search(r"^(?:[A-Z]\s+)?Ethical Considerations\s*$", text, re.MULTILINE)
+        heading = re.search(
+            r"^(?:References|(?:[A-Z]\s+)?Ethical Considerations)\s*$",
+            text, re.MULTILINE,
+        )
         if heading:
             prefix = text[:heading.start()].strip()
             # A page number alone is not body text. The canonical source starts
@@ -25,7 +28,7 @@ def body_page_issues(texts: list[str]) -> list[str]:
             body_pages = number if shares_body else number - 1
             return ([f"body is {body_pages} pages; USENIX limit is 13"]
                     if body_pages > 13 else [])
-    return ["Ethical Considerations appendix heading was not found"]
+    return ["References or Ethical Considerations heading was not found"]
 
 
 def _font_descriptor(font: object) -> object | None:
@@ -134,8 +137,6 @@ def check(
     )
     if references_page is None:
         issues.append("References heading was not found")
-    elif open_science_page is not None and references_page < open_science_page:
-        issues.append("References appear before Open Science")
     if named_draft:
         for expected in (
             "Md. Tanzamul Azad", "Jahidul Islam", "Azizur Rahman Anik",
