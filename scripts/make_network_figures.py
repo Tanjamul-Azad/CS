@@ -159,9 +159,10 @@ def architecture() -> None:
                                      shrinkA=0, shrinkB=0))
 
     def step(x, y, n):
-        ax.add_patch(Circle((x, y), 0.25, facecolor="black", edgecolor="white", linewidth=0.6,
+        # Dark selectable text avoids white-glyph hidden-text warnings in PDF readers.
+        ax.add_patch(Circle((x, y), 0.25, facecolor=trust_fill, edgecolor=BLUE, linewidth=0.6,
                             zorder=5))
-        ax.text(x, y - 0.01, str(n), ha="center", va="center", color="white", fontsize=6.3,
+        ax.text(x, y - 0.01, str(n), ha="center", va="center", color="black", fontsize=6.3,
                 fontweight="bold", zorder=6)
 
     def label(x, y, text, color=GRAY, ha="left", size=7, **kw):
@@ -228,7 +229,7 @@ def architecture() -> None:
         label(10.2, y + h + 0.55, title, "black", style="italic")
         for i, (x, text) in enumerate(zip(cols, stages)):
             if i == 1:
-                box(x, y, w, h, text, BLUE, tcolor="white")
+                box(x, y, w, h, text, "#B9DCF0", BLUE)
             else:
                 box(x, y, w, h, text, trust_fill, BLUE)
             step(x, y + h, 4 + i)
